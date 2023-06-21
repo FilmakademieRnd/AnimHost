@@ -16,6 +16,12 @@ public:
     virtual void run() = 0;
     virtual QString name() {  return metaObject()->className(); }
 
+    //QTNodes
+    virtual QString category() = 0;  // Returns a category for the node
+    virtual QList<QMetaType> inputTypes() = 0;  // Returns input data types
+    virtual QList<QMetaType> outputTypes() = 0;  // Returns output data types
+
+    //Data
     QList<QVariant> inputs;
     QList<QVariant>* outputs;
 

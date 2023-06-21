@@ -17,3 +17,28 @@ void ExamplePlugin::run()
     //inform
     emit done();
 }
+
+QString ExamplePlugin::category()
+{
+    return "Generator";
+}
+
+QList<QMetaType> ExamplePlugin::inputTypes()
+{
+    QList<QMetaType> list = QList<QMetaType>();
+    foreach (QVariant v, inputs)
+    {
+        list.append(v.metaType());
+    }
+    return list;
+}
+
+QList<QMetaType> ExamplePlugin::outputTypes()
+{
+    QList<QMetaType> list = QList<QMetaType>();
+    foreach (QVariant v, *outputs)
+    {
+        list.append(v.metaType());
+    }
+    return list;
+}

@@ -1,26 +1,17 @@
- #include "animhost.h"
+#include "animhost.h"
+#include "animhostnode.h"
 #include <iostream>
 #include <QCoreApplication>
 #include <QPluginLoader>
 #include <QCryptographicHash>
 
-AnimHost::AnimHost(QString filePath)
+AnimHost::AnimHost()
 {
-    //process filePath String
-    basePath = QFileInfo(filePath);
-
     //load existing Plugins
     loadPlugins();
-}
 
-//run the animHost
-void AnimHost::run()
-{
-    //check file path
-    if (!basePath.exists())
-    {
-        return;
-    }
+    //initalize list for nodes
+    nodes = std::make_shared<NodeDelegateModelRegistry>();
 }
 
 //register a plugin to animHost
@@ -61,6 +52,7 @@ bool AnimHost::loadPlugins()
                 QList<QVariant>* outputs = pluginInterface->outputs;
 
                 registerPlugin(pluginInterface, inputs, outputs);
+                createNodeFromPlugin(pluginInterface);
                 return true;
             }
             pluginLoader.unload();
@@ -68,4 +60,22 @@ bool AnimHost::loadPlugins()
     }
 
     return false;
+}
+
+void AnimHost::createNodeFromPlugin(PluginInterface* plugin)
+{
+    //AnimHostNode node = new AnimHostNode();
+
+
+    //nodes->registerModel<NumberSourceDataModel>("Sources");
+
+    /*ret->registerModel<NumberDisplayDataModel>("Displays");
+
+    ret->registerModel<AdditionModel>("Operators");
+
+    ret->registerModel<SubtractionModel>("Operators");
+
+    ret->registerModel<MultiplicationModel>("Operators");
+
+    ret->registerModel<DivisionModel>("Operators");*/
 }

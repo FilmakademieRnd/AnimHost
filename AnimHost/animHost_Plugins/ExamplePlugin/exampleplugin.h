@@ -16,6 +16,12 @@ public:
     void run() override;
     QObject* getObject() { return this; }
 
+    //QTNodes
+    QString category() override;  // Returns a category for the node
+    QList<QMetaType> inputTypes() override;  // Returns input data types
+    QList<QMetaType> outputTypes() override;  // Returns output data types
+
+    //Data
     QList<QVariant> inputs = { QVariant(10),        //int
                                QVariant(5.f) };     //float
     QList<QVariant>* outputs = new QList<QVariant>{ QVariant(10),        //int

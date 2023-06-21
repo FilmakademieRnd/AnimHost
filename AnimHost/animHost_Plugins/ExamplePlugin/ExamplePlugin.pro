@@ -31,3 +31,9 @@ EXAMPLE_FILES = exampleplugin.json
 INSTALLS += target
 
 CONFIG += install_ok  # Do not cargo-cult this!
+
+#QtNodes
+macx: LIBS += -L$$PWD/../../core/QTNodes/lib/release/ -lQtNodes
+
+INCLUDEPATH += $$PWD/../../core/QTNodes/include
+DEPENDPATH += $$PWD/../../core/QTNodes/include

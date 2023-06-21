@@ -4,44 +4,91 @@
 #include <QObject>
 #include <QString>
 
-class CommonDatatypes : public QObject
+#define NODE_EDITOR_SHARED 1
+
+#include "QtNodes/NodeData"
+
+using QtNodes::NodeData;
+using QtNodes::NodeDataType;
+
+class HumanoidBones
 {
-    Q_OBJECT
+    // Spine bones
+    QVariantList spine;
+    QVariantList chest;
+    QVariantList upperChest;
+
+    // Head bone
+    QVariantList head;
+
+    // Arm bones
+    QVariantList leftShoulder;
+    QVariantList leftUpperArm;
+    QVariantList leftLowerArm;
+    QVariantList leftHand;
+
+    QVariantList rightShoulder;
+    QVariantList rightUpperArm;
+    QVariantList rightLowerArm;
+    QVariantList rightHand;
+
+    // Leg bones
+    QVariantList leftUpperLeg;
+    QVariantList leftLowerLeg;
+    QVariantList leftFoot;
+    QVariantList leftToes;
+
+    QVariantList rightUpperLeg;
+    QVariantList rightLowerLeg;
+    QVariantList rightFoot;
+    QVariantList rightToes;
+};
+Q_DECLARE_METATYPE(HumanoidBones)
+
+//
+// Qt Node Editor Data
+//
+
+//Float
+class FloatData : public NodeData
+{
 public:
-    enum State{WAITING,RUNNING, DONE, ERROR};
-    Q_ENUM(State)
+    FloatData()
+        : _number(0.0)
+    {}
 
-    struct HumanoidBones {
-        // Spine bones
-        QVariantList spine;
-        QVariantList chest;
-        QVariantList upperChest;
+    FloatData(float const number)
+        : _number(number)
+    {}
 
-        // Head bone
-        QVariantList head;
+    NodeDataType type() const override { return NodeDataType{"float", "Float"}; }
 
-        // Arm bones
-        QVariantList leftShoulder;
-        QVariantList leftUpperArm;
-        QVariantList leftLowerArm;
-        QVariantList leftHand;
+    float number() const { return _number; }
 
-        QVariantList rightShoulder;
-        QVariantList rightUpperArm;
-        QVariantList rightLowerArm;
-        QVariantList rightHand;
+    QString numberAsText() const { return QString::number(_number, 'f'); }
 
-        // Leg bones
-        QVariantList leftUpperLeg;
-        QVariantList leftLowerLeg;
-        QVariantList leftFoot;
-        QVariantList leftToes;
+private:
+    float _number;
+};
 
-        QVariantList rightUpperLeg;
-        QVariantList rightLowerLeg;
-        QVariantList rightFoot;
-        QVariantList rightToes;
-    };
+//Humanoid Bones
+class HumanoidBonesData : public NodeData
+{
+public:
+    HumanoidBonesData()
+        : _humanoidBones()
+    {}
+
+    HumanoidBonesData(HumanoidBones const humanoidBones)
+        : _humanoidBones(humanoidBones)
+    {}
+
+    NodeDataType type() const override { return NodeDataType{"humanoidBones", "HumanoidBones"}; }
+
+    HumanoidBones humanoidBones() const { return _humanoidBones; }
+
+private:
+    HumanoidBones _humanoidBones;
 };
 
 #endif // COMMONDATATYPES_H
