@@ -29,7 +29,7 @@ class AnimHost : public QObject
 public:
     //functions
     AnimHost();
-    void registerPlugin(PluginInterface* plugin, QList<QVariant> inputs, QList<QVariant>* outputs);
+    void registerPlugin(PluginInterface* plugin);
     bool loadPlugins();
 
     //variables

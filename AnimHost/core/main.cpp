@@ -22,6 +22,9 @@ using QtNodes::DataFlowGraphModel;
 using QtNodes::GraphicsView;
 using QtNodes::NodeDelegateModelRegistry;
 
+//!
+//! \brief set the UI style for the nodes
+//!
 static void setStyle()
 {
     ConnectionStyle::setConnectionStyle(
@@ -44,6 +47,12 @@ static void setStyle()
   )");
 }
 
+//!
+//! \brief main function being the entry point of the app
+//! \param argc commandline arguments given
+//! \param argv commandline arguments given
+//! \return
+//!
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QQuaternion>
 
 #define NODE_EDITOR_SHARED 1
 
@@ -11,38 +12,42 @@
 using QtNodes::NodeData;
 using QtNodes::NodeDataType;
 
+//!
+//! \brief The prototype of a HumanoidBones class
+//!
 class HumanoidBones
 {
     // Spine bones
-    QVariantList spine;
-    QVariantList chest;
-    QVariantList upperChest;
+    QQuaternion spine;
+    QQuaternion chest;
+    QQuaternion upperChest;
 
     // Head bone
-    QVariantList head;
+    QQuaternion head;
 
     // Arm bones
-    QVariantList leftShoulder;
-    QVariantList leftUpperArm;
-    QVariantList leftLowerArm;
-    QVariantList leftHand;
+    QQuaternion leftShoulder;
+    QQuaternion leftUpperArm;
+    QQuaternion leftLowerArm;
+    QQuaternion leftHand;
 
-    QVariantList rightShoulder;
-    QVariantList rightUpperArm;
-    QVariantList rightLowerArm;
-    QVariantList rightHand;
+    QQuaternion rightShoulder;
+    QQuaternion rightUpperArm;
+    QQuaternion rightLowerArm;
+    QQuaternion rightHand;
 
     // Leg bones
-    QVariantList leftUpperLeg;
-    QVariantList leftLowerLeg;
-    QVariantList leftFoot;
-    QVariantList leftToes;
+    QQuaternion leftUpperLeg;
+    QQuaternion leftLowerLeg;
+    QQuaternion leftFoot;
+    QQuaternion leftToes;
 
-    QVariantList rightUpperLeg;
-    QVariantList rightLowerLeg;
-    QVariantList rightFoot;
-    QVariantList rightToes;
+    QQuaternion rightUpperLeg;
+    QQuaternion rightLowerLeg;
+    QQuaternion rightFoot;
+    QQuaternion rightToes;
 };
+//add HumanoidBones class as type to QVariants
 Q_DECLARE_METATYPE(HumanoidBones)
 
 //

@@ -11,12 +11,12 @@ CONFIG -= app_bundle
 
 HEADERS += \
     animhost.h \
-    #animhostnode.h \
+    animhostnode.h \
     commondatatypes.h \
 
 SOURCES += \
         animhost.cpp \
-        #animhostnode.cpp \
+        animhostnode.cpp \
         main.cpp
 
 #include analyser plugin interface

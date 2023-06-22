@@ -5,6 +5,9 @@
 #include <QPluginLoader>
 #include <QCryptographicHash>
 
+//!
+//! \brief Constructor of AnimHost class
+//!
 AnimHost::AnimHost()
 {
     //load existing Plugins
@@ -14,8 +17,11 @@ AnimHost::AnimHost()
     nodes = std::make_shared<NodeDelegateModelRegistry>();
 }
 
-//register a plugin to animHost
-void AnimHost::registerPlugin(PluginInterface* plugin, QList<QVariant> inputs, QList<QVariant>* outputs)
+//!
+//! \brief register a plugin to animHost
+//! @param plugin the plugin to be registered based on PluginInterface
+//!
+void AnimHost::registerPlugin(PluginInterface* plugin)
 {
     //add plugin to list
     plugins.insert(plugin->name(),plugin);
@@ -24,7 +30,9 @@ void AnimHost::registerPlugin(PluginInterface* plugin, QList<QVariant> inputs, Q
     //QObject::connect(plugin, &PluginInterface::done, xxx, xxx);
 }
 
-//load all available plugins
+//!
+//! load all available plugins based on dynamic libraries
+//!
 bool AnimHost::loadPlugins()
 {
     QDir pluginsDir(QCoreApplication::applicationDirPath());
@@ -51,7 +59,7 @@ bool AnimHost::loadPlugins()
                 QList<QVariant> inputs = pluginInterface->inputs;
                 QList<QVariant>* outputs = pluginInterface->outputs;
 
-                registerPlugin(pluginInterface, inputs, outputs);
+                registerPlugin(pluginInterface);
                 createNodeFromPlugin(pluginInterface);
                 return true;
             }
@@ -62,6 +70,10 @@ bool AnimHost::loadPlugins()
     return false;
 }
 
+//!
+//! \brief create a UI node from a plugin
+//! \param plugin the plugin to be represented
+//!
 void AnimHost::createNodeFromPlugin(PluginInterface* plugin)
 {
     //AnimHostNode node = new AnimHostNode();

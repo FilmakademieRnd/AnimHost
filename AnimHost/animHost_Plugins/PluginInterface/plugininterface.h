@@ -8,12 +8,17 @@
 #include "../../core/commondatatypes.h"
 #include "plugininterface_global.h"
 
+//!
+//! \brief Interface for plugins for the AnimHost
+//!
 class PLUGININTERFACESHARED_EXPORT PluginInterface : public QObject
 {
     Q_OBJECT
 
 public:
+    // main function of the plugin generating outputs based on given inputs
     virtual void run() = 0;
+    // provide the name of the plugin
     virtual QString name() {  return metaObject()->className(); }
 
     //QTNodes
@@ -22,8 +27,8 @@ public:
     virtual QList<QMetaType> outputTypes() = 0;  // Returns output data types
 
     //Data
-    QList<QVariant> inputs;
-    QList<QVariant>* outputs;
+    QList<QVariant> inputs; // list of input parameters
+    QList<QVariant>* outputs; // list of output parameters
 
 protected:
 
