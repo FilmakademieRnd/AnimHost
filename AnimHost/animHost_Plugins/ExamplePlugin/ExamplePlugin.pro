@@ -7,8 +7,8 @@ TARGET          = ExamplePlugin
 
 DEFINES += EXAMPLEPLUGIN_LIBRARY
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../PluginInterface/lib/release/ -lPluginInterface
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../PluginInterface/lib/debug/ -lPluginInterface
+win32: LIBS += -L$$PWD/../PluginInterface/lib/ -lPluginInterface
+
 else:unix: LIBS += -L$$PWD/../PluginInterface/lib/ -lPluginInterface
 
 INCLUDEPATH += $$PWD/../PluginInterface

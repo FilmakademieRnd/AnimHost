@@ -11,21 +11,19 @@ CONFIG -= app_bundle
 
 HEADERS += \
     animhost.h \
-    #animhostnode.h \
+    animhostnode.h \
     commondatatypes.h \
 
 SOURCES += \
         animhost.cpp \
-        #animhostnode.cpp \
+        animhostnode.cpp \
         main.cpp
 
 #include analyser plugin interface
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../animHost_Plugins/PluginInterface/lib/release/ -lPluginInterface
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../animHost_Plugins/PluginInterface/lib/debug/ -lPluginInterface
-else:unix: LIBS += -L$$PWD/../animHost_Plugins/PluginInterface/lib/ -lPluginInterface \
+win32:LIBS += -L$$PWD/../animHost_Plugins/PluginInterface/lib -lPluginInterface
 
 INCLUDEPATH += $$PWD/../animHost_Plugins/PluginInterface \
-DEPENDPATH += $$PWD/../animHost_analyserPlugins/PluginInterface
+#DEPENDPATH += $$PWD/../animHost_analyserPlugins/PluginInterface
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -34,7 +32,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 
 #QtNodes
-macx: LIBS += -L$$PWD/QTNodes/lib/release/ -lQtNodes
+macx: LIBS += -L$$PWD/QTNodes/lib/release -lQtNodes
+win32: LIBS += -L$$PWD/QTNodes/lib/release -lQtNodes
 
 INCLUDEPATH += $$PWD/QTNodes/include
 DEPENDPATH += $$PWD/QTNodes/include
