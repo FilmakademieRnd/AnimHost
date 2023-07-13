@@ -1,6 +1,6 @@
 set(target_name core)
 
-qt_add_executable(core MACOSX_BUNDLE
+qt_add_executable(core
     animhost.cpp animhost.h
     animhostnode.cpp animhostnode.h
     commondatatypes.h

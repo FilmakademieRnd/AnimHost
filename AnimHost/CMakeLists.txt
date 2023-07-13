@@ -11,8 +11,7 @@ set(CMAKE_DEBUG_POSTFIX _d)
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR} CACHE PATH "set install prefix" FORCE)
 
-find_package(Qt6 REQUIRED COMPONENTS Core)
-find_package(Qt6 REQUIRED COMPONENTS Gui Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 qt_standard_project_setup()
 
 set_property (GLOBAL PROPERTY USE_FOLDERS ON) 
