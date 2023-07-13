@@ -14,9 +14,14 @@ target_compile_definitions(ExamplePlugin PUBLIC
     EXAMPLEPLUGIN_LIBRARY
 )
 
+target_link_directories(${target_name} 
+	PRIVATE ${CMAKE_SOURCE_DIR}/animHost_Plugins/PluginInterface/lib
+)
+
 target_link_libraries(ExamplePlugin PUBLIC
     Qt::Core
     Qt::Gui
+    PluginInterface
 )
 
 

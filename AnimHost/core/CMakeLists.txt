@@ -1,6 +1,6 @@
 set(target_name core)
 
-qt_add_executable(core
+qt_add_executable(core MACOSX_BUNDLE
     animhost.cpp animhost.h
     animhostnode.cpp animhostnode.h
     commondatatypes.h
@@ -8,32 +8,20 @@ qt_add_executable(core
 )
 target_include_directories(core PRIVATE
     ../animHost_Plugins/PluginInterface
-    ../../QTNodesLibrary/include
-	../../glm
+    ${CMAKE_SOURCE_DIR}/core/QTNodes/include
+    ../../glm
 )
 
+target_link_directories(${target_name} PRIVATE 
+    ${CMAKE_SOURCE_DIR}/core/QTNodes/lib
+)
 
 target_link_libraries(core PRIVATE
-	../../QtNodesLibrary/lib/QTNodes
-	Qt::Core
+    QTNodes
+    Qt::Core
     Qt::Gui
     Qt::Widgets
 )
-
-if(WIN32)
-    target_link_libraries(core PRIVATE
-        # Remove: L${CMAKE_CURRENT_SOURCE_DIR}/../animHost_Plugins/PluginInterface/lib
-        # Remove: L${CMAKE_CURRENT_SOURCE_DIR}/QTNodes/lib/release
-        PluginInterface
-    )
-endif()
-
-if(MACOS)
-    target_link_libraries(core PRIVATE
-        # Remove: L${CMAKE_CURRENT_SOURCE_DIR}/QTNodes/lib/release
-        QtNodes
-    )
-endif()
 
 install(TARGETS core
     BUNDLE DESTINATION .
