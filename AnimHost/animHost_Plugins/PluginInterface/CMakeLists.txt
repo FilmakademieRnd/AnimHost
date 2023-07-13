@@ -1,5 +1,3 @@
-set(target_name PluginInterface)
-
 qt_add_library(PluginInterface
     plugininterface.h
     plugininterface_global.h
@@ -19,10 +17,5 @@ target_link_libraries(PluginInterface PUBLIC
     Qt::Gui
 )
 
-install(TARGETS PluginInterface
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    FRAMEWORK DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
 
 

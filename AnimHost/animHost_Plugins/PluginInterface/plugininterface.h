@@ -19,7 +19,7 @@ public:
     // main function of the plugin generating outputs based on given inputs
     virtual void run() = 0;
     // provide the name of the plugin
-    virtual QString name() {  return metaObject()->className(); }
+    virtual QString name() { return metaObject()->className(); };
 
     //QTNodes
     virtual QString category() = 0;  // Returns a category for the node

@@ -16,8 +16,9 @@ qt_standard_project_setup()
 
 set_property (GLOBAL PROPERTY USE_FOLDERS ON) 
 
-add_subdirectory(core)
 add_subdirectory(animHost_Plugins)
+add_subdirectory(core)
+
 
 install(TARGETS ${i_targets}
 		DESTINATION ${CMAKE_INSTALL_PREFIX}/bin

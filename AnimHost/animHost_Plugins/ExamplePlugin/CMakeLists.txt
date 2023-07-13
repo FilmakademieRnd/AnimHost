@@ -12,10 +12,6 @@ target_compile_definitions(ExamplePlugin PUBLIC
     EXAMPLEPLUGIN_LIBRARY
 )
 
-#target_link_directories(${target_name} 
-#	PRIVATE ${CMAKE_SOURCE_DIR}/animHost_Plugins/PluginInterface/lib
-#)
-
 target_link_libraries(ExamplePlugin PUBLIC
     Qt::Core
     Qt::Gui
@@ -23,16 +19,4 @@ target_link_libraries(ExamplePlugin PUBLIC
 )
 
 
-#target_link_libraries(ExamplePlugin PUBLIC
-#    # Remove: L${CMAKE_CURRENT_SOURCE_DIR}/../PluginInterface/lib/
-#    PluginInterface
-#)
 
-
-
-
-install(TARGETS ExamplePlugin
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    FRAMEWORK DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
