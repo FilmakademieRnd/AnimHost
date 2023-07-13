@@ -1,5 +1,0 @@
-﻿  Automatic MOC and UIC for target PluginInterface
-  Building Custom Rule C:/DEV/AnimHost/AnimHost/animHost_Plugins/PluginInterface/CMakeLists.txt
-  mocs_compilation_Debug.cpp
-     Creating library C:/DEV/AnimHost/cmake_build/animHost_Plugins/PluginInterface/Debug/PluginInterface_d.lib and object C:/DEV/AnimHost/cmake_build/animHost_Plugins/PluginInterface/Debug/PluginInterface_d.exp
-  PluginInterface.vcxproj -> C:\DEV\AnimHost\cmake_build\Debug\PluginInterface_d.dll

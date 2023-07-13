@@ -1,2 +1,0 @@
-﻿  Automatic MOC and UIC for target ExamplePlugin
-LINK : fatal error LNK1104: cannot open file '..\PluginInterface\lib\.lib'
