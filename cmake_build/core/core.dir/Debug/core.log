@@ -1,0 +1,7 @@
+﻿  Automatic MOC and UIC for target core
+     Creating library C:/DEV/AnimHost/cmake_build/core/Debug/core.lib and object C:/DEV/AnimHost/cmake_build/core/Debug/core.exp
+mocs_compilation_Debug.obj : error LNK2001: unresolved external symbol "public: static struct QMetaObject const PluginInterface::staticMetaObject" (?staticMetaObject@PluginInterface@@2UQMetaObject@@B)
+animhost.obj : error LNK2001: unresolved external symbol "public: static struct QMetaObject const PluginInterface::staticMetaObject" (?staticMetaObject@PluginInterface@@2UQMetaObject@@B)
+animhostnode.obj : error LNK2001: unresolved external symbol "public: static struct QMetaObject const PluginInterface::staticMetaObject" (?staticMetaObject@PluginInterface@@2UQMetaObject@@B)
+main.obj : error LNK2001: unresolved external symbol "public: static struct QMetaObject const PluginInterface::staticMetaObject" (?staticMetaObject@PluginInterface@@2UQMetaObject@@B)
+C:\DEV\AnimHost\cmake_build\Debug\core.exe : fatal error LNK1120: 1 unresolved externals

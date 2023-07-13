@@ -6,6 +6,7 @@
 #include <QtNodes/NodeDelegateModel>
 #include "plugininterface.h"
 #include "commondatatypes.h"
+#include <vector>
 
 using QtNodes::NodeData;
 using QtNodes::NodeDataType;
@@ -15,25 +16,41 @@ using QtNodes::PortType;
 
 class AnimHostNode : public NodeDelegateModel
 {
-public:
-    AnimHostNode(PluginInterface plugin);
+    Q_OBJECT
 
+public:
+    AnimHostNode(){};
+    AnimHostNode(std::shared_ptr<PluginInterface> plugin);
+
+public:
+    QString caption() const override { return QStringLiteral("AnimHostNode Caption"); }
+
+    bool captionVisible() const override { return false; }
+
+    QString name() const override { return(!_plugin) ?  "NONE" : _plugin->name(); }
+
+public:
     unsigned int nPorts(PortType portType) const override;
+
     NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
+
     std::shared_ptr<NodeData> outData(PortIndex port) override;
+
     void setInData(std::shared_ptr<NodeData> data, PortIndex portIndex) override;
+
     QWidget *embeddedWidget() override { return nullptr; }
 
 protected:
      void compute();
 
 protected:
-    //std::weak_ptr<HumanoidBonesData> _number1;
-    //std::weak_ptr<FloatData> _number2;
-    //std::shared_ptr<HumanoidBonesData> _result;
+
+    std::vector<std::weak_ptr<NodeData>> _dataIn;
+
+    std::vector<std::shared_ptr<NodeData>> _dataOut;
 
 private:
-    PluginInterface* _plugin;
+    std::shared_ptr<PluginInterface> _plugin;
 
     NodeDataType convertQMetaTypeToNodeDataType(QMetaType qType) const;
 };

@@ -37,3 +37,6 @@ macx: LIBS += -L$$PWD/../../core/QTNodes/lib/release/ -lQtNodes
 
 INCLUDEPATH += $$PWD/../../core/QTNodes/include
 DEPENDPATH += $$PWD/../../core/QTNodes/include
+
+#glm
+INCLUDEPATH += $$PWD/../../../glm

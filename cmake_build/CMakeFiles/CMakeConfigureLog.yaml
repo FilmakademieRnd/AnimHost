@@ -1,0 +1,360 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeDetermineSystem.cmake:204 (message)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      The system is: Windows - 10.0.19045 - AMD64
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeDetermineCXXCompiler.cmake:126 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+      Compiler:  
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      Microsoft (R)-Build-Engine, Version 16.11.2+f32259642 f\xc2\x81r .NET Framework
+      Copyright (C) Microsoft Corporation. Alle Rechte vorbehalten.
+      
+      Der Buildvorgang wurde am 13.07.2023 11:56:36 gestartet.
+      Projekt "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\3.26.3\\CompilerIdCXX\\CompilerIdCXX.vcxproj" auf Knoten "1" (Standardziele).
+      PrepareForBuild:
+        Das Verzeichnis "Debug\\" wird erstellt.
+        Das Verzeichnis "Debug\\CompilerIdCXX.tlog\\" wird erstellt.
+      InitializeBuildStatus:
+        "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild" wird erstellt, da "AlwaysCreate" angegeben wurde.
+      ClCompile:
+        C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\CL.exe /c /nologo /W0 /WX- /diagnostics:column /Od /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\\\" /Fd"Debug\\vc142.pdb" /external:W0 /Gd /TP /FC /errorReport:queue CMakeCXXCompilerId.cpp
+        CMakeCXXCompilerId.cpp
+      Link:
+        C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdCXX.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdCXX.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdCXX.lib" /MACHINE:X64 Debug\\CMakeCXXCompilerId.obj
+        CompilerIdCXX.vcxproj -> C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\3.26.3\\CompilerIdCXX\\CompilerIdCXX.exe
+      PostBuildEvent:
+        for %%i in (cl.exe) do @echo CMAKE_CXX_COMPILER=%%~$PATH:i
+        :VCEnd
+        CMAKE_CXX_COMPILER=C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\Hostx64\\x64\\cl.exe
+      FinalizeBuildStatus:
+        Die Datei "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild" wird gel”scht.
+        Aktualisieren des Timestamps von "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.lastbuildstate".
+      Die Erstellung von Projekt "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\3.26.3\\CompilerIdCXX\\CompilerIdCXX.vcxproj" ist abgeschlossen (Standardziele).
+      
+      Der Buildvorgang wurde erfolgreich ausgef\xc2\x81hrt.
+          0 Warnung(en)
+          0 Fehler
+      
+      Verstrichene Zeit 00:00:00.59
+      
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.vcxproj"
+      
+      The CXX compiler identification is MSVC, found in:
+        C:/DEV/AnimHost/cmake_build/CMakeFiles/3.26.3/CompilerIdCXX/CompilerIdCXX.exe
+      
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeDetermineCompilerABI.cmake:57 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:3 (project)"
+    checks:
+      - "Detecting CXX compiler ABI info"
+    directories:
+      source: "C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-70gy83"
+      binary: "C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-70gy83"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /EHsc"
+      CMAKE_CXX_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+    buildResult:
+      variable: "CMAKE_CXX_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-70gy83
+        
+        Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/MSBuild/Current/Bin/MSBuild.exe cmTC_5718c.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=16.0 /v:n && Microsoft (R)-Build-Engine, Version 16.11.2+f32259642 f\xc2\x81r .NET Framework
+        Copyright (C) Microsoft Corporation. Alle Rechte vorbehalten.
+        
+        Der Buildvorgang wurde am 13.07.2023 11:56:37 gestartet.
+        Projekt "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-70gy83\\cmTC_5718c.vcxproj" auf Knoten "1" (Standardziele).
+        PrepareForBuild:
+          Das Verzeichnis "cmTC_5718c.dir\\Debug\\" wird erstellt.
+          Das Verzeichnis "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-70gy83\\Debug\\" wird erstellt.
+          Das Verzeichnis "cmTC_5718c.dir\\Debug\\cmTC_5718c.tlog\\" wird erstellt.
+        InitializeBuildStatus:
+          "cmTC_5718c.dir\\Debug\\cmTC_5718c.tlog\\unsuccessfulbuild" wird erstellt, da "AlwaysCreate" angegeben wurde.
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_5718c.dir\\Debug\\\\" /Fd"cmTC_5718c.dir\\Debug\\vc142.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.26\\Modules\\CMakeCXXCompilerABI.cpp"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.29.30146 for x64
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          CMakeCXXCompilerABI.cpp
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_5718c.dir\\Debug\\\\" /Fd"cmTC_5718c.dir\\Debug\\vc142.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.26\\Modules\\CMakeCXXCompilerABI.cpp"
+        Link:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-70gy83\\Debug\\cmTC_5718c.exe" /INCREMENTAL /ILK:"cmTC_5718c.dir\\Debug\\cmTC_5718c.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-70gy83/Debug/cmTC_5718c.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-70gy83/Debug/cmTC_5718c.lib" /MACHINE:X64  /machine:x64 cmTC_5718c.dir\\Debug\\CMakeCXXCompilerABI.obj
+          cmTC_5718c.vcxproj -> C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-70gy83\\Debug\\cmTC_5718c.exe
+        FinalizeBuildStatus:
+          Die Datei "cmTC_5718c.dir\\Debug\\cmTC_5718c.tlog\\unsuccessfulbuild" wird gel”scht.
+          Aktualisieren des Timestamps von "cmTC_5718c.dir\\Debug\\cmTC_5718c.tlog\\cmTC_5718c.lastbuildstate".
+        Die Erstellung von Projekt "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-70gy83\\cmTC_5718c.vcxproj" ist abgeschlossen (Standardziele).
+        
+        Der Buildvorgang wurde erfolgreich ausgef\xc2\x81hrt.
+            0 Warnung(en)
+            0 Fehler
+        
+        Verstrichene Zeit 00:00:00.46
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CheckCXXSourceCompiles.cmake:76 (cmake_check_source_compiles)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/FindThreads.cmake:99 (CHECK_CXX_SOURCE_COMPILES)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/FindThreads.cmake:163 (_threads_check_libc)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6/QtPublicDependencyHelpers.cmake:36 (find_dependency)"
+      - "C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6/Qt6Dependencies.cmake:24 (_qt_internal_find_third_party_dependencies)"
+      - "C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6/Qt6Config.cmake:112 (include)"
+      - "CMakeLists.txt:14 (find_package)"
+    checks:
+      - "Performing Test CMAKE_HAVE_LIBC_PTHREAD"
+    directories:
+      source: "C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-6crr9i"
+      binary: "C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-6crr9i"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /EHsc"
+      CMAKE_CXX_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      CMAKE_MODULE_PATH: "C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6;C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6/3rdparty/extra-cmake-modules/find-modules;C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6/3rdparty/kwin"
+    buildResult:
+      variable: "CMAKE_HAVE_LIBC_PTHREAD"
+      cached: true
+      stdout: |
+        Change Dir: C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-6crr9i
+        
+        Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/MSBuild/Current/Bin/MSBuild.exe cmTC_e8ea8.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=16.0 /v:n && Microsoft (R)-Build-Engine, Version 16.11.2+f32259642 f\xc2\x81r .NET Framework
+        Copyright (C) Microsoft Corporation. Alle Rechte vorbehalten.
+        
+        Der Buildvorgang wurde am 13.07.2023 11:56:37 gestartet.
+        Projekt "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-6crr9i\\cmTC_e8ea8.vcxproj" auf Knoten "1" (Standardziele).
+        PrepareForBuild:
+          Das Verzeichnis "cmTC_e8ea8.dir\\Debug\\" wird erstellt.
+          Das Verzeichnis "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-6crr9i\\Debug\\" wird erstellt.
+          Das Verzeichnis "cmTC_e8ea8.dir\\Debug\\cmTC_e8ea8.tlog\\" wird erstellt.
+        InitializeBuildStatus:
+          "cmTC_e8ea8.dir\\Debug\\cmTC_e8ea8.tlog\\unsuccessfulbuild" wird erstellt, da "AlwaysCreate" angegeben wurde.
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CMAKE_HAVE_LIBC_PTHREAD /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++17 /Fo"cmTC_e8ea8.dir\\Debug\\\\" /Fd"cmTC_e8ea8.dir\\Debug\\vc142.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-6crr9i\\src.cxx"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.29.30146 for x64
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          src.cxx
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CMAKE_HAVE_LIBC_PTHREAD /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++17 /Fo"cmTC_e8ea8.dir\\Debug\\\\" /Fd"cmTC_e8ea8.dir\\Debug\\vc142.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-6crr9i\\src.cxx"
+        C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-6crr9i\\src.cxx(1,10): fatal error C1083: Cannot open include file: 'pthread.h': No such file or directory [C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-6crr9i\\cmTC_e8ea8.vcxproj]
+        Die Erstellung des Projekts "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-6crr9i\\cmTC_e8ea8.vcxproj" ist abgeschlossen (Standardziele) -- FEHLER.
+        
+        Fehler beim Buildvorgang.
+        
+        "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-6crr9i\\cmTC_e8ea8.vcxproj" (Standardziel) (1) ->
+        (ClCompile Ziel) -> 
+          C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-6crr9i\\src.cxx(1,10): fatal error C1083: Cannot open include file: 'pthread.h': No such file or directory [C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-6crr9i\\cmTC_e8ea8.vcxproj]
+        
+            0 Warnung(en)
+            1 Fehler
+        
+        Verstrichene Zeit 00:00:00.31
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CheckLibraryExists.cmake:71 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/FindThreads.cmake:112 (CHECK_LIBRARY_EXISTS)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/FindThreads.cmake:175 (_threads_check_lib)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6/QtPublicDependencyHelpers.cmake:36 (find_dependency)"
+      - "C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6/Qt6Dependencies.cmake:24 (_qt_internal_find_third_party_dependencies)"
+      - "C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6/Qt6Config.cmake:112 (include)"
+      - "CMakeLists.txt:14 (find_package)"
+    checks:
+      - "Looking for pthread_create in pthreads"
+    directories:
+      source: "C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-inv4pz"
+      binary: "C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-inv4pz"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /EHsc"
+      CMAKE_CXX_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      CMAKE_MODULE_PATH: "C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6;C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6/3rdparty/extra-cmake-modules/find-modules;C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6/3rdparty/kwin"
+    buildResult:
+      variable: "CMAKE_HAVE_PTHREADS_CREATE"
+      cached: true
+      stdout: |
+        Change Dir: C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-inv4pz
+        
+        Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/MSBuild/Current/Bin/MSBuild.exe cmTC_b2593.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=16.0 /v:n && Microsoft (R)-Build-Engine, Version 16.11.2+f32259642 f\xc2\x81r .NET Framework
+        Copyright (C) Microsoft Corporation. Alle Rechte vorbehalten.
+        
+        Der Buildvorgang wurde am 13.07.2023 11:56:38 gestartet.
+        Projekt "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-inv4pz\\cmTC_b2593.vcxproj" auf Knoten "1" (Standardziele).
+        PrepareForBuild:
+          Das Verzeichnis "cmTC_b2593.dir\\Debug\\" wird erstellt.
+          Das Verzeichnis "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-inv4pz\\Debug\\" wird erstellt.
+          Das Verzeichnis "cmTC_b2593.dir\\Debug\\cmTC_b2593.tlog\\" wird erstellt.
+        InitializeBuildStatus:
+          "cmTC_b2593.dir\\Debug\\cmTC_b2593.tlog\\unsuccessfulbuild" wird erstellt, da "AlwaysCreate" angegeben wurde.
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++17 /Fo"cmTC_b2593.dir\\Debug\\\\" /Fd"cmTC_b2593.dir\\Debug\\vc142.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-inv4pz\\CheckFunctionExists.cxx"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.29.30146 for x64
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          CheckFunctionExists.cxx
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++17 /Fo"cmTC_b2593.dir\\Debug\\\\" /Fd"cmTC_b2593.dir\\Debug\\vc142.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-inv4pz\\CheckFunctionExists.cxx"
+        Link:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-inv4pz\\Debug\\cmTC_b2593.exe" /INCREMENTAL /ILK:"cmTC_b2593.dir\\Debug\\cmTC_b2593.ilk" /NOLOGO pthreads.lib kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-inv4pz/Debug/cmTC_b2593.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-inv4pz/Debug/cmTC_b2593.lib" /MACHINE:X64  /machine:x64 cmTC_b2593.dir\\Debug\\CheckFunctionExists.obj
+        LINK : fatal error LNK1104: cannot open file 'pthreads.lib' [C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-inv4pz\\cmTC_b2593.vcxproj]
+        Die Erstellung des Projekts "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-inv4pz\\cmTC_b2593.vcxproj" ist abgeschlossen (Standardziele) -- FEHLER.
+        
+        Fehler beim Buildvorgang.
+        
+        "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-inv4pz\\cmTC_b2593.vcxproj" (Standardziel) (1) ->
+        (Link Ziel) -> 
+          LINK : fatal error LNK1104: cannot open file 'pthreads.lib' [C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-inv4pz\\cmTC_b2593.vcxproj]
+        
+            0 Warnung(en)
+            1 Fehler
+        
+        Verstrichene Zeit 00:00:00.38
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CheckLibraryExists.cmake:71 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/FindThreads.cmake:112 (CHECK_LIBRARY_EXISTS)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/FindThreads.cmake:176 (_threads_check_lib)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6/QtPublicDependencyHelpers.cmake:36 (find_dependency)"
+      - "C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6/Qt6Dependencies.cmake:24 (_qt_internal_find_third_party_dependencies)"
+      - "C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6/Qt6Config.cmake:112 (include)"
+      - "CMakeLists.txt:14 (find_package)"
+    checks:
+      - "Looking for pthread_create in pthread"
+    directories:
+      source: "C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-yew4fx"
+      binary: "C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-yew4fx"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /EHsc"
+      CMAKE_CXX_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      CMAKE_MODULE_PATH: "C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6;C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6/3rdparty/extra-cmake-modules/find-modules;C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6/3rdparty/kwin"
+    buildResult:
+      variable: "CMAKE_HAVE_PTHREAD_CREATE"
+      cached: true
+      stdout: |
+        Change Dir: C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-yew4fx
+        
+        Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/MSBuild/Current/Bin/MSBuild.exe cmTC_fdcbe.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=16.0 /v:n && Microsoft (R)-Build-Engine, Version 16.11.2+f32259642 f\xc2\x81r .NET Framework
+        Copyright (C) Microsoft Corporation. Alle Rechte vorbehalten.
+        
+        Der Buildvorgang wurde am 13.07.2023 11:56:38 gestartet.
+        Projekt "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-yew4fx\\cmTC_fdcbe.vcxproj" auf Knoten "1" (Standardziele).
+        PrepareForBuild:
+          Das Verzeichnis "cmTC_fdcbe.dir\\Debug\\" wird erstellt.
+          Das Verzeichnis "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-yew4fx\\Debug\\" wird erstellt.
+          Das Verzeichnis "cmTC_fdcbe.dir\\Debug\\cmTC_fdcbe.tlog\\" wird erstellt.
+        InitializeBuildStatus:
+          "cmTC_fdcbe.dir\\Debug\\cmTC_fdcbe.tlog\\unsuccessfulbuild" wird erstellt, da "AlwaysCreate" angegeben wurde.
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++17 /Fo"cmTC_fdcbe.dir\\Debug\\\\" /Fd"cmTC_fdcbe.dir\\Debug\\vc142.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-yew4fx\\CheckFunctionExists.cxx"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.29.30146 for x64
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          CheckFunctionExists.cxx
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++17 /Fo"cmTC_fdcbe.dir\\Debug\\\\" /Fd"cmTC_fdcbe.dir\\Debug\\vc142.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-yew4fx\\CheckFunctionExists.cxx"
+        Link:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-yew4fx\\Debug\\cmTC_fdcbe.exe" /INCREMENTAL /ILK:"cmTC_fdcbe.dir\\Debug\\cmTC_fdcbe.ilk" /NOLOGO pthread.lib kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-yew4fx/Debug/cmTC_fdcbe.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-yew4fx/Debug/cmTC_fdcbe.lib" /MACHINE:X64  /machine:x64 cmTC_fdcbe.dir\\Debug\\CheckFunctionExists.obj
+        LINK : fatal error LNK1104: cannot open file 'pthread.lib' [C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-yew4fx\\cmTC_fdcbe.vcxproj]
+        Die Erstellung des Projekts "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-yew4fx\\cmTC_fdcbe.vcxproj" ist abgeschlossen (Standardziele) -- FEHLER.
+        
+        Fehler beim Buildvorgang.
+        
+        "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-yew4fx\\cmTC_fdcbe.vcxproj" (Standardziel) (1) ->
+        (Link Ziel) -> 
+          LINK : fatal error LNK1104: cannot open file 'pthread.lib' [C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-yew4fx\\cmTC_fdcbe.vcxproj]
+        
+            0 Warnung(en)
+            1 Fehler
+        
+        Verstrichene Zeit 00:00:00.39
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CheckCXXSourceCompiles.cmake:76 (cmake_check_source_compiles)"
+      - "C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6/FindWrapAtomic.cmake:36 (check_cxx_source_compiles)"
+      - "C:/Program Files/CMake/share/cmake-3.26/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6/QtPublicDependencyHelpers.cmake:36 (find_dependency)"
+      - "C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6Core/Qt6CoreDependencies.cmake:30 (_qt_internal_find_third_party_dependencies)"
+      - "C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6Core/Qt6CoreConfig.cmake:40 (include)"
+      - "C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6/Qt6Config.cmake:157 (find_package)"
+      - "CMakeLists.txt:14 (find_package)"
+    checks:
+      - "Performing Test HAVE_STDATOMIC"
+    directories:
+      source: "C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-srp12w"
+      binary: "C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-srp12w"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /EHsc"
+      CMAKE_CXX_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      CMAKE_MODULE_PATH: "C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6;C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6/3rdparty/extra-cmake-modules/find-modules;C:/Qt/6.5.1/msvc2019_64/lib/cmake/Qt6/3rdparty/kwin"
+    buildResult:
+      variable: "HAVE_STDATOMIC"
+      cached: true
+      stdout: |
+        Change Dir: C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-srp12w
+        
+        Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/MSBuild/Current/Bin/MSBuild.exe cmTC_fdf06.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=16.0 /v:n && Microsoft (R)-Build-Engine, Version 16.11.2+f32259642 f\xc2\x81r .NET Framework
+        Copyright (C) Microsoft Corporation. Alle Rechte vorbehalten.
+        
+        Der Buildvorgang wurde am 13.07.2023 11:56:39 gestartet.
+        Projekt "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-srp12w\\cmTC_fdf06.vcxproj" auf Knoten "1" (Standardziele).
+        PrepareForBuild:
+          Das Verzeichnis "cmTC_fdf06.dir\\Debug\\" wird erstellt.
+          Das Verzeichnis "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-srp12w\\Debug\\" wird erstellt.
+          Das Verzeichnis "cmTC_fdf06.dir\\Debug\\cmTC_fdf06.tlog\\" wird erstellt.
+        InitializeBuildStatus:
+          "cmTC_fdf06.dir\\Debug\\cmTC_fdf06.tlog\\unsuccessfulbuild" wird erstellt, da "AlwaysCreate" angegeben wurde.
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D HAVE_STDATOMIC /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++17 /Fo"cmTC_fdf06.dir\\Debug\\\\" /Fd"cmTC_fdf06.dir\\Debug\\vc142.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-srp12w\\src.cxx"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.29.30146 for x64
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          src.cxx
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D HAVE_STDATOMIC /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /std:c++17 /Fo"cmTC_fdf06.dir\\Debug\\\\" /Fd"cmTC_fdf06.dir\\Debug\\vc142.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-srp12w\\src.cxx"
+        Link:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-srp12w\\Debug\\cmTC_fdf06.exe" /INCREMENTAL /ILK:"cmTC_fdf06.dir\\Debug\\cmTC_fdf06.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-srp12w/Debug/cmTC_fdf06.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/DEV/AnimHost/cmake_build/CMakeFiles/CMakeScratch/TryCompile-srp12w/Debug/cmTC_fdf06.lib" /MACHINE:X64  /machine:x64 cmTC_fdf06.dir\\Debug\\src.obj
+          cmTC_fdf06.vcxproj -> C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-srp12w\\Debug\\cmTC_fdf06.exe
+        FinalizeBuildStatus:
+          Die Datei "cmTC_fdf06.dir\\Debug\\cmTC_fdf06.tlog\\unsuccessfulbuild" wird gel”scht.
+          Aktualisieren des Timestamps von "cmTC_fdf06.dir\\Debug\\cmTC_fdf06.tlog\\cmTC_fdf06.lastbuildstate".
+        Die Erstellung von Projekt "C:\\DEV\\AnimHost\\cmake_build\\CMakeFiles\\CMakeScratch\\TryCompile-srp12w\\cmTC_fdf06.vcxproj" ist abgeschlossen (Standardziele).
+        
+        Der Buildvorgang wurde erfolgreich ausgef\xc2\x81hrt.
+            0 Warnung(en)
+            0 Fehler
+        
+        Verstrichene Zeit 00:00:00.52
+        
+      exitCode: 0
+...

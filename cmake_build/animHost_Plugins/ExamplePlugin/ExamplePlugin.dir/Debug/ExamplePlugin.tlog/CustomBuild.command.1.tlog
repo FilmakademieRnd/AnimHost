@@ -1,0 +1,10 @@
+^C:\DEV\ANIMHOST\ANIMHOST\ANIMHOST_PLUGINS\EXAMPLEPLUGIN\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/DEV/AnimHost/AnimHost -BC:/DEV/AnimHost/cmake_build --check-stamp-file C:/DEV/AnimHost/cmake_build/animHost_Plugins/ExamplePlugin/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

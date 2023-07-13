@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QString>
 #include <QQuaternion>
+#include <vector>
+#include <glm/glm.hpp>
 
 #define NODE_EDITOR_SHARED 1
 
@@ -11,6 +13,27 @@
 
 using QtNodes::NodeData;
 using QtNodes::NodeDataType;
+
+
+
+
+class Pose
+{
+    float timeStamp;
+    std::vector<glm::vec3> mPositionData;
+};
+
+Q_DECLARE_METATYPE(Pose)
+
+
+
+
+
+
+
+
+
+
 
 //!
 //! \brief The prototype of a HumanoidBones class

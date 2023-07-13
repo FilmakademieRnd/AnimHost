@@ -1,8 +1,8 @@
 #include "animhostnode.h"
 
-AnimHostNode::AnimHostNode(PluginInterface plugin)
+AnimHostNode::AnimHostNode(std::shared_ptr<PluginInterface> plugin)
 {
-    _plugin = &plugin;
+    _plugin = plugin;
 }
 
 
@@ -31,32 +31,39 @@ NodeDataType AnimHostNode::dataType(PortType portType, PortIndex index) const
 
 std::shared_ptr<NodeData> AnimHostNode::outData(PortIndex index)
 {
-    QVariant data = _plugin->outputs->at(index);
-    return std::static_pointer_cast<NodeData>(_result);
+    //QVariant data = _plugin->outputs->at(index);
+
+    if(index < _dataOut.size()){
+        return std::static_pointer_cast<NodeData>(_dataOut[index]);
+    }
+
+    else{
+        throw "PortIndex out of range!";
+    }
+
 }
 
 void AnimHostNode::setInData(std::shared_ptr<NodeData> data, PortIndex portIndex)
 {
-    auto numberData = std::dynamic_pointer_cast<DecimalData>(data);
+
 
     if (!data) {
         Q_EMIT dataInvalidated(0);
     }
 
-    if (portIndex == 0) {
-        _number1 = numberData;
-    } else {
-        _number2 = numberData;
+    if (portIndex < _dataIn.size()){
+        _dataIn[portIndex] = data;
     }
+
 
     compute();
 }
 
 void AnimHostNode::compute()
 {
-    foreach (var, container) {
+//    foreach (var, container) {
 
-    }
+//    }
     _plugin->run();
 }
 
@@ -68,5 +75,7 @@ NodeDataType AnimHostNode::convertQMetaTypeToNodeDataType(QMetaType qType) const
         return FloatData().type();
     else if (typeId == QMetaType::fromName("HumanoidBones").id())
         return HumanoidBonesData().type();
+    else
+        throw "Unknown Datatype";
 }
 

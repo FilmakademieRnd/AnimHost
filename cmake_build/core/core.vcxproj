@@ -1,0 +1,241 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F9464A2E-F529-3DBF-BE6D-8804D424873C}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>core</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\DEV\AnimHost\cmake_build\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">core.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">core</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\DEV\AnimHost\cmake_build\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">core.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">core</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\DEV\AnimHost\cmake_build\core\core_autogen\include_Debug;C:\DEV\AnimHost\AnimHost\core\..\animHost_Plugins\PluginInterface;C:\DEV\AnimHost\AnimHost\core\..\..\QTNodesLibrary\include;C:\DEV\AnimHost\AnimHost\core\..\..\glm;C:\DEV\AnimHost\AnimHost\animHost_Plugins\PluginInterface\..\..\..\glm;C:\DEV\AnimHost\AnimHost\animHost_Plugins\PluginInterface\..\..\core\QTNodes\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Qt/6.5.1/msvc2019_64/include/QtCore" /external:I "C:/Qt/6.5.1/msvc2019_64/include" /external:I "C:/Qt/6.5.1/msvc2019_64/mkspecs/win32-msvc" /external:I "C:/Qt/6.5.1/msvc2019_64/include/QtGui" /external:I "C:/Qt/6.5.1/msvc2019_64/include/QtWidgets" -Zc:__cplusplus -utf-8</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <ConformanceMode>true</ConformanceMode>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;QT_CORE_LIB;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;_WIN64;UNICODE;_UNICODE;QT_GUI_LIB;QT_WIDGETS_LIB;PLUGININTERFACE_LIBRARY;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;QT_CORE_LIB;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;_WIN64;UNICODE;_UNICODE;QT_GUI_LIB;QT_WIDGETS_LIB;PLUGININTERFACE_LIBRARY;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\DEV\AnimHost\cmake_build\core\core_autogen\include_Debug;C:\DEV\AnimHost\AnimHost\core\..\animHost_Plugins\PluginInterface;C:\DEV\AnimHost\AnimHost\core\..\..\QTNodesLibrary\include;C:\DEV\AnimHost\AnimHost\core\..\..\glm;C:\DEV\AnimHost\AnimHost\animHost_Plugins\PluginInterface\..\..\..\glm;C:\DEV\AnimHost\AnimHost\animHost_Plugins\PluginInterface\..\..\core\QTNodes\include;C:\Qt\6.5.1\msvc2019_64\include\QtCore;C:\Qt\6.5.1\msvc2019_64\include;C:\Qt\6.5.1\msvc2019_64\mkspecs\win32-msvc;C:\Qt\6.5.1\msvc2019_64\include\QtGui;C:\Qt\6.5.1\msvc2019_64\include\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\DEV\AnimHost\cmake_build\core\core_autogen\include_Debug;C:\DEV\AnimHost\AnimHost\core\..\animHost_Plugins\PluginInterface;C:\DEV\AnimHost\AnimHost\core\..\..\QTNodesLibrary\include;C:\DEV\AnimHost\AnimHost\core\..\..\glm;C:\DEV\AnimHost\AnimHost\animHost_Plugins\PluginInterface\..\..\..\glm;C:\DEV\AnimHost\AnimHost\animHost_Plugins\PluginInterface\..\..\core\QTNodes\include;C:\Qt\6.5.1\msvc2019_64\include\QtCore;C:\Qt\6.5.1\msvc2019_64\include;C:\Qt\6.5.1\msvc2019_64\mkspecs\win32-msvc;C:\Qt\6.5.1\msvc2019_64\include\QtGui;C:\Qt\6.5.1\msvc2019_64\include\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PreBuildEvent>
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message>Automatic MOC and UIC for target core</Message>
+      <Command>setlocal
+cd C:\DEV\AnimHost\cmake_build\core
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E cmake_autogen C:/DEV/AnimHost/cmake_build/core/CMakeFiles/core_autogen.dir/AutogenInfo.json Debug
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PreBuildEvent>
+    <Link>
+      <AdditionalDependencies>../../QtNodesLibrary/lib/QTNodes.lib;..\animHost_Plugins\PluginInterface\Debug\PluginInterface_d.lib;C:\Qt\6.5.1\msvc2019_64\lib\Qt6Widgetsd.lib;C:\Qt\6.5.1\msvc2019_64\lib\Qt6Guid.lib;C:\Qt\6.5.1\msvc2019_64\lib\Qt6Cored.lib;mpr.lib;userenv.lib;d3d11.lib;dxgi.lib;dxguid.lib;dcomp.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/DEV/AnimHost/cmake_build/core/Debug/core.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/DEV/AnimHost/cmake_build/Debug/core.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\DEV\AnimHost\cmake_build\core\core_autogen\include_Release;C:\DEV\AnimHost\AnimHost\core\..\animHost_Plugins\PluginInterface;C:\DEV\AnimHost\AnimHost\core\..\..\QTNodesLibrary\include;C:\DEV\AnimHost\AnimHost\core\..\..\glm;C:\DEV\AnimHost\AnimHost\animHost_Plugins\PluginInterface\..\..\..\glm;C:\DEV\AnimHost\AnimHost\animHost_Plugins\PluginInterface\..\..\core\QTNodes\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Qt/6.5.1/msvc2019_64/include/QtCore" /external:I "C:/Qt/6.5.1/msvc2019_64/include" /external:I "C:/Qt/6.5.1/msvc2019_64/mkspecs/win32-msvc" /external:I "C:/Qt/6.5.1/msvc2019_64/include/QtGui" /external:I "C:/Qt/6.5.1/msvc2019_64/include/QtWidgets" -Zc:__cplusplus -utf-8</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ConformanceMode>true</ConformanceMode>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;QT_CORE_LIB;QT_NO_DEBUG;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;_WIN64;UNICODE;_UNICODE;QT_GUI_LIB;QT_WIDGETS_LIB;PLUGININTERFACE_LIBRARY;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;QT_CORE_LIB;QT_NO_DEBUG;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;_WIN64;UNICODE;_UNICODE;QT_GUI_LIB;QT_WIDGETS_LIB;PLUGININTERFACE_LIBRARY;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\DEV\AnimHost\cmake_build\core\core_autogen\include_Release;C:\DEV\AnimHost\AnimHost\core\..\animHost_Plugins\PluginInterface;C:\DEV\AnimHost\AnimHost\core\..\..\QTNodesLibrary\include;C:\DEV\AnimHost\AnimHost\core\..\..\glm;C:\DEV\AnimHost\AnimHost\animHost_Plugins\PluginInterface\..\..\..\glm;C:\DEV\AnimHost\AnimHost\animHost_Plugins\PluginInterface\..\..\core\QTNodes\include;C:\Qt\6.5.1\msvc2019_64\include\QtCore;C:\Qt\6.5.1\msvc2019_64\include;C:\Qt\6.5.1\msvc2019_64\mkspecs\win32-msvc;C:\Qt\6.5.1\msvc2019_64\include\QtGui;C:\Qt\6.5.1\msvc2019_64\include\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\DEV\AnimHost\cmake_build\core\core_autogen\include_Release;C:\DEV\AnimHost\AnimHost\core\..\animHost_Plugins\PluginInterface;C:\DEV\AnimHost\AnimHost\core\..\..\QTNodesLibrary\include;C:\DEV\AnimHost\AnimHost\core\..\..\glm;C:\DEV\AnimHost\AnimHost\animHost_Plugins\PluginInterface\..\..\..\glm;C:\DEV\AnimHost\AnimHost\animHost_Plugins\PluginInterface\..\..\core\QTNodes\include;C:\Qt\6.5.1\msvc2019_64\include\QtCore;C:\Qt\6.5.1\msvc2019_64\include;C:\Qt\6.5.1\msvc2019_64\mkspecs\win32-msvc;C:\Qt\6.5.1\msvc2019_64\include\QtGui;C:\Qt\6.5.1\msvc2019_64\include\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PreBuildEvent>
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message>Automatic MOC and UIC for target core</Message>
+      <Command>setlocal
+cd C:\DEV\AnimHost\cmake_build\core
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E cmake_autogen C:/DEV/AnimHost/cmake_build/core/CMakeFiles/core_autogen.dir/AutogenInfo.json Release
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PreBuildEvent>
+    <Link>
+      <AdditionalDependencies>../../QtNodesLibrary/lib/QTNodes.lib;..\animHost_Plugins\PluginInterface\Release\PluginInterface.lib;C:\Qt\6.5.1\msvc2019_64\lib\Qt6Widgets.lib;C:\Qt\6.5.1\msvc2019_64\lib\Qt6Gui.lib;C:\Qt\6.5.1\msvc2019_64\lib\Qt6Core.lib;mpr.lib;userenv.lib;d3d11.lib;dxgi.lib;dxguid.lib;dcomp.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/DEV/AnimHost/cmake_build/core/Release/core.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/DEV/AnimHost/cmake_build/Release/core.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\DEV\AnimHost\AnimHost\core\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/DEV/AnimHost/AnimHost/core/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/DEV/AnimHost/AnimHost -BC:/DEV/AnimHost/cmake_build --check-stamp-file C:/DEV/AnimHost/cmake_build/core/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\DEV\AnimHost\cmake_build\core\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/DEV/AnimHost/AnimHost/core/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/DEV/AnimHost/AnimHost -BC:/DEV/AnimHost/cmake_build --check-stamp-file C:/DEV/AnimHost/cmake_build/core/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\DEV\AnimHost\cmake_build\core\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="C:\DEV\AnimHost\cmake_build\core\core_autogen\mocs_compilation_Debug.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="C:\DEV\AnimHost\AnimHost\core\animhost.cpp" />
+    <ClInclude Include="C:\DEV\AnimHost\AnimHost\core\animhost.h" />
+    <ClCompile Include="C:\DEV\AnimHost\AnimHost\core\animhostnode.cpp" />
+    <ClInclude Include="C:\DEV\AnimHost\AnimHost\core\animhostnode.h" />
+    <ClInclude Include="C:\DEV\AnimHost\AnimHost\core\commondatatypes.h" />
+    <ClCompile Include="C:\DEV\AnimHost\AnimHost\core\main.cpp" />
+    <ClCompile Include="C:\DEV\AnimHost\cmake_build\core\core_autogen\mocs_compilation_Release.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:\DEV\AnimHost\cmake_build\ZERO_CHECK.vcxproj">
+      <Project>{E762F31E-4775-3A32-A74B-9DECC8C1921C}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\DEV\AnimHost\cmake_build\animHost_Plugins\PluginInterface\PluginInterface.vcxproj">
+      <Project>{B93D617C-29AF-3D0F-8C40-04B617209034}</Project>
+      <Name>PluginInterface</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

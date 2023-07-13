@@ -13,6 +13,7 @@ HEADERS += \
     animhost.h \
     animhostnode.h \
     commondatatypes.h \
+    nodedatatypes.h
 
 SOURCES += \
         animhost.cpp \
@@ -37,3 +38,6 @@ win32: LIBS += -L$$PWD/QTNodes/lib/release -lQtNodes
 
 INCLUDEPATH += $$PWD/QTNodes/include
 DEPENDPATH += $$PWD/QTNodes/include
+
+#glm
+INCLUDEPATH += $$PWD/../../glm

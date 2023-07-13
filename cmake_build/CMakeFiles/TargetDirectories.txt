@@ -1,0 +1,11 @@
+C:/DEV/AnimHost/cmake_build/CMakeFiles/INSTALL.dir
+C:/DEV/AnimHost/cmake_build/CMakeFiles/ALL_BUILD.dir
+C:/DEV/AnimHost/cmake_build/CMakeFiles/ZERO_CHECK.dir
+C:/DEV/AnimHost/cmake_build/core/CMakeFiles/core.dir
+C:/DEV/AnimHost/cmake_build/core/CMakeFiles/INSTALL.dir
+C:/DEV/AnimHost/cmake_build/animHost_Plugins/CMakeFiles/INSTALL.dir
+C:/DEV/AnimHost/cmake_build/animHost_Plugins/CMakeFiles/ALL_BUILD.dir
+C:/DEV/AnimHost/cmake_build/animHost_Plugins/PluginInterface/CMakeFiles/PluginInterface.dir
+C:/DEV/AnimHost/cmake_build/animHost_Plugins/PluginInterface/CMakeFiles/INSTALL.dir
+C:/DEV/AnimHost/cmake_build/animHost_Plugins/ExamplePlugin/CMakeFiles/ExamplePlugin.dir
+C:/DEV/AnimHost/cmake_build/animHost_Plugins/ExamplePlugin/CMakeFiles/INSTALL.dir

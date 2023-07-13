@@ -10,18 +10,20 @@
 //!
 AnimHost::AnimHost()
 {
-    //load existing Plugins
-    loadPlugins();
 
     //initalize list for nodes
     nodes = std::make_shared<NodeDelegateModelRegistry>();
+    //load existing Plugins
+    loadPlugins();
+
+
 }
 
 //!
 //! \brief register a plugin to animHost
 //! @param plugin the plugin to be registered based on PluginInterface
 //!
-void AnimHost::registerPlugin(PluginInterface* plugin)
+void AnimHost::registerPlugin(std::shared_ptr<PluginInterface> plugin)
 {
     //add plugin to list
     plugins.insert(plugin->name(),plugin);
@@ -52,15 +54,18 @@ bool AnimHost::loadPlugins()
         QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
         QObject *plugin = pluginLoader.instance();
         if (plugin) {
-            PluginInterface* pluginInterface = qobject_cast<PluginInterface *>(plugin);
+            PluginInterface* pluginInterface = qobject_cast<PluginInterface* >(plugin);
             if (pluginInterface)
             {
                 //register analyser plugin to requested file types
-                QList<QVariant> inputs = pluginInterface->inputs;
-                QList<QVariant>* outputs = pluginInterface->outputs;
+                /*QList<QVariant> inputs = pluginInterface->inputs;
+                QList<QVariant>* outputs = pluginInterface->outputs*/;
 
-                registerPlugin(pluginInterface);
-                createNodeFromPlugin(pluginInterface);
+
+                std::shared_ptr<PluginInterface> sp_PluginInterface(pluginInterface);
+
+                registerPlugin(sp_PluginInterface);
+                createNodeFromPlugin(sp_PluginInterface);
                 return true;
             }
             pluginLoader.unload();
@@ -74,12 +79,23 @@ bool AnimHost::loadPlugins()
 //! \brief create a UI node from a plugin
 //! \param plugin the plugin to be represented
 //!
-void AnimHost::createNodeFromPlugin(PluginInterface* plugin)
+void AnimHost::createNodeFromPlugin(std::shared_ptr<PluginInterface> plugin)
 {
-    //AnimHostNode node = new AnimHostNode();
+    //auto up_plugin = std::unique_ptr<PluginInterface>(plugin);
+    //AnimHostNode* node = new AnimHostNode(plugin);
+    auto ret = std::make_shared<NodeDelegateModelRegistry>();
+
+    NodeDelegateModelRegistry::RegisteredModelCreatorsMap test;
 
 
-    //nodes->registerModel<NumberSourceDataModel>("Sources");
+    //auto a = test.count("Hello");
+
+
+
+    //ret->registerModel<AnimHostNode>("hello");
+
+    NodeDelegateModelRegistry::RegistryItemCreator creator = [p=plugin]() { return std::make_unique<AnimHostNode>(p); };
+    ret->registerModel<AnimHostNode>(std::move(creator), "OK");
 
     /*ret->registerModel<NumberDisplayDataModel>("Displays");
 

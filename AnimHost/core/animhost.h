@@ -29,7 +29,7 @@ class AnimHost : public QObject
 public:
     //functions
     AnimHost();
-    void registerPlugin(PluginInterface* plugin);
+    void registerPlugin(std::shared_ptr<PluginInterface> plugin);
     bool loadPlugins();
 
     //variables
@@ -37,8 +37,8 @@ public:
 
 private:
     //variables
-    QMultiMap<QString, PluginInterface*> plugins;
-    void createNodeFromPlugin(PluginInterface *plugin);
+    QMultiMap<QString, std::shared_ptr<PluginInterface>> plugins;
+    void createNodeFromPlugin(std::shared_ptr<PluginInterface> plugin);
 
 
     //functions
