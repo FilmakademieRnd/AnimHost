@@ -13,7 +13,7 @@
 //!
 class PLUGININTERFACESHARED_EXPORT PluginInterface : public QObject
 {
-    Q_OBJECT
+
 
 public:
     // main function of the plugin generating outputs based on given inputs
@@ -32,8 +32,6 @@ public:
 
 protected:
 
-signals:
-    void done();
 };
 
 #define PluginInterface_iid "de.animhost.PluginInterface"
