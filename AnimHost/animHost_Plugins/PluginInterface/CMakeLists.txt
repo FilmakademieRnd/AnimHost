@@ -1,5 +1,5 @@
 qt_add_library(PluginInterface
-    plugininterface.h
+    plugininterface.h plugininterface.cpp
     plugininterface_global.h
 )
 

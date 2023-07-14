@@ -13,9 +13,6 @@ ExamplePlugin::ExamplePlugin()
 void ExamplePlugin::run()
 {
     //execute
-
-    //inform
-    emit done();
 }
 
 QString ExamplePlugin::category()
