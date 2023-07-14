@@ -27,3 +27,4 @@ ExportedObj/
 #Qt
 build*
 *.autosave
+cmake_build*
