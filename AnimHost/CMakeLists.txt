@@ -38,5 +38,3 @@ install(TARGETS $ENV{i_plugin_targets}
 #	DESTINATION ${CMAKE_INSTALL_PREFIX}
 #)
 
-
-
