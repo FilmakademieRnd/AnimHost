@@ -7,7 +7,7 @@ qt_add_executable(${target_name}
     main.cpp
 )
 target_include_directories(${target_name} PRIVATE
-    ../animHost_Plugins/PluginInterface
+    ${CMAKE_SOURCE_DIR}/animHost_Plugins/PluginInterface
     ${CMAKE_SOURCE_DIR}/core/QTNodes/include
     ../../glm
 )
@@ -35,7 +35,7 @@ qt_generate_deploy_app_script(
 )
 install(SCRIPT ${deploy_script})
 
-
+#Copy QTNodes dll
 # Define the paths to the prebuilt libraries
 set(PREBUILT_LIBRARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/QTNodes/lib)
 
