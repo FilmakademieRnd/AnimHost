@@ -1,4 +1,4 @@
-#include "exampleplugin.h"
+#include "TestDataSourcePlugin.h"
 #include <iostream>
 #include <QFileInfo>
 #include <QDateTime>
@@ -6,23 +6,26 @@
 #include <QBuffer>
 #include "../../core/commondatatypes.h"
 
-ExamplePlugin::ExamplePlugin()
+TestDataSourcePlugin::TestDataSourcePlugin()
 {
     qDebug() << "Hello Example Plugin";
 
  
     //Data
-    inputs.append(QMetaType::fromName("HumanoidBones"));
+    //inputs.append(QMetaType::fromName("Pose"));
     outputs.append(QMetaType::fromName("Pose"));
+    outputs.append(QMetaType::fromName("HumanoidBones"));
+    outputs.append(QMetaType(QMetaType::Int));
+    outputs.append(QMetaType(QMetaType::Float));
 }
 
-ExamplePlugin::~ExamplePlugin()
+TestDataSourcePlugin::~TestDataSourcePlugin()
 {
-    qDebug() << "Good Bye Example Plugin";
+    qDebug() << "~TestDataSourcePlugin()";
 }
 
 // execute the main functionality of the plugin
-void ExamplePlugin::run(QVariantList in, QVariantList& out)
+void TestDataSourcePlugin::run(QVariantList in, QVariantList& out)
 {
     //execute
     HumanoidBones test = in[0].value<HumanoidBones>();
@@ -35,12 +38,12 @@ void ExamplePlugin::run(QVariantList in, QVariantList& out)
     out.append(QVariant::fromValue(pose));
 }
 
-QString ExamplePlugin::category()
+QString TestDataSourcePlugin::category()
 {
     return "Generator";
 }
 
-QList<QMetaType> ExamplePlugin::inputTypes()
+QList<QMetaType> TestDataSourcePlugin::inputTypes()
 {
     //QList<QMetaType> list = QList<QMetaType>();
     ///*foreach (QVariant v, inputs)
@@ -53,7 +56,7 @@ QList<QMetaType> ExamplePlugin::inputTypes()
     return inputs;
 }
 
-QList<QMetaType> ExamplePlugin::outputTypes()
+QList<QMetaType> TestDataSourcePlugin::outputTypes()
 {
     /*QList<QMetaType> list = QList<QMetaType>();
     foreach (QVariant v, outputs)

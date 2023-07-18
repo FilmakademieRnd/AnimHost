@@ -1,20 +1,20 @@
 #ifndef EXAMPLEPLUGIN_H
 #define EXAMPLEPLUGIN_H
 
-#include "exampleplugin_global.h"
+#include "TestDataSourcePlugin_global.h"
 #include <QMetaType>
 #include <plugininterface.h>
 
 
-class EXAMPLEPLUGINSHARED_EXPORT ExamplePlugin : public PluginInterface
+class TESTDATASOURCEPLUGINSHARED_EXPORT TestDataSourcePlugin : public PluginInterface
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "de.animhost.PluginInterface" FILE "exampleplugin.json")
+    Q_PLUGIN_METADATA(IID "de.animhost.PluginInterface" FILE "TestDataSourcePlugin.json")
     Q_INTERFACES(PluginInterface)
 
 public:
-    ExamplePlugin();
-    ~ExamplePlugin();
+    TestDataSourcePlugin();
+    ~TestDataSourcePlugin();
     void run(QVariantList in, QVariantList& out) override;
     QObject* getObject() { return this; }
 

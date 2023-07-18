@@ -67,7 +67,11 @@ int main(int argc, char *argv[])
         return a.exec();
     }*/
     //run animHost
+
+    qRegisterMetaType<HumanoidBones>("HumanoidBones");
+    qRegisterMetaType<Pose>("Pose");
     AnimHost* animHost = new AnimHost();
+
 
     //QTNodes
     setStyle();

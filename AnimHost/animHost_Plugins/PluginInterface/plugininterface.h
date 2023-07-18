@@ -16,7 +16,7 @@ class PLUGININTERFACESHARED_EXPORT PluginInterface : public QObject
 
 public:
     // main function of the plugin generating outputs based on given inputs
-    virtual void run() = 0;
+    virtual void run(QVariantList in, QVariantList& out) = 0;
     // provide the name of the plugin
     virtual QString name();
 
@@ -26,8 +26,11 @@ public:
     virtual QList<QMetaType> outputTypes() = 0;  // Returns output data types
 
     //Data
-    QList<QVariant> inputs; // list of input parameters
-    QList<QVariant>* outputs; // list of output parameters
+    //QVariantList inputs; // list of input parameters
+    //QVariantList* outputs; // list of output parameters
+
+    QList<QMetaType> inputs;
+    QList<QMetaType> outputs;
 
 protected:
 

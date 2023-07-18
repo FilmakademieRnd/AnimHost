@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QQuaternion>
+#include <QMetaType>
 #include <vector>
 #include <glm/glm.hpp>
 
@@ -21,17 +22,13 @@ class Pose
 {
     float timeStamp;
     std::vector<glm::vec3> mPositionData;
+public:
+    Pose() {};
+    ~Pose() {};
+    Pose(const Pose&) {};
 };
 
 Q_DECLARE_METATYPE(Pose)
-
-
-
-
-
-
-
-
 
 
 
@@ -40,6 +37,11 @@ Q_DECLARE_METATYPE(Pose)
 //!
 class HumanoidBones
 {
+public:
+    HumanoidBones() { qDebug() << "HumanBones Hi!"; };
+    HumanoidBones(const HumanoidBones& t) {};
+    ~HumanoidBones() { qDebug() << "HumanBones Bye!!"; };
+private:
     // Spine bones
     QQuaternion spine;
     QQuaternion chest;
@@ -77,46 +79,8 @@ Q_DECLARE_METATYPE(HumanoidBones)
 // Qt Node Editor Data
 //
 
-//Float
-class FloatData : public NodeData
-{
-public:
-    FloatData()
-        : _number(0.0)
-    {}
 
-    FloatData(float const number)
-        : _number(number)
-    {}
 
-    NodeDataType type() const override { return NodeDataType{"float", "Float"}; }
 
-    float number() const { return _number; }
-
-    QString numberAsText() const { return QString::number(_number, 'f'); }
-
-private:
-    float _number;
-};
-
-//Humanoid Bones
-class HumanoidBonesData : public NodeData
-{
-public:
-    HumanoidBonesData()
-        : _humanoidBones()
-    {}
-
-    HumanoidBonesData(HumanoidBones const humanoidBones)
-        : _humanoidBones(humanoidBones)
-    {}
-
-    NodeDataType type() const override { return NodeDataType{"humanoidBones", "HumanoidBones"}; }
-
-    HumanoidBones humanoidBones() const { return _humanoidBones; }
-
-private:
-    HumanoidBones _humanoidBones;
-};
 
 #endif // COMMONDATATYPES_H

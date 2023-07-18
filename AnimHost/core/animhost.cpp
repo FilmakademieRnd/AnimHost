@@ -1,5 +1,6 @@
 #include "animhost.h"
 #include "animhostnode.h"
+#include "sourcedatanode.h"
 #include <iostream>
 #include <QCoreApplication>
 #include <QPluginLoader>
@@ -16,6 +17,9 @@ AnimHost::AnimHost()
     //load existing Plugins
     loadPlugins();
 
+    nodes->registerModel<SourceDataNode>("TestData");
+
+    qDebug() << "Hello";
 
 }
 
@@ -56,9 +60,9 @@ bool AnimHost::loadPlugins()
 
                 registerPlugin(sp_PluginInterface);
                 createNodeFromPlugin(sp_PluginInterface);
-                return true;
+                //return true;
             }
-            pluginLoader.unload();
+            //pluginLoader.unload();
         }
     }
 
@@ -73,27 +77,12 @@ void AnimHost::createNodeFromPlugin(std::shared_ptr<PluginInterface> plugin)
 {
     //auto up_plugin = std::unique_ptr<PluginInterface>(plugin);
     //AnimHostNode* node = new AnimHostNode(plugin);
-    auto ret = std::make_shared<NodeDelegateModelRegistry>();
-
-    NodeDelegateModelRegistry::RegisteredModelCreatorsMap test;
-
-
-    //auto a = test.count("Hello");
-
+   
 
 
     //ret->registerModel<AnimHostNode>("hello");
 
     NodeDelegateModelRegistry::RegistryItemCreator creator = [p=plugin]() { return std::make_unique<AnimHostNode>(p); };
-    ret->registerModel<AnimHostNode>(std::move(creator), "OK");
+    nodes->registerModel<AnimHostNode>(std::move(creator), plugin->category());
 
-    /*ret->registerModel<NumberDisplayDataModel>("Displays");
-
-    ret->registerModel<AdditionModel>("Operators");
-
-    ret->registerModel<SubtractionModel>("Operators");
-
-    ret->registerModel<MultiplicationModel>("Operators");
-
-    ret->registerModel<DivisionModel>("Operators");*/
 }

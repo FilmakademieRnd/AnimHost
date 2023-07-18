@@ -3,7 +3,8 @@ set(target_name AnimHost)
 qt_add_executable(${target_name}
     animhost.cpp animhost.h
     animhostnode.cpp animhostnode.h
-    commondatatypes.h
+    commondatatypes.h nodedatatypes.h
+    sourcedatanode.h sourcedatanode.cpp
     main.cpp
 )
 target_include_directories(${target_name} PRIVATE
@@ -43,7 +44,7 @@ if(WIN32)
     if(CMAKE_BUILD_TYPE MATCHES Debug)
         set(PREBUILT_LIBRARY_PATH ${PREBUILT_LIBRARY_DIR}/debug/QTNodes.dll)
     else()
-        set(PREBUILT_LIBRARY_PATH ${PREBUILT_LIBRARY_DIR}/release/QTNodes.dll)
+        set(PREBUILT_LIBRARY_PATH ${PREBUILT_LIBRARY_DIR}/debug/QTNodes.dll)
     endif()
 elseif(APPLE)
     if(CMAKE_BUILD_TYPE MATCHES Debug)
