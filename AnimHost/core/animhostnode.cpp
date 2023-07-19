@@ -76,6 +76,8 @@ void AnimHostNode::compute()
     foreach (std::weak_ptr<QtNodes::NodeData> var,  _dataIn)
     {
         auto test = std::dynamic_pointer_cast<AnimNodeData>(var.lock());
+        if (!test)
+            return;
         auto variant = test->getVariant();
 
         list.append(variant);
@@ -97,6 +99,10 @@ NodeDataType AnimHostNode::convertQMetaTypeToNodeDataType(QMetaType qType) const
         return HumanoidBonesData::staticType();
     else if (typeId == QMetaType::fromName("Pose").id())
         return PoseNodeData::staticType();
+    else if (typeId == QMetaType::fromName("Skeleton").id())
+        return SkeletonNodeData::staticType();
+    else if (typeId == QMetaType::fromName("Animation").id())
+        return AnimationNodeData::staticType();
     else
         throw "Unknown Datatype";
 }

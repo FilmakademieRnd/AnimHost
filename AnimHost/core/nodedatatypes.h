@@ -124,4 +124,57 @@ private:
     Pose _pose;
 };
 
+
+
+class ANIMHOSTCORESHARED_EXPORT SkeletonNodeData : public AnimNodeData
+{
+public:
+    SkeletonNodeData()
+        : _skeleton()
+    {}
+
+
+    SkeletonNodeData(Skeleton const skeleton)
+        : _skeleton(skeleton)
+    {}
+
+    NodeDataType type() const override { return staticType(); }
+
+    static NodeDataType staticType() { return NodeDataType{ "skeleton", "Skeleton" }; }
+
+    Skeleton* skeleton() { return &_skeleton; }
+
+    QVariant getVariant() const override { return QVariant::fromValue(_skeleton); }
+
+    //QString poseAsText() const { return QString::number(_number, 'f'); }
+
+private:
+    Skeleton _skeleton;
+};
+
+class ANIMHOSTCORESHARED_EXPORT AnimationNodeData : public AnimNodeData
+{
+public:
+    AnimationNodeData()
+        : _animation()
+    {}
+
+
+    AnimationNodeData(Animation const animation)
+        : _animation(animation)
+    {}
+
+    NodeDataType type() const override { return staticType(); }
+
+    static NodeDataType staticType() { return NodeDataType{ "animation", "Animation" }; }
+
+    Animation* animation() { return &_animation; }
+
+    QVariant getVariant() const override { return QVariant::fromValue(_animation); }
+
+    //QString poseAsText() const { return QString::number(_number, 'f'); }
+
+private:
+    Animation _animation;
+};
 #endif // NODEDATATYPES_H

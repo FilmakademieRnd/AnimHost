@@ -1,16 +1,22 @@
 #include "animhostcore.h"
 #include "animhostnode.h"
 #include "sourcedatanode.h"
+#include "assimploadernode.h"
 #include <iostream>
 #include <QCoreApplication>
 #include <QPluginLoader>
 #include <QCryptographicHash>
+
 
 //!
 //! \brief Constructor of AnimHost class
 //!
 AnimHost::AnimHost()
 {
+    qRegisterMetaType<HumanoidBones>("HumanoidBones");
+    qRegisterMetaType<Pose>("Pose");
+    qRegisterMetaType<Skeleton>("Skeleton");
+    qRegisterMetaType<Animation>("Animation");
 
     //initalize list for nodes
     nodes = std::make_shared<NodeDelegateModelRegistry>();
@@ -18,8 +24,11 @@ AnimHost::AnimHost()
     loadPlugins();
 
     nodes->registerModel<SourceDataNode>("TestData");
+    nodes->registerModel<AssimpLoaderNode>("Data Loader");
 
     qDebug() << "Hello";
+
+
 
 }
 

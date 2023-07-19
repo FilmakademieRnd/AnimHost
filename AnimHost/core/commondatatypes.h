@@ -16,6 +16,9 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/ext/quaternion_float.hpp>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 #define NODE_EDITOR_SHARED 1
 
@@ -70,6 +73,7 @@ public:
     glm::vec3 GetScale(int frame);
 
 };
+Q_DECLARE_METATYPE(Bone)
 
 class ANIMHOSTCORESHARED_EXPORT Skeleton
 {
@@ -85,18 +89,17 @@ public:
     int mFrameOffset;
 
 private:
-    //void IndexSkelettonHirarchy(aiNode* pNode, int* currentBoneCount);
 
 
 public:
-
-    //Skeleton(aiNode* pNodes);
+    Skeleton() {};
 
     //static void WriteToCSV(std::string filename, const Skeleton& pSkeleton, const AnimatedPoseData& mPoseData);
     //static void LoadAnimationData(aiAnimation* pASSIMPAnimation, Skeleton* pSkeleton, Animation* pAnimation, aiNode*);
     //static void BuildPose(Skeleton* pSkeleton, int frame, Animation* pAnimation, AnimatedPoseData& pAnimatedPoseData);
 
 };
+Q_DECLARE_METATYPE(Skeleton)
 
 class ANIMHOSTCORESHARED_EXPORT Animation
 {
@@ -115,7 +118,7 @@ public:
     };
 
 };
-
+Q_DECLARE_METATYPE(Animation)
 
 
 

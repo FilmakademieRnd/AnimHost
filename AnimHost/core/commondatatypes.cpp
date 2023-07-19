@@ -1,5 +1,6 @@
 #include "commondatatypes.h"
 
+
 //#include "AssimpHelper.h"
 
 Bone::Bone(std::string name, int id, int numPos, int numRot, int numScl, glm::mat4 rest)
@@ -78,6 +79,9 @@ glm::vec3 Bone::GetScale(int frame)
 	}
 
 }
+
+
+
 
 //void Animation::SetRestingPosition(const aiNode& pNode, const Skeleton& pSkeleton)
 //{

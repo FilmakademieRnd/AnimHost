@@ -12,7 +12,9 @@ ExamplePlugin::ExamplePlugin()
 
  
     //Data
-    inputs.append(QMetaType::fromName("HumanoidBones"));
+    inputs.append(QMetaType::fromName("Skeleton"));
+    inputs.append(QMetaType::fromName("Animation"));
+
     outputs.append(QMetaType::fromName("Pose"));
 }
 
@@ -24,13 +26,16 @@ ExamplePlugin::~ExamplePlugin()
 // execute the main functionality of the plugin
 void ExamplePlugin::run(QVariantList in, QVariantList& out)
 {
+    qDebug() << Q_FUNC_INFO;
     //execute
-    HumanoidBones test = in[0].value<HumanoidBones>();
+    Skeleton skeleton = in[0].value<Skeleton>();
+    Animation animation = in[1].value<Animation>();
 
-    qDebug() << "Eval Example Plugin";
     qDebug() << in[0].userType();
+    qDebug() << QMetaType::fromName("Skeleton").id();
 
-    qDebug() << QMetaType::fromName("HumanoidBones").id();
+    qDebug() << in[1].userType();
+    qDebug() << QMetaType::fromName("Animation").id();
 
     Pose pose;
 
