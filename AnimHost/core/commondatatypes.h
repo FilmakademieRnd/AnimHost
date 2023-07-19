@@ -1,6 +1,14 @@
 #ifndef COMMONDATATYPES_H
 #define COMMONDATATYPES_H
 
+#include <QtCore/qglobal.h>
+
+#if defined(ANIMHOSTCORE_LIBRARY)
+#define ANIMHOSTCORESHARED_EXPORT Q_DECL_EXPORT
+#else
+#define ANIMHOSTCORESHARED_EXPORT Q_DECL_IMPORT
+#endif
+
 #include <QObject>
 #include <QString>
 #include <QQuaternion>
@@ -18,7 +26,7 @@ using QtNodes::NodeDataType;
 
 
 
-class Pose
+class ANIMHOSTCORESHARED_EXPORT Pose
 {
     float timeStamp;
     std::vector<glm::vec3> mPositionData;
@@ -35,12 +43,14 @@ Q_DECLARE_METATYPE(Pose)
 //!
 //! \brief The prototype of a HumanoidBones class
 //!
-class HumanoidBones
+class ANIMHOSTCORESHARED_EXPORT HumanoidBones
 {
 public:
     HumanoidBones() { qDebug() << "HumanBones Hi!"; };
-    HumanoidBones(const HumanoidBones& t) {};
+    HumanoidBones(const HumanoidBones& t);
     ~HumanoidBones() { qDebug() << "HumanBones Bye!!"; };
+
+    void SetSpine(QQuaternion in) { spine = in; };
 private:
     // Spine bones
     QQuaternion spine;

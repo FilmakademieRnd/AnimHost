@@ -15,7 +15,7 @@ using QtNodes::NodeDelegateModel;
 using QtNodes::PortIndex;
 using QtNodes::PortType;
 
-class AnimHostNode : public NodeDelegateModel
+class ANIMHOSTCORESHARED_EXPORT AnimHostNode : public NodeDelegateModel
 {
     Q_OBJECT
 

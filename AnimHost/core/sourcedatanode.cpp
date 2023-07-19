@@ -1,8 +1,17 @@
 #include "sourcedatanode.h"
 
-SourceDataNode::SourceDataNode(std::shared_ptr<PluginInterface> plugin)
+SourceDataNode::SourceDataNode()
 {
-    
+    HumanoidBones test;
+
+    test.SetSpine({ 1.f,2.f,3.f,4.f });
+
+    _dataOut.push_back(std::make_shared<HumanoidBonesData>(HumanoidBonesData(test)));
+    _dataOut.push_back(std::make_shared<PoseNodeData>());
+    _dataOut.push_back(std::make_shared<FloatData>());
+    _dataOut.push_back(std::make_shared<IntData>());
+
+
 }
 
 
@@ -24,7 +33,7 @@ NodeDataType SourceDataNode::dataType(PortType portType, PortIndex index) const
     if (portType == PortType::In)
         return type;
     else
-        return type = _dataOut[index].get()->type();
+        return type = _dataOut[index]->type();
 
 }
 

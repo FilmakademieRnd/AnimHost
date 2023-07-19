@@ -1,6 +1,6 @@
 #include <QCoreApplication>
 #include <iostream>
-#include "animhost.h"
+#include <animhostcore.h>
 
 #include <QtNodes/ConnectionStyle>
 #include <QtNodes/DataFlowGraphModel>

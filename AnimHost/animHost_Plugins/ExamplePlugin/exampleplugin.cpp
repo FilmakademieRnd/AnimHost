@@ -28,7 +28,9 @@ void ExamplePlugin::run(QVariantList in, QVariantList& out)
     HumanoidBones test = in[0].value<HumanoidBones>();
 
     qDebug() << "Eval Example Plugin";
-    qDebug() << in[0].type();
+    qDebug() << in[0].userType();
+
+    qDebug() << QMetaType::fromName("HumanoidBones").id();
 
     Pose pose;
 

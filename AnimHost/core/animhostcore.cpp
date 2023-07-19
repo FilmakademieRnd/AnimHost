@@ -1,4 +1,4 @@
-#include "animhost.h"
+#include "animhostcore.h"
 #include "animhostnode.h"
 #include "sourcedatanode.h"
 #include <iostream>

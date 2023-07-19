@@ -7,6 +7,8 @@
 #include "plugininterface.h"
 #include <QMultiMap>
 
+#include "commondatatypes.h"
+
 #define NODE_EDITOR_SHARED 1
 
 #include <QtNodes/ConnectionStyle>
@@ -22,9 +24,9 @@ using QtNodes::DataFlowGraphModel;
 using QtNodes::GraphicsView;
 using QtNodes::NodeDelegateModelRegistry;
 
-class AnimHost : public QObject
+class ANIMHOSTCORESHARED_EXPORT AnimHost : public QObject
 {
-    Q_OBJECT
+    //Q_OBJECT
 
 public:
     //functions
@@ -44,9 +46,7 @@ private:
     //functions
 
 
-signals:
 
-public slots:
 
 protected:
 };

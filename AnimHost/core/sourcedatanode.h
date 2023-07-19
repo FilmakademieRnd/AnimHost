@@ -15,19 +15,13 @@ using QtNodes::NodeDelegateModel;
 using QtNodes::PortIndex;
 using QtNodes::PortType;
 
-class SourceDataNode : public NodeDelegateModel
+class ANIMHOSTCORESHARED_EXPORT SourceDataNode : public NodeDelegateModel
 {
     Q_OBJECT
 
 public:
-    SourceDataNode(){
-        _dataOut.push_back(std::make_shared<HumanoidBonesData>());
-        _dataOut.push_back(std::make_shared<PoseNodeData>());
-        _dataOut.push_back(std::make_shared<FloatData>());
-        _dataOut.push_back(std::make_shared<IntData>());
-    };
+    SourceDataNode();
 
-    SourceDataNode(std::shared_ptr<PluginInterface> plugin);
 
 public:
     QString caption() const override { return QStringLiteral("Test Data Source"); }

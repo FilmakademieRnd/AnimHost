@@ -3,6 +3,10 @@
 AnimHostNode::AnimHostNode(std::shared_ptr<PluginInterface> plugin)
 {
     _plugin = plugin;
+
+    for (int i = 0; i < _plugin->inputs.size(); i++){
+        this->_dataIn.push_back(std::weak_ptr<QtNodes::NodeData>());
+    }
 }
 
 
@@ -51,9 +55,9 @@ void AnimHostNode::setInData(std::shared_ptr<NodeData> data, PortIndex portIndex
         Q_EMIT dataInvalidated(0);
     }
 
-    if (portIndex < _dataIn.size()){
-        _dataIn[portIndex] = data;
-    }
+    
+
+    _dataIn[portIndex] = data;
 
 
     compute();
@@ -72,7 +76,7 @@ void AnimHostNode::compute()
     foreach (std::weak_ptr<QtNodes::NodeData> var,  _dataIn)
     {
         auto test = std::dynamic_pointer_cast<AnimNodeData>(var.lock());
-        auto variant = test.get()->getVariant();
+        auto variant = test->getVariant();
 
         list.append(variant);
     }
@@ -86,13 +90,13 @@ NodeDataType AnimHostNode::convertQMetaTypeToNodeDataType(QMetaType qType) const
     int typeId = qType.id();
     auto ttt = QMetaType::fromName("HumanoidBones");
     if (typeId == QMetaType::Float)
-        return FloatData().type();
+        return FloatData::staticType();
     else if (typeId == QMetaType::Int)
-        return IntData().type();
+        return IntData::staticType();
     else if (typeId == QMetaType::fromName("HumanoidBones").id())
-        return HumanoidBonesData().type();
+        return HumanoidBonesData::staticType();
     else if (typeId == QMetaType::fromName("Pose").id())
-        return PoseNodeData().type();
+        return PoseNodeData::staticType();
     else
         throw "Unknown Datatype";
 }
