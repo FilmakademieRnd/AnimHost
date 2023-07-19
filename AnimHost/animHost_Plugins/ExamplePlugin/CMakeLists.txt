@@ -4,7 +4,6 @@ qt_add_library(ExamplePlugin
 )
 target_include_directories(ExamplePlugin PUBLIC
     ../PluginInterface
-    ../../core/QTNodes/include
     ../../../glm
 )
 
@@ -13,9 +12,8 @@ target_compile_definitions(ExamplePlugin PUBLIC
 )
 
 target_link_libraries(ExamplePlugin PUBLIC
-    Qt::Core
-    Qt::Gui
     PluginInterface
+    AnimHostCore
 )
 
 

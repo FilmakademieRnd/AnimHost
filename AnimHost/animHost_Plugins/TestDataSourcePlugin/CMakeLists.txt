@@ -4,7 +4,6 @@ qt_add_library(TestDataSourcePlugin
 )
 target_include_directories(TestDataSourcePlugin PUBLIC
     ../PluginInterface
-    ../../core/QTNodes/include
     ../../../glm
 )
 
@@ -13,9 +12,8 @@ target_compile_definitions(TestDataSourcePlugin PUBLIC
 )
 
 target_link_libraries(TestDataSourcePlugin PUBLIC
-    Qt::Core
-    Qt::Gui
     PluginInterface
+    AnimHostCore
 )
 
 
