@@ -15,6 +15,7 @@
 #include <QMetaType>
 #include <vector>
 #include <glm/glm.hpp>
+#include <glm/ext/quaternion_float.hpp>
 
 #define NODE_EDITOR_SHARED 1
 
@@ -22,6 +23,98 @@
 
 using QtNodes::NodeData;
 using QtNodes::NodeDataType;
+
+
+struct ANIMHOSTCORESHARED_EXPORT KeyPosition
+{
+    float timeStamp;
+    glm::vec3 position;
+};
+
+struct ANIMHOSTCORESHARED_EXPORT KeyRotation
+{
+    float timeStamp;
+    glm::quat orientation;
+};
+
+struct ANIMHOSTCORESHARED_EXPORT KeyScale
+{
+    float timeStamp;
+    glm::vec3 scale;
+};
+
+class ANIMHOSTCORESHARED_EXPORT Bone
+{
+public:
+    int mID;
+    int mNumKeysPosition;
+    int mNumKeysRotation;
+    int mNumKeysScale;
+
+    std::string mName;
+    std::vector<KeyPosition> mPositonKeys;
+    std::vector<KeyRotation> mRotationKeys;
+    std::vector<KeyScale> mScaleKeys;
+    glm::mat4 mRestingTransform;
+
+public:
+    Bone(std::string name, int id, int numPos, int numRot, int numScl, glm::mat4 rest);
+    Bone();
+
+    glm::mat4 GetRestingTransform() { return mRestingTransform; };
+
+    glm::quat GetOrientation(int frame);
+
+    glm::vec3 GetPosition(int frame);
+
+    glm::vec3 GetScale(int frame);
+
+};
+
+class ANIMHOSTCORESHARED_EXPORT Skeleton
+{
+public:
+    std::map<std::string, int> bone_names;
+    std::map<int, std::string> bone_names_reverse;
+    std::map<int, std::vector<int>> bone_hierarchy;
+
+    int mAnimationDataSize;
+    int mNumBones;
+    int mRotationSize = 4;
+    int mNumKeyFrames;
+    int mFrameOffset;
+
+private:
+    //void IndexSkelettonHirarchy(aiNode* pNode, int* currentBoneCount);
+
+
+public:
+
+    //Skeleton(aiNode* pNodes);
+
+    //static void WriteToCSV(std::string filename, const Skeleton& pSkeleton, const AnimatedPoseData& mPoseData);
+    //static void LoadAnimationData(aiAnimation* pASSIMPAnimation, Skeleton* pSkeleton, Animation* pAnimation, aiNode*);
+    //static void BuildPose(Skeleton* pSkeleton, int frame, Animation* pAnimation, AnimatedPoseData& pAnimatedPoseData);
+
+};
+
+class ANIMHOSTCORESHARED_EXPORT Animation
+{
+public:
+    float mDuration = 0.0;
+
+    int mDurationFrames = 0;
+    std::vector<Bone> mBones;
+
+
+    //void SetRestingPosition(const aiNode& pNode, const Skeleton& pSkeleton);
+
+    Animation()
+    {
+        mBones = std::vector<Bone>();
+    };
+
+};
 
 
 

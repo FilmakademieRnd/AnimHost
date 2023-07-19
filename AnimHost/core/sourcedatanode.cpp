@@ -2,11 +2,14 @@
 
 SourceDataNode::SourceDataNode()
 {
-    HumanoidBones test;
 
-    test.SetSpine({ 1.f,2.f,3.f,4.f });
 
-    _dataOut.push_back(std::make_shared<HumanoidBonesData>(HumanoidBonesData(test)));
+    auto h = std::make_shared<HumanoidBonesData>();
+    
+    h->_humanoidBones.SetSpine({ 1.f,2.f,3.f,4.f });
+
+    _dataOut.push_back(h);
+ 
     _dataOut.push_back(std::make_shared<PoseNodeData>());
     _dataOut.push_back(std::make_shared<FloatData>());
     _dataOut.push_back(std::make_shared<IntData>());

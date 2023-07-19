@@ -90,9 +90,11 @@ public:
     HumanoidBones humanoidBones() const { return _humanoidBones; }
 
     QVariant getVariant() const override { return QVariant::fromValue(_humanoidBones); }
+    
+    HumanoidBones _humanoidBones;
 
 private:
-    HumanoidBones _humanoidBones;
+    
 };
 
 //Pose
