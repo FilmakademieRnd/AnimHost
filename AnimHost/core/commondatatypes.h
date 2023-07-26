@@ -28,6 +28,11 @@ using QtNodes::NodeData;
 using QtNodes::NodeDataType;
 
 
+
+#define COMMONDATA(id, name)  static QString getId() { return #id ; };\
+    static QString getName() { return #name ; };\
+
+
 struct ANIMHOSTCORESHARED_EXPORT KeyPosition
 {
     float timeStamp;
@@ -46,7 +51,7 @@ struct ANIMHOSTCORESHARED_EXPORT KeyScale
     glm::vec3 scale;
 };
 
-class ANIMHOSTCORESHARED_EXPORT Bone
+class ANIMHOSTCORESHARED_EXPORT Bone 
 {
 public:
     int mID;
@@ -72,6 +77,8 @@ public:
 
     glm::vec3 GetScale(int frame);
 
+    COMMONDATA(bone, Bone)
+
 };
 Q_DECLARE_METATYPE(Bone)
 
@@ -93,7 +100,9 @@ private:
 
 public:
     Skeleton() {};
-    ~Skeleton() {}
+    ~Skeleton() {};
+
+    COMMONDATA(skeleton, Skeleton)
 };
 Q_DECLARE_METATYPE(Skeleton)
 
@@ -121,6 +130,8 @@ public:
 
     ~Animation() {};
 
+    COMMONDATA(animation, Animation)
+
 };
 Q_DECLARE_METATYPE(Animation)
 Q_DECLARE_METATYPE(std::shared_ptr<Animation>)
@@ -130,13 +141,20 @@ Q_DECLARE_METATYPE(std::shared_ptr<Animation>)
 class ANIMHOSTCORESHARED_EXPORT Pose
 {
     float timeStamp;
-    //std::vector<glm::vec3> mPositionData;
+
+public:
+
+    std::vector<glm::vec3> mPositionData;
+
 public:
     Pose() { qDebug() << "Pose ()"; };
     ~Pose() {};
     Pose(const Pose& o) : mPositionData(o.mPositionData) { qDebug() << "Pose Copy"; };
     Pose(Pose&& o) noexcept : mPositionData(std::move(o.mPositionData)) { qDebug() << "Pose Move"; };
-    std::vector<glm::vec3> mPositionData;
+
+    COMMONDATA(pose, Pose)
+
+    
 };
 
 Q_DECLARE_METATYPE(Pose)
@@ -155,6 +173,10 @@ public:
     ~HumanoidBones() { qDebug() << "HumanBones Bye!!"; };
 
     void SetSpine(QQuaternion in) { spine = in; };
+
+    COMMONDATA(humanoidbones, HumanoidBones)
+
+
 private:
     // Spine bones
     QQuaternion spine;
@@ -192,9 +214,5 @@ Q_DECLARE_METATYPE(HumanoidBones)
 //
 // Qt Node Editor Data
 //
-
-
-
-
 
 #endif // COMMONDATATYPES_H

@@ -32,7 +32,7 @@ void ExamplePlugin::run(QVariantList in, QVariantList& out)
 {
     qDebug() << Q_FUNC_INFO;
     //execute
-    Skeleton skeleton = in[0].value<Skeleton>();
+    std::shared_ptr<Skeleton> skeleton = in[0].value<std::shared_ptr<Skeleton>>();
     std::shared_ptr<Animation> animation = in[1].value<std::shared_ptr<Animation>>();
 
 
@@ -45,7 +45,7 @@ void ExamplePlugin::run(QVariantList in, QVariantList& out)
     auto pose = std::make_shared<Pose>();
     int frame = 0;
 
-    pose->mPositionData = std::vector<glm::vec3>(skeleton.mNumBones, glm::vec3(0.0));
+    pose->mPositionData = std::vector<glm::vec3>(skeleton->mNumBones, glm::vec3(0.0));
 
     int initcurrentBone = 0;
     glm::mat4 initcurrentPos(1.0f);
@@ -78,7 +78,7 @@ void ExamplePlugin::run(QVariantList in, QVariantList& out)
 
         pose->mPositionData[currentBone] = result;
 
-        for (int i : skeleton.bone_hierarchy[currentBone]) {
+        for (int i : skeleton->bone_hierarchy[currentBone]) {
             lBuildPose(globalT, i);
         }
     };

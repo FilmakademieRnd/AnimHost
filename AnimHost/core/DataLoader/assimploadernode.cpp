@@ -9,9 +9,9 @@
 AssimpLoaderNode::AssimpLoaderNode()
 {
 
-	_skeleton = std::make_shared<SkeletonNodeData>();
+	_skeleton = std::make_shared<AnimNodeData<Skeleton>>();
 
-	_animation = std::make_shared<AnimationNodeData>();
+	_animation = std::make_shared<AnimNodeData<Animation>>();
     
 	bDataValid = false;
 
@@ -175,11 +175,11 @@ void AssimpLoaderNode::importAssimpData()
             }
         }
 
-		AssimpHelper::buildSkeletonFormAssimpNode(_skeleton->skeleton(), scene->mRootNode);
+		AssimpHelper::buildSkeletonFormAssimpNode(_skeleton->getData().get(), scene->mRootNode);
 
 		
 
-		loadAnimationData(scene->mAnimations[0], _skeleton->skeleton(),_animation->animation().get(), scene->mRootNode);
+		loadAnimationData(scene->mAnimations[0], _skeleton->getData().get(),_animation->getData().get(), scene->mRootNode);
     }
 }
 

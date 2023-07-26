@@ -10,206 +10,44 @@ using QtNodes::NodeData;
 using QtNodes::NodeDataType;
 
 
-class ANIMHOSTCORESHARED_EXPORT AnimNodeData : public NodeData
+class ANIMHOSTCORESHARED_EXPORT AnimNodeDataBase : public NodeData
 {
 public:
-  
-    virtual QVariant getVariant() const = 0;
 
-    void setVariant(QVariant variant) { _variant = variant; };
-    static NodeDataType staticType() { return NodeDataType{ "animNodeData", "AnimNodeData" }; };
+    virtual QVariant getVariant() = 0;
 
+    virtual void setVariant(QVariant variant) = 0;
+
+protected:
     QVariant _variant;
 
 };
 
 
 
-template <typename T> class ANIMHOSTCORESHARED_EXPORT AHNodeData : public NodeData
+template <typename T> class ANIMHOSTCORESHARED_EXPORT AnimNodeData : public AnimNodeDataBase
 {
 public:
 
+    AnimNodeData() { _data = std::make_shared<T>(); }
+
     NodeDataType type() const override { return staticType(); }
 
-    static NodeDataType staticType() { return NodeDataType{ "animation", "Animation" }; }
+    static NodeDataType staticType() { return NodeDataType{ T::getId(), T::getName() }; }
 
     std::shared_ptr<T> getData() { return _data; }
 
-    QVariant getVariant() { return QVariant::fromValue(_data); }
+    QVariant getVariant() override { return QVariant::fromValue(_data); }
+
+    void setVariant(QVariant variant) override { 
+        _variant = variant; 
+        _data = _variant.value<std::shared_ptr<T>>();
+    }
 
 private:
-    QVariant _variant;
 
     std::shared_ptr<T> _data;
 
 };
 
-
-template<> class AHNodeData<int> : public NodeData
-{
-public:
-    static NodeDataType staticType() { return NodeDataType{ "int", "Int" }; }
-};
-
-
-//Float
-class ANIMHOSTCORESHARED_EXPORT FloatData : public AnimNodeData
-{
-public:
-    FloatData()
-        : _number(0.0)
-    {}
-
-    FloatData(float const number)
-        : _number(number)
-    {}
-
-    NodeDataType type() const override { return staticType(); }
-    static NodeDataType staticType() { return NodeDataType{ "float", "Float" }; }
-
-    float number() const { 
-        return _number;
-    }
-
-    QString numberAsText() const { return QString::number(_number, 'f'); }
-
-    QVariant getVariant() const override { return QVariant(_number); }
-
-
-private:
-    float _number;
-};
-
-//Float
-class ANIMHOSTCORESHARED_EXPORT IntData : public AnimNodeData
-{
-public:
-    IntData()
-        : _number(0)
-    {}
-
-    IntData(int const number)
-        : _number(number)
-    {}
-
-    NodeDataType type() const override { return staticType(); }
-    static NodeDataType staticType() { return NodeDataType{ "int", "Int" }; }
-
-    float number() const { return _number; }
-
-    QString numberAsText() const { return QString::number(_number); }
-
-    QVariant getVariant() const override { return QVariant(_number); }
-
-private:
-    int _number;
-};
-
-//Humanoid Bones
-class ANIMHOSTCORESHARED_EXPORT HumanoidBonesData : public AnimNodeData
-{
-public:
-    HumanoidBonesData()
-    {}
-
-    HumanoidBonesData(HumanoidBones const humanoidBones)
-        : _humanoidBones(humanoidBones)
-    {}
-
-    NodeDataType type() const override { return staticType(); }
-
-    static NodeDataType staticType() { return NodeDataType{ "humanoidBones", "HumanoidBones" }; }
-
-    //static NodeDataType staticType() { return NodeDataType{ "humanoidBones", "HumanoidBones" }; }
-
-    HumanoidBones humanoidBones() const { return _humanoidBones; }
-
-    QVariant getVariant() const override { return QVariant::fromValue(_humanoidBones); }
-    
-    HumanoidBones _humanoidBones;
-
-private:
-    
-};
-
-//Pose
-class ANIMHOSTCORESHARED_EXPORT PoseNodeData : public AnimNodeData
-{
-public:
-    PoseNodeData()
-     //   : _pose()
-    {}
-
-
-   // PoseNodeData(Pose const pose)
-     //   : _pose(pose)
-   // {}
-
-    NodeDataType type() const override { return staticType(); }
-
-    static NodeDataType staticType() { return NodeDataType{ "pose", "Pose" }; }
-
-    //Pose pose() const { return _pose; }
-
-    QVariant getVariant() const override { return _variant; }//QVariant::fromValue(_pose); }
-
-    //QString poseAsText() const { return QString::number(_number, 'f'); }
-
-private:
-    //Pose _pose;
-};
-
-
-
-class ANIMHOSTCORESHARED_EXPORT SkeletonNodeData : public AnimNodeData
-{
-public:
-    SkeletonNodeData()
-        : _skeleton()
-    {}
-
-
-    SkeletonNodeData(Skeleton const skeleton)
-        : _skeleton(skeleton)
-    {}
-
-    NodeDataType type() const override { return staticType(); }
-
-    static NodeDataType staticType() { return NodeDataType{ "skeleton", "Skeleton" }; }
-
-    Skeleton* skeleton() { return &_skeleton; }
-
-    QVariant getVariant() const override { return QVariant::fromValue(_skeleton); }
-
-    //QString poseAsText() const { return QString::number(_number, 'f'); }
-
-private:
-    Skeleton _skeleton;
-};
-
-class ANIMHOSTCORESHARED_EXPORT AnimationNodeData : public AnimNodeData
-{
-public:
-    AnimationNodeData()
-        : _animation(std::make_shared<Animation>())
-    {}
-
-
-    AnimationNodeData(Animation const animation)
-        : _animation(std::make_shared<Animation>(animation))
-    {}
-
-    NodeDataType type() const override { return staticType(); }
-
-    static NodeDataType staticType() { return NodeDataType{ "animation", "Animation" }; }
-
-    std::shared_ptr<Animation> animation() { return _animation; }
-
-    QVariant getVariant() const override { return QVariant::fromValue(_animation); }
-
-    //QString poseAsText() const { return QString::number(_number, 'f'); }
-
-private:
-    std::shared_ptr<Animation> _animation;
-};
 #endif // NODEDATATYPES_H

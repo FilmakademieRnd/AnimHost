@@ -65,9 +65,9 @@ private Q_SLOTS:
     void onButtonClicked();
 
 protected:
-    std::shared_ptr<SkeletonNodeData> _skeleton;
+    std::shared_ptr<AnimNodeData<Skeleton>> _skeleton;
 
-    std::shared_ptr<AnimationNodeData> _animation;
+    std::shared_ptr<AnimNodeData<Animation>> _animation;
 
     QString SourceFilePath = "C:/Users/m5940/_dev/_datasets/Mixamo_new/Doozy/Drunk Walk.bvh";
 

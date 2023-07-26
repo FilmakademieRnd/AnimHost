@@ -54,7 +54,7 @@ private:
     std::shared_ptr<PluginInterface> _plugin;
 
     NodeDataType convertQMetaTypeToNodeDataType(QMetaType qType) const;
-    std::shared_ptr<AnimNodeData> createAnimNodeDataFromID(QMetaType qType) const;
+    std::shared_ptr<AnimNodeDataBase> createAnimNodeDataFromID(QMetaType qType) const;
 };
 
 #endif // ANIMHOSTNODE_H

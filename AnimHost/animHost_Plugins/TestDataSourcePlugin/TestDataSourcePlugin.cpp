@@ -27,7 +27,7 @@ TestDataSourcePlugin::~TestDataSourcePlugin()
 void TestDataSourcePlugin::run(QVariantList in, QVariantList& out)
 {
     //execute
-    Skeleton skeletonIn = in[0].value<Skeleton>();
+    auto skeletonIn = in[0].value<std::shared_ptr<Skeleton>>();
     auto poseIn = in[1].value<std::shared_ptr<Pose>>();
 
     qDebug() << "Eval Test Data Source Plugin";
@@ -35,22 +35,22 @@ void TestDataSourcePlugin::run(QVariantList in, QVariantList& out)
     std::ofstream fileOut("ok.csv");
 
 
-    for (int i = 0; i < skeletonIn.mNumBones; i++) {
-        fileOut << skeletonIn.bone_names_reverse.at(i) << "_x,";
-        fileOut << skeletonIn.bone_names_reverse.at(i) << "_y,";
-        fileOut << skeletonIn.bone_names_reverse.at(i) << "_z";
-        if (i != skeletonIn.mNumBones - 1)
+    for (int i = 0; i < skeletonIn->mNumBones; i++) {
+        fileOut << skeletonIn->bone_names_reverse.at(i) << "_x,";
+        fileOut << skeletonIn->bone_names_reverse.at(i) << "_y,";
+        fileOut << skeletonIn->bone_names_reverse.at(i) << "_z";
+        if (i != skeletonIn->mNumBones - 1)
             fileOut << ",";
     }
     fileOut << "\n";
 
     
-        for (int bone = 0; bone < skeletonIn.mNumBones; bone++) {
+        for (int bone = 0; bone < skeletonIn->mNumBones; bone++) {
            
             fileOut << poseIn->mPositionData[bone].x << ",";
             fileOut << poseIn->mPositionData[bone].y << ",";
             fileOut << poseIn->mPositionData[bone].z;
-            if (bone != skeletonIn.mNumBones - 1)
+            if (bone != skeletonIn->mNumBones - 1)
                 fileOut << ",";
 
         }

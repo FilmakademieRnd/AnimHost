@@ -70,7 +70,7 @@ void AnimHostNode::compute()
 
     foreach (std::weak_ptr<QtNodes::NodeData> var,  _dataIn)
     {
-        auto test = std::dynamic_pointer_cast<AnimNodeData>(var.lock());
+        auto test = std::dynamic_pointer_cast<AnimNodeDataBase>(var.lock());
         if (!test)
             return;
         auto variant = test->getVariant();
@@ -99,42 +99,33 @@ NodeDataType AnimHostNode::convertQMetaTypeToNodeDataType(QMetaType qType) const
 {
     int typeId = qType.id();
 
-    if (typeId == QMetaType::Float)
-        return FloatData::staticType();
-    else if (typeId == QMetaType::Int)
-        return IntData::staticType();
-    else if (typeId == QMetaType::fromName("HumanoidBones").id())
-        return HumanoidBonesData::staticType();
+
+    if (typeId == QMetaType::fromName("HumanoidBones").id())
+        return AnimNodeData<HumanoidBones>::staticType();
     else if (typeId == QMetaType::fromName("Pose").id())
-        return PoseNodeData::staticType();
-    //else if (typeId == QMetaType::fromName("shared_ptr<Pose>").id())
-      //  return PoseNodeData::staticType();
+        return AnimNodeData<Pose>::staticType();
     else if (typeId == QMetaType::fromName("Skeleton").id())
-        return SkeletonNodeData::staticType();
+        return AnimNodeData<Skeleton>::staticType();
     else if (typeId == QMetaType::fromName("Animation").id())
-        return AnimationNodeData::staticType();
+        return AnimNodeData<Animation>::staticType();
     else
         throw "Unknown Datatype";
 }
 
-std::shared_ptr<AnimNodeData> AnimHostNode::createAnimNodeDataFromID(QMetaType qType) const
+std::shared_ptr<AnimNodeDataBase> AnimHostNode::createAnimNodeDataFromID(QMetaType qType) const
 {
     int typeId = qType.id();
 
-    if (typeId == QMetaType::Float)
-        return std::make_shared<FloatData>();
-    else if (typeId == QMetaType::Int)
-        return std::make_shared<IntData>();
-    else if (typeId == QMetaType::fromName("HumanoidBones").id())
-        return std::make_shared<HumanoidBonesData>();
+    if (typeId == QMetaType::fromName("HumanoidBones").id())
+        return std::make_shared<AnimNodeData<HumanoidBones>>();
     else if (typeId == QMetaType::fromName("Pose").id())
-        return std::make_shared<PoseNodeData>();
+        return std::make_shared<AnimNodeData<Pose>>();
     else if (typeId == QMetaType::fromName("shared_ptr<Pose>").id())
-        return std::make_shared<PoseNodeData>();
+        return std::make_shared<AnimNodeData<Pose>>();
     else if (typeId == QMetaType::fromName("Skeleton").id())
-        return std::make_shared<SkeletonNodeData>();
+        return std::make_shared<AnimNodeData<Skeleton>>();
     else if (typeId == QMetaType::fromName("Animation").id())
-        return std::make_shared<AnimationNodeData>();
+        return std::make_shared<AnimNodeData<Animation>>();
     else
         throw "Unknown Datatype";
 }
