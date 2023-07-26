@@ -24,9 +24,9 @@ public:
     AnimHostNode(std::shared_ptr<PluginInterface> plugin);
 
 public:
-    QString caption() const override { return QStringLiteral("AnimHostNode Caption"); }
+    QString caption() const override { return this->name(); }
 
-    bool captionVisible() const override { return false; }
+    bool captionVisible() const override { return true; }
 
     QString name() const override { return(!_plugin) ?  "NONE" : _plugin->name(); }
 
@@ -54,6 +54,7 @@ private:
     std::shared_ptr<PluginInterface> _plugin;
 
     NodeDataType convertQMetaTypeToNodeDataType(QMetaType qType) const;
+    std::shared_ptr<AnimNodeData> createAnimNodeDataFromID(QMetaType qType) const;
 };
 
 #endif // ANIMHOSTNODE_H

@@ -6,6 +6,10 @@
 #include <QBuffer>
 #include "../../core/commondatatypes.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/ext/quaternion_float.hpp>
+
 ExamplePlugin::ExamplePlugin()
 {
     qDebug() << "Hello Example Plugin";
@@ -29,7 +33,8 @@ void ExamplePlugin::run(QVariantList in, QVariantList& out)
     qDebug() << Q_FUNC_INFO;
     //execute
     Skeleton skeleton = in[0].value<Skeleton>();
-    Animation animation = in[1].value<Animation>();
+    std::shared_ptr<Animation> animation = in[1].value<std::shared_ptr<Animation>>();
+
 
     qDebug() << in[0].userType();
     qDebug() << QMetaType::fromName("Skeleton").id();
@@ -37,7 +42,48 @@ void ExamplePlugin::run(QVariantList in, QVariantList& out)
     qDebug() << in[1].userType();
     qDebug() << QMetaType::fromName("Animation").id();
 
-    Pose pose;
+    auto pose = std::make_shared<Pose>();
+    int frame = 0;
+
+    pose->mPositionData = std::vector<glm::vec3>(skeleton.mNumBones, glm::vec3(0.0));
+
+    int initcurrentBone = 0;
+    glm::mat4 initcurrentPos(1.0f);
+
+
+
+    std::function<void(glm::mat4, int)> lBuildPose;
+    lBuildPose = [&](glm::mat4 currentT, int currentBone) {
+
+        glm::mat4 transform = animation->mBones[currentBone].GetRestingTransform();
+
+        glm::vec4 result = glm::vec4(0.0, 0.0, 0.0, 1.0);
+
+        glm::quat orientation = animation->mBones[currentBone].GetOrientation(frame);
+        glm::mat4 rotation = glm::toMat4(orientation);
+
+        glm::vec3 scl = animation->mBones[currentBone].GetScale(frame);
+        glm::mat4 scale = glm::scale(glm::mat4(1.0f), scl);
+
+        glm::vec3 pos = animation->mBones[currentBone].GetPosition(frame);
+        glm::mat4 translation = glm::translate(glm::mat4(1.0f), pos);
+
+        glm::mat4 local_transform = translation * rotation * scale;// *scale;
+
+        //result = transform *  result;// *glm::vec4(0.0, 0.0, 0.0, 1.0);
+        glm::mat4 globalT = currentT * local_transform;
+        result = globalT * result;
+
+
+
+        pose->mPositionData[currentBone] = result;
+
+        for (int i : skeleton.bone_hierarchy[currentBone]) {
+            lBuildPose(globalT, i);
+        }
+    };
+
+    lBuildPose(initcurrentPos, initcurrentBone);
 
     out.append(QVariant::fromValue(pose));
 }

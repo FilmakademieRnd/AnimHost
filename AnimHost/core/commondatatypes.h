@@ -93,11 +93,7 @@ private:
 
 public:
     Skeleton() {};
-
-    //static void WriteToCSV(std::string filename, const Skeleton& pSkeleton, const AnimatedPoseData& mPoseData);
-    //static void LoadAnimationData(aiAnimation* pASSIMPAnimation, Skeleton* pSkeleton, Animation* pAnimation, aiNode*);
-    //static void BuildPose(Skeleton* pSkeleton, int frame, Animation* pAnimation, AnimatedPoseData& pAnimatedPoseData);
-
+    ~Skeleton() {}
 };
 Q_DECLARE_METATYPE(Skeleton)
 
@@ -115,24 +111,36 @@ public:
     Animation()
     {
         mBones = std::vector<Bone>();
+
+        qDebug() << "Animation()";
     };
+
+    Animation(const Animation& o) : mBones(o.mBones) { qDebug() << "Animation Copy"; };
+
+    Animation(Animation&& o) noexcept : mBones(std::move(o.mBones)) { qDebug() << "Animation Move"; };
+
+    ~Animation() {};
 
 };
 Q_DECLARE_METATYPE(Animation)
+Q_DECLARE_METATYPE(std::shared_ptr<Animation>)
 
 
 
 class ANIMHOSTCORESHARED_EXPORT Pose
 {
     float timeStamp;
-    std::vector<glm::vec3> mPositionData;
+    //std::vector<glm::vec3> mPositionData;
 public:
-    Pose() {};
+    Pose() { qDebug() << "Pose ()"; };
     ~Pose() {};
-    Pose(const Pose&) {};
+    Pose(const Pose& o) : mPositionData(o.mPositionData) { qDebug() << "Pose Copy"; };
+    Pose(Pose&& o) noexcept : mPositionData(std::move(o.mPositionData)) { qDebug() << "Pose Move"; };
+    std::vector<glm::vec3> mPositionData;
 };
 
 Q_DECLARE_METATYPE(Pose)
+Q_DECLARE_METATYPE(std::shared_ptr<Pose>)
 
 
 

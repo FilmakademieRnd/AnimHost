@@ -32,6 +32,7 @@ target_link_libraries(AnimHostCore PUBLIC
     QTNodes
     Qt::Core
     Qt::Gui
+    Qt::Widgets
     assimp-vc142-mtd
 )
 

@@ -5,6 +5,8 @@
 
 #include <QtNodes/NodeDelegateModel>
 #include <QDir>
+#include <QtCore/QObject>
+
 #include "plugininterface.h"
 #include <commondatatypes.h>
 #include <nodedatatypes.h>
@@ -21,6 +23,8 @@ using QtNodes::NodeDelegateModel;
 using QtNodes::PortIndex;
 using QtNodes::PortType;
 
+class QPushButton;
+
 class ANIMHOSTCORESHARED_EXPORT AssimpLoaderNode : public NodeDelegateModel
 {
     Q_OBJECT
@@ -32,7 +36,7 @@ public:
 public:
     QString caption() const override { return QStringLiteral("ASSIMP Loader"); }
 
-    bool captionVisible() const override { return false; }
+    bool captionVisible() const override { return true; }
 
     QString name() const override { return "ASSIMP Loader"; }
 
@@ -45,19 +49,22 @@ public:
 
     void setInData(std::shared_ptr<NodeData> data, PortIndex portIndex) override {};
 
-    QWidget *embeddedWidget() override { return nullptr; }
+    QWidget* embeddedWidget() override;
 
 private:
+
     void loadAnimationData(aiAnimation* pASSIMPAnimation, Skeleton* pSkeleton, Animation* pAnimation, aiNode*);
     void importAssimpData();
 
     bool bDataValid;
     
+    QPushButton* _pushButton;
 
+
+private Q_SLOTS:
+    void onButtonClicked();
 
 protected:
-    std::vector<std::shared_ptr<NodeData>> _dataOut;
-
     std::shared_ptr<SkeletonNodeData> _skeleton;
 
     std::shared_ptr<AnimationNodeData> _animation;

@@ -4,19 +4,18 @@
 #include <QDateTime>
 #include <QImage>
 #include <QBuffer>
+#include <fstream>
 #include "../../core/commondatatypes.h"
 
 TestDataSourcePlugin::TestDataSourcePlugin()
 {
-    qDebug() << "Hello Example Plugin";
+    qDebug() << "Hello Test Data Source Plugin";
 
  
     //Data
-    //inputs.append(QMetaType::fromName("Pose"));
-    outputs.append(QMetaType::fromName("Pose"));
-    outputs.append(QMetaType::fromName("HumanoidBones"));
-    outputs.append(QMetaType(QMetaType::Int));
-    outputs.append(QMetaType(QMetaType::Float));
+    inputs.append(QMetaType::fromName("Skeleton"));
+    inputs.append(QMetaType::fromName("Pose"));
+
 }
 
 TestDataSourcePlugin::~TestDataSourcePlugin()
@@ -28,19 +27,47 @@ TestDataSourcePlugin::~TestDataSourcePlugin()
 void TestDataSourcePlugin::run(QVariantList in, QVariantList& out)
 {
     //execute
-    HumanoidBones test = in[0].value<HumanoidBones>();
+    Skeleton skeletonIn = in[0].value<Skeleton>();
+    auto poseIn = in[1].value<std::shared_ptr<Pose>>();
 
-    qDebug() << "Eval Example Plugin";
-    qDebug() << in[0].type();
+    qDebug() << "Eval Test Data Source Plugin";
 
-    Pose pose;
+    std::ofstream fileOut("ok.csv");
 
-    out.append(QVariant::fromValue(pose));
+
+    for (int i = 0; i < skeletonIn.mNumBones; i++) {
+        fileOut << skeletonIn.bone_names_reverse.at(i) << "_x,";
+        fileOut << skeletonIn.bone_names_reverse.at(i) << "_y,";
+        fileOut << skeletonIn.bone_names_reverse.at(i) << "_z";
+        if (i != skeletonIn.mNumBones - 1)
+            fileOut << ",";
+    }
+    fileOut << "\n";
+
+    
+        for (int bone = 0; bone < skeletonIn.mNumBones; bone++) {
+           
+            fileOut << poseIn->mPositionData[bone].x << ",";
+            fileOut << poseIn->mPositionData[bone].y << ",";
+            fileOut << poseIn->mPositionData[bone].z;
+            if (bone != skeletonIn.mNumBones - 1)
+                fileOut << ",";
+
+        }
+        fileOut << "\n";
+  
+    fileOut.close();
+    
+
+
+
+
+    //out.append(QVariant::fromValue(pose));
 }
 
 QString TestDataSourcePlugin::category()
 {
-    return "Generator";
+    return "Output";
 }
 
 QList<QMetaType> TestDataSourcePlugin::inputTypes()

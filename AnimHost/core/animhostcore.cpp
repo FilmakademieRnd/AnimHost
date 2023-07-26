@@ -13,10 +13,20 @@
 //!
 AnimHost::AnimHost()
 {
+    qDebug() << AHNodeData<int>::staticType().id;
+
+    AHNodeData<int> inddd;
+
+    inddd.getDat
+
+    qDebug() << AHNodeData<Pose>::staticType().id;
+
     qRegisterMetaType<HumanoidBones>("HumanoidBones");
-    qRegisterMetaType<Pose>("Pose");
+    //qRegisterMetaType<Pose>("Pose");
+    qRegisterMetaType<std::shared_ptr<Pose>>("Pose");
     qRegisterMetaType<Skeleton>("Skeleton");
-    qRegisterMetaType<Animation>("Animation");
+    qRegisterMetaType<std::shared_ptr<Animation>>("Animation");
+
 
     //initalize list for nodes
     nodes = std::make_shared<NodeDelegateModelRegistry>();
