@@ -1,6 +1,8 @@
 qt_add_library(AnimHostCore
     animhostcore.h animhostcore.cpp
     animhostnode.h animhostnode.cpp
+    animhostinputnode.h animhostinputnode.cpp
+    animhostoperationnode.h animhostoperationnode.cpp
     commondatatypes.h commondatatypes.cpp
     nodedatatypes.h
     sourcedatanode.h sourcedatanode.cpp

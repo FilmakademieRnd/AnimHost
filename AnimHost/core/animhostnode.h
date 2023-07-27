@@ -23,26 +23,27 @@ public:
     AnimHostNode(){};
     AnimHostNode(std::shared_ptr<PluginInterface> plugin);
 
-public:
     QString caption() const override { return this->name(); }
 
     bool captionVisible() const override { return true; }
 
     QString name() const override { return(!_plugin) ?  "NONE" : _plugin->name(); }
 
-public:
     unsigned int nPorts(PortType portType) const override;
 
     NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
 
-    std::shared_ptr<NodeData> outData(PortIndex port) override;
+    virtual std::shared_ptr<NodeData> outData(PortIndex port) = 0;
 
-    void setInData(std::shared_ptr<NodeData> data, PortIndex portIndex) override;
+    virtual void setInData(std::shared_ptr<NodeData> data, PortIndex portIndex) = 0;
 
     QWidget *embeddedWidget() override { return nullptr; }
 
 protected:
-     void compute();
+     virtual void compute() = 0;
+
+     static NodeDataType convertQMetaTypeToNodeDataType(QMetaType qType);
+     static std::shared_ptr<AnimNodeDataBase> createAnimNodeDataFromID(QMetaType qType);
 
 protected:
 
@@ -50,11 +51,9 @@ protected:
 
     std::vector<std::shared_ptr<NodeData>> _dataOut;
 
-private:
     std::shared_ptr<PluginInterface> _plugin;
 
-    NodeDataType convertQMetaTypeToNodeDataType(QMetaType qType) const;
-    std::shared_ptr<AnimNodeDataBase> createAnimNodeDataFromID(QMetaType qType) const;
+    
 };
 
 #endif // ANIMHOSTNODE_H

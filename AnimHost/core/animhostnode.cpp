@@ -26,6 +26,7 @@ unsigned int AnimHostNode::nPorts(PortType portType) const
     return result;
 }
 
+
 NodeDataType AnimHostNode::dataType(PortType portType, PortIndex index) const
 {
     QMetaType metaType;
@@ -37,66 +38,10 @@ NodeDataType AnimHostNode::dataType(PortType portType, PortIndex index) const
     return convertQMetaTypeToNodeDataType(metaType);
 }
 
-std::shared_ptr<NodeData> AnimHostNode::outData(PortIndex index)
+
+NodeDataType AnimHostNode::convertQMetaTypeToNodeDataType(QMetaType qType)
 {
-    //QVariant data = _plugin->outputs->at(index);
 
-    if(index < _dataOut.size()){
-        return std::static_pointer_cast<NodeData>(_dataOut[index]);
-    }
-
-    else{
-        throw "PortIndex out of range!";
-    }
-
-}
-
-void AnimHostNode::setInData(std::shared_ptr<NodeData> data, PortIndex portIndex)
-{
-    if (!data) {
-        Q_EMIT dataInvalidated(0);
-    }
-
-    _dataIn[portIndex] = data;
-
-    compute();
-}
-
-void AnimHostNode::compute()
-{
-   
-    QVariantList list;
-    QVariantList listOut;
-
-    foreach (std::weak_ptr<QtNodes::NodeData> var,  _dataIn)
-    {
-        auto test = std::dynamic_pointer_cast<AnimNodeDataBase>(var.lock());
-        if (!test)
-            return;
-        auto variant = test->getVariant();
-
-        list.append(variant);
-    }
-    qDebug() << "AnimHostNode::compute()";
-    _plugin->run(list, listOut);
-
-    int counter = 0;
-    foreach(QVariant var, listOut)
-    {
-        auto nodeData = createAnimNodeDataFromID(var.metaType());
-        nodeData->setVariant(var);
-        _dataOut[counter] = nodeData;
-    }
-
-    for (int i = 1; i <= nPorts(PortType::Out); i++)
-    {
-        Q_EMIT dataUpdated(i - 1);
-    }
-}
-
-
-NodeDataType AnimHostNode::convertQMetaTypeToNodeDataType(QMetaType qType) const
-{
     int typeId = qType.id();
 
 
@@ -112,7 +57,8 @@ NodeDataType AnimHostNode::convertQMetaTypeToNodeDataType(QMetaType qType) const
         throw "Unknown Datatype";
 }
 
-std::shared_ptr<AnimNodeDataBase> AnimHostNode::createAnimNodeDataFromID(QMetaType qType) const
+
+std::shared_ptr<AnimNodeDataBase> AnimHostNode::createAnimNodeDataFromID(QMetaType qType)
 {
     int typeId = qType.id();
 

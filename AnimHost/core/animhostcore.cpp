@@ -1,5 +1,6 @@
 #include "animhostcore.h"
 #include "animhostnode.h"
+#include "animhostoperationnode.h"
 #include "sourcedatanode.h"
 #include "assimploadernode.h"
 #include <iostream>
@@ -13,17 +14,11 @@
 //!
 AnimHost::AnimHost()
 {
-    //qDebug() << AHNodeData<int>::staticType().id;
-
-    qDebug() << AnimNodeData<Bone>::staticType().id;
-    qDebug() << AnimNodeData<Skeleton>::staticType().id;
-
 
     qRegisterMetaType<std::shared_ptr<HumanoidBones>>("HumanoidBones");
     qRegisterMetaType<std::shared_ptr<Pose>>("Pose");
     qRegisterMetaType<std::shared_ptr<Skeleton>>("Skeleton");
     qRegisterMetaType<std::shared_ptr<Animation>>("Animation");
-
 
     //initalize list for nodes
     nodes = std::make_shared<NodeDelegateModelRegistry>();
@@ -32,11 +27,6 @@ AnimHost::AnimHost()
 
     nodes->registerModel<SourceDataNode>("TestData");
     nodes->registerModel<AssimpLoaderNode>("Data Loader");
-
-    qDebug() << "Hello";
-
-
-
 }
 
 //!
@@ -91,14 +81,8 @@ bool AnimHost::loadPlugins()
 //!
 void AnimHost::createNodeFromPlugin(std::shared_ptr<PluginInterface> plugin)
 {
-    //auto up_plugin = std::unique_ptr<PluginInterface>(plugin);
-    //AnimHostNode* node = new AnimHostNode(plugin);
-   
 
-
-    //ret->registerModel<AnimHostNode>("hello");
-
-    NodeDelegateModelRegistry::RegistryItemCreator creator = [p=plugin]() { return std::make_unique<AnimHostNode>(p); };
-    nodes->registerModel<AnimHostNode>(std::move(creator), plugin->category());
+    NodeDelegateModelRegistry::RegistryItemCreator creator = [p=plugin]() { return std::make_unique<AnimHostOperationNode>(p); };
+    nodes->registerModel<AnimHostOperationNode>(std::move(creator), plugin->category());
 
 }
