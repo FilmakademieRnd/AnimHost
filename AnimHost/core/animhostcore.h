@@ -5,6 +5,7 @@
 #include <QFileInfo>
 #include <QDirIterator>
 #include "plugininterface.h"
+#include "pluginnodeinterface.h"
 #include <QMultiMap>
 
 #include "commondatatypes.h"
@@ -33,6 +34,8 @@ public:
     AnimHost();
     void registerPlugin(std::shared_ptr<PluginInterface> plugin);
     bool loadPlugins();
+
+    void createNodeFromNodePlugin(std::shared_ptr<PluginNodeInterface> plugin);
 
     //variables
     std::shared_ptr<NodeDelegateModelRegistry> nodes;

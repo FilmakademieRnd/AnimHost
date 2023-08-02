@@ -25,19 +25,12 @@ public:
     virtual QList<QMetaType> inputTypes() = 0;  // Returns input data types
     virtual QList<QMetaType> outputTypes() = 0;  // Returns output data types
 
-    //Data
-    //QVariantList inputs; // list of input parameters
-    //QVariantList* outputs; // list of output parameters
-
     QList<QMetaType> inputs;
     QList<QMetaType> outputs;
-
-protected:
 
 };
 
 #define PluginInterface_iid "de.animhost.PluginInterface"
-
 Q_DECLARE_INTERFACE(PluginInterface, PluginInterface_iid)
 
 #endif // PLUGININTERFACE_H

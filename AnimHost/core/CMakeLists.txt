@@ -6,8 +6,6 @@ qt_add_library(AnimHostCore
     commondatatypes.h commondatatypes.cpp
     nodedatatypes.h
     sourcedatanode.h sourcedatanode.cpp
-    DataLoader/assimploadernode.h DataLoader/assimploadernode.cpp
-    DataLoader/assimphelper.h DataLoader/assimphelper.cpp
 )
 
 target_compile_definitions(AnimHostCore PUBLIC
@@ -16,18 +14,16 @@ target_compile_definitions(AnimHostCore PUBLIC
 
 target_include_directories(AnimHostCore PUBLIC
     ../../glm
-    ../../assimp/include
     ./QTNodes/include
     ../animHost_Plugins/PluginInterface
+    ../animHost_Plugins/PluginNodeInterface
     ./
-    ./DataLoader
 )
 
 
 
 target_link_directories(AnimHostCore PUBLIC 
     ./QTNodes/lib
-    ../../assimp/lib/Debug
 )
 
 target_link_libraries(AnimHostCore PUBLIC
@@ -35,7 +31,6 @@ target_link_libraries(AnimHostCore PUBLIC
     Qt::Core
     Qt::Gui
     Qt::Widgets
-    assimp-vc142-mtd
 )
 
 

@@ -4,6 +4,9 @@
 
 #include<assimp/matrix4x4.h>
 #include<assimp/quaternion.h>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 #include<glm/glm.hpp>
 #include <glm/ext/quaternion_float.hpp>
 #include <commondatatypes.h>

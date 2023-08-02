@@ -2,7 +2,6 @@
 #include "animhostnode.h"
 #include "animhostoperationnode.h"
 #include "sourcedatanode.h"
-#include "assimploadernode.h"
 #include <iostream>
 #include <QCoreApplication>
 #include <QPluginLoader>
@@ -26,7 +25,7 @@ AnimHost::AnimHost()
     loadPlugins();
 
     nodes->registerModel<SourceDataNode>("TestData");
-    nodes->registerModel<AssimpLoaderNode>("Data Loader");
+    //nodes->registerModel<AssimpLoaderNode>("Data Loader");
 }
 
 //!
@@ -68,11 +67,29 @@ bool AnimHost::loadPlugins()
                 createNodeFromPlugin(sp_PluginInterface);
                 //return true;
             }
+            else
+            {
+                PluginNodeInterface* pluginNodeInterface = qobject_cast<PluginNodeInterface*>(plugin);
+                if (pluginNodeInterface)
+                {
+                    std::shared_ptr<PluginNodeInterface> sp_PluginNodeInterface(pluginNodeInterface);
+
+                    createNodeFromNodePlugin(sp_PluginNodeInterface);
+                }
+            }
             //pluginLoader.unload();
         }
     }
 
     return false;
+}
+
+void AnimHost::createNodeFromNodePlugin(std::shared_ptr<PluginNodeInterface> plugin)
+{
+
+    NodeDelegateModelRegistry::RegistryItemCreator creator = [p = plugin]() {  return p->Init(); };
+    nodes->registerModel<NodeDelegateModel>(std::move(creator), plugin->category());
+
 }
 
 //!

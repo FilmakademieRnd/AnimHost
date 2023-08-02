@@ -16,9 +16,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/ext/quaternion_float.hpp>
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+
 
 #define NODE_EDITOR_SHARED 1
 
