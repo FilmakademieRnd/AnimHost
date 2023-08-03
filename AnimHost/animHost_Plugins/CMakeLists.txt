@@ -3,3 +3,5 @@ add_subdirectory(PluginNodeInterface)
 add_subdirectory(ExamplePlugin)
 add_subdirectory(TestDataSourcePlugin)
 add_subdirectory(AssimpLoader)
+add_subdirectory(BasicOnnxPlugin)
+

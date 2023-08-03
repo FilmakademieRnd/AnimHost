@@ -1,6 +1,8 @@
 # Visual Studio cache directory
 .vs/
 
+AnimHost/animHost_Plugins/BasicOnnxPlugin/onnxruntime/
+
 # Mac
 .DS_Store
 iOS
