@@ -97,12 +97,16 @@ public:
 Q_SIGNALS:
     void inPortDataWasSet(NodeId const, PortType const, PortIndex const);
 
+     void embeddedWidgetSizeUpdated(NodeId const);
+
 private:
     NodeId newNodeId() override { return _nextNodeId++; }
 
     void sendConnectionCreation(ConnectionId const connectionId);
 
     void sendConnectionDeletion(ConnectionId const connectionId);
+
+   
 
 private Q_SLOTS:
     /**

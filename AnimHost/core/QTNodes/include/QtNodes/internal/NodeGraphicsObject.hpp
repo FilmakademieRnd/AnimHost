@@ -31,6 +31,10 @@ public:
 
     BasicGraphicsScene *nodeScene() const;
 
+
+    //Change AI Simon H.
+    void updateQWidget();
+
     NodeId nodeId() { return _nodeId; }
 
     NodeId nodeId() const { return _nodeId; }
@@ -85,6 +89,7 @@ private:
 
     NodeState _nodeState;
 
+public:
     // either nullptr or owned by parent QGraphicsItem
     QGraphicsProxyWidget *_proxyWidget;
 };
