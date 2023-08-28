@@ -1,9 +1,12 @@
-
 qt_add_library(BasicOnnxPlugin
     BasicOnnxPlugin.cpp BasicOnnxPlugin.h
+    OnnxModel.h OnnxModel.cpp
+    OnnxTensor.h OnnxTensor.cpp
+    OnnxModelViewWidget.cpp OnnxModelViewWidget.h
     BasicOnnxPlugin_global.h
     OnnxHelper.h
 )
+
 target_include_directories(BasicOnnxPlugin PUBLIC
     ../PluginNodeInterface
     ./onnxruntime/include

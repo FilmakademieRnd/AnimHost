@@ -4,9 +4,14 @@
 
 #include "BasicOnnxPlugin_global.h"
 #include <QMetaType>
-#include <pluginnodeinterface.h>
 
-class QPushButton;
+#include <QtWidgets>
+#include <pluginnodeinterface.h>
+#include <onnxruntime_cxx_api.h>
+#include "OnnxModel.h"
+
+class OnnxModelViewWidget;
+
 
 class BASICONNXPLUGINSHARED_EXPORT BasicOnnxPlugin : public PluginNodeInterface
 {
@@ -15,7 +20,27 @@ class BASICONNXPLUGINSHARED_EXPORT BasicOnnxPlugin : public PluginNodeInterface
     Q_INTERFACES(PluginNodeInterface)
 
 private:
-    QPushButton* _pushButton;
+
+    
+
+    //GUI
+    OnnxModelViewWidget* widget;
+
+    //TodO. Link Model to ModelView
+    //Add Tensor Class
+
+    std::unique_ptr<OnnxModel> _onnxModel;
+
+    QString OnnxModelFilePath = "";
+    bool bModelDescValid = false;
+
+
+
+    std::vector<std::weak_ptr<NodeData>> _dataIn;
+    std::vector<std::shared_ptr<NodeData>> _dataOut;
+
+
+
 
 public:
     BasicOnnxPlugin();
@@ -37,6 +62,28 @@ public:
 
     //QTNodes
     QString category() override { return "Undefined Category"; };  // Returns a category for the node
+    /// It is possible to hide port caption in GUI
+    bool portCaptionVisible(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override { return true; }
+
+
+    /// Port caption is used in GUI to label individual ports
+    QString portCaption(QtNodes::PortType, QtNodes::PortIndex) const override;
+
+private:
+    void LoadOnnxModel();
+    void RunDummyInference();
+
+    void clearPorts();
+    void addPort();
+
+
+    std::string shape_printer(const std::vector<int64_t>& vec) {
+        return std::accumulate(vec.begin(), vec.end(), std::string{},
+            [](const std::string& a, int b) {
+                return a.empty() ? std::to_string(b) : a + " " + std::to_string(b);
+            });
+    }
+
 
 private Q_SLOTS:
     void onButtonClicked();
