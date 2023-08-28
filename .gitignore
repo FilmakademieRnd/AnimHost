@@ -29,3 +29,4 @@ ExportedObj/
 build*
 *.autosave
 cmake_build*
+cmake*
