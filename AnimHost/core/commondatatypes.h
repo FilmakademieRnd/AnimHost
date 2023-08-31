@@ -65,15 +65,19 @@ public:
 
 public:
     Bone(std::string name, int id, int numPos, int numRot, int numScl, glm::mat4 rest);
+    
+    // copy bone with information from single bone
+    Bone(const Bone& o, int frame);
+    
     Bone();
 
     glm::mat4 GetRestingTransform() { return mRestingTransform; };
 
-    glm::quat GetOrientation(int frame);
+    glm::quat GetOrientation(int frame) const;
 
-    glm::vec3 GetPosition(int frame);
+    glm::vec3 GetPosition(int frame) const;
 
-    glm::vec3 GetScale(int frame);
+    glm::vec3 GetScale(int frame) const;
 
     COMMONDATA(bone, Bone)
 
@@ -87,11 +91,11 @@ public:
     std::map<int, std::string> bone_names_reverse;
     std::map<int, std::vector<int>> bone_hierarchy;
 
-    int mAnimationDataSize;
-    int mNumBones;
+    int mAnimationDataSize = 0;
+    int mNumBones = 0;
     int mRotationSize = 4;
-    int mNumKeyFrames;
-    int mFrameOffset;
+    int mNumKeyFrames = 0;
+    int mFrameOffset = 0;
 
 private:
 
@@ -145,10 +149,13 @@ public:
     std::vector<glm::vec3> mPositionData;
 
 public:
-    Pose() { qDebug() << "Pose ()"; };
+    Pose() {
+        qDebug() << "Pose ()"; 
+        mPositionData = std::vector<glm::vec3>();
+    };
     ~Pose() {};
     Pose(const Pose& o) : mPositionData(o.mPositionData) { qDebug() << "Pose Copy"; };
-    Pose(Pose&& o) noexcept : mPositionData(std::move(o.mPositionData)) { qDebug() << "Pose Move"; };
+
 
     COMMONDATA(pose, Pose)
 
@@ -157,6 +164,24 @@ public:
 
 Q_DECLARE_METATYPE(Pose)
 Q_DECLARE_METATYPE(std::shared_ptr<Pose>)
+
+
+class ANIMHOSTCORESHARED_EXPORT PoseSequence
+{
+public:
+
+    std::vector<Pose> mPoseSequence;
+public:
+
+    PoseSequence() { qDebug() << "PoseSequence()"; };
+
+    COMMONDATA(poseSequence, PoseSequence)
+
+
+};
+
+Q_DECLARE_METATYPE(PoseSequence)
+Q_DECLARE_METATYPE(std::shared_ptr<PoseSequence>)
 
 
 

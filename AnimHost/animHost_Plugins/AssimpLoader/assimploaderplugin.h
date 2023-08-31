@@ -7,7 +7,7 @@
 #include <pluginnodeinterface.h>
 #include <commondatatypes.h>
 #include <nodedatatypes.h>
-#include <QPushButton>
+#include <QtWidgets>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -24,11 +24,14 @@ private:
     std::shared_ptr<AnimNodeData<Skeleton>> _skeleton;
     std::shared_ptr<AnimNodeData<Animation>> _animation;
 
-    QString SourceFilePath = "C:/Users/m5940/_dev/_datasets/Mixamo_new/Doozy/Drunk Walk.bvh";
+    QString SourceFilePath = "";
 
     bool bDataValid;
 
+    QWidget* widget;
     QPushButton* _pushButton;
+    QLabel* _label;
+    QHBoxLayout* _filePathLayout;
 
 public:
     AssimpLoaderPlugin();
@@ -37,7 +40,9 @@ public:
 
     std::unique_ptr<NodeDelegateModel> Init() override { return  std::unique_ptr<AssimpLoaderPlugin>(new AssimpLoaderPlugin()); };
 
-    QString caption() const override { return this->name(); }
+    QString caption() const override { return "Animation Import"; }
+    QString name() const override { return "Animation Import"; }
+   
     bool captionVisible() const override { return true; }
 
     unsigned int nPorts(QtNodes::PortType portType) const override;
@@ -50,7 +55,7 @@ public:
     QWidget* embeddedWidget() override;
 
     //QTNodes
-    QString category() override { return "1234"; };  // Returns a category for the node
+    QString category() override { return "Import"; };  // Returns a category for the node
 
 private Q_SLOTS:
     void onButtonClicked();

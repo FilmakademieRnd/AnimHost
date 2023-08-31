@@ -48,7 +48,7 @@ public:
     
     std::unique_ptr<NodeDelegateModel> Init() override { return  std::unique_ptr<BasicOnnxPlugin>(new BasicOnnxPlugin()); };
 
-    QString caption() const override { return this->name(); }
+    QString caption() const override { return "Onnx Runtime Inference";  }
     bool captionVisible() const override { return true; }
 
     unsigned int nPorts(QtNodes::PortType portType) const override;
@@ -61,7 +61,7 @@ public:
     QWidget* embeddedWidget() override;
 
     //QTNodes
-    QString category() override { return "Undefined Category"; };  // Returns a category for the node
+    QString category() override { return "Operator"; };  // Returns a category for the node
     /// It is possible to hide port caption in GUI
     bool portCaptionVisible(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override { return true; }
 

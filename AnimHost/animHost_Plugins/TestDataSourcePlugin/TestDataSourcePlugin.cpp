@@ -10,11 +10,10 @@
 TestDataSourcePlugin::TestDataSourcePlugin()
 {
     qDebug() << "Hello Test Data Source Plugin";
-
  
     //Data
     inputs.append(QMetaType::fromName("Skeleton"));
-    inputs.append(QMetaType::fromName("Pose"));
+    inputs.append(QMetaType::fromName("PoseSequence"));
 
 }
 
@@ -26,9 +25,8 @@ TestDataSourcePlugin::~TestDataSourcePlugin()
 // execute the main functionality of the plugin
 void TestDataSourcePlugin::run(QVariantList in, QVariantList& out)
 {
-    //execute
     auto skeletonIn = in[0].value<std::shared_ptr<Skeleton>>();
-    auto poseIn = in[1].value<std::shared_ptr<Pose>>();
+    auto poseSequenceIn = in[1].value<std::shared_ptr<PoseSequence>>();
 
     qDebug() << "Eval Test Data Source Plugin";
 
@@ -45,24 +43,20 @@ void TestDataSourcePlugin::run(QVariantList in, QVariantList& out)
     fileOut << "\n";
 
     
+    for (int frame = 0; frame < poseSequenceIn->mPoseSequence.size(); frame++) {
         for (int bone = 0; bone < skeletonIn->mNumBones; bone++) {
-           
-            fileOut << poseIn->mPositionData[bone].x << ",";
-            fileOut << poseIn->mPositionData[bone].y << ",";
-            fileOut << poseIn->mPositionData[bone].z;
+
+            fileOut << poseSequenceIn->mPoseSequence[frame].mPositionData[bone].x << ",";
+            fileOut << poseSequenceIn->mPoseSequence[frame].mPositionData[bone].y << ",";
+            fileOut << poseSequenceIn->mPoseSequence[frame].mPositionData[bone].z;
             if (bone != skeletonIn->mNumBones - 1)
                 fileOut << ",";
 
         }
         fileOut << "\n";
+    }
   
     fileOut.close();
-    
-
-
-
-
-    //out.append(QVariant::fromValue(pose));
 }
 
 QString TestDataSourcePlugin::category()
@@ -72,24 +66,10 @@ QString TestDataSourcePlugin::category()
 
 QList<QMetaType> TestDataSourcePlugin::inputTypes()
 {
-    //QList<QMetaType> list = QList<QMetaType>();
-    ///*foreach (QVariant v, inputs)
-    ///*foreach (QVariant v, inputs)
-    //{
-    //    list.append(v.metaType());
-    //}*/
-
-    //list.append(QMetaType::fromName("HumanoidBones"));
     return inputs;
 }
 
 QList<QMetaType> TestDataSourcePlugin::outputTypes()
 {
-    /*QList<QMetaType> list = QList<QMetaType>();
-    foreach (QVariant v, outputs)
-    {
-        list.append(v.metaType());
-    }
-    list.append(QMetaType::fromName("HumanoidBones"));*/
     return outputs;
 }

@@ -17,6 +17,8 @@ public:
 
     QPushButton* GetButton() { return button; };
 
+    QLabel* label;
+
     void UpdateModelDescription(const std::vector<std::string>& rTensorNames, const std::vector<std::string>& rTensorShape, bool BIsInput = true);
 
 private:
@@ -25,7 +27,7 @@ private:
 
     QVBoxLayout* mainLayout; 
     //V1
-    QLabel* label;
+    //QLabel* label;
     QPushButton* button;
     QHBoxLayout* modelPathLayout;
 

@@ -16,8 +16,10 @@ AnimHost::AnimHost()
 
     qRegisterMetaType<std::shared_ptr<HumanoidBones>>("HumanoidBones");
     qRegisterMetaType<std::shared_ptr<Pose>>("Pose");
+    qRegisterMetaType<std::shared_ptr<PoseSequence>>("PoseSequence");
     qRegisterMetaType<std::shared_ptr<Skeleton>>("Skeleton");
     qRegisterMetaType<std::shared_ptr<Animation>>("Animation");
+
 
     //initalize list for nodes
     nodes = std::make_shared<NodeDelegateModelRegistry>();

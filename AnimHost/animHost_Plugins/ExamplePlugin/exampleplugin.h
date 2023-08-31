@@ -15,10 +15,14 @@ class EXAMPLEPLUGINSHARED_EXPORT ExamplePlugin : public PluginInterface
 public:
     ExamplePlugin();
     ~ExamplePlugin();
+
     void run(QVariantList in, QVariantList& out) override;
     QObject* getObject() { return this; }
 
+
+
     //QTNodes
+    QString name() override { return "Global Joint Positions"; };
     QString category() override;  // Returns a category for the node
     QList<QMetaType> inputTypes() override;  // Returns input data types
     QList<QMetaType> outputTypes() override;  // Returns output data types

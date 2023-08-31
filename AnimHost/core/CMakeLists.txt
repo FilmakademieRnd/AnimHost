@@ -6,6 +6,7 @@ qt_add_library(AnimHostCore
     commondatatypes.h commondatatypes.cpp
     nodedatatypes.h
     sourcedatanode.h sourcedatanode.cpp
+    animhosthelper.h animhosthelper.cpp
 )
 
 target_compile_definitions(AnimHostCore PUBLIC

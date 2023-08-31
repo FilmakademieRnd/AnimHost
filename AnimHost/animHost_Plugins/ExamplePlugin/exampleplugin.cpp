@@ -19,7 +19,7 @@ ExamplePlugin::ExamplePlugin()
     inputs.append(QMetaType::fromName("Skeleton"));
     inputs.append(QMetaType::fromName("Animation"));
 
-    outputs.append(QMetaType::fromName("Pose"));
+    outputs.append(QMetaType::fromName("PoseSequence"));
 }
 
 ExamplePlugin::~ExamplePlugin()
@@ -42,14 +42,10 @@ void ExamplePlugin::run(QVariantList in, QVariantList& out)
     qDebug() << in[1].userType();
     qDebug() << QMetaType::fromName("Animation").id();
 
-    auto pose = std::make_shared<Pose>();
+    auto poseSequence = std::make_shared<PoseSequence>();
     int frame = 0;
 
-    pose->mPositionData = std::vector<glm::vec3>(skeleton->mNumBones, glm::vec3(0.0));
-
-    int initcurrentBone = 0;
-    glm::mat4 initcurrentPos(1.0f);
-
+    poseSequence->mPoseSequence = std::vector<Pose>(animation->mDurationFrames);
 
 
     std::function<void(glm::mat4, int)> lBuildPose;
@@ -76,21 +72,32 @@ void ExamplePlugin::run(QVariantList in, QVariantList& out)
 
 
 
-        pose->mPositionData[currentBone] = result;
+        poseSequence->mPoseSequence[frame].mPositionData[currentBone] = result;
 
         for (int i : skeleton->bone_hierarchy[currentBone]) {
             lBuildPose(globalT, i);
         }
     };
 
-    lBuildPose(initcurrentPos, initcurrentBone);
 
-    out.append(QVariant::fromValue(pose));
+    for (int i = 0; i < animation->mDurationFrames; i++) {
+
+        int initcurrentBone = 0;
+        glm::mat4 initcurrentPos(1.0f);
+
+        poseSequence->mPoseSequence[frame].mPositionData = std::vector<glm::vec3>(skeleton->mNumBones, glm::vec3(0.0));
+
+        lBuildPose(initcurrentPos, initcurrentBone);
+
+        frame++;
+    }
+
+    out.append(QVariant::fromValue(poseSequence));
 }
 
 QString ExamplePlugin::category()
 {
-    return "Generator";
+    return "Operator";
 }
 
 QList<QMetaType> ExamplePlugin::inputTypes()

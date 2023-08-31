@@ -19,6 +19,7 @@ public:
     QObject* getObject() { return this; }
 
     //QTNodes
+    QString name() override { return "CSV Export"; }
     QString category() override;  // Returns a category for the node
     QList<QMetaType> inputTypes() override;  // Returns input data types
     QList<QMetaType> outputTypes() override;  // Returns output data types

@@ -135,7 +135,8 @@ void OnnxModel::RunInference()
     auto in_size = input_names_c.size();
     auto out_names = output_names_c.data();
     auto out_size = output_names_c.size();
-    ret = input_tensors[1].GetTensorMutableData<float>();
+
+//    ret = input_tensors[1].GetTensorMutableData<float>();
 
     try {
         auto out_tensors = session->Run(Ort::RunOptions{ nullptr }, in_names, in_tensor,

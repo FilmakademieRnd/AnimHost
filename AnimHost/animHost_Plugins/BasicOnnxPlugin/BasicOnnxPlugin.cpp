@@ -1,6 +1,7 @@
 
 #include "BasicOnnxPlugin.h"
 #include "OnnxHelper.h"
+#include "animhosthelper.h"
 #include <QPushButton>
 #include <QtWidgets>
 #include "OnnxModelViewWidget.h"
@@ -188,5 +189,10 @@ void BasicOnnxPlugin::onButtonClicked()
     LoadOnnxModel();
 
     qDebug() << file_name;
+    QString shorty = AnimHostHelper::shortenFilePath(file_name, 10);
+
+    widget->label->setText(shorty);
+    Q_EMIT embeddedWidgetSizeUpdated();
+    Q_EMIT dataUpdated(0);
 
 }

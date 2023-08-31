@@ -14,6 +14,22 @@ Bone::Bone(std::string name, int id, int numPos, int numRot, int numScl, glm::ma
 	mRestingTransform = rest;
 }
 
+Bone::Bone(const Bone& o, int frame)
+{
+	mName = o.mName;
+	mID = o.mID;
+	mNumKeysPosition = 1;
+	mNumKeysRotation = 1;
+	mNumKeysScale = 1;
+
+	mRestingTransform = o.mRestingTransform;
+
+	this->mPositonKeys.push_back({ 0.0,  o.GetPosition(frame)});
+	this->mRotationKeys.push_back({ 0.0,  o.GetOrientation(frame)});
+	this->mScaleKeys.push_back({ 0.0, o.GetScale(frame)});
+
+}
+
 Bone::Bone()
 {
 	mName = "";
@@ -24,7 +40,7 @@ Bone::Bone()
 	mRestingTransform = glm::mat4(1.0f);
 }
 
-glm::quat Bone::GetOrientation(int frame)
+glm::quat Bone::GetOrientation(int frame) const
 {
 	if (mRotationKeys.size() == 0)
 	{
@@ -42,7 +58,7 @@ glm::quat Bone::GetOrientation(int frame)
 
 }
 
-glm::vec3 Bone::GetPosition(int frame)
+glm::vec3 Bone::GetPosition(int frame) const
 {
 	if (mPositonKeys.size() == 0)
 	{
@@ -62,7 +78,7 @@ glm::vec3 Bone::GetPosition(int frame)
 
 }
 
-glm::vec3 Bone::GetScale(int frame)
+glm::vec3 Bone::GetScale(int frame) const
 {
 	if (mScaleKeys.size() == 0)
 	{

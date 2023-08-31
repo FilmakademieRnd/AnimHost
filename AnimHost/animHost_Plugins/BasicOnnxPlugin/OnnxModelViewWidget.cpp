@@ -7,6 +7,7 @@ OnnxModelViewWidget::OnnxModelViewWidget()
     qDebug() << "BasicOnnxPlugin getWidget";
 
     mainLayout = new QVBoxLayout();
+    mainLayout->setSizeConstraint(QLayout::SetMinimumSize);
 
 
     inputModel = new QStandardItemModel();
@@ -16,18 +17,23 @@ OnnxModelViewWidget::OnnxModelViewWidget()
     outputModel->setHorizontalHeaderLabels({ "Output", "Shape" });
 
     //V1
-    label = new QLabel("Select Model Path");
-    button = new QPushButton("Example Widget");
+    label = new QLabel("Path");
+    button = new QPushButton("Import Model");
   //  connect(button, &QPushButton::released, this, &BasicOnnxPlugin::onButtonClicked);
 
     //button->resize(QSize(10, 10));
-    button->setFixedSize(QSize(30, 30));
+    //button->resize(QSize(30, 30));
     modelPathLayout = new QHBoxLayout();
 
     modelPathLayout->addWidget(label);
     modelPathLayout->addWidget(button);
 
+    //modelPathLayout->setSizeConstraint(QLayout::SetMinimumSize);
+
+
     mainLayout->addLayout(modelPathLayout);
+
+    mainLayout->setSizeConstraint(QLayout::SetMinimumSize);
 
     //V2
     inputView = new QTableView();
@@ -51,10 +57,12 @@ OnnxModelViewWidget::OnnxModelViewWidget()
 
 
     this->setLayout(mainLayout);
+    //this->setSizeConstraint(QLayout::SetMinimumSize);
 
     this->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
         "QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"
-        "QPushButton{border: 1px solid white; border-radius: 4px; min-width:30px;}"
+        "QPushButton{border: 1px solid white; border-radius: 4px; padding: 5px; background-color:rgb(98, 139, 202);}"
+        "QLabel{background-color:rgb(25, 25, 25); border-width: 1px; border-color: rgb(60, 60, 60); border-radius: 4px; padding: 5px; min-width: 200px}"
     );
     
 

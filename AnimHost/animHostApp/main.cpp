@@ -89,8 +89,11 @@ int main(int argc, char *argv[])
 
     DataFlowGraphModel dataFlowGraphModel(registry);
 
+
+
     l->addWidget(menuBar);
     auto scene = new DataFlowGraphicsScene(dataFlowGraphModel, &mainWidget);
+ 
 
     auto view = new GraphicsView(scene);
     l->addWidget(view);

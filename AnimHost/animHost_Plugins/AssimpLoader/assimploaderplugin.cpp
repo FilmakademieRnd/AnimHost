@@ -2,6 +2,8 @@
 #include <iostream>
 
 #include "assimphelper.h"
+#include "animhosthelper.h"
+
 
 #include <QFileInfo>
 #include <QDateTime>
@@ -26,6 +28,9 @@ AssimpLoaderPlugin::AssimpLoaderPlugin()
 	bDataValid = false;
 
 	_pushButton = nullptr;
+	widget = nullptr;
+	_label = nullptr;
+	_filePathLayout = nullptr;
 	
 	qDebug() << this->name();
 }
@@ -58,17 +63,18 @@ std::shared_ptr<NodeData> AssimpLoaderPlugin::outData(QtNodes::PortIndex port)
 {
 	if (!bDataValid) {
 		importAssimpData();
-		bDataValid = true;
 	}
-
-
-	switch (port) {
-	case 0:
-		return _skeleton;
-	case 1:
-		return _animation;
-	default:
-		break;
+	
+	if (bDataValid)
+	{
+		switch (port) {
+		case 0:
+			return _skeleton;
+		case 1:
+			return _animation;
+		default:
+			break;
+		}
 	}
 
 	return nullptr;
@@ -77,13 +83,35 @@ std::shared_ptr<NodeData> AssimpLoaderPlugin::outData(QtNodes::PortIndex port)
 QWidget* AssimpLoaderPlugin::embeddedWidget()
 {
 	if (!_pushButton) {
-		_pushButton = new QPushButton("Select File");
-		_pushButton->resize(QSize(200, 50));
+		_pushButton = new QPushButton("Import Animation");
+		_label = new QLabel("Select Animation Path");
+
+		_pushButton->resize(QSize(30, 30));
+		_filePathLayout = new QHBoxLayout();
+
+		_filePathLayout->addWidget(_label);
+		_filePathLayout->addWidget(_pushButton);
+
+		_filePathLayout->setSizeConstraint(QLayout::SetMinimumSize);
+
+		widget = new QWidget();
+
+		widget->setLayout(_filePathLayout);
+
+
+
+
 
 		connect(_pushButton, &QPushButton::released, this, &AssimpLoaderPlugin::onButtonClicked);
 	}
 
-	return _pushButton;
+	widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
+		"QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"
+		"QPushButton{border: 1px solid white; border-radius: 4px; padding: 5px; background-color:rgb(98, 139, 202);}"
+		"QLabel{background-color:rgb(25, 25, 25); border: 1px; border-color: rgb(60, 60, 60); border-radius: 4px; padding: 5px;}"
+	);
+
+	return widget;
 }
 
 void AssimpLoaderPlugin::loadAnimationData(aiAnimation* pASSIMPAnimation, Skeleton* pSkeleton, Animation* pAnimation, aiNode* pNode)
@@ -149,6 +177,7 @@ void AssimpLoaderPlugin::importAssimpData()
 
 	if (nullptr == scene) {
 		qDebug() << Q_FUNC_INFO << "\n" << importer.GetErrorString();
+		bDataValid = false;
 		return;
 	}
 
@@ -164,6 +193,8 @@ void AssimpLoaderPlugin::importAssimpData()
 
 		AssimpHelper::buildSkeletonFormAssimpNode(_skeleton->getData().get(), scene->mRootNode);
 		loadAnimationData(scene->mAnimations[0], _skeleton->getData().get(), _animation->getData().get(), scene->mRootNode);
+
+		bDataValid = true;
 	}
 }
 
@@ -171,15 +202,24 @@ void AssimpLoaderPlugin::importAssimpData()
 void AssimpLoaderPlugin::onButtonClicked()
 {
 	qDebug() << "Clicked";
-	QString file_name = QFileDialog::getOpenFileName(nullptr, "Open Animation", "C://", "(*.bvh *.fbx)");
+	QString file_name = QFileDialog::getOpenFileName(nullptr, "Import Animation", "C://", "(*.bvh *.fbx)");
 
 	SourceFilePath = file_name;
 	bDataValid = false;
 
 	qDebug() << file_name;
 
+	QString shorty =AnimHostHelper::shortenFilePath(file_name, 10);
+
+	_label->setText(shorty);
+
+
+	
+
 	Q_EMIT dataUpdated(0);
 	Q_EMIT dataUpdated(1);
+
+	Q_EMIT embeddedWidgetSizeUpdated();
 
 }
 
