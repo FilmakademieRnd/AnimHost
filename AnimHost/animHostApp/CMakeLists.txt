@@ -62,6 +62,6 @@ add_custom_command(TARGET AnimHost POST_BUILD
 
 add_custom_command(TARGET AnimHost POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${CMAKE_SOURCE_DIR}/../assimp/bin/Debug/assimp-vc142-mtd.dll
+        ${CMAKE_SOURCE_DIR}/../assimp/bin/Debug/assimp-vc143-mtd.dll
         $<TARGET_FILE_DIR:AnimHost>
 )

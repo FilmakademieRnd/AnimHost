@@ -23,7 +23,7 @@ target_link_libraries(AssimpLoader PUBLIC
     Qt::Core
     Qt::Gui
     Qt::Widgets
-    assimp-vc142-mtd
+    assimp-vc143-mtd
     AnimHostCore
 )
 
