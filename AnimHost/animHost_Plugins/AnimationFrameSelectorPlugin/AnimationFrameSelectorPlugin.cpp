@@ -8,6 +8,7 @@ AnimationFrameSelectorPlugin::AnimationFrameSelectorPlugin()
     _slider = nullptr;
 
     _animationOut = std::make_shared<AnimNodeData<Animation>>();
+
     qDebug() << "AnimationFrameSelectorPlugin created";
 }
 
@@ -64,7 +65,7 @@ QWidget* AnimationFrameSelectorPlugin::embeddedWidget()
         _widget = new QWidget();
 
         _slider = new QSlider(Qt::Horizontal, _widget);
-		
+        _slider->setTracking(false);
 
         connect(_slider, &QSlider::valueChanged, this, &AnimationFrameSelectorPlugin::onFrameChange);
 	}
@@ -76,6 +77,7 @@ void AnimationFrameSelectorPlugin::onFrameChange(int value)
 {
     qDebug() << value;
     auto AnimOut = _animationOut->getData();
+    AnimOut->mDurationFrames = 1;
 
     if (auto spAnimationIn = _animationIn.lock()) {
         
