@@ -24,7 +24,8 @@ protected:
 };
 
 
-
+//! Templated class making common data types available for using in Qt nodes and Qt reflection system
+//! 
 template <typename T> class ANIMHOSTCORESHARED_EXPORT AnimNodeData : public AnimNodeDataBase
 {
 public:

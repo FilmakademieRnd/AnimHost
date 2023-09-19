@@ -30,25 +30,30 @@ using QtNodes::NodeDataType;
 #define COMMONDATA(id, name)  static QString getId() { return #id ; };\
     static QString getName() { return #name ; };\
 
-
+//! 3D position keyframe of an animation with timestamp
 struct ANIMHOSTCORESHARED_EXPORT KeyPosition
 {
     float timeStamp;
     glm::vec3 position;
 };
 
+//! 3D rotation keyframe of an animation with timestamp
 struct ANIMHOSTCORESHARED_EXPORT KeyRotation
 {
     float timeStamp;
     glm::quat orientation;
 };
 
+//! 3D scale keyframe of an animation with timestamp
 struct ANIMHOSTCORESHARED_EXPORT KeyScale
 {
     float timeStamp;
     glm::vec3 scale;
 };
 
+//! Bone data container
+//! Every bone has a string name, and automatically generated ID and a series of positions, rotations and scales representing an animation.
+//! Additionally, every node has a set resting transform
 class ANIMHOSTCORESHARED_EXPORT Bone 
 {
 public:
@@ -84,6 +89,9 @@ public:
 };
 Q_DECLARE_METATYPE(Bone)
 
+//! Skeleton holds maps to retreive bone names given an ID and vice versa
+//! It also stores the bone hierarchy (every bone ID is associated with an array of the IDs of its own children)
+//! Additional info (don't know if still relevant)
 class ANIMHOSTCORESHARED_EXPORT Skeleton
 {
 public:
@@ -108,6 +116,9 @@ public:
 };
 Q_DECLARE_METATYPE(Skeleton)
 
+//! Animation data structure:
+//! Duration in seconds and in frames
+//! Array of Bone instances (sorted by ID) -> Bone instances contain sequences of pos/rot/sca of a specific bone (i.e. bone motions - see line 54 to 90)
 class ANIMHOSTCORESHARED_EXPORT Animation
 {
 public:
@@ -139,7 +150,7 @@ Q_DECLARE_METATYPE(Animation)
 Q_DECLARE_METATYPE(std::shared_ptr<Animation>)
 
 
-
+//! Positions of every character joint relative to Character Space with relative timestamp
 class ANIMHOSTCORESHARED_EXPORT Pose
 {
     float timeStamp;
@@ -165,7 +176,7 @@ public:
 Q_DECLARE_METATYPE(Pose)
 Q_DECLARE_METATYPE(std::shared_ptr<Pose>)
 
-
+//! Sequence of poses
 class ANIMHOSTCORESHARED_EXPORT PoseSequence
 {
 public:

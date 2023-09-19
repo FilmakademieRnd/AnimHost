@@ -7,6 +7,7 @@ qt_add_library(AnimHostCore
     nodedatatypes.h
     sourcedatanode.h sourcedatanode.cpp
     animhosthelper.h animhosthelper.cpp
+    ZMQMessageHandler.h
 )
 
 target_compile_definitions(AnimHostCore PUBLIC
@@ -15,6 +16,8 @@ target_compile_definitions(AnimHostCore PUBLIC
 
 target_include_directories(AnimHostCore PUBLIC
     ../../glm
+    ../../nzmqt/3rdparty/cppzmq
+    ../../nzmqt/include
     ./QTNodes/include
     ../animHost_Plugins/PluginInterface
     ../animHost_Plugins/PluginNodeInterface
@@ -22,9 +25,9 @@ target_include_directories(AnimHostCore PUBLIC
 )
 
 
-
 target_link_directories(AnimHostCore PUBLIC 
     ./QTNodes/lib
+    
 )
 
 target_link_libraries(AnimHostCore PUBLIC
