@@ -4,7 +4,9 @@
 
 #include "DataExportPlugin_global.h"
 #include <QMetaType>
+#include <QtWidgets>
 #include <pluginnodeinterface.h>
+#include <nodedatatypes.h>
 
 class QPushButton;
 
@@ -15,7 +17,27 @@ class DATAEXPORTPLUGINSHARED_EXPORT DataExportPlugin : public PluginNodeInterfac
     Q_INTERFACES(PluginNodeInterface)
 
 private:
+    
+    
+    QWidget* widget;
     QPushButton* _pushButton;
+    QLabel* _label;
+    QHBoxLayout* _filePathLayout;
+
+    // Node Data Innput
+    std::weak_ptr<AnimNodeData<Skeleton>> _skeletonIn;
+
+    bool bWritePoseSequence = true;
+    std::weak_ptr<AnimNodeData<PoseSequence>> _poseSequenceIn;
+
+    bool bWriteJointVelocity = false;
+    std::weak_ptr<AnimNodeData<JointVelocitySequence>> _jointVelocitySequenceIn;
+
+
+    // Export Settings
+    QString exportDirectory = "";
+
+    bool bWriteBinaryData = false;
 
 public:
     DataExportPlugin();
@@ -34,6 +56,14 @@ public:
     void setInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
 
     QWidget* embeddedWidget() override;
+
+    void exportPoseSequenceData();
+
+    void writeCSVPoseSequenceData();
+
+    void exportJointVelocitySequence();
+
+    void writeCSVJointVelocitySequence();
 
     //QTNodes
     QString category() override { return "Undefined Category"; };  // Returns a category for the node
