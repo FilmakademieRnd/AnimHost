@@ -1,20 +1,20 @@
-#ifndef EXAMPLEPLUGIN_H
-#define EXAMPLEPLUGIN_H
+#ifndef JOINTPOSITIONPLUGIN_H
+#define JOINTPOSITIONPLUGIN_H
 
-#include "exampleplugin_global.h"
+#include "JointPositionPlugin_global.h"
 #include <QMetaType>
 #include <plugininterface.h>
 
 
-class EXAMPLEPLUGINSHARED_EXPORT ExamplePlugin : public PluginInterface
+class JOINTPOSITIONPLUGINSHARED_EXPORT JointPositionPlugin : public PluginInterface
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "de.animhost.PluginInterface" FILE "exampleplugin.json")
+    Q_PLUGIN_METADATA(IID "de.animhost.PluginInterface" FILE "JointPositionPlugin.json")
     Q_INTERFACES(PluginInterface)
 
 public:
-    ExamplePlugin();
-    ~ExamplePlugin();
+    JointPositionPlugin();
+    ~JointPositionPlugin();
 
     void run(QVariantList in, QVariantList& out) override;
     QObject* getObject() { return this; }
@@ -30,4 +30,4 @@ public:
 
 };
 
-#endif // EXAMPLEPLUGIN_H
+#endif // JOINTPOSITIONPLUGIN_H

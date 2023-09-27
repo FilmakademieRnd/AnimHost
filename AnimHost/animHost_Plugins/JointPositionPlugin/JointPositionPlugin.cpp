@@ -1,4 +1,4 @@
-#include "exampleplugin.h"
+#include "JointPositionPlugin.h"
 #include <iostream>
 #include <QFileInfo>
 #include <QDateTime>
@@ -10,10 +10,9 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/ext/quaternion_float.hpp>
 
-ExamplePlugin::ExamplePlugin()
+JointPositionPlugin::JointPositionPlugin()
 {
-    qDebug() << "Hello Example Plugin";
-
+    qDebug() << "JointPositionPlugin created";
  
     //Data
     inputs.append(QMetaType::fromName("Skeleton"));
@@ -22,13 +21,13 @@ ExamplePlugin::ExamplePlugin()
     outputs.append(QMetaType::fromName("PoseSequence"));
 }
 
-ExamplePlugin::~ExamplePlugin()
+JointPositionPlugin::~JointPositionPlugin()
 {
-    qDebug() << "Good Bye Example Plugin";
+    qDebug() << "~JointPositionPlugin()";
 }
 
 // execute the main functionality of the plugin
-void ExamplePlugin::run(QVariantList in, QVariantList& out)
+void JointPositionPlugin::run(QVariantList in, QVariantList& out)
 {
     qDebug() << "RUN Global Joint Position Calculation";
     //execute
@@ -91,31 +90,17 @@ void ExamplePlugin::run(QVariantList in, QVariantList& out)
     out.append(QVariant::fromValue(poseSequence));
 }
 
-QString ExamplePlugin::category()
+QString JointPositionPlugin::category()
 {
     return "Operator";
 }
 
-QList<QMetaType> ExamplePlugin::inputTypes()
+QList<QMetaType> JointPositionPlugin::inputTypes()
 {
-    //QList<QMetaType> list = QList<QMetaType>();
-    ///*foreach (QVariant v, inputs)
-    ///*foreach (QVariant v, inputs)
-    //{
-    //    list.append(v.metaType());
-    //}*/
-
-    //list.append(QMetaType::fromName("HumanoidBones"));
     return inputs;
 }
 
-QList<QMetaType> ExamplePlugin::outputTypes()
+QList<QMetaType> JointPositionPlugin::outputTypes()
 {
-    /*QList<QMetaType> list = QList<QMetaType>();
-    foreach (QVariant v, outputs)
-    {
-        list.append(v.metaType());
-    }
-    list.append(QMetaType::fromName("HumanoidBones"));*/
     return outputs;
 }
