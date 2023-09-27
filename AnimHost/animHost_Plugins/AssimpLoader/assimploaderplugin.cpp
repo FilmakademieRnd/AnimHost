@@ -69,8 +69,10 @@ std::shared_ptr<NodeData> AssimpLoaderPlugin::outData(QtNodes::PortIndex port)
 	{
 		switch (port) {
 		case 0:
+			qDebug() << "	1. Collect Skeleton Info";
 			return _skeleton;
 		case 1:
+			qDebug() << "	2. Collect Animation Data";
 			return _animation;
 		default:
 			break;
@@ -97,11 +99,6 @@ QWidget* AssimpLoaderPlugin::embeddedWidget()
 		widget = new QWidget();
 
 		widget->setLayout(_filePathLayout);
-
-
-
-
-
 		connect(_pushButton, &QPushButton::released, this, &AssimpLoaderPlugin::onButtonClicked);
 	}
 
@@ -170,8 +167,6 @@ void AssimpLoaderPlugin::importAssimpData()
 	Assimp::Importer importer;
 	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 
-	qDebug() << Q_FUNC_INFO;
-
 	const  aiScene* scene = importer.ReadFile(SourceFilePath.toStdString(),
 		aiProcess_SortByPType);
 
@@ -191,6 +186,12 @@ void AssimpLoaderPlugin::importAssimpData()
 			}
 		}
 
+		QFileInfo fi(SourceFilePath);
+		_animation->getData()->sourceName = fi.fileName();
+
+		globalSequenceCounter++;
+		_animation->getData()->dataSetID = globalSequenceCounter;
+
 		AssimpHelper::buildSkeletonFormAssimpNode(_skeleton->getData().get(), scene->mRootNode);
 		loadAnimationData(scene->mAnimations[0], _skeleton->getData().get(), _animation->getData().get(), scene->mRootNode);
 
@@ -202,28 +203,67 @@ void AssimpLoaderPlugin::importAssimpData()
 void AssimpLoaderPlugin::onButtonClicked()
 {
 	qDebug() << "Clicked";
-	QString file_name = QFileDialog::getOpenFileName(nullptr, "Import Animation", "C://", "(*.bvh *.fbx)");
 
-	SourceFilePath = file_name;
-	bDataValid = false;
+	QStringList files = loadFilesFromDir();
 
-	qDebug() << file_name;
+	for (auto file : files) {
+		//QString file_name = QFileDialog::getOpenFileName(nullptr, "Import Animation", "C://", "(*.bvh *.fbx)");
 
-	QString shorty =AnimHostHelper::shortenFilePath(file_name, 10);
+		qDebug() << "... Start Process " << file;
 
-	_label->setText(shorty);
+		Q_EMIT dataInvalidated(0);
+		Q_EMIT dataInvalidated(1);
 
+		qDebug() << "... Data Invalid Send ...";
+
+		SourceFilePath = file;
+		bDataValid = false;
+
+		QString shorty = AnimHostHelper::shortenFilePath(file, 10);
+
+		_label->setText(shorty);
+
+
+
+		qDebug() << "====== Send 0 Data Updated";
+		Q_EMIT dataUpdated(0);
+		qDebug() << "====== Data 0 Updated Done";
+
+		qDebug() << "====== Send 1 Data Updated";
+		Q_EMIT dataUpdated(1);
+		qDebug() << "====== Data 1 Updated Done";
+
+		qDebug() << "Process " << shorty << "... Done";
+
+		Q_EMIT embeddedWidgetSizeUpdated();
+	}
 
 	
 
-	Q_EMIT dataUpdated(0);
-	Q_EMIT dataUpdated(1);
-
-	Q_EMIT embeddedWidgetSizeUpdated();
-
 }
 
+QStringList AssimpLoaderPlugin::loadFilesFromDir()
+{
+	QString directory = QDir::toNativeSeparators(QFileDialog::getExistingDirectory(nullptr, "Import Animation", "C://"));
 
+	if (!directory.isEmpty()) {
+		QStringList filter = { "*.bvh","*.fbx" };
+
+
+		QDirIterator itr(directory, filter, QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+		
+		QStringList files;
+
+		while (itr.hasNext())
+			files << itr.next();
+
+		files.sort();
+
+		return files;
+	}
+
+	return {""};
+}
 
 
 

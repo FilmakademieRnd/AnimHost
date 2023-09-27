@@ -15,8 +15,15 @@ std::shared_ptr<NodeData> AnimHostOperationNode::outData(PortIndex index)
 
 void AnimHostOperationNode::setInData(std::shared_ptr<NodeData> data, PortIndex portIndex)
 {
+    qDebug() << this->name() << "setInData() " << portIndex;
+
     if (!data) {
-        Q_EMIT dataInvalidated(0);
+        for(int i=0; i< _dataOut.size(); i++)
+            Q_EMIT dataInvalidated(i);
+
+        _dataIn[portIndex] = data;
+        
+        return;
     }
 
     _dataIn[portIndex] = data;
@@ -38,7 +45,7 @@ void AnimHostOperationNode::compute()
 
         list.append(variant);
     }
-    qDebug() << "AnimHostNode::compute()";
+    qDebug() << this->name() << "compute()";
     _plugin->run(list, listOut);
 
     int counter = 0;

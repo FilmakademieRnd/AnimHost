@@ -26,6 +26,18 @@ using QtNodes::NodeData;
 using QtNodes::NodeDataType;
 
 
+//!Datacontainer for identifing proccessed and saved sequences 
+class Sequence {
+
+public:
+
+    // Name of the motion source. may be populated by original filename of sequence or freely chosen "Take" name.
+    QString sourceName = "";
+
+    // Used as identifier to map data to Source Name
+    int dataSetID = -1;
+};
+
 
 #define COMMONDATA(id, name)  static QString getId() { return #id ; };\
     static QString getName() { return #name ; };\
@@ -119,7 +131,7 @@ Q_DECLARE_METATYPE(Skeleton)
 //! Animation data structure:
 //! Duration in seconds and in frames
 //! Array of Bone instances (sorted by ID) -> Bone instances contain sequences of pos/rot/sca of a specific bone (i.e. bone motions - see line 54 to 90)
-class ANIMHOSTCORESHARED_EXPORT Animation
+class ANIMHOSTCORESHARED_EXPORT Animation : public Sequence
 {
 public:
     float mDuration = 0.0;
@@ -150,18 +162,58 @@ Q_DECLARE_METATYPE(Animation)
 Q_DECLARE_METATYPE(std::shared_ptr<Animation>)
 
 
+//! Velocity of every character joint calculated based on global position V = Xt - X(t-1)
+class ANIMHOSTCORESHARED_EXPORT JointVelocity
+{
+    float timeStamp;
+        
+public:
+
+    std::vector<glm::vec3> mJointVelocity;
+
+public: 
+    JointVelocity() {
+        mJointVelocity = std::vector<glm::vec3>();
+    };
+    
+    COMMONDATA(jointVelocity, JointVelocity)
+
+};
+Q_DECLARE_METATYPE(JointVelocity)
+Q_DECLARE_METATYPE(std::shared_ptr<JointVelocity>)
+
+//! Sequence of joint velocities
+class ANIMHOSTCORESHARED_EXPORT JointVelocitySequence : public Sequence
+{
+public:
+    std::vector<JointVelocity> mJointVelocitySequence;
+
+public:
+    JointVelocitySequence() {};
+
+
+    COMMONDATA(jointVelocitySequence, JointVelocitySequence)
+
+
+};
+
+Q_DECLARE_METATYPE(JointVelocitySequence)
+Q_DECLARE_METATYPE(std::shared_ptr<JointVelocitySequence>)
+
+
+
+
 //! Positions of every character joint relative to Character Space with relative timestamp
 class ANIMHOSTCORESHARED_EXPORT Pose
 {
-    float timeStamp;
+    float timeStamp = -1;
 
 public:
 
     std::vector<glm::vec3> mPositionData;
 
 public:
-    Pose() {
-        qDebug() << "Pose ()"; 
+    Pose() { 
         mPositionData = std::vector<glm::vec3>();
     };
     ~Pose() {};
@@ -172,12 +224,11 @@ public:
 
     
 };
-
 Q_DECLARE_METATYPE(Pose)
 Q_DECLARE_METATYPE(std::shared_ptr<Pose>)
 
 //! Sequence of poses
-class ANIMHOSTCORESHARED_EXPORT PoseSequence
+class ANIMHOSTCORESHARED_EXPORT PoseSequence : public Sequence
 {
 public:
 
@@ -190,63 +241,12 @@ public:
 
 
 };
-
 Q_DECLARE_METATYPE(PoseSequence)
 Q_DECLARE_METATYPE(std::shared_ptr<PoseSequence>)
 
 
 
-//!
-//! \brief The prototype of a HumanoidBones class
-//!
-class ANIMHOSTCORESHARED_EXPORT HumanoidBones
-{
-public:
-    HumanoidBones() { qDebug() << "HumanBones Hi!"; };
-    HumanoidBones(const HumanoidBones& t);
-    ~HumanoidBones() { qDebug() << "HumanBones Bye!!"; };
-
-    void SetSpine(QQuaternion in) { spine = in; };
-
-    COMMONDATA(humanoidbones, HumanoidBones)
 
 
-private:
-    // Spine bones
-    QQuaternion spine;
-    QQuaternion chest;
-    QQuaternion upperChest;
-
-    // Head bone
-    QQuaternion head;
-
-    // Arm bones
-    QQuaternion leftShoulder;
-    QQuaternion leftUpperArm;
-    QQuaternion leftLowerArm;
-    QQuaternion leftHand;
-
-    QQuaternion rightShoulder;
-    QQuaternion rightUpperArm;
-    QQuaternion rightLowerArm;
-    QQuaternion rightHand;
-
-    // Leg bones
-    QQuaternion leftUpperLeg;
-    QQuaternion leftLowerLeg;
-    QQuaternion leftFoot;
-    QQuaternion leftToes;
-
-    QQuaternion rightUpperLeg;
-    QQuaternion rightLowerLeg;
-    QQuaternion rightFoot;
-    QQuaternion rightToes;
-};
-//add HumanoidBones class as type to QVariants
-Q_DECLARE_METATYPE(HumanoidBones)
-
-//
-// Qt Node Editor Data
-//
 
 #endif // COMMONDATATYPES_H

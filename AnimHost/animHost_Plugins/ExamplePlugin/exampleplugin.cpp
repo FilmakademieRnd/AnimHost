@@ -30,21 +30,14 @@ ExamplePlugin::~ExamplePlugin()
 // execute the main functionality of the plugin
 void ExamplePlugin::run(QVariantList in, QVariantList& out)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << "RUN Global Joint Position Calculation";
     //execute
     std::shared_ptr<Skeleton> skeleton = in[0].value<std::shared_ptr<Skeleton>>();
     std::shared_ptr<Animation> animation = in[1].value<std::shared_ptr<Animation>>();
 
-
-    qDebug() << in[0].userType();
-    qDebug() << QMetaType::fromName("Skeleton").id();
-
-    qDebug() << in[1].userType();
-    qDebug() << QMetaType::fromName("Animation").id();
-
     auto poseSequence = std::make_shared<PoseSequence>();
     int frame = 0;
-
+  
     poseSequence->mPoseSequence = std::vector<Pose>(animation->mDurationFrames);
 
 
@@ -91,6 +84,9 @@ void ExamplePlugin::run(QVariantList in, QVariantList& out)
 
         frame++;
     }
+
+    poseSequence->dataSetID = animation->dataSetID;
+    poseSequence->sourceName = animation->sourceName;
 
     out.append(QVariant::fromValue(poseSequence));
 }

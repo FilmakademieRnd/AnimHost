@@ -3,13 +3,6 @@
 SourceDataNode::SourceDataNode()
 {
 
-
-    auto h = std::make_shared<AnimNodeData<HumanoidBones>>();
-    
-    h->getData()->SetSpine({ 1.f,2.f,3.f,4.f });
-
-    _dataOut.push_back(h);
- 
     _dataOut.push_back(std::make_shared<AnimNodeData<Pose>>());
 
 

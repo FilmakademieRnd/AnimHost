@@ -33,6 +33,8 @@ private:
     QLabel* _label;
     QHBoxLayout* _filePathLayout;
 
+    int globalSequenceCounter = 0;
+
 public:
     AssimpLoaderPlugin();
 
@@ -64,8 +66,7 @@ private:
     void loadAnimationData(aiAnimation* pASSIMPAnimation, Skeleton* pSkeleton, Animation* pAnimation, aiNode* pNode);
     void importAssimpData();
 
-
-
+    QStringList loadFilesFromDir();
 
 };
 
