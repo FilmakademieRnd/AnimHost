@@ -1,15 +1,20 @@
 #ifndef ANIMHOSTMESSAGESENDER_H
 #define ANIMHOSTMESSAGESENDER_H
 
-#include <QObject>
+#include "ZMQMessageHandler.h"
+#include "TracerUpdateSenderPlugin.h"
+
+//#include <QObject>
 #include <QMutex>
 #include <QMultiMap>
 #include <QElapsedTimer>
 #include <nzmqt/nzmqt.hpp>
-#include "ZMQMessageHandler.h"
 
-class AnimHostMessageSender : public ZMQMessageHandler {
+
+class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMessageHandler {
+    
     Q_OBJECT
+
     public:
     AnimHostMessageSender() {}
     AnimHostMessageSender(QString m_ipAddress) {
@@ -19,8 +24,9 @@ class AnimHostMessageSender : public ZMQMessageHandler {
         ipAddress = m_ipAddress;
         _debug = m_debugState;
         context = m_context;
-        _stop = false;
+        _stop = true;
         _working = false;
+        _paused = false;
     }
     ~AnimHostMessageSender() {
         sendSocket->close();
@@ -31,6 +37,8 @@ class AnimHostMessageSender : public ZMQMessageHandler {
 
     //request this process to stop working
     void requestStop() override;
+
+    void setMessage(zmq::message_t* msg);
 
     private:
 
@@ -63,18 +71,29 @@ class AnimHostMessageSender : public ZMQMessageHandler {
 
     signals:
     //signal emitted when process requests to work
-    void startRequested();
+    //void startRequested();
 
     //signal emitted when process is finished
     void stopped();
 
-    public slots:
+    public Q_SLOTS:
     //execute operations
-    void run() override;
+    void run();
 
-    private slots:
+    protected slots:
     //create a new sync message
-    void createSyncMessage(int time);
+    void createSyncMessage(int time) {
+        syncMessage[0] = targetHostID;
+        syncMessage[1] = time;
+        syncMessage[2] = MessageType::SYNC;
+
+        // increase local time for controlling client timeouts
+        m_time++;
+    }
+
+    //protected slots:
+    //create a new sync message
+    //void createSyncMessage(int time);
 };
 
 #endif // ANIMHOSTMESSAGESENDER_H

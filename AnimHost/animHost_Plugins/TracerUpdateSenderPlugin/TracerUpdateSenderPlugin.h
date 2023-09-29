@@ -3,31 +3,39 @@
 #define TRACERUPDATESENDERPLUGINPLUGIN_H
 
 #include "TracerUpdateSenderPlugin_global.h"
+#include "ZMQMessageHandler.h"
 #include <QMetaType>
 #include <QThread>
+#include <QTimer>
 #include <QPushButton>
 #include <pluginnodeinterface.h>
+#include <commondatatypes.h>
 #include <nodedatatypes.h>
 #include <zmq.hpp>
 #include <nzmqt/nzmqt.hpp>
-#include "AnimHostMessageSender.h"
 
-class QPushButton;
+class ZMQMessageHandler;
+class AnimHostMessageSender;
+class TickReceiver;
+
 
 class TRACERUPDATESENDERPLUGINSHARED_EXPORT TracerUpdateSenderPlugin : public PluginNodeInterface
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "de.animhost.TracerUpdateSender" FILE "TracerUpdateSenderPlugin.json")
+    Q_PLUGIN_METADATA(IID "de.animhost.PluginNodeInterface" FILE "TracerUpdateSenderPlugin.json")
     Q_INTERFACES(PluginNodeInterface)
 
 private:
     zmq::context_t* _updateSenderContext = nullptr;
-    //zmq::socket_t* _updateSenderSocket = nullptr;
 
     QThread* zeroMQSenderThread = nullptr;
-    AnimHostMessageSender* msgSender = nullptr;
+    QThread* zeroMQTickReceiverThread = nullptr;
+    
+    QTimer* timer;
+    int localTime = 0;
 
-    void sendAnimData(); //possibly passing a "mode" as param
+    AnimHostMessageSender* msgSender = nullptr;
+    TickReceiver* tickReceiver = nullptr;
 
     void freeData(void* data, void* hint) {
         free(data);
@@ -65,6 +73,8 @@ public:
 
 private Q_SLOTS:
     //void onButtonClicked();
+    void run();
+    void ticked(int externalTime);
 
 };
 

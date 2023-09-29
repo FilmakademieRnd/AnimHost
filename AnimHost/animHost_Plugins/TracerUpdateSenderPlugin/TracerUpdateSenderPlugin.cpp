@@ -1,15 +1,23 @@
 
 #include "TracerUpdateSenderPlugin.h"
+#include "AnimHostMessageSender.h"
+#include "TickReceiver.h"
 
 
 TracerUpdateSenderPlugin::TracerUpdateSenderPlugin()
 {
     _pushButton = nullptr;
 
+    timer = new QTimer();
+    timer->setTimerType(Qt::PreciseTimer);
+    timer->start(0);
     _updateSenderContext = new zmq::context_t(1);
+
     //msgSender = new AnimHostMessageSender("127.0.0.1", false, _updateSenderContext); // It could be an idea to let the user set the IP Address using a widget
 
     //_updateSenderSocket = new zmq::socket_t(*_updateSenderContext, zmq::socket_type::pub);
+
+    //QObject::connect(tickReceiver, &ZMQMessageHandler::stopped, this, &TracerUpdateSenderPlugin::stoppeddddd);
 
     qDebug() << "TracerUpdateSenderPlugin created";
 }
@@ -20,6 +28,7 @@ TracerUpdateSenderPlugin::~TracerUpdateSenderPlugin()
         msgSender->~AnimHostMessageSender();
     //_updateSenderSocket->close();
     _updateSenderContext->close();
+    timer->stop();
 
     qDebug() << "~TracerUpdateSenderPlugin()";
 }
@@ -65,11 +74,22 @@ void TracerUpdateSenderPlugin::setInData(std::shared_ptr<NodeData> data, QtNodes
     }
     
     if (validData == 1) {
+        localTime = timer->interval() % 128;
+
+        zeroMQTickReceiverThread = new QThread();
+        tickReceiver = new TickReceiver(this, "127.0.0.1", false, _updateSenderContext);
+
+        tickReceiver->moveToThread(zeroMQTickReceiverThread);
+        QObject::connect(tickReceiver, &TickReceiver::tick, this, &TracerUpdateSenderPlugin::ticked);
+        QObject::connect(zeroMQTickReceiverThread, &QThread::started, tickReceiver, &TickReceiver::run);
+        tickReceiver->requestStart();
+        zeroMQTickReceiverThread->start();
+
         msgSender = new AnimHostMessageSender("127.0.0.1", false, _updateSenderContext);
         zeroMQSenderThread = new QThread();
 
         // Example of data processing
-        float numbers[] = { 10, 5,-2,0, -3.5,2.7,0.25, 2,2,2 }; // Example of sending pos/rot/scale data
+        byte numbers[] = { 10, 5,2,0, 3,7,25, 2,2,2 }; // Example of sending pos/rot/scale data
         zmq::message_t* msg = new zmq::message_t(static_cast<void*>(numbers), sizeof(numbers));
 
         // Example of message creation and sending
@@ -78,8 +98,8 @@ void TracerUpdateSenderPlugin::setInData(std::shared_ptr<NodeData> data, QtNodes
         msgSender->moveToThread(zeroMQSenderThread);
         QObject::connect(zeroMQSenderThread, &QThread::started, msgSender, &AnimHostMessageSender::run);
 
-        zeroMQSenderThread->start();
         msgSender->requestStart();
+        zeroMQSenderThread->start();
     }
     
     // INPUT DATA PROCESSING
@@ -100,16 +120,17 @@ void TracerUpdateSenderPlugin::setInData(std::shared_ptr<NodeData> data, QtNodes
 
 }
 
-// If the input data is set in a satisfying and coherent way, process and stream
-// Maybe using widget to select a "mode" that specifies which inputs are set and how to treat them
-void TracerUpdateSenderPlugin::sendAnimData() {
-   /* std::string debugOut;
-    float* debugDataArray = static_cast<float*>(_outMsg->data());
-    for (int i = 0; i < _outMsg->size() / sizeof(float); i++) {
-        debugOut = debugOut + std::to_string(debugDataArray[i]) + " ";
-    }
-    qDebug() << "Sending message: " << debugOut;
-    _updateSenderSocket->send(*_outMsg);*/
+void TracerUpdateSenderPlugin::run() {
+    // To be populated when the GUI will provide a global "run" signal
+}
+
+// When TICK is received message sender is enabled
+// This Tick-Slot is connected to the Tick-Signal in the TickRecieverThread
+void TracerUpdateSenderPlugin::ticked(int externalTime) {
+    localTime = externalTime;
+    timer->stop();
+    timer->start(localTime);
+    msgSender->resume();
 }
 
 std::shared_ptr<NodeData> TracerUpdateSenderPlugin::outData(QtNodes::PortIndex port)

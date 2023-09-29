@@ -5,9 +5,10 @@ qt_add_executable(${target_name}
 )
 
 target_include_directories(${target_name} PRIVATE
-    ${CMAKE_SOURCE_DIR}/animHost_Plugins/PluginInterface
     ${CMAKE_SOURCE_DIR}/core/QTNodes/include
     ${CMAKE_SOURCE_DIR}/core
+    ${CMAKE_SOURCE_DIR}/animHost_Plugins/PluginInterface
+    ${CMAKE_SOURCE_DIR}/animHost_Plugins/
     ../../glm
 )
 

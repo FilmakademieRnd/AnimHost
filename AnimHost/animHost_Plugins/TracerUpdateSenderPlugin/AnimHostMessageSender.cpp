@@ -10,28 +10,27 @@ void AnimHostMessageSender::requestStart() {
     mutex.lock();
     _working = true;
     _stop = false;
+    _paused = false;
     qDebug() << "AnimHost Message Sender requested to start";// in Thread "<<thread()->currentThreadId();
     mutex.unlock();
-
-    emit startRequested();
 }
 
 void AnimHostMessageSender::requestStop() {
     mutex.lock();
     if (_working) {
         _stop = true;
+        _paused = false;
+        //_working = false;
         qDebug() << "AnimHost Message Sender stopping";// in Thread "<<thread()->currentThreadId();
     }
     mutex.unlock();
 }
 
-void AnimHostMessageSender::createSyncMessage(int time) {
-    syncMessage[0] = targetHostID;
-    syncMessage[1] = time;
-    syncMessage[2] = MessageType::SYNC;
+void AnimHostMessageSender::setMessage(zmq::message_t* msg) {
+    qDebug() << "Setting message of size " << msg->size();
+    message = msg;
+    qDebug() << "Setting message of size " << message->size();
 
-    // increase local time for controlling client timeouts
-    m_time++;
 }
 
 void AnimHostMessageSender::run() {
@@ -45,34 +44,45 @@ void AnimHostMessageSender::run() {
 
     qDebug() << "Starting AnimHost Message Sender";// in Thread " << thread()->currentThreadId();
 
-    while (true) {
+    zmq::message_t* tempMsg = new zmq::message_t();
+    int type;
+    size_t type_size = sizeof(type);
+    int count = 0;
+    while (_working) {
 
         // checks if process should be aborted
         mutex.lock();
         bool stop = _stop;
+        if (_paused)
+            waitCondition.wait(&mutex); // in this place, your thread will stop to execute until someone calls resume
+        else
+            _paused = true; // Execute once and pause at the beginning of next iteration of while-loop
         mutex.unlock();
 
         bool msgIsExternal = false;
 
         // SENDING MESSAGES
-        zmq::message_t* tempMsg = new zmq::message_t();
         tempMsg->rebuild(message->data(), message->size());
 
         std::string debugOut;
-        float* debugDataArray = static_cast<float*>(tempMsg->data());
-        for (int i = 0; i < message->size() / sizeof(float); i++) {
+        byte* debugDataArray = static_cast<byte*>(tempMsg->data());
+        for (int i = 0; i < message->size() / sizeof(byte); i++) {
             debugOut = debugOut + std::to_string(debugDataArray[i]) + " ";
         }
-        
+
+        sendSocket->getsockopt(ZMQ_TYPE, &type, &type_size);
+
+        QThread::msleep(1);
 
         qDebug() << "Message size: " << tempMsg->size();
         qDebug() << "Sending message: " << debugOut;
-        sendSocket->send(*tempMsg);
+        int retunVal = sendSocket->send(*tempMsg);
 
         if (stop) {
             qDebug() << "Stopping AnimHost Message Sender";// in Thread "<<thread()->currentThreadId();
             break;
         }
+        QThread::yieldCurrentThread();
     }
 
     // Set _working to false -> process cannot be aborted anymore

@@ -1,13 +1,15 @@
 #ifndef ZMQMESSAGEHANDLER_H
 #define ZMQMESSAGEHANDLER_H
 
-#include <QObject>
+#include <QtCore/QObject>
+#include "commondatatypes.h"
 #include <QMutex>
+#include <QObject>
 #include <QMultiMap>
 #include <QElapsedTimer>
+#include <QWaitCondition>
 #include <nzmqt/nzmqt.hpp>
 #include <zmq.hpp>
-#include "C:\Qt\6.5.2\msvc2019_64\include\QtCore\qobject.h"
 
 typedef unsigned char byte;
 
@@ -17,9 +19,10 @@ typedef unsigned char byte;
 * - Senders, Receivers, Broadcasters, etc. -
 * The concrete implementation is constraint by where and how the derived classes will be deployed
 */
-class ZMQMessageHandler : public QObject {
-    // IMPORTANT: uncomment the line below in the header of the concrete class
-    //Q_OBJECT 
+class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
+    
+   //Q_OBJECT
+
     public:
     ZMQMessageHandler() {};
 
@@ -33,11 +36,12 @@ class ZMQMessageHandler : public QObject {
         _debug = _debugState;
     }
 
-    void setMessage(zmq::message_t* msg) {
-        qDebug() << "Setting message of size " << msg->size();
-        message = msg;
-        qDebug() << "Setting message of size " << message->size();
+    void resume();
 
+    void pause() {
+        mutex.lock();
+        _paused = true;
+        mutex.unlock();
     }
 
     enum MessageType {
@@ -46,6 +50,14 @@ class ZMQMessageHandler : public QObject {
         UNDOREDOADD, RESETOBJECT, // undo redo
         DATAHUB, // DataHub
         EMPTY = 255
+    };
+
+    enum ParameterType : byte {
+        NONE, ACTION, BOOL,                     // Generic
+        INT, FLOAT,                             // Scalar
+        VECTOR2, VECTOR3, VECTOR4, QUATERNION,  // Vectors
+        COLOR, STRING, LIST,                    // Other Data Structures
+        UNKNOWN = 100
     };
 
     protected:
@@ -62,14 +74,20 @@ class ZMQMessageHandler : public QObject {
     //if true process is running
     bool _working = false;
 
+    //if true process is running but paused
+    bool _paused = false;
+
     //protect access to _stop
     QMutex mutex;
+
+    //handles pause/resume signals
+    QWaitCondition waitCondition;
 
     //zeroMQ context
     zmq::context_t* context = nullptr;
 
     //zeroMQ message exposed to be populated before being passed along the data pipeline
-    zmq::message_t* message = nullptr;;
+    zmq::message_t* message;
 
     //syncMessage: includes targetHostID, timestamp? and size of the message (as defined by MessageType enum)
     byte syncMessage[3] = { targetHostID,0,MessageType::EMPTY };
@@ -91,26 +109,30 @@ class ZMQMessageHandler : public QObject {
 
     static const unsigned int m_pingTimeout = 4;
 
-    inline const short CharToShort(const char* buf) const {
+    const short CharToShort(const char* buf) const {
         short val;
         std::memcpy(&val, buf, 2);
         return val;
     }
 
-    signals:
-    //signal emitted when process requests to work
-    virtual void startRequested() = 0;
-
+    signals :
     //signal emitted when process is finished
-    virtual void stopped() = 0;
+    void stopped();
 
     public slots:
     //execute operations
-    virtual void run() = 0;
+    virtual void run() {};
 
-    private slots:
+    protected slots:
     //create a new sync message
-    virtual void createSyncMessage(int time) = 0;
+    void createSyncMessage(int time) {
+        syncMessage[0] = targetHostID;
+        syncMessage[1] = time;
+        syncMessage[2] = MessageType::SYNC;
+
+        // increase local time for controlling client timeouts
+        m_time++;
+    }
 };
 
 //class ZMQMessageHandler :

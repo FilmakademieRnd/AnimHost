@@ -7,7 +7,7 @@ qt_add_library(AnimHostCore
     nodedatatypes.h
     sourcedatanode.h sourcedatanode.cpp
     animhosthelper.h animhosthelper.cpp
-    ZMQMessageHandler.h
+    ZMQMessageHandler.h ZMQMessageHandler.cpp
 )
 
 target_compile_definitions(AnimHostCore PUBLIC
