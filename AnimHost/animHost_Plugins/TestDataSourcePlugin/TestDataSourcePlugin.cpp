@@ -28,10 +28,11 @@ void TestDataSourcePlugin::run(QVariantList in, QVariantList& out)
     auto skeletonIn = in[0].value<std::shared_ptr<Skeleton>>();
     auto poseSequenceIn = in[1].value<std::shared_ptr<PoseSequence>>();
 
-    qDebug() << "Eval Test Data Source Plugin";
+
+
+    qDebug() << "Write Pose Data to File";
 
     std::ofstream fileOut("ok.csv");
-
 
     for (int i = 0; i < skeletonIn->mNumBones; i++) {
         fileOut << skeletonIn->bone_names_reverse.at(i) << "_x,";

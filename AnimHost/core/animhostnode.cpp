@@ -44,10 +44,7 @@ NodeDataType AnimHostNode::convertQMetaTypeToNodeDataType(QMetaType qType)
 
     int typeId = qType.id();
 
-
-    if (typeId == QMetaType::fromName("HumanoidBones").id())
-        return AnimNodeData<HumanoidBones>::staticType();
-    else if (typeId == QMetaType::fromName("Pose").id())
+    if (typeId == QMetaType::fromName("Pose").id())
         return AnimNodeData<Pose>::staticType();
     else if (typeId == QMetaType::fromName("Skeleton").id())
         return AnimNodeData<Skeleton>::staticType();
@@ -55,6 +52,8 @@ NodeDataType AnimHostNode::convertQMetaTypeToNodeDataType(QMetaType qType)
         return AnimNodeData<Animation>::staticType();
     else if (typeId == QMetaType::fromName("PoseSequence").id())
         return AnimNodeData<PoseSequence>::staticType();
+    else if (typeId == QMetaType::fromName("JointVelocitySequence").id())
+        return AnimNodeData<JointVelocitySequence>::staticType();
     else
         throw "Unknown Datatype";
 }
@@ -64,9 +63,7 @@ std::shared_ptr<AnimNodeDataBase> AnimHostNode::createAnimNodeDataFromID(QMetaTy
 {
     int typeId = qType.id();
 
-    if (typeId == QMetaType::fromName("HumanoidBones").id())
-        return std::make_shared<AnimNodeData<HumanoidBones>>();
-    else if (typeId == QMetaType::fromName("Pose").id())
+    if (typeId == QMetaType::fromName("Pose").id())
         return std::make_shared<AnimNodeData<Pose>>();
     else if (typeId == QMetaType::fromName("shared_ptr<Pose>").id())
         return std::make_shared<AnimNodeData<Pose>>();
@@ -76,6 +73,8 @@ std::shared_ptr<AnimNodeDataBase> AnimHostNode::createAnimNodeDataFromID(QMetaTy
         return std::make_shared<AnimNodeData<Animation>>();
     else if (typeId == QMetaType::fromName("PoseSequence").id())
         return std::make_shared <AnimNodeData<PoseSequence>>();
+    else if (typeId == QMetaType::fromName("JointVelocitySequence").id())
+        return std::make_shared <AnimNodeData<JointVelocitySequence>>();
     else
         throw "Unknown Datatype";
 }
