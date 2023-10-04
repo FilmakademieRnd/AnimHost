@@ -1,25 +1,14 @@
 #include "animhostoperationnode.h"
 
-std::shared_ptr<NodeData> AnimHostOperationNode::outData(PortIndex index)
-{
-    //QVariant data = _plugin->outputs->at(index);
 
-    if (index < _dataOut.size()) {
-        return std::static_pointer_cast<NodeData>(_dataOut[index]);
-    }
 
-    else {
-        throw "PortIndex out of range!";
-    }
-}
-
-void AnimHostOperationNode::setInData(std::shared_ptr<NodeData> data, PortIndex portIndex)
+void AnimHostOperationNode::processInData(std::shared_ptr<NodeData> data, PortIndex portIndex)
 {
     qDebug() << this->name() << "setInData() " << portIndex;
 
     if (!data) {
         for(int i=0; i< _dataOut.size(); i++)
-            Q_EMIT dataInvalidated(i);
+            Q_EMIT emitDataInvalidated(i);
 
         _dataIn[portIndex] = data;
         
@@ -27,8 +16,6 @@ void AnimHostOperationNode::setInData(std::shared_ptr<NodeData> data, PortIndex 
     }
 
     _dataIn[portIndex] = data;
-
-    compute();
 }
 
 void AnimHostOperationNode::compute()
@@ -56,8 +43,10 @@ void AnimHostOperationNode::compute()
         _dataOut[counter] = nodeData;
     }
 
-    for (int i = 1; i <= nPorts(PortType::Out); i++)
+    for (int i = 0; i < _dataOut.size(); i++)
     {
-        Q_EMIT dataUpdated(i - 1);
+        emitDataUpdate(i);
     }
+
+    emitRunNextNode();
 }

@@ -31,12 +31,15 @@ public:
     QString caption() const override { return this->name(); }
     bool captionVisible() const override { return true; }
 
-    unsigned int nPorts(QtNodes::PortType portType) const override;
-    NodeDataType dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
+    unsigned int nDataPorts(QtNodes::PortType portType) const override;
+    NodeDataType dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
 
-    std::shared_ptr<NodeData> outData(QtNodes::PortIndex port) override;
+    std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;
 
-    void setInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
+    void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
+
+    void run() override;
+
 
     QWidget* embeddedWidget() override;
 

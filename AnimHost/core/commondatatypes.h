@@ -245,6 +245,21 @@ Q_DECLARE_METATYPE(PoseSequence)
 Q_DECLARE_METATYPE(std::shared_ptr<PoseSequence>)
 
 
+class ANIMHOSTCORESHARED_EXPORT RunSignal
+{
+
+public:
+
+    RunSignal() { qDebug() << "RunSignal()"; };
+
+    COMMONDATA(runSignal, Run)
+
+
+};
+Q_DECLARE_METATYPE(RunSignal)
+Q_DECLARE_METATYPE(std::shared_ptr<RunSignal>)
+
+
 
 
 

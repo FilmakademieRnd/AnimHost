@@ -24,9 +24,10 @@ public:
     AnimHostOperationNode() {};
     AnimHostOperationNode(std::shared_ptr<PluginInterface> plugin) : AnimHostNode(plugin) {};
 
+    void processInData(std::shared_ptr<NodeData> data, PortIndex portIndex) override;
 
-    std::shared_ptr<NodeData> outData(PortIndex index) override;
-    void setInData(std::shared_ptr<NodeData> data, PortIndex portIndex) override;
+    bool hasInputRunSignal() const override { return true; };
+    bool hasOutputRunSignal() const override { return true; };
 
     void compute() override;
 

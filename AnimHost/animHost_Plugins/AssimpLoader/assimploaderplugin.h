@@ -24,6 +24,8 @@ private:
     std::shared_ptr<AnimNodeData<Skeleton>> _skeleton;
     std::shared_ptr<AnimNodeData<Animation>> _animation;
 
+
+
     QString SourceFilePath = "";
 
     bool bDataValid;
@@ -47,12 +49,17 @@ public:
    
     bool captionVisible() const override { return true; }
 
-    unsigned int nPorts(QtNodes::PortType portType) const override;
-    NodeDataType dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
 
-    std::shared_ptr<NodeData> outData(QtNodes::PortIndex port) override;
+    unsigned int nDataPorts(QtNodes::PortType portType) const override;
+    NodeDataType dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
 
-    void setInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override {};
+    bool hasInputRunSignal() const override { return false; };
+
+    std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;
+
+    void processInData(std::shared_ptr<QtNodes::NodeData> data, QtNodes::PortIndex portIndex) {};
+
+    void run() override;
 
     QWidget* embeddedWidget() override;
 

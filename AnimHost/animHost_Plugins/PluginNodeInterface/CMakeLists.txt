@@ -23,6 +23,7 @@ target_link_libraries(PluginNodeInterface PUBLIC
     Qt::Gui
     PluginInterface
     QTNodes
+    AnimHostCore
 )
 
 

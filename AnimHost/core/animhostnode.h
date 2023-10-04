@@ -33,9 +33,22 @@ public:
 
     NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
 
-    virtual std::shared_ptr<NodeData> outData(PortIndex port) = 0;
 
-    virtual void setInData(std::shared_ptr<NodeData> data, PortIndex portIndex) = 0;
+    virtual std::shared_ptr<NodeData> outData(PortIndex port);
+
+    virtual void setInData(std::shared_ptr<NodeData> data, PortIndex portIndex);
+
+    virtual void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) = 0;
+
+    virtual bool hasInputRunSignal() const = 0;
+
+    virtual bool hasOutputRunSignal() const = 0;
+
+    void emitDataUpdate(QtNodes::PortIndex portIndex);
+
+    void emitRunNextNode();
+
+    void emitDataInvalidated(QtNodes::PortIndex portIndex);
 
     QWidget *embeddedWidget() override { return nullptr; }
 
@@ -46,6 +59,8 @@ protected:
      static std::shared_ptr<AnimNodeDataBase> createAnimNodeDataFromID(QMetaType qType);
 
 protected:
+
+    std::shared_ptr<AnimNodeData<RunSignal>> _runSignal;
 
     std::vector<std::weak_ptr<NodeData>> _dataIn;
 
