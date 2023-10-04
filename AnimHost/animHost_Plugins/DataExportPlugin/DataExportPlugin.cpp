@@ -12,7 +12,6 @@
 
 DataExportPlugin::DataExportPlugin()
 {
-    
     //Init inputs
     _skeletonIn = std::make_shared<AnimNodeData<Skeleton>>();
     _poseSequenceIn = std::make_shared<AnimNodeData<PoseSequence>>();
@@ -23,6 +22,9 @@ DataExportPlugin::DataExportPlugin()
     _pushButton = nullptr;
     _label = nullptr;
     _filePathLayout = nullptr;
+    _cbWriteBinary = nullptr;
+    _cbOverwrite = nullptr;
+    _vLayout = nullptr;
 
     qDebug() << "DataExportPlugin created";
 }
@@ -32,7 +34,7 @@ DataExportPlugin::~DataExportPlugin()
     qDebug() << "~DataExportPlugin()";
 }
 
-unsigned int DataExportPlugin::nPorts(QtNodes::PortType portType) const
+unsigned int DataExportPlugin::nDataPorts(QtNodes::PortType portType) const
 {
     if (portType == QtNodes::PortType::In)
         return 3;
@@ -40,7 +42,7 @@ unsigned int DataExportPlugin::nPorts(QtNodes::PortType portType) const
         return 0;
 }
 
-NodeDataType DataExportPlugin::dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
+NodeDataType DataExportPlugin::dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
 {
     NodeDataType type;
     if (portType == QtNodes::PortType::In)
@@ -59,7 +61,12 @@ NodeDataType DataExportPlugin::dataType(QtNodes::PortType portType, QtNodes::Por
         return type;
 }
 
-void DataExportPlugin::setInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex)
+std::shared_ptr<NodeData> DataExportPlugin::processOutData(QtNodes::PortIndex port)
+{
+    return nullptr;
+}
+
+void DataExportPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex)
 {
     qDebug() << "DataExportPlugin setInData";
 
@@ -96,24 +103,31 @@ void DataExportPlugin::setInData(std::shared_ptr<NodeData> data, QtNodes::PortIn
         return;
     }
 
-    // Write Data
-
-    if (auto sp_poseSeq = _poseSequenceIn.lock() && bWritePoseSequence) {
-        // Do Stuff
-        if (auto sp_skeleton = _skeletonIn.lock()) {
-            exportPoseSequenceData();
-        }
-    }
-
-    if (auto sp_jointVelSeq = _jointVelocitySequenceIn.lock() && bWriteJointVelocity) {
-        // Do Stuff
-    }
+    
 
 }
 
-std::shared_ptr<NodeData> DataExportPlugin::outData(QtNodes::PortIndex port)
+void DataExportPlugin::run()
 {
-	return nullptr;
+    // Write Data
+
+    if (!exportDirectory.isEmpty()) {
+
+        if (auto sp_poseSeq = _poseSequenceIn.lock() && bWritePoseSequence) {
+            // Do Stuff
+            if (auto sp_skeleton = _skeletonIn.lock()) {
+                exportPoseSequenceData();
+            }
+        }
+
+        if (auto sp_jointVelSeq = _jointVelocitySequenceIn.lock() && bWriteJointVelocity) {
+
+            if (auto sp_skeleton = _skeletonIn.lock()) {
+                exportJointVelocitySequence();
+            }
+
+        }
+    }
 }
 
 QWidget* DataExportPlugin::embeddedWidget()
@@ -130,10 +144,24 @@ QWidget* DataExportPlugin::embeddedWidget()
 
         _filePathLayout->setSizeConstraint(QLayout::SetMinimumSize);
 
+
+        _cbWriteBinary = new QCheckBox("Write Binary Data");
+        _cbOverwrite = new QCheckBox("Overwrite Existing Data");
+
+        _vLayout = new QVBoxLayout();
+
+        _vLayout->addLayout(_filePathLayout);
+        _vLayout->addWidget(_cbWriteBinary);
+        _vLayout->addWidget(_cbOverwrite);
+
         widget = new QWidget();
 
-        widget->setLayout(_filePathLayout);
+        widget->setLayout(_vLayout);
+
+
+
         connect(_pushButton, &QPushButton::released, this, &DataExportPlugin::onButtonClicked);
+        connect(_cbOverwrite, &QCheckBox::stateChanged, this, &DataExportPlugin::onOverrideCheckbox);
     }
 
     widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
@@ -150,7 +178,7 @@ void DataExportPlugin::onButtonClicked()
 	qDebug() << "Example Widget Clicked";
 
     QString directory = QDir::toNativeSeparators(QFileDialog::getExistingDirectory(nullptr, "Import Animation", "C://"));
-    exportDirectory = directory;
+    exportDirectory = directory + "/";
 
 
     QString shorty = AnimHostHelper::shortenFilePath(exportDirectory, 10);
@@ -158,11 +186,20 @@ void DataExportPlugin::onButtonClicked()
 }
 
 
+void DataExportPlugin::onOverrideCheckbox(int state) {
+
+    bOverwriteJointVelSeq = state;
+    bOverwritePoseSeq = state;
+
+}
+
 
 void DataExportPlugin::exportPoseSequenceData() {
     //Check if Binary or CSV
+    bWriteBinaryData = _cbWriteBinary->isChecked();
+
     if (bWriteBinaryData) {
-        //Do Stuff
+        writeBinaryPoseSequenceData();
     }
     else {
         writeCSVPoseSequenceData();
@@ -174,43 +211,126 @@ void DataExportPlugin::writeCSVPoseSequenceData() {
     auto skeletonIn = _skeletonIn.lock()->getData();
     auto poseSequenceIn = _poseSequenceIn.lock()->getData();
 
+    qDebug() << "Write Pose Data to CSV File";
 
 
-    qDebug() << "Write Pose Data to File";
+    QFile file(exportDirectory+"pose.csv");
 
-    std::ofstream fileOut("ofgsgargk.csv");
-
-    for (int i = 0; i < skeletonIn->mNumBones; i++) {
-        fileOut << skeletonIn->bone_names_reverse.at(i) << "_x,";
-        fileOut << skeletonIn->bone_names_reverse.at(i) << "_y,";
-        fileOut << skeletonIn->bone_names_reverse.at(i) << "_z";
-        if (i != skeletonIn->mNumBones - 1)
-            fileOut << ",";
+    if (bOverwritePoseSeq) {
+        file.open(QIODevice::WriteOnly | QIODevice::Text);   
     }
-    fileOut << "\n";
+    else {
+        file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append);
+    }
 
+
+    QTextStream out(&file);
+
+    if (bOverwritePoseSeq) {
+        out << "seq_id,";
+        for (int i = 0; i < skeletonIn->mNumBones; i++) {
+            out << QString::fromStdString(skeletonIn->bone_names_reverse.at(i)) << "_x,";
+            out << QString::fromStdString(skeletonIn->bone_names_reverse.at(i)) << "_y,";
+            out << QString::fromStdString(skeletonIn->bone_names_reverse.at(i)) << "_z";
+            if (i != skeletonIn->mNumBones - 1)
+                out << ",";
+        }
+        out << "\n";
+
+        bOverwritePoseSeq = false;
+    }
 
     for (int frame = 0; frame < poseSequenceIn->mPoseSequence.size(); frame++) {
+        out << poseSequenceIn->dataSetID << ",";
         for (int bone = 0; bone < skeletonIn->mNumBones; bone++) {
-
-            fileOut << poseSequenceIn->mPoseSequence[frame].mPositionData[bone].x << ",";
-            fileOut << poseSequenceIn->mPoseSequence[frame].mPositionData[bone].y << ",";
-            fileOut << poseSequenceIn->mPoseSequence[frame].mPositionData[bone].z;
+            out << poseSequenceIn->mPoseSequence[frame].mPositionData[bone].x << ",";
+            out << poseSequenceIn->mPoseSequence[frame].mPositionData[bone].y << ",";
+            out << poseSequenceIn->mPoseSequence[frame].mPositionData[bone].z;
             if (bone != skeletonIn->mNumBones - 1)
-                fileOut << ",";
+                out << ",";
 
         }
-        fileOut << "\n";
+        out << "\n";
+    }
+}
+
+void DataExportPlugin::writeBinaryPoseSequenceData() {
+
+    auto skeletonIn = _skeletonIn.lock()->getData();
+    auto poseSequenceIn = _poseSequenceIn.lock()->getData();
+
+    qDebug() << "Write Pose Data to Binary File";
+    
+    QFile file(exportDirectory+ "pose.bin");
+
+    if (bOverwritePoseSeq) {
+        file.open(QIODevice::WriteOnly);
+        bOverwritePoseSeq = false;
+    }
+    else {
+        file.open(QIODevice::WriteOnly | QIODevice::Append);
     }
 
-    fileOut.close();
+    QDataStream out(&file);
 
+    int sizeframe = poseSequenceIn->mPoseSequence[0].mPositionData.size() * sizeof(glm::vec3);
+
+    for (int frame = 0; frame < poseSequenceIn->mPoseSequence.size(); frame++) {
+        out.writeRawData((char*)&poseSequenceIn->mPoseSequence[frame].mPositionData[0], sizeframe);
+    }
+       
 }
+
+//long long option_1(std::size_t bytes)
+//{
+//    std::vector<uint64_t> data = GenerateData(bytes);
+//
+//    auto startTime = std::chrono::high_resolution_clock::now();
+//    auto myfile = std::fstream("file.binary", std::ios::out | std::ios::binary);
+//    myfile.write((char*)&data[0], bytes);
+//    myfile.close();
+
 
 void DataExportPlugin::exportJointVelocitySequence() {
     //Check if Binary or CSV
+
+    bWriteBinaryData = _cbWriteBinary->isChecked();
+
+    if (bWriteBinaryData) {
+        writeBinaryJointVelocitySequence();
+    }
+    else {
+        writeCSVJointVelocitySequence();
+    }
 }
 
 void DataExportPlugin::writeCSVJointVelocitySequence() {
 
 } 
+
+void DataExportPlugin::writeBinaryJointVelocitySequence() {
+
+    auto skeletonIn = _skeletonIn.lock()->getData();
+    auto jointVelSeqIn = _jointVelocitySequenceIn.lock()->getData();
+
+    qDebug() << "Write Joint Velocity Data to Binary File";
+
+    QFile file(exportDirectory + "joint_velocity.bin");
+
+    if (bOverwriteJointVelSeq) {
+        file.open(QIODevice::WriteOnly);
+        bOverwriteJointVelSeq = false;
+    }
+    else {
+        file.open(QIODevice::WriteOnly | QIODevice::Append);
+    }
+
+    QDataStream out(&file);
+
+    int sizeframe = jointVelSeqIn->mJointVelocitySequence[0].mJointVelocity.size() * sizeof(glm::vec3);
+
+    for (int frame = 0; frame < jointVelSeqIn->mJointVelocitySequence.size(); frame++) {
+        out.writeRawData((char*)&jointVelSeqIn->mJointVelocitySequence[frame].mJointVelocity[0], sizeframe);
+    }
+
+}

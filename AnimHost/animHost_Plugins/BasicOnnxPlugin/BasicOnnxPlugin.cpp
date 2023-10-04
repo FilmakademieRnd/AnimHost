@@ -31,7 +31,7 @@ BasicOnnxPlugin::~BasicOnnxPlugin()
     qDebug() << "~BasicOnnxPlugin()";
 }
 
-unsigned int BasicOnnxPlugin::nPorts(QtNodes::PortType portType) const
+unsigned int BasicOnnxPlugin::nDataPorts(QtNodes::PortType portType) const
 {
     if (_onnxModel) {
         if (portType == QtNodes::PortType::In)
@@ -44,7 +44,7 @@ unsigned int BasicOnnxPlugin::nPorts(QtNodes::PortType portType) const
     }
 }
 
-NodeDataType BasicOnnxPlugin::dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
+NodeDataType BasicOnnxPlugin::dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
 {
     NodeDataType type;
     if (portType == QtNodes::PortType::In)
@@ -54,14 +54,18 @@ NodeDataType BasicOnnxPlugin::dataType(QtNodes::PortType portType, QtNodes::Port
         return AnimNodeData<OnnxTensor>::staticType();
 }
 
-void BasicOnnxPlugin::setInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex)
+std::shared_ptr<NodeData> BasicOnnxPlugin::processOutData(QtNodes::PortIndex port)
+{
+    return nullptr;
+}
+
+void BasicOnnxPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex)
 {
     qDebug() << "BasicOnnxPlugin setInData";
 }
 
-std::shared_ptr<NodeData> BasicOnnxPlugin::outData(QtNodes::PortIndex port)
-{
-	return nullptr;
+void BasicOnnxPlugin::run() {
+
 }
 
 QWidget* BasicOnnxPlugin::embeddedWidget()

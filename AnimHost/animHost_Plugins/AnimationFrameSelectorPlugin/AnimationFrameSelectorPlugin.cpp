@@ -17,7 +17,7 @@ AnimationFrameSelectorPlugin::~AnimationFrameSelectorPlugin()
     qDebug() << "~AnimationFrameSelectorPlugin()";
 }
 
-unsigned int AnimationFrameSelectorPlugin::nPorts(QtNodes::PortType portType) const
+unsigned int AnimationFrameSelectorPlugin::nDataPorts(QtNodes::PortType portType) const
 {
     if (portType == QtNodes::PortType::In)
         return 1;
@@ -25,7 +25,7 @@ unsigned int AnimationFrameSelectorPlugin::nPorts(QtNodes::PortType portType) co
         return 1;
 }
 
-NodeDataType AnimationFrameSelectorPlugin::dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
+NodeDataType AnimationFrameSelectorPlugin::dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
 {
     NodeDataType type;
     if (portType == QtNodes::PortType::In)
@@ -34,28 +34,34 @@ NodeDataType AnimationFrameSelectorPlugin::dataType(QtNodes::PortType portType, 
         return AnimNodeData<Animation>::staticType();
 }
 
-void AnimationFrameSelectorPlugin::setInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex)
-{ 
+
+
+void AnimationFrameSelectorPlugin::run()
+{
+}
+
+std::shared_ptr<NodeData> AnimationFrameSelectorPlugin::processOutData(QtNodes::PortIndex port)
+{
+    return _animationOut;
+}
+
+void AnimationFrameSelectorPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex)
+{
     if (!data) {
         Q_EMIT dataInvalidated(0);
     }
     _animationIn = std::static_pointer_cast<AnimNodeData<Animation>>(data);
-    if (auto spAnimation = _animationIn.lock()){
+    if (auto spAnimation = _animationIn.lock()) {
 
         int duration = spAnimation->getData()->mDurationFrames;
-        _slider->setMaximum(duration-1);
+        _slider->setMaximum(duration - 1);
 
     }
-    else{
+    else {
         return;
     }
-       
-    qDebug() << "AnimationFrameSelectorPlugin setInData";
-}
 
-std::shared_ptr<NodeData> AnimationFrameSelectorPlugin::outData(QtNodes::PortIndex port)
-{
-	return _animationOut;
+    qDebug() << "AnimationFrameSelectorPlugin setInData";
 }
 
 QWidget* AnimationFrameSelectorPlugin::embeddedWidget()

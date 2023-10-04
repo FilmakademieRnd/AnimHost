@@ -24,13 +24,17 @@ private:
     QLabel* _label;
     QHBoxLayout* _filePathLayout;
 
+    QCheckBox* _cbWriteBinary;
+    QCheckBox* _cbOverwrite;
+    QVBoxLayout* _vLayout;
+
     // Node Data Innput
     std::weak_ptr<AnimNodeData<Skeleton>> _skeletonIn;
 
     bool bWritePoseSequence = true;
     std::weak_ptr<AnimNodeData<PoseSequence>> _poseSequenceIn;
 
-    bool bWriteJointVelocity = false;
+    bool bWriteJointVelocity = true;
     std::weak_ptr<AnimNodeData<JointVelocitySequence>> _jointVelocitySequenceIn;
 
 
@@ -38,6 +42,9 @@ private:
     QString exportDirectory = "";
 
     bool bWriteBinaryData = false;
+
+    bool bOverwriteJointVelSeq = true;
+    bool bOverwritePoseSeq = true;
 
 public:
     DataExportPlugin();
@@ -48,12 +55,14 @@ public:
     QString caption() const override { return this->name(); }
     bool captionVisible() const override { return true; }
 
-    unsigned int nPorts(QtNodes::PortType portType) const override;
-    NodeDataType dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
+    unsigned int nDataPorts(QtNodes::PortType portType) const override;
+    NodeDataType dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
 
-    std::shared_ptr<NodeData> outData(QtNodes::PortIndex port) override;
+    std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;
 
-    void setInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
+    void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
+
+    void run() override;
 
     QWidget* embeddedWidget() override;
 
@@ -61,15 +70,20 @@ public:
 
     void writeCSVPoseSequenceData();
 
+    void writeBinaryPoseSequenceData();
+
     void exportJointVelocitySequence();
 
     void writeCSVJointVelocitySequence();
+
+    void writeBinaryJointVelocitySequence();
 
     //QTNodes
     QString category() override { return "Undefined Category"; };  // Returns a category for the node
 
 private Q_SLOTS:
     void onButtonClicked();
+    void onOverrideCheckbox(int state);
 
 };
 

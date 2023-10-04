@@ -17,8 +17,9 @@ AnimHost::AnimHost()
     qRegisterMetaType<std::shared_ptr<Pose>>("Pose");
     qRegisterMetaType<std::shared_ptr<PoseSequence>>("PoseSequence");
     qRegisterMetaType<std::shared_ptr<JointVelocitySequence>>("JointVelocitySequence");
-    qRegisterMetaType<std::shared_ptr<Skeleton>>("Skeleton");
+    qRegisterMetaType<std::shared_ptr<Skeleton>>("Skeleton"); 
     qRegisterMetaType<std::shared_ptr<Animation>>("Animation");
+    qRegisterMetaType<std::shared_ptr<RunSignal>>("RunSignal");
 
 
     //initalize list for nodes

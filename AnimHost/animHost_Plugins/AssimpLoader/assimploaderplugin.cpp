@@ -25,6 +25,8 @@ AssimpLoaderPlugin::AssimpLoaderPlugin()
 
 	_animation = std::make_shared<AnimNodeData<Animation>>();
 
+	_runSignal = std::make_shared<AnimNodeData<RunSignal>>();
+
 	bDataValid = false;
 
 	_pushButton = nullptr;
@@ -35,7 +37,7 @@ AssimpLoaderPlugin::AssimpLoaderPlugin()
 	qDebug() << this->name();
 }
 
-unsigned int AssimpLoaderPlugin::nPorts(QtNodes::PortType portType) const
+unsigned int AssimpLoaderPlugin::nDataPorts(QtNodes::PortType portType) const
 {
     unsigned int result;
 
@@ -47,24 +49,30 @@ unsigned int AssimpLoaderPlugin::nPorts(QtNodes::PortType portType) const
     return result;
 }
 
-NodeDataType AssimpLoaderPlugin::dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
+NodeDataType AssimpLoaderPlugin::dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
 {
     NodeDataType type;
     if (portType == QtNodes::PortType::In)
         return type;
     else
-        if (portIndex == 0)
-            return type = _skeleton->type();
-        else
-            return type = _animation->type();
+		switch (portIndex) {
+		case 0:
+			return type = _skeleton->type();
+		case 1:
+			return type = _animation->type();
+
+		default:
+			return type;
+		}
+             
 }
 
-std::shared_ptr<NodeData> AssimpLoaderPlugin::outData(QtNodes::PortIndex port)
+std::shared_ptr<NodeData> AssimpLoaderPlugin::processOutData(QtNodes::PortIndex port)
 {
 	if (!bDataValid) {
 		importAssimpData();
 	}
-	
+
 	if (bDataValid)
 	{
 		switch (port) {
@@ -78,8 +86,12 @@ std::shared_ptr<NodeData> AssimpLoaderPlugin::outData(QtNodes::PortIndex port)
 			break;
 		}
 	}
-
 	return nullptr;
+}
+
+void AssimpLoaderPlugin::run() {
+	
+	//ToDo Move Processing
 }
 
 QWidget* AssimpLoaderPlugin::embeddedWidget()
@@ -211,8 +223,8 @@ void AssimpLoaderPlugin::onButtonClicked()
 
 		qDebug() << "... Start Process " << file;
 
-		Q_EMIT dataInvalidated(0);
-		Q_EMIT dataInvalidated(1);
+		Q_EMIT emitDataInvalidated(0);
+		Q_EMIT emitDataInvalidated(1);
 
 		qDebug() << "... Data Invalid Send ...";
 
@@ -226,16 +238,18 @@ void AssimpLoaderPlugin::onButtonClicked()
 
 
 		qDebug() << "====== Send 0 Data Updated";
-		Q_EMIT dataUpdated(0);
+		emitDataUpdate(0);
 		qDebug() << "====== Data 0 Updated Done";
 
 		qDebug() << "====== Send 1 Data Updated";
-		Q_EMIT dataUpdated(1);
+		emitDataUpdate(1);
 		qDebug() << "====== Data 1 Updated Done";
 
 		qDebug() << "Process " << shorty << "... Done";
 
 		Q_EMIT embeddedWidgetSizeUpdated();
+
+		emitRunNextNode();
 	}
 
 	
