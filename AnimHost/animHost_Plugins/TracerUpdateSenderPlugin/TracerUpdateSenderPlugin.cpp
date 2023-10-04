@@ -77,7 +77,7 @@ void TracerUpdateSenderPlugin::setInData(std::shared_ptr<NodeData> data, QtNodes
         localTime = timer->interval() % 128;
 
         zeroMQTickReceiverThread = new QThread();
-        tickReceiver = new TickReceiver(this, "127.0.0.1", false, _updateSenderContext);
+        tickReceiver = new TickReceiver(this, ipAddress, false, _updateSenderContext);
 
         tickReceiver->moveToThread(zeroMQTickReceiverThread);
         QObject::connect(tickReceiver, &TickReceiver::tick, this, &TracerUpdateSenderPlugin::ticked);
@@ -85,15 +85,18 @@ void TracerUpdateSenderPlugin::setInData(std::shared_ptr<NodeData> data, QtNodes
         tickReceiver->requestStart();
         zeroMQTickReceiverThread->start();
 
-        msgSender = new AnimHostMessageSender("127.0.0.1", false, _updateSenderContext);
+        msgSender = new AnimHostMessageSender(ipAddress, false, _updateSenderContext);
         zeroMQSenderThread = new QThread();
 
-        // Example of data processing
-        byte numbers[] = { 10, 5,2,0, 3,7,25, 2,2,2 }; // Example of sending pos/rot/scale data
-        zmq::message_t* msg = new zmq::message_t(static_cast<void*>(numbers), sizeof(numbers));
+        byte posVecExample[3] {2.5, 7.4, 0}; // To be substituted with REAL DATA
+        zmq::message_t msg = msgSender->createMessage(ipAddress[ipAddress.size()-1].toLatin1(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE,
+                                 0, 0, 0, ZMQMessageHandler::ParameterType::VECTOR3, posVecExample);
+
+        //byte numbers[] = { 10, 5,2,0, 3,7,25, 2,2,2 }; // Example of sending pos/rot/scale data
+        //zmq::message_t* msg = new zmq::message_t(static_cast<void*>(numbers), sizeof(numbers));
 
         // Example of message creation and sending
-        msgSender->setMessage(msg);
+        msgSender->setMessage(&msg);
 
         msgSender->moveToThread(zeroMQSenderThread);
         QObject::connect(zeroMQSenderThread, &QThread::started, msgSender, &AnimHostMessageSender::run);

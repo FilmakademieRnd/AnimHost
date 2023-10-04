@@ -60,6 +60,30 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
         UNKNOWN = 100
     };
 
+    static constexpr byte getParameterDimension(ParameterType parameterType) {
+        return parameterDimension[parameterType];
+    }
+
+    //enum ParameterDim : byte {
+    //    NONE = 0, ACTION = 1, BOOL = 2,                             // Generic
+    //    INT = 2, FLOAT = 4,                                         // Scalar
+    //    VECTOR2 = 8, VECTOR3 = 12, VECTOR4 = 16, QUATERNION = 16,   // Vectors
+    //    COLOR = 3, STRING = 100, LIST = 100,                        // Other Data Structures
+    //    UNKNOWN = 100
+    //};
+
+    void setTargetHostID(byte _targetHostID) {
+        targetHostID = _targetHostID;
+    }
+
+    byte getTargetHostID() {
+        return targetHostID;
+    }
+
+    zmq::message_t createMessage(byte targetHostID, byte time, ZMQMessageHandler::MessageType messageType,
+                             byte SceneID, byte objectID, byte ParameterID, ZMQMessageHandler::ParameterType paramType,
+                             byte* data);
+
     protected:
 
     //id displayed as clientID for messages redistributed through syncServer
@@ -109,6 +133,9 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
 
     static const unsigned int m_pingTimeout = 4;
 
+    // Storing parameter dimensions (NONE, ACTION, BOOL, INT, FLOAT, VECTOR2, VECTOR3, VECTOR4, QUATERNION, COLOR, STRING, LIST, UNKNOWN respectively)
+    static constexpr byte parameterDimension[13] = { 0, 1, 2, 2, 4, 8, 12, 16, 16, 3, 100, 100, 100 };
+    
     const short CharToShort(const char* buf) const {
         short val;
         std::memcpy(&val, buf, 2);

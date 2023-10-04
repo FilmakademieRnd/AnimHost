@@ -26,6 +26,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TracerUpdateSenderPlugin : public Pl
     Q_INTERFACES(PluginNodeInterface)
 
 private:
+    QString ipAddress = "127.0.0.1"; // does it need to be settable from UI? (Probably)
     zmq::context_t* _updateSenderContext = nullptr;
 
     QThread* zeroMQSenderThread = nullptr;
