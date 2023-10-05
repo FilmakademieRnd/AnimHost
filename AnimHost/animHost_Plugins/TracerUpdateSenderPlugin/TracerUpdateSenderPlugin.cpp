@@ -43,8 +43,30 @@ unsigned int TracerUpdateSenderPlugin::nPorts(QtNodes::PortType portType) const
         return 0;
 }
 
+unsigned int TracerUpdateSenderPlugin::nDataPorts(QtNodes::PortType portType) const {
+    if (portType == QtNodes::PortType::In)
+        return 3;
+    else
+        return 0;
+}
+
 NodeDataType TracerUpdateSenderPlugin::dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
 {
+    NodeDataType type;
+    if (portType == QtNodes::PortType::In)  // INPUT Ports DataTypes
+        if (portIndex == 0)
+            return AnimNodeData<Skeleton>::staticType();
+        else if (portIndex == 1)
+            return AnimNodeData<Animation>::staticType();
+        else if (portIndex == 2)
+            return AnimNodeData<Pose>::staticType();
+        else
+            return type;
+    else                                    // OUTPUT Ports DataTypes 
+        return type;
+}
+
+NodeDataType TracerUpdateSenderPlugin::dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const {
     NodeDataType type;
     if (portType == QtNodes::PortType::In)  // INPUT Ports DataTypes
         if (portIndex == 0)
@@ -123,8 +145,20 @@ void TracerUpdateSenderPlugin::setInData(std::shared_ptr<NodeData> data, QtNodes
 
 }
 
+void TracerUpdateSenderPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) {
+
+    // To be populated with some of the SetInData functionalities
+    if (!data) {
+        Q_EMIT dataInvalidated(0);
+    } else {
+        return;
+    }
+
+    qDebug() << "TracerUpdateSenderPlugin setInData";
+}
+
 void TracerUpdateSenderPlugin::run() {
-    // To be populated when the GUI will provide a global "run" signal
+    // To be populated with some of the SetInData functionalities
 }
 
 // When TICK is received message sender is enabled
@@ -139,6 +173,10 @@ void TracerUpdateSenderPlugin::ticked(int externalTime) {
 std::shared_ptr<NodeData> TracerUpdateSenderPlugin::outData(QtNodes::PortIndex port)
 {
 	return nullptr;
+}
+
+std::shared_ptr<NodeData> TracerUpdateSenderPlugin::processOutData(QtNodes::PortIndex port) {
+    return nullptr;
 }
 
 QWidget* TracerUpdateSenderPlugin::embeddedWidget()
