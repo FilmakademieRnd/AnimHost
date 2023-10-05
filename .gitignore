@@ -30,4 +30,4 @@ build*
 *.autosave
 cmake_build*
 cmake*
-!*CMakeList.txt
+!*CMakeLists.txt
