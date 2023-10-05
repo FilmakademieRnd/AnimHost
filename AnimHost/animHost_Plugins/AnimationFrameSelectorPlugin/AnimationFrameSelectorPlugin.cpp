@@ -21,7 +21,7 @@ unsigned int AnimationFrameSelectorPlugin::nDataPorts(QtNodes::PortType portType
 {
     if (portType == QtNodes::PortType::In)
         return 1;
-    else            
+    else
         return 1;
 }
 
