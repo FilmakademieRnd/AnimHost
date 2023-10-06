@@ -27,7 +27,7 @@ target_include_directories(AnimHostCore PUBLIC
 
 target_link_directories(AnimHostCore PUBLIC 
     ./QTNodes/lib
-    
+    ../../nzmqt/3rdparty/zmq/lib
 )
 
 target_link_libraries(AnimHostCore PUBLIC

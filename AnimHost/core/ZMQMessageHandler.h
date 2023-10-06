@@ -8,7 +8,12 @@
 #include <QMultiMap>
 #include <QElapsedTimer>
 #include <QWaitCondition>
+
 #include <any>
+#include <stdio.h>
+#include <string>
+
+
 #include <nzmqt/nzmqt.hpp>
 #include <zmq.hpp>
 
@@ -82,7 +87,8 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     }
 
     // Converting elements in data into bytes
-    void Serialize(byte* data, ParameterType type);
+    void Serialize(byte* dest, bool data);
+    void Serialize(byte* dest, int _value);
 
     zmq::message_t* createMessage(byte targetHostID, byte time, ZMQMessageHandler::MessageType messageType,
                              byte SceneID, byte objectID, byte ParameterID, ZMQMessageHandler::ParameterType paramType,

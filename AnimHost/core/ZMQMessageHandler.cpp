@@ -7,23 +7,25 @@ void ZMQMessageHandler::resume() {
     mutex.unlock();
 }
 
-//void ZMQMessageHandler::Serialize(byte* dest, bool data) {
+void ZMQMessageHandler::Serialize(byte* dest, bool _value) {
+    bool val = std::any_cast<bool>(_value);
+    std::memcpy(dest, &val, sizeof(bool));
+}
+
+void ZMQMessageHandler::Serialize(byte* dest, int _value) {
+    int32 val = std::any_cast<int32>(_value);
+    std::memcpy(data, &val, sizeof(int32));
+}
+
+//void ZMQMessageHandler::Serialize(byte* dest, float _value) {
 //   
 //}
 
-//void ZMQMessageHandler::Serialize(byte* dest, int data) {
+//void ZMQMessageHandler::Serialize(byte* dest, float[] _value, ZMQMessageHandler::ParameterType type) {
 //   
 //}
 
-//void ZMQMessageHandler::Serialize(byte* dest, float data) {
-//   
-//}
-
-//void ZMQMessageHandler::Serialize(byte* dest, float[] data, ZMQMessageHandler::ParameterType type) {
-//   
-//}
-
-//void ZMQMessageHandler::Serialize(byte* dest, std::string data) {
+//void ZMQMessageHandler::Serialize(byte* dest, std::string _value) {
 //   
 //}
 
