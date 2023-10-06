@@ -38,6 +38,7 @@ NodeDataType AnimationFrameSelectorPlugin::dataPortType(QtNodes::PortType portTy
 
 void AnimationFrameSelectorPlugin::run()
 {
+    qDebug() << this->name() << " RUN";
 }
 
 std::shared_ptr<NodeData> AnimationFrameSelectorPlugin::processOutData(QtNodes::PortIndex port)
@@ -97,10 +98,12 @@ void AnimationFrameSelectorPlugin::onFrameChange(int value)
             AnimOut->mBones[i] = Bone(AnimIn->mBones[i], value);
         }
 
-        Q_EMIT dataUpdated(0);
+        emitDataUpdate(0);
+
+        emitRunNextNode();
     }
     else {
-        Q_EMIT dataInvalidated(0);
+        emitDataInvalidated(0);
     }
 
 }

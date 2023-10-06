@@ -25,8 +25,6 @@ AssimpLoaderPlugin::AssimpLoaderPlugin()
 
 	_animation = std::make_shared<AnimNodeData<Animation>>();
 
-	_runSignal = std::make_shared<AnimNodeData<RunSignal>>();
-
 	bDataValid = false;
 
 	_pushButton = nullptr;

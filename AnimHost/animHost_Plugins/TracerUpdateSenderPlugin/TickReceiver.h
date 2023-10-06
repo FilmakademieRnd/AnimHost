@@ -21,7 +21,6 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
         ipAddress = m_ipAddress;
         _debug = m_debugState;
         context = m_context;
-        message = nullptr;
         _stop = true;
         _working = false;
         _paused = false;
@@ -31,7 +30,6 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
         ipAddress = m_ipAddress;
         _debug = m_debugState;
         context = m_context;
-        message = nullptr;
         _stop = true;
         _working = false;
         _paused = false;

@@ -16,7 +16,7 @@
 class PLUGINNODEINTERFACESHARED_EXPORT PluginNodeInterface : public QtNodes::NodeDelegateModel
 {
 
-protected:
+private:
     std::shared_ptr<AnimNodeData<RunSignal>> _runSignal = nullptr;
 
 public:

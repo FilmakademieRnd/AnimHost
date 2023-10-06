@@ -77,7 +77,13 @@ void PluginNodeInterface::emitDataUpdate(QtNodes::PortIndex portIndex)
 void PluginNodeInterface::emitRunNextNode()
 {
 	if (hasOutputRunSignal()) {
-		Q_EMIT dataUpdated(0);
+		if (_runSignal) {
+			Q_EMIT dataUpdated(0);
+		} 
+		else {
+			_runSignal = std::make_shared<AnimNodeData<RunSignal>>();
+			Q_EMIT dataUpdated(0);
+		}
 	}
 	else {
 		qDebug() << "Node has no output run signal.";

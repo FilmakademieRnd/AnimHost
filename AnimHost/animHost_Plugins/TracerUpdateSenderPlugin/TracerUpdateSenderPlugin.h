@@ -44,6 +44,7 @@ private:
     QPushButton* _pushButton;
 
     // Input animation data (of either type animation or pose...maybe both?!)
+    std::weak_ptr<AnimNodeData<Skeleton>> _skeletonIn;
     std::weak_ptr<AnimNodeData<Animation>> _animIn;
     std::weak_ptr<AnimNodeData<Pose>> _poseIn;
 
@@ -59,16 +60,17 @@ public:
     
     QString caption() const override { return this->name(); }
     bool captionVisible() const override { return true; }
+    bool hasOutputRunSignal() const override { return false; }
 
-    unsigned int nPorts(QtNodes::PortType portType) const override;
+    //unsigned int nPorts(QtNodes::PortType portType) const override;
     unsigned int nDataPorts(QtNodes::PortType portType) const override;
-    NodeDataType dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
+    //NodeDataType dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
     NodeDataType dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
 
     std::shared_ptr<NodeData> outData(QtNodes::PortIndex port) override;
     std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;
 
-    void setInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
+    //void setInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
     void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
 
     QWidget* embeddedWidget() override;

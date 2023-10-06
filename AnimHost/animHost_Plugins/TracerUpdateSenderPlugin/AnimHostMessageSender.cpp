@@ -28,8 +28,8 @@ void AnimHostMessageSender::requestStop() {
 
 void AnimHostMessageSender::setMessage(zmq::message_t* msg) {
     qDebug() << "Setting message of size " << msg->size();
-    message = msg;
-    qDebug() << "Setting message of size " << message->size();
+    message.copy(msg);
+    qDebug() << "Setting message of size " << message.size();
 
 }
 
@@ -62,11 +62,11 @@ void AnimHostMessageSender::run() {
         bool msgIsExternal = false;
 
         // SENDING MESSAGES
-        tempMsg->rebuild(message->data(), message->size());
+        tempMsg->rebuild(message.data(), message.size());
 
         std::string debugOut;
         byte* debugDataArray = static_cast<byte*>(tempMsg->data());
-        for (int i = 0; i < message->size() / sizeof(byte); i++) {
+        for (int i = 0; i < message.size() / sizeof(byte); i++) {
             debugOut = debugOut + std::to_string(debugDataArray[i]) + " ";
         }
 

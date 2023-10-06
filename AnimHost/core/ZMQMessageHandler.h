@@ -8,6 +8,7 @@
 #include <QMultiMap>
 #include <QElapsedTimer>
 #include <QWaitCondition>
+#include <any>
 #include <nzmqt/nzmqt.hpp>
 #include <zmq.hpp>
 
@@ -80,9 +81,12 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
         return targetHostID;
     }
 
-    zmq::message_t createMessage(byte targetHostID, byte time, ZMQMessageHandler::MessageType messageType,
+    // Converting elements in data into bytes
+    void Serialize(byte* data, ParameterType type);
+
+    zmq::message_t* createMessage(byte targetHostID, byte time, ZMQMessageHandler::MessageType messageType,
                              byte SceneID, byte objectID, byte ParameterID, ZMQMessageHandler::ParameterType paramType,
-                             byte* data);
+                             byte* payload, size_t payloadSize);
 
     protected:
 
@@ -111,7 +115,7 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     zmq::context_t* context = nullptr;
 
     //zeroMQ message exposed to be populated before being passed along the data pipeline
-    zmq::message_t* message;
+    zmq::message_t message;
 
     //syncMessage: includes targetHostID, timestamp? and size of the message (as defined by MessageType enum)
     byte syncMessage[3] = { targetHostID,0,MessageType::EMPTY };
@@ -133,8 +137,12 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
 
     static const unsigned int m_pingTimeout = 4;
 
-    // Storing parameter dimensions (NONE, ACTION, BOOL, INT, FLOAT, VECTOR2, VECTOR3, VECTOR4, QUATERNION, COLOR, STRING, LIST, UNKNOWN respectively)
-    static constexpr byte parameterDimension[13] = { 0, 1, 2, 2, 4, 8, 12, 16, 16, 3, 100, 100, 100 };
+    // Storing parameter dimensions (NONE, ACTION, BOOL, INT, FLOAT, VECTOR2, VECTOR3, VECTOR4, QUATERNION, COLOR-RGBA, STRING, LIST, UNKNOWN respectively)
+    static constexpr byte parameterDimension[13] = {
+        0, 1, sizeof(bool),
+        sizeof(int), sizeof(float),
+        sizeof(float)*2, sizeof(float)*3, sizeof(float)*4, sizeof(float)*4,
+        sizeof(float)*4, 100, 100, 100};
     
     const short CharToShort(const char* buf) const {
         short val;
