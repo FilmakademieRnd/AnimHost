@@ -49,6 +49,10 @@ private:
 public:
     DataExportPlugin();
     ~DataExportPlugin();
+
+    QJsonObject save() const override;
+
+    void load(QJsonObject const& p) override;
     
     std::unique_ptr<NodeDelegateModel> Init() override { return  std::unique_ptr<DataExportPlugin>(new DataExportPlugin()); };
 

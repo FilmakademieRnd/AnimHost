@@ -34,6 +34,28 @@ DataExportPlugin::~DataExportPlugin()
     qDebug() << "~DataExportPlugin()";
 }
 
+QJsonObject DataExportPlugin::save() const
+{
+    QJsonObject nodeJson = NodeDelegateModel::save();
+
+    nodeJson["dir"] = exportDirectory;
+
+    return nodeJson;
+}
+
+void DataExportPlugin::load(QJsonObject const& p)
+{
+    QJsonValue v = p["dir"];
+
+    if (!v.isUndefined()) {
+        QString strDir = v.toString();
+
+        if (!strDir.isEmpty()) {
+            exportDirectory = strDir;
+        }
+    }
+}
+
 unsigned int DataExportPlugin::nDataPorts(QtNodes::PortType portType) const
 {
     if (portType == QtNodes::PortType::In)

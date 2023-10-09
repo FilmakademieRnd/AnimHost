@@ -35,6 +35,28 @@ AssimpLoaderPlugin::AssimpLoaderPlugin()
 	qDebug() << this->name();
 }
 
+QJsonObject AssimpLoaderPlugin::save() const
+{
+	QJsonObject nodeJson = NodeDelegateModel::save();
+
+	nodeJson["dir"] = SourceDirectory;
+
+	return nodeJson;
+}
+
+void AssimpLoaderPlugin::load(QJsonObject const& p)
+{
+	QJsonValue v = p["dir"];
+
+	if (!v.isUndefined()) {
+		QString strDir = v.toString();
+
+		if (!strDir.isEmpty()) {
+			SourceDirectory = strDir;
+		}
+	}
+}
+
 unsigned int AssimpLoaderPlugin::nDataPorts(QtNodes::PortType portType) const
 {
     unsigned int result;
@@ -259,6 +281,9 @@ QStringList AssimpLoaderPlugin::loadFilesFromDir()
 	QString directory = QDir::toNativeSeparators(QFileDialog::getExistingDirectory(nullptr, "Import Animation", "C://"));
 
 	if (!directory.isEmpty()) {
+
+		SourceDirectory = directory;
+
 		QStringList filter = { "*.bvh","*.fbx" };
 
 

@@ -25,7 +25,7 @@ private:
     std::shared_ptr<AnimNodeData<Animation>> _animation;
 
 
-
+    QString SourceDirectory = "";
     QString SourceFilePath = "";
 
     bool bDataValid;
@@ -49,7 +49,13 @@ public:
    
     bool captionVisible() const override { return true; }
 
+public:
+    QJsonObject save() const override;
 
+    void load(QJsonObject const& p) override;
+
+
+public:
     unsigned int nDataPorts(QtNodes::PortType portType) const override;
     NodeDataType dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
 
