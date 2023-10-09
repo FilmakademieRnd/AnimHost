@@ -145,21 +145,33 @@ void TracerUpdateSenderPlugin::run() {
     msgSender = new AnimHostMessageSender(ipAddress, false, _updateSenderContext);
     zeroMQSenderThread = new QThread();
 
-    float posVecExample[3] = { 2.5, 7.4, 0 }; // To be substituted with REAL DATA (from sp_akeleton and sp_animation)
-    zmq::message_t* msg = msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE,
-                                                  0, 0, 0, ZMQMessageHandler::ParameterType::VECTOR3, (byte *)posVecExample, sizeof(posVecExample));
+    //std::vector<float> vec3Example = { 2.5, -7.4, 0 }; // To be substituted with REAL DATA (from sp_akeleton and sp_animation)
+    //zmq::message_t* msgVec3 = msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE,
+    //                                              0, 0, 0, ZMQMessageHandler::ParameterType::VECTOR3, vec3Example);
 
-    //byte numbers[] = { 10, 5,2,0, 3,7,25, 2,2,2 }; // Example of sending pos/rot/scale data
-    //zmq::message_t* msg = new zmq::message_t(static_cast<void*>(numbers), sizeof(numbers));
+    /*float floatExample = 78.3;
+    zmq::message_t* msgFloat = msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE,
+                                                       0, 0, 0, ZMQMessageHandler::ParameterType::FLOAT, floatExample);*/
 
-    // Example of message creation and sending
-    msgSender->setMessage(msg);
+    bool boolExample = true;
+    zmq::message_t* msgBool = msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE,
+                                                      0, 0, 0, ZMQMessageHandler::ParameterType::BOOL, boolExample);
+
+    /*int intExample = -64;
+    zmq::message_t* msgInt = msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE,
+                                                   0, 0, 0, ZMQMessageHandler::ParameterType::INT, intExample);*/
 
     msgSender->moveToThread(zeroMQSenderThread);
     QObject::connect(zeroMQSenderThread, &QThread::started, msgSender, &AnimHostMessageSender::run);
 
     msgSender->requestStart();
     zeroMQSenderThread->start();
+
+    // Example of message creation and 
+    msgSender->setMessage(msgBool);
+    //msgSender->setMessage(msgInt);
+    //msgSender->setMessage(msgFloat);
+    //msgSender->setMessage(msgVec3);
 }
 
 // When TICK is received message sender is enabled

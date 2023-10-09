@@ -12,6 +12,7 @@
 #include <any>
 #include <stdio.h>
 #include <string>
+#include <vector>
 
 
 #include <nzmqt/nzmqt.hpp>
@@ -87,12 +88,23 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     }
 
     // Converting elements in data into bytes
-    void Serialize(byte* dest, bool data);
+    /*void Serialize(byte* dest, bool _value);
     void Serialize(byte* dest, int _value);
+    void Serialize(byte* dest, float _value);*/
+    void SerializeVector(byte* dest, std::vector<float> _vector, ZMQMessageHandler::ParameterType type);
 
     zmq::message_t* createMessage(byte targetHostID, byte time, ZMQMessageHandler::MessageType messageType,
-                             byte SceneID, byte objectID, byte ParameterID, ZMQMessageHandler::ParameterType paramType,
-                             byte* payload, size_t payloadSize);
+                                  byte SceneID, byte objectID, byte ParameterID, ZMQMessageHandler::ParameterType paramType,
+                                  bool payload);
+    zmq::message_t* createMessage(byte targetHostID, byte time, ZMQMessageHandler::MessageType messageType,
+                                  byte SceneID, byte objectID, byte ParameterID, ZMQMessageHandler::ParameterType paramType,
+                                  int payload);
+    zmq::message_t* createMessage(byte targetHostID, byte time, ZMQMessageHandler::MessageType messageType,
+                                  byte SceneID, byte objectID, byte ParameterID, ZMQMessageHandler::ParameterType paramType,
+                                  float payload);
+    zmq::message_t* createMessage(byte targetHostID, byte time, ZMQMessageHandler::MessageType messageType,
+                                  byte SceneID, byte objectID, byte ParameterID, ZMQMessageHandler::ParameterType paramType,
+                                  std::vector<float> payload);
 
     protected:
 
@@ -146,7 +158,7 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     // Storing parameter dimensions (NONE, ACTION, BOOL, INT, FLOAT, VECTOR2, VECTOR3, VECTOR4, QUATERNION, COLOR-RGBA, STRING, LIST, UNKNOWN respectively)
     static constexpr byte parameterDimension[13] = {
         0, 1, sizeof(bool),
-        sizeof(int), sizeof(float),
+        sizeof(std::int32_t), sizeof(float),
         sizeof(float)*2, sizeof(float)*3, sizeof(float)*4, sizeof(float)*4,
         sizeof(float)*4, 100, 100, 100};
     
