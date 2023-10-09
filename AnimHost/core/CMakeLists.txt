@@ -10,6 +10,10 @@ qt_add_library(AnimHostCore
     ZMQMessageHandler.h ZMQMessageHandler.cpp
 )
 
+set_target_properties (AnimHostCore PROPERTIES
+    FOLDER Core
+)
+
 target_compile_definitions(AnimHostCore PUBLIC
     ANIMHOSTCORE_LIBRARY
 )

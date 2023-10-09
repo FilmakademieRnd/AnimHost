@@ -3,6 +3,11 @@ qt_add_library(AssimpLoader
     assimploaderplugin_global.h
     assimphelper.h assimphelper.cpp
 )
+
+set_target_properties (AssimpLoader PROPERTIES
+    FOLDER Plugins/DataInput
+)
+
 target_include_directories(AssimpLoader PUBLIC
     ../PluginNodeInterface
     ../../core/DataLoader

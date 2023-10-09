@@ -3,6 +3,10 @@ qt_add_library(PluginNodeInterface
     pluginnodeinterface_global.h
 )
 
+set_target_properties (PluginNodeInterface PROPERTIES
+    FOLDER Plugins
+)
+
 target_compile_definitions(PluginNodeInterface PUBLIC
     PLUGINNODEINTERFACE_LIBRARY
 )

@@ -7,6 +7,11 @@ qt_add_library(BasicOnnxPlugin
     OnnxHelper.h
 )
 
+set_target_properties (BasicOnnxPlugin PROPERTIES
+    FOLDER Plugins/NeuralNetwork
+)
+
+
 target_include_directories(BasicOnnxPlugin PUBLIC
     ../PluginNodeInterface
     ./onnxruntime/include
