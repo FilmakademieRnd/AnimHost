@@ -89,9 +89,6 @@ NodeDataType AssimpLoaderPlugin::dataPortType(QtNodes::PortType portType, QtNode
 
 std::shared_ptr<NodeData> AssimpLoaderPlugin::processOutData(QtNodes::PortIndex port)
 {
-	if (!bDataValid) {
-		importAssimpData();
-	}
 
 	if (bDataValid)
 	{
@@ -112,6 +109,41 @@ std::shared_ptr<NodeData> AssimpLoaderPlugin::processOutData(QtNodes::PortIndex 
 void AssimpLoaderPlugin::run() {
 	
 	//ToDo Move Processing
+	QStringList files = loadFilesFromDir();
+
+	for (auto file : files) {
+		//QString file_name = QFileDialog::getOpenFileName(nullptr, "Import Animation", "C://", "(*.bvh *.fbx)");
+
+		qDebug() << "... Start Process " << file;
+
+		Q_EMIT emitDataInvalidated(0);
+		Q_EMIT emitDataInvalidated(1);
+
+		qDebug() << "... Data Invalid Send ...";
+
+		SourceFilePath = file;
+		bDataValid = false;
+
+		QString shorty = AnimHostHelper::shortenFilePath(file, 10);
+
+		_label->setText(shorty);
+
+		importAssimpData();
+
+		qDebug() << "====== Send 0 Data Updated";
+		emitDataUpdate(0);
+		qDebug() << "====== Data 0 Updated Done";
+
+		qDebug() << "====== Send 1 Data Updated";
+		emitDataUpdate(1);
+		qDebug() << "====== Data 1 Updated Done";
+
+		qDebug() << "Process " << shorty << "... Done";
+
+		Q_EMIT embeddedWidgetSizeUpdated();
+
+		emitRunNextNode();
+	}
 }
 
 QWidget* AssimpLoaderPlugin::embeddedWidget()
@@ -236,53 +268,25 @@ void AssimpLoaderPlugin::onButtonClicked()
 {
 	qDebug() << "Clicked";
 
-	QStringList files = loadFilesFromDir();
-
-	for (auto file : files) {
-		//QString file_name = QFileDialog::getOpenFileName(nullptr, "Import Animation", "C://", "(*.bvh *.fbx)");
-
-		qDebug() << "... Start Process " << file;
-
-		Q_EMIT emitDataInvalidated(0);
-		Q_EMIT emitDataInvalidated(1);
-
-		qDebug() << "... Data Invalid Send ...";
-
-		SourceFilePath = file;
-		bDataValid = false;
-
-		QString shorty = AnimHostHelper::shortenFilePath(file, 10);
-
-		_label->setText(shorty);
-
-
-
-		qDebug() << "====== Send 0 Data Updated";
-		emitDataUpdate(0);
-		qDebug() << "====== Data 0 Updated Done";
-
-		qDebug() << "====== Send 1 Data Updated";
-		emitDataUpdate(1);
-		qDebug() << "====== Data 1 Updated Done";
-
-		qDebug() << "Process " << shorty << "... Done";
-
-		Q_EMIT embeddedWidgetSizeUpdated();
-
-		emitRunNextNode();
-	}
-
-	
-
+	selectDir();
 }
 
-QStringList AssimpLoaderPlugin::loadFilesFromDir()
-{
+
+void AssimpLoaderPlugin::selectDir() {
+
 	QString directory = QDir::toNativeSeparators(QFileDialog::getExistingDirectory(nullptr, "Import Animation", "C://"));
 
 	if (!directory.isEmpty()) {
-
 		SourceDirectory = directory;
+	}
+}
+
+
+QStringList AssimpLoaderPlugin::loadFilesFromDir()
+{
+	if (!SourceDirectory.isEmpty()) {
+
+		QString directory = SourceDirectory;
 
 		QStringList filter = { "*.bvh","*.fbx" };
 

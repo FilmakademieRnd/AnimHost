@@ -59,8 +59,6 @@ public:
     unsigned int nDataPorts(QtNodes::PortType portType) const override;
     NodeDataType dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
 
-    bool hasInputRunSignal() const override { return false; };
-
     std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;
 
     void processInData(std::shared_ptr<QtNodes::NodeData> data, QtNodes::PortIndex portIndex) {};
@@ -78,6 +76,8 @@ private Q_SLOTS:
 private:
     void loadAnimationData(aiAnimation* pASSIMPAnimation, Skeleton* pSkeleton, Animation* pAnimation, aiNode* pNode);
     void importAssimpData();
+
+    void selectDir();
 
     QStringList loadFilesFromDir();
 

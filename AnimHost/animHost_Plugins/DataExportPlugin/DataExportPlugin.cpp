@@ -40,6 +40,10 @@ QJsonObject DataExportPlugin::save() const
 
     nodeJson["dir"] = exportDirectory;
 
+    nodeJson["writeBin"] = bWriteBinaryData;
+
+    nodeJson["overwrite"] = bOverwritePoseSeq;
+
     return nodeJson;
 }
 
@@ -53,6 +57,21 @@ void DataExportPlugin::load(QJsonObject const& p)
         if (!strDir.isEmpty()) {
             exportDirectory = strDir;
         }
+    }
+
+
+    v = p["writeBin"];
+
+    if (!v.isUndefined()) {
+        bWriteBinaryData = v.toBool();
+    }
+
+
+    v = p["overwrite"];
+
+    if (!v.isUndefined()) {
+        bOverwritePoseSeq = v.toBool();
+        bOverwriteJointVelSeq = v.toBool();
     }
 }
 
@@ -288,6 +307,7 @@ void DataExportPlugin::writeBinaryPoseSequenceData() {
     if (bOverwritePoseSeq) {
         file.open(QIODevice::WriteOnly);
         bOverwritePoseSeq = false;
+        _cbOverwrite->setCheckState(Qt::Unchecked);
     }
     else {
         file.open(QIODevice::WriteOnly | QIODevice::Append);
@@ -342,6 +362,7 @@ void DataExportPlugin::writeBinaryJointVelocitySequence() {
     if (bOverwriteJointVelSeq) {
         file.open(QIODevice::WriteOnly);
         bOverwriteJointVelSeq = false;
+        _cbOverwrite->setCheckState(Qt::Unchecked);
     }
     else {
         file.open(QIODevice::WriteOnly | QIODevice::Append);
