@@ -17,36 +17,32 @@ class DATAEXPORTPLUGINSHARED_EXPORT DataExportPlugin : public PluginNodeInterfac
     Q_INTERFACES(PluginNodeInterface)
 
 private:
-    
-    
-    QWidget* widget;
-    QPushButton* _pushButton;
-    QLabel* _label;
-    QHBoxLayout* _filePathLayout;
 
-    QCheckBox* _cbWriteBinary;
-    QCheckBox* _cbOverwrite;
-    QVBoxLayout* _vLayout;
+    QWidget* widget = nullptr;
+    QPushButton* _pushButton = nullptr;
+    QLabel* _label = nullptr;
+    QHBoxLayout* _filePathLayout = nullptr;
+    QCheckBox* _cbWriteBinary = nullptr;
+    QCheckBox* _cbOverwrite = nullptr;
+    QVBoxLayout* _vLayout = nullptr;
 
     // Node Data Innput
     std::weak_ptr<AnimNodeData<Skeleton>> _skeletonIn;
 
     bool bWritePoseSequence = true;
     std::weak_ptr<AnimNodeData<PoseSequence>> _poseSequenceIn;
-
     bool bWriteJointVelocity = true;
     std::weak_ptr<AnimNodeData<JointVelocitySequence>> _jointVelocitySequenceIn;
-
 
     // Export Settings
     QString exportDirectory = "";
 
     bool bWriteBinaryData = false;
-
     bool bOverwriteJointVelSeq = true;
     bool bOverwritePoseSeq = true;
 
 public:
+
     DataExportPlugin();
     ~DataExportPlugin();
 
@@ -63,7 +59,6 @@ public:
     NodeDataType dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
 
     std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;
-
     void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
 
     void run() override;
@@ -71,15 +66,11 @@ public:
     QWidget* embeddedWidget() override;
 
     void exportPoseSequenceData();
-
     void writeCSVPoseSequenceData();
-
     void writeBinaryPoseSequenceData();
 
     void exportJointVelocitySequence();
-
     void writeCSVJointVelocitySequence();
-
     void writeBinaryJointVelocitySequence();
 
     //QTNodes
