@@ -16,15 +16,6 @@ DataExportPlugin::DataExportPlugin()
     _skeletonIn = std::make_shared<AnimNodeData<Skeleton>>();
     _poseSequenceIn = std::make_shared<AnimNodeData<PoseSequence>>();
     _jointVelocitySequenceIn = std::make_shared<AnimNodeData<JointVelocitySequence>>();
-    
-    
-    widget = nullptr;
-    _pushButton = nullptr;
-    _label = nullptr;
-    _filePathLayout = nullptr;
-    _cbWriteBinary = nullptr;
-    _cbOverwrite = nullptr;
-    _vLayout = nullptr;
 
     qDebug() << "DataExportPlugin created";
 }
@@ -59,16 +50,12 @@ void DataExportPlugin::load(QJsonObject const& p)
         }
     }
 
-
     v = p["writeBin"];
-
     if (!v.isUndefined()) {
         bWriteBinaryData = v.toBool();
     }
 
-
     v = p["overwrite"];
-
     if (!v.isUndefined()) {
         bOverwritePoseSeq = v.toBool();
         bOverwriteJointVelSeq = v.toBool();
@@ -143,15 +130,10 @@ void DataExportPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::Po
     default:
         return;
     }
-
-    
-
 }
 
 void DataExportPlugin::run()
 {
-    // Write Data
-
     if (!exportDirectory.isEmpty()) {
 
         if (auto sp_poseSeq = _poseSequenceIn.lock() && bWritePoseSequence) {
@@ -174,32 +156,27 @@ void DataExportPlugin::run()
 QWidget* DataExportPlugin::embeddedWidget()
 {
     if (!_pushButton) {
+
         _pushButton = new QPushButton("Select Dir");
+        _pushButton->resize(QSize(30, 30));
+
         _label = new QLabel("Export Path");
 
-        _pushButton->resize(QSize(30, 30));
         _filePathLayout = new QHBoxLayout();
-
         _filePathLayout->addWidget(_label);
         _filePathLayout->addWidget(_pushButton);
-
         _filePathLayout->setSizeConstraint(QLayout::SetMinimumSize);
-
 
         _cbWriteBinary = new QCheckBox("Write Binary Data");
         _cbOverwrite = new QCheckBox("Overwrite Existing Data");
-
+        
         _vLayout = new QVBoxLayout();
-
         _vLayout->addLayout(_filePathLayout);
         _vLayout->addWidget(_cbWriteBinary);
         _vLayout->addWidget(_cbOverwrite);
 
         widget = new QWidget();
-
         widget->setLayout(_vLayout);
-
-
 
         connect(_pushButton, &QPushButton::released, this, &DataExportPlugin::onButtonClicked);
         connect(_cbOverwrite, &QCheckBox::stateChanged, this, &DataExportPlugin::onOverrideCheckbox);

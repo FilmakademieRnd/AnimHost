@@ -46,14 +46,11 @@ public:
 
     QString caption() const override { return "Animation Import"; }
     QString name() const override { return "Animation Import"; }
-   
     bool captionVisible() const override { return true; }
 
 public:
     QJsonObject save() const override;
-
     void load(QJsonObject const& p) override;
-
 
 public:
     unsigned int nDataPorts(QtNodes::PortType portType) const override;
@@ -67,16 +64,16 @@ public:
 
     QWidget* embeddedWidget() override;
 
-    //QTNodes
-    QString category() override { return "Import"; };  // Returns a category for the node
+    QString category() override { return "Import"; }; 
 
 private Q_SLOTS:
     void onButtonClicked();
 
 private:
     void loadAnimationData(aiAnimation* pASSIMPAnimation, Skeleton* pSkeleton, Animation* pAnimation, aiNode* pNode);
+    
     void importAssimpData();
-
+    
     void selectDir();
 
     QStringList loadFilesFromDir();

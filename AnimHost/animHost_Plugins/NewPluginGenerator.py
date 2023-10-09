@@ -161,20 +161,18 @@ public:
     
     std::unique_ptr<NodeDelegateModel> Init() override {{ return  std::unique_ptr<{name}Plugin>(new {name}Plugin()); }};
 
+    QString category() override {{ return "Undefined Category"; }};
     QString caption() const override {{ return this->name(); }}
     bool captionVisible() const override {{ return true; }}
 
-    unsigned int nPorts(QtNodes::PortType portType) const override;
-    NodeDataType dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
+    unsigned int nDataPorts(QtNodes::PortType portType) const override;
+    NodeDataType dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
 
-    std::shared_ptr<NodeData> outData(QtNodes::PortIndex port) override;
-
-    void setInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
+    std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;
+    void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
+    void run() override;
 
     QWidget* embeddedWidget() override;
-
-    //QTNodes
-    QString category() override {{ return "Undefined Category"; }};  // Returns a category for the node
 
 private Q_SLOTS:
     void onButtonClicked();
@@ -201,7 +199,7 @@ private Q_SLOTS:
     qDebug() << "~{name}Plugin()";
 }}
 
-unsigned int {name}Plugin::nPorts(QtNodes::PortType portType) const
+unsigned int {name}Plugin::nDataPorts(QtNodes::PortType portType) const
 {{
     if (portType == QtNodes::PortType::In)
         return 0;
@@ -209,7 +207,7 @@ unsigned int {name}Plugin::nPorts(QtNodes::PortType portType) const
         return 0;
 }}
 
-NodeDataType {name}Plugin::dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
+NodeDataType {name}Plugin::dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
 {{
     NodeDataType type;
     if (portType == QtNodes::PortType::In)
@@ -218,12 +216,12 @@ NodeDataType {name}Plugin::dataType(QtNodes::PortType portType, QtNodes::PortInd
         return type;
 }}
 
-void {name}Plugin::setInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex)
+void {name}Plugin::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex)
 {{
     qDebug() << "{name}Plugin setInData";
 }}
 
-std::shared_ptr<NodeData> {name}Plugin::outData(QtNodes::PortIndex port)
+std::shared_ptr<NodeData> {name}Plugin::processOutData(QtNodes::PortIndex port)
 {{
 	return nullptr;
 }}
