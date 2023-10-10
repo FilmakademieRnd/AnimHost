@@ -94,17 +94,17 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     void SerializeVector(byte* dest, std::vector<float> _vector, ZMQMessageHandler::ParameterType type);
 
     zmq::message_t* createMessage(byte targetHostID, byte time, ZMQMessageHandler::MessageType messageType,
-                                  byte SceneID, byte objectID, byte ParameterID, ZMQMessageHandler::ParameterType paramType,
-                                  bool payload);
-    zmq::message_t* createMessage(byte targetHostID, byte time, ZMQMessageHandler::MessageType messageType,
-                                  byte SceneID, byte objectID, byte ParameterID, ZMQMessageHandler::ParameterType paramType,
-                                  int payload);
-    zmq::message_t* createMessage(byte targetHostID, byte time, ZMQMessageHandler::MessageType messageType,
-                                  byte SceneID, byte objectID, byte ParameterID, ZMQMessageHandler::ParameterType paramType,
-                                  float payload);
-    zmq::message_t* createMessage(byte targetHostID, byte time, ZMQMessageHandler::MessageType messageType,
-                                  byte SceneID, byte objectID, byte ParameterID, ZMQMessageHandler::ParameterType paramType,
-                                  std::vector<float> payload);
+                                  QByteArray* body);
+    QByteArray createMessageBody(byte SceneID, byte objectID, byte ParameterID, ZMQMessageHandler::ParameterType paramType,
+                                 bool payload);
+    QByteArray createMessageBody(byte SceneID, byte objectID, byte ParameterID, ZMQMessageHandler::ParameterType paramType,
+                                 std::int32_t payload);
+    QByteArray createMessageBody(byte SceneID, byte objectID, byte ParameterID, ZMQMessageHandler::ParameterType paramType,
+                                 float payload);
+    QByteArray createMessageBody(byte sceneID, byte objectID, byte parameterID, ZMQMessageHandler::ParameterType parameterType,
+                                 std::string payload);
+    QByteArray createMessageBody(byte SceneID, byte objectID, byte ParameterID, ZMQMessageHandler::ParameterType paramType,
+                                 std::vector<float> payload);
 
     protected:
 

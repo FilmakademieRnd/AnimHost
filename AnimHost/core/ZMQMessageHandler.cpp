@@ -112,9 +112,38 @@ void ZMQMessageHandler::SerializeVector(byte* dest, std::vector<float> _vector, 
     }
 }
 
-zmq::message_t* ZMQMessageHandler::createMessage(byte targetHostID, byte time, ZMQMessageHandler::MessageType messageType,
-                                            byte sceneID, byte objectID, byte parameterID, ZMQMessageHandler::ParameterType parameterType,
-                                            bool payload) {
+
+// Creating ZMQ Message from existing QByteArray
+zmq::message_t* ZMQMessageHandler::createMessage(byte targetHostID, byte time, ZMQMessageHandler::MessageType messageType, QByteArray* body) {
+    try {
+        if (targetHostID == -1)
+            throw (targetHostID);
+    } catch (int targetHostID) {
+        qDebug() << "Invalid target host ID";
+    }
+
+    qDebug() << "Creating ZMQ Message from existing QByteArray";
+
+    // Constructing new message
+    QByteArray newMessage((qsizetype) 3, Qt::Uninitialized);
+
+    // Header
+    newMessage[0] = targetHostID;                           // Target Client ID
+    newMessage[1] = time;                                   // Time
+    newMessage[2] = messageType;                            // Message Type
+
+    newMessage.append(*body);
+
+    void* msgData = newMessage.data();
+    size_t msgSize = newMessage.size();
+    zmq::message_t* zmqNewMessage = new zmq::message_t(msgData, msgSize);
+
+    return zmqNewMessage;
+}
+
+// Creating ZMQ Message Body from bool value
+QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byte parameterID, ZMQMessageHandler::ParameterType parameterType,
+                                                bool payload) {
     try {
         if (targetHostID == -1)
             throw (targetHostID);
@@ -125,20 +154,15 @@ zmq::message_t* ZMQMessageHandler::createMessage(byte targetHostID, byte time, Z
     qDebug() << "Serialize bool: " << payload;
 
     // Constructing new message
-    QByteArray newMessage((qsizetype) 10, Qt::Uninitialized);
+    QByteArray newMessage((qsizetype) 7, Qt::Uninitialized);
 
-    // Header
-    newMessage[0] = targetHostID;                           // Target Client ID
-    newMessage[1] = time;                                   // Time
-    newMessage[2] = messageType;                            // Message Type
-
-    newMessage[3] = sceneID;                                // Scene ID (from where do I retrieve it?)
-    newMessage[4] = objectID;                               // Object ID (from where do I retrieve it?)
-    newMessage[5] = objectID;                               // Object ID (from where do I retrieve it?)
-    newMessage[6] = parameterID;                            // Parameter ID (from where do I retrieve it?)
-    newMessage[7] = parameterID;                            // Parameter ID (from where do I retrieve it?)
-    newMessage[8] = parameterType;                          // Parameter Type (from where do I retrieve it?)
-    newMessage[9] = getParameterDimension(parameterType);   // Parameter Dimensionality (in bytes) (from where do I retrieve it?)
+    newMessage[0] = sceneID;                                // Scene ID (from where do I retrieve it?)
+    newMessage[1] = objectID;                               // Object ID (from where do I retrieve it?)
+    newMessage[2] = objectID;                               // Object ID (from where do I retrieve it?)
+    newMessage[3] = parameterID;                            // Parameter ID (from where do I retrieve it?)
+    newMessage[4] = parameterID;                            // Parameter ID (from where do I retrieve it?)
+    newMessage[5] = parameterType;                          // Parameter Type (from where do I retrieve it?)
+    newMessage[6] = getParameterDimension(parameterType);   // Parameter Dimensionality (in bytes) (from where do I retrieve it?)
 
     const char* payloadBytes = (char*) malloc(getParameterDimension(parameterType));
     bool val = payload;
@@ -150,16 +174,17 @@ zmq::message_t* ZMQMessageHandler::createMessage(byte targetHostID, byte time, Z
     debugOut = std::to_string(_bool);
     qDebug() << "Payload data: " + debugOut;
 
-    void* msgData = newMessage.data();
+    return newMessage;
+    /*void* msgData = newMessage.data();
     size_t msgSize = newMessage.size();
     zmq::message_t* zmqNewMessage = new zmq::message_t(msgData, msgSize);
 
-    return zmqNewMessage;
+    return zmqNewMessage;*/
 }
 
-zmq::message_t* ZMQMessageHandler::createMessage(byte targetHostID, byte time, ZMQMessageHandler::MessageType messageType,
-                                                 byte sceneID, byte objectID, byte parameterID, ZMQMessageHandler::ParameterType parameterType,
-                                                 std::int32_t payload) {
+// Creating ZMQ Message Body from 32-bit int
+QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byte parameterID, ZMQMessageHandler::ParameterType parameterType,
+                                                std::int32_t payload) {
     try {
         if (targetHostID == -1)
             throw (targetHostID);
@@ -170,20 +195,15 @@ zmq::message_t* ZMQMessageHandler::createMessage(byte targetHostID, byte time, Z
     qDebug() << "Serialize int: " << payload;
 
     // Constructing new message
-    QByteArray newMessage((qsizetype) 10, Qt::Uninitialized);
+    QByteArray newMessage((qsizetype) 7, Qt::Uninitialized);
 
-    // Header
-    newMessage[0] = targetHostID;                           // Target Client ID
-    newMessage[1] = time;                                   // Time
-    newMessage[2] = messageType;                            // Message Type
-
-    newMessage[3] = sceneID;                                // Scene ID (from where do I retrieve it?)
-    newMessage[4] = objectID;                               // Object ID (from where do I retrieve it?)
-    newMessage[5] = objectID;                               // Object ID (from where do I retrieve it?)
-    newMessage[6] = parameterID;                            // Parameter ID (from where do I retrieve it?)
-    newMessage[7] = parameterID;                            // Parameter ID (from where do I retrieve it?)
-    newMessage[8] = parameterType;                          // Parameter Type (from where do I retrieve it?)
-    newMessage[9] = getParameterDimension(parameterType);   // Parameter Dimensionality (in bytes) (from where do I retrieve it?)
+    newMessage[0] = sceneID;                                // Scene ID (from where do I retrieve it?)
+    newMessage[1] = objectID;                               // Object ID (from where do I retrieve it?)
+    newMessage[2] = objectID;                               // Object ID (from where do I retrieve it?)
+    newMessage[3] = parameterID;                            // Parameter ID (from where do I retrieve it?)
+    newMessage[4] = parameterID;                            // Parameter ID (from where do I retrieve it?)
+    newMessage[5] = parameterType;                          // Parameter Type (from where do I retrieve it?)
+    newMessage[6] = getParameterDimension(parameterType);   // Parameter Dimensionality (in bytes) (from where do I retrieve it?)
 
     const char* payloadBytes = (char*) malloc(getParameterDimension(parameterType));
     std::int32_t val = payload;
@@ -195,16 +215,17 @@ zmq::message_t* ZMQMessageHandler::createMessage(byte targetHostID, byte time, Z
     debugOut = std::to_string(_int);
     qDebug() << "Payload data: " + debugOut;
 
-    void* msgData = newMessage.data();
+    return newMessage;
+    /*void* msgData = newMessage.data();
     size_t msgSize = newMessage.size();
     zmq::message_t* zmqNewMessage = new zmq::message_t(msgData, msgSize);
 
-    return zmqNewMessage;
+    return zmqNewMessage;*/
 }
 
-zmq::message_t* ZMQMessageHandler::createMessage(byte targetHostID, byte time, ZMQMessageHandler::MessageType messageType,
-                                                 byte sceneID, byte objectID, byte parameterID, ZMQMessageHandler::ParameterType parameterType,
-                                                 float payload) {
+// Creating ZMQ Message Body from float value
+QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byte parameterID, ZMQMessageHandler::ParameterType parameterType,
+                                                float payload) {
     try {
         if (targetHostID == -1)
             throw (targetHostID);
@@ -214,20 +235,15 @@ zmq::message_t* ZMQMessageHandler::createMessage(byte targetHostID, byte time, Z
     qDebug() << "Serialize float: " << std::to_string(payload);
 
     // Constructing new message
-    QByteArray newMessage((qsizetype) 10, Qt::Uninitialized);
+    QByteArray newMessage((qsizetype) 7, Qt::Uninitialized);
 
-    // Header
-    newMessage[0] = targetHostID;                           // Target Client ID
-    newMessage[1] = time;                                   // Time
-    newMessage[2] = messageType;                            // Message Type
-
-    newMessage[3] = sceneID;                                // Scene ID (from where do I retrieve it?)
-    newMessage[4] = objectID;                               // Object ID (from where do I retrieve it?)
-    newMessage[5] = objectID;                               // Object ID (from where do I retrieve it?)
-    newMessage[6] = parameterID;                            // Parameter ID (from where do I retrieve it?)
-    newMessage[7] = parameterID;                            // Parameter ID (from where do I retrieve it?)
-    newMessage[8] = parameterType;                          // Parameter Type (from where do I retrieve it?)
-    newMessage[9] = getParameterDimension(parameterType);   // Parameter Dimensionality (in bytes) (from where do I retrieve it?)
+    newMessage[0] = sceneID;                                // Scene ID (from where do I retrieve it?)
+    newMessage[1] = objectID;                               // Object ID (from where do I retrieve it?)
+    newMessage[2] = objectID;                               // Object ID (from where do I retrieve it?)
+    newMessage[3] = parameterID;                            // Parameter ID (from where do I retrieve it?)
+    newMessage[4] = parameterID;                            // Parameter ID (from where do I retrieve it?)
+    newMessage[5] = parameterType;                          // Parameter Type (from where do I retrieve it?)
+    newMessage[6] = getParameterDimension(parameterType);   // Parameter Dimensionality (in bytes) (from where do I retrieve it?)
 
     const char* payloadBytes = (char*) malloc(getParameterDimension(parameterType));
     float val = payload;
@@ -239,16 +255,56 @@ zmq::message_t* ZMQMessageHandler::createMessage(byte targetHostID, byte time, Z
     debugOut = std::to_string(_float);
     qDebug() << "Payload data: " + debugOut;
 
-    void* msgData = newMessage.data();
+    return newMessage;
+    /*void* msgData = newMessage.data();
     size_t msgSize = newMessage.size();
     zmq::message_t* zmqNewMessage = new zmq::message_t(msgData, msgSize);
 
-    return zmqNewMessage;
+    return zmqNewMessage;*/
 }
 
-zmq::message_t* ZMQMessageHandler::createMessage(byte targetHostID, byte time, ZMQMessageHandler::MessageType messageType,
-                                                 byte sceneID, byte objectID, byte parameterID, ZMQMessageHandler::ParameterType parameterType,
-                                                 std::vector<float> payload) {
+// Creating ZMQ Message Body from string value
+QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byte parameterID, ZMQMessageHandler::ParameterType parameterType,
+                                                std::string payload) {
+    try {
+        if (targetHostID == -1)
+            throw (targetHostID);
+    } catch (int targetHostID) {
+        qDebug() << "Invalid target host ID";
+    }
+    qDebug() << "Serialize serialize: " << payload;
+
+    // Constructing new message
+    QByteArray newMessage((qsizetype) 7, Qt::Uninitialized);
+
+    newMessage[0] = sceneID;                                // Scene ID (from where do I retrieve it?)
+    newMessage[1] = objectID;                               // Object ID (from where do I retrieve it?)
+    newMessage[2] = objectID;                               // Object ID (from where do I retrieve it?)
+    newMessage[3] = parameterID;                            // Parameter ID (from where do I retrieve it?)
+    newMessage[4] = parameterID;                            // Parameter ID (from where do I retrieve it?)
+    newMessage[5] = parameterType;                          // Parameter Type (from where do I retrieve it?)
+    newMessage[6] = getParameterDimension(parameterType);   // Parameter Dimensionality (in bytes) (from where do I retrieve it?)
+
+    payload.shrink_to_fit();
+    const char* payloadBytes = (char*) malloc(payload.size());
+    std::memcpy((byte*) payloadBytes, &payload, payload.size());
+    newMessage.append(payloadBytes, (qsizetype) payload.size());
+
+    std::string debugOut = std::any_cast<std::string>(payloadBytes);
+    qDebug() << "Payload data: " + debugOut;
+
+    return newMessage;
+    /*void* msgData = newMessage.data();
+    size_t msgSize = newMessage.size();
+    zmq::message_t* zmqNewMessage = new zmq::message_t(msgData, msgSize);
+
+    return zmqNewMessage;*/
+}
+
+
+// Creating ZMQ Message Body from float vector (VECTOR2-3-4, QUATERNION, COLOR)
+QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byte parameterID, ZMQMessageHandler::ParameterType parameterType,
+                                                std::vector<float> payload) {
     try {
         if (targetHostID == -1)
             throw (targetHostID);
@@ -257,20 +313,15 @@ zmq::message_t* ZMQMessageHandler::createMessage(byte targetHostID, byte time, Z
     }
 
     // Constructing new message
-    QByteArray newMessage((qsizetype) 10, Qt::Uninitialized);
+    QByteArray newMessage((qsizetype) 7, Qt::Uninitialized);
 
-    // Header
-    newMessage[0] = targetHostID;                           // Target Client ID
-    newMessage[1] = time;                                   // Time
-    newMessage[2] = messageType;                            // Message Type
-
-    newMessage[3] = sceneID;                                // Scene ID (from where do I retrieve it?)
-    newMessage[4] = objectID;                               // Object ID (from where do I retrieve it?)
-    newMessage[5] = objectID;                               // Object ID (from where do I retrieve it?)
-    newMessage[6] = parameterID;                            // Parameter ID (from where do I retrieve it?)
-    newMessage[7] = parameterID;                            // Parameter ID (from where do I retrieve it?)
-    newMessage[8] = parameterType;                          // Parameter Type (from where do I retrieve it?)
-    newMessage[9] = getParameterDimension(parameterType);   // Parameter Dimensionality (in bytes) (from where do I retrieve it?)
+    newMessage[0] = sceneID;                                // Scene ID (from where do I retrieve it?)
+    newMessage[1] = objectID;                               // Object ID (from where do I retrieve it?)
+    newMessage[2] = objectID;                               // Object ID (from where do I retrieve it?)
+    newMessage[3] = parameterID;                            // Parameter ID (from where do I retrieve it?)
+    newMessage[4] = parameterID;                            // Parameter ID (from where do I retrieve it?)
+    newMessage[5] = parameterType;                          // Parameter Type (from where do I retrieve it?)
+    newMessage[6] = getParameterDimension(parameterType);   // Parameter Dimensionality (in bytes) (from where do I retrieve it?)
 
     const char* payloadBytes = (char*)malloc(getParameterDimension(parameterType));
     SerializeVector((byte *)payloadBytes, payload, parameterType);
@@ -286,9 +337,10 @@ zmq::message_t* ZMQMessageHandler::createMessage(byte targetHostID, byte time, Z
     }
     qDebug() << "Payload data: " + debugOut;
 
-    void* msgData = newMessage.data();
+    return newMessage;
+    /*void* msgData = newMessage.data();
     size_t msgSize = newMessage.size();
     zmq::message_t* zmqNewMessage = new zmq::message_t(msgData, msgSize);
 
-    return zmqNewMessage;
+    return zmqNewMessage;*/
 }

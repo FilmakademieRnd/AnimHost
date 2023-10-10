@@ -13,12 +13,6 @@ TracerUpdateSenderPlugin::TracerUpdateSenderPlugin()
     timer->start(0);
     _updateSenderContext = new zmq::context_t(1);
 
-    //msgSender = new AnimHostMessageSender("127.0.0.1", false, _updateSenderContext); // It could be an idea to let the user set the IP Address using a widget
-
-    //_updateSenderSocket = new zmq::socket_t(*_updateSenderContext, zmq::socket_type::pub);
-
-    //QObject::connect(tickReceiver, &ZMQMessageHandler::stopped, this, &TracerUpdateSenderPlugin::stoppeddddd);
-
     qDebug() << "TracerUpdateSenderPlugin created";
 }
 
@@ -145,21 +139,42 @@ void TracerUpdateSenderPlugin::run() {
     msgSender = new AnimHostMessageSender(ipAddress, false, _updateSenderContext);
     zeroMQSenderThread = new QThread();
 
-    //std::vector<float> vec3Example = { 2.5, -7.4, 0 }; // To be substituted with REAL DATA (from sp_akeleton and sp_animation)
-    //zmq::message_t* msgVec3 = msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE,
-    //                                              0, 0, 0, ZMQMessageHandler::ParameterType::VECTOR3, vec3Example);
-
-    /*float floatExample = 78.3;
-    zmq::message_t* msgFloat = msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE,
-                                                       0, 0, 0, ZMQMessageHandler::ParameterType::FLOAT, floatExample);*/
-
-    bool boolExample = true;
-    zmq::message_t* msgBool = msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE,
-                                                      0, 0, 0, ZMQMessageHandler::ParameterType::BOOL, boolExample);
+    /*bool boolExample = true;
+    QByteArray msgBodyBool = msgSender->createMessageBody(0, 0, 0, ZMQMessageHandler::ParameterType::BOOL, boolExample);*/
 
     /*int intExample = -64;
-    zmq::message_t* msgInt = msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE,
-                                                   0, 0, 0, ZMQMessageHandler::ParameterType::INT, intExample);*/
+    QByteArray msgBodyInt = msgSender->createMessageBody(0, 0, 0, ZMQMessageHandler::ParameterType::INT, intExample);*/
+    
+    /*float floatExample = 78.3;
+    QByteArray msgBodyFloat = msgSender->createMessageBody(0, 0, 0, ZMQMessageHandler::ParameterType::FLOAT, floatExample);*/
+
+    //std::vector<float> vec3Example = { 2.5, -7.4, 0 }; // To be substituted with REAL DATA (from sp_akeleton and sp_animation)
+    //QByteArray msgBodyVec3 = msgSender->createMessageBody(0, 0, 0, ZMQMessageHandler::ParameterType::VECTOR3, vec3Example);
+
+    std::shared_ptr<AnimNodeData<Animation>> animNodeData = std::shared_ptr<AnimNodeData<Animation>>(_animIn);
+    auto animData = animNodeData->getData();
+
+    QByteArray msgBodyAnim = QByteArray();
+    for (int i = 0; i < animData->mBones.size(); i++) {
+        // Getting Bone Object ID
+        //byte boneID = -1; // is this long one or two bytes?
+        //try {
+        //    bool ok;
+        //    boneID = animData->mBones[i].getId().toUShort(&ok); // Throws exception. WHY?
+        //    if (!ok)
+        //        throw i;
+        //} catch (int i) {
+        //    qFatal() << "In TracerSenderUpdatePlugin. No ID found for Bone " << i << ".";
+        //}
+
+        // Getting Bone Object Rotation Quaternion
+        glm::quat boneQuat = animData->mBones[i].GetOrientation(0);
+        std::vector<float> boneQuatVector = {boneQuat.x, boneQuat.y, boneQuat.z, boneQuat.w}; // converting glm::quat in vector<float>
+
+        // How do I retrieve sceneID? Where is ParameterID placed?
+        QByteArray msgBoneQuat = msgSender->createMessageBody(0, i, 0, ZMQMessageHandler::ParameterType::QUATERNION, boneQuatVector);
+        msgBodyAnim.append(msgBoneQuat);
+    }
 
     msgSender->moveToThread(zeroMQSenderThread);
     QObject::connect(zeroMQSenderThread, &QThread::started, msgSender, &AnimHostMessageSender::run);
@@ -168,10 +183,13 @@ void TracerUpdateSenderPlugin::run() {
     zeroMQSenderThread->start();
 
     // Example of message creation and 
-    msgSender->setMessage(msgBool);
-    //msgSender->setMessage(msgInt);
-    //msgSender->setMessage(msgFloat);
-    //msgSender->setMessage(msgVec3);
+    //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyBool));
+    //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyInt);
+    //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyFloat);
+    //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyVec3);
+
+    // create ZMQ and send it through AnimHostMessageSender
+    msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyAnim));
 }
 
 // When TICK is received message sender is enabled
