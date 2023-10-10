@@ -54,17 +54,24 @@ void JointPositionPlugin::run(QVariantList in, QVariantList& out)
         glm::mat4 scale = glm::scale(glm::mat4(1.0f), scl);
 
         glm::vec3 pos = animation->mBones[currentBone].GetPosition(frame);
-        glm::mat4 translation = glm::translate(glm::mat4(1.0f), pos);
+        glm::mat4 translation (1.0f);
+        if (currentBone == 0) {
+            translation = glm::translate(translation, glm::vec3(0.0, pos.y, 0.0));
+        }
+        else {
+            translation = glm::translate(translation, pos);
+        }
+        //glm::mat4 translation = glm::translate(glm::mat4(1.0f), pos);
 
-        glm::mat4 local_transform = translation * rotation * scale;// *scale;
-
-        //result = transform *  result;// *glm::vec4(0.0, 0.0, 0.0, 1.0);
+        glm::mat4 local_transform = translation * rotation * scale;
+  
         glm::mat4 globalT = currentT * local_transform;
         result = globalT * result;
 
-
-
         poseSequence->mPoseSequence[frame].mPositionData[currentBone] = result;
+        if (currentBone == 0) {
+            poseSequence->mPoseSequence[frame].mPositionData[currentBone] += glm::vec3(pos.x, 0, pos.z);
+        }
 
         for (int i : skeleton->bone_hierarchy[currentBone]) {
             lBuildPose(globalT, i);

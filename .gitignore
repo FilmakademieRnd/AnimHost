@@ -25,6 +25,9 @@ ExportedObj/
 *.VC.db
 *.vsconfig
 
+#Python
+.ipynb_checkpoints
+
 #Qt
 build*
 *.autosave
