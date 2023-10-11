@@ -35,6 +35,10 @@ void HistoryPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::PortI
     qDebug() << "HistoryPlugin setInData";
 }
 
+void HistoryPlugin::run()
+{
+}
+
 std::shared_ptr<NodeData> HistoryPlugin::processOutData(QtNodes::PortIndex port)
 {
 	return nullptr;

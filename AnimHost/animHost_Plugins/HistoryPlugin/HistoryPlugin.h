@@ -5,6 +5,7 @@
 #include "HistoryPlugin_global.h"
 #include <QMetaType>
 #include <pluginnodeinterface.h>
+#include "HistoryHelper.h"
 
 class QPushButton;
 
@@ -16,6 +17,8 @@ class HISTORYPLUGINSHARED_EXPORT HistoryPlugin : public PluginNodeInterface
 
 private:
     QPushButton* _pushButton;
+
+    RingBuffer<Pose>* _poseHistory;
 
 public:
     HistoryPlugin();

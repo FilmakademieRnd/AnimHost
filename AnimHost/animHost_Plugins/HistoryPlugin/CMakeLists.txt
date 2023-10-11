@@ -2,6 +2,7 @@
 qt_add_library(HistoryPlugin
     HistoryPlugin.cpp HistoryPlugin.h
     HistoryPlugin_global.h
+    HistoryHelper.h
 )
 target_include_directories(HistoryPlugin PUBLIC
     ../PluginNodeInterface
