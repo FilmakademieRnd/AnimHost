@@ -52,6 +52,9 @@ private:
     std::vector<int> _animOut;
     int validData = -1;
 
+    // Serializes in the form of a byte array an animation frame represented by a list of quaternions (Animation data type)
+    void SerializeAnimation(std::shared_ptr<Animation> animData, QByteArray* byteArray);
+
 public:
     TracerUpdateSenderPlugin();
     ~TracerUpdateSenderPlugin();

@@ -13,6 +13,15 @@ TracerUpdateSenderPlugin::TracerUpdateSenderPlugin()
     timer->start(0);
     _updateSenderContext = new zmq::context_t(1);
 
+    localTime = timer->interval() % 128;
+
+    zeroMQTickReceiverThread = new QThread();
+    tickReceiver = new TickReceiver(this, ipAddress, false, _updateSenderContext);
+
+    tickReceiver->moveToThread(zeroMQTickReceiverThread);
+    QObject::connect(tickReceiver, &TickReceiver::tick, this, &TracerUpdateSenderPlugin::ticked);
+    QObject::connect(zeroMQTickReceiverThread, &QThread::started, tickReceiver, &TickReceiver::run);
+
     qDebug() << "TracerUpdateSenderPlugin created";
 }
 
@@ -125,14 +134,6 @@ void TracerUpdateSenderPlugin::run() {
         return;
     }
 
-    localTime = timer->interval() % 128;
-
-    zeroMQTickReceiverThread = new QThread();
-    tickReceiver = new TickReceiver(this, ipAddress, false, _updateSenderContext);
-
-    tickReceiver->moveToThread(zeroMQTickReceiverThread);
-    QObject::connect(tickReceiver, &TickReceiver::tick, this, &TracerUpdateSenderPlugin::ticked);
-    QObject::connect(zeroMQTickReceiverThread, &QThread::started, tickReceiver, &TickReceiver::run);
     tickReceiver->requestStart();
     zeroMQTickReceiverThread->start();
 
@@ -152,35 +153,9 @@ void TracerUpdateSenderPlugin::run() {
     //QByteArray msgBodyVec3 = msgSender->createMessageBody(0, 0, 0, ZMQMessageHandler::ParameterType::VECTOR3, vec3Example);
 
     std::shared_ptr<AnimNodeData<Animation>> animNodeData = std::shared_ptr<AnimNodeData<Animation>>(_animIn);
-    auto animData = animNodeData->getData();
-
-    QByteArray msgBodyAnim = QByteArray();
-    for (int i = 0; i < animData->mBones.size(); i++) {
-        // Getting Bone Object ID
-        //byte boneID = -1; // is this long one or two bytes?
-        //try {
-        //    bool ok;
-        //    boneID = animData->mBones[i].getId().toUShort(&ok); // Throws exception. WHY?
-        //    if (!ok)
-        //        throw i;
-        //} catch (int i) {
-        //    qFatal() << "In TracerSenderUpdatePlugin. No ID found for Bone " << i << ".";
-        //}
-
-        // Getting Bone Object Rotation Quaternion
-        glm::quat boneQuat = animData->mBones[i].GetOrientation(0);
-        std::vector<float> boneQuatVector = {boneQuat.x, boneQuat.y, boneQuat.z, boneQuat.w}; // converting glm::quat in vector<float>
-
-        // How do I retrieve sceneID? Where is ParameterID placed?
-        QByteArray msgBoneQuat = msgSender->createMessageBody(0, i, 0, ZMQMessageHandler::ParameterType::QUATERNION, boneQuatVector);
-        msgBodyAnim.append(msgBoneQuat);
-    }
-
-    msgSender->moveToThread(zeroMQSenderThread);
-    QObject::connect(zeroMQSenderThread, &QThread::started, msgSender, &AnimHostMessageSender::run);
-
-    msgSender->requestStart();
-    zeroMQSenderThread->start();
+    std::shared_ptr<Animation> animData = animNodeData->getData();
+    QByteArray* msgBodyAnim = new QByteArray();
+    SerializeAnimation(animData, msgBodyAnim);
 
     // Example of message creation and 
     //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyBool));
@@ -189,7 +164,32 @@ void TracerUpdateSenderPlugin::run() {
     //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyVec3);
 
     // create ZMQ and send it through AnimHostMessageSender
-    msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyAnim));
+    zmq::message_t* new_msg = msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
+    byte* new_msg_data = (byte*) new_msg->data();
+    msgSender->setMessage(new_msg);
+
+    msgSender->moveToThread(zeroMQSenderThread);
+    QObject::connect(zeroMQSenderThread, &QThread::started, msgSender, &AnimHostMessageSender::run);
+
+    msgSender->requestStart();
+    zeroMQSenderThread->start();
+}
+
+void TracerUpdateSenderPlugin::SerializeAnimation(std::shared_ptr<Animation> animData, QByteArray* byteArray) {
+    for (std::int16_t i = 0; i < animData->mBones.size(); i++) {
+        // Getting Bone Object ID
+        std::int16_t boneID = 0;
+        boneID = animData->mBones[i].mID;
+        //qDebug() << "Bone ID: " << boneID;
+
+        // Getting Bone Object Rotation Quaternion
+        glm::quat boneQuat = animData->mBones[i].GetOrientation(0);
+        std::vector<float> boneQuatVector = { boneQuat.x, boneQuat.y, boneQuat.z, boneQuat.w }; // converting glm::quat in vector<float>
+
+        // How do I retrieve sceneID? Where is ParameterID placed?
+        QByteArray msgBoneQuat = msgSender->createMessageBody(0, i, 0, ZMQMessageHandler::ParameterType::QUATERNION, boneQuatVector);
+        byteArray->append(msgBoneQuat);
+    }
 }
 
 // When TICK is received message sender is enabled

@@ -23,16 +23,16 @@ void ZMQMessageHandler::resume() {
 //}
 
 void ZMQMessageHandler::SerializeVector(byte* dest, std::vector<float> _vector, ZMQMessageHandler::ParameterType type) {
-    qDebug() << "Serialize vector " << type;
+    //qDebug() << "Serialize vector " << type;
 
     switch (type) {
         case ZMQMessageHandler::VECTOR2: {
-            qDebug() << "Vector2";
+            //qDebug() << "Vector2";
             std::vector<float> vec2 = std::any_cast<std::vector<float>>(_vector);
             float x = vec2[0];
             float y = vec2[1];
 
-            qDebug() << "[" + std::to_string(x) + ", " + std::to_string(y) + "]";
+            //qDebug() << "[" + std::to_string(x) + ", " + std::to_string(y) + "]";
 
             byte offset = 0;
             std::memcpy(dest + offset, &x, sizeof(float)); offset += sizeof(float);
@@ -40,13 +40,13 @@ void ZMQMessageHandler::SerializeVector(byte* dest, std::vector<float> _vector, 
             break;
         }
         case ZMQMessageHandler::VECTOR3: {
-            qDebug() << "Vector3";
+            //qDebug() << "Vector3";
             std::vector<float> vec3 = std::any_cast<std::vector<float>>(_vector);
             float x = vec3[0];
             float y = vec3[1];
             float z = vec3[2];
 
-            qDebug() << "[" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + "]";
+            //qDebug() << "[" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + "]";
 
             byte offset = 0;
             std::memcpy(dest + offset, &x, sizeof(float)); offset += sizeof(float);
@@ -56,14 +56,14 @@ void ZMQMessageHandler::SerializeVector(byte* dest, std::vector<float> _vector, 
             break;
         }
         case ZMQMessageHandler::VECTOR4: {
-            qDebug() << "Vector4";
+            //qDebug() << "Vector4";
             std::vector<float> vec4 = std::any_cast<std::vector<float>>(_vector);
             float x = vec4[0];
             float y = vec4[1];
             float z = vec4[2];
             float w = vec4[3];
             
-            qDebug() << "[" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ", " + std::to_string(w) + "]";
+            //qDebug() << "[" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ", " + std::to_string(w) + "]";
 
             byte offset = 0;
             std::memcpy(dest + offset, &x, sizeof(float)); offset += sizeof(float);
@@ -74,14 +74,14 @@ void ZMQMessageHandler::SerializeVector(byte* dest, std::vector<float> _vector, 
             break;
         }
         case ZMQMessageHandler::QUATERNION: {
-            qDebug() << "Quaternion";
+            //qDebug() << "Quaternion";
             std::vector<float> quat = std::any_cast<std::vector<float>>(_vector);
             float x = -quat[0];
             float y = quat[1];
             float z = quat[2];
             float w = quat[3];
             
-            qDebug() << "[" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ", " + std::to_string(w) + "]";
+            //qDebug() << "[" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ", " + std::to_string(w) + "]";
 
             byte offset = 0;
             std::memcpy(dest + offset, &x, sizeof(float)); offset += sizeof(float);
@@ -92,14 +92,14 @@ void ZMQMessageHandler::SerializeVector(byte* dest, std::vector<float> _vector, 
             break;
         }
         case ZMQMessageHandler::COLOR: {
-            qDebug() << "Colour";
+            //qDebug() << "Colour";
             std::vector<float> color = std::any_cast<std::vector<float>>(_vector);
             float r = color[0];
             float g = color[1];
             float b = color[2];
             float a = color[3];
             
-            qDebug() << "[" + std::to_string(r) + ", " + std::to_string(g) + ", " + std::to_string(b) + ", " + std::to_string(a) + "]";
+            //qDebug() << "[" + std::to_string(r) + ", " + std::to_string(g) + ", " + std::to_string(b) + ", " + std::to_string(a) + "]";
 
             byte offset = 0;
             std::memcpy(dest + offset, &r, sizeof(float)); offset += sizeof(float);
@@ -134,15 +134,17 @@ zmq::message_t* ZMQMessageHandler::createMessage(byte targetHostID, byte time, Z
 
     newMessage.append(*body);
 
-    void* msgData = newMessage.data();
+    const void* msgData = newMessage.constData();
+    //const byte* msgDataByte = (byte*)newMessage.constData();
     size_t msgSize = newMessage.size();
     zmq::message_t* zmqNewMessage = new zmq::message_t(msgData, msgSize);
+    byte* newMsgData = (byte*)zmqNewMessage->data(); // just for debug
 
     return zmqNewMessage;
 }
 
 // Creating ZMQ Message Body from bool value
-QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byte parameterID, ZMQMessageHandler::ParameterType parameterType,
+QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
                                                 bool payload) {
     try {
         if (targetHostID == -1)
@@ -151,7 +153,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byt
         qDebug() << "Invalid target host ID";
     }
 
-    qDebug() << "Serialize bool: " << payload;
+    //qDebug() << "Serialize bool: " << payload;
 
     // Constructing new message
     QByteArray newMessage((qsizetype) 7, Qt::Uninitialized);
@@ -162,7 +164,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byt
     newMessage[3] = parameterID;                            // Parameter ID (from where do I retrieve it?)
     newMessage[4] = parameterID;                            // Parameter ID (from where do I retrieve it?)
     newMessage[5] = parameterType;                          // Parameter Type (from where do I retrieve it?)
-    newMessage[6] = getParameterDimension(parameterType);   // Parameter Dimensionality (in bytes) (from where do I retrieve it?)
+    newMessage[6] = getParameterDimension(parameterType) + 7;   // Parameter Message Dimensionality (in bytes) - i.e. size of the param. HEADER + VALUES (7+1)
 
     const char* payloadBytes = (char*) malloc(getParameterDimension(parameterType));
     bool val = payload;
@@ -172,7 +174,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byt
     std::string debugOut;
     bool _bool = *(bool*) payloadBytes;
     debugOut = std::to_string(_bool);
-    qDebug() << "Payload data: " + debugOut;
+    //qDebug() << "Payload data: " + debugOut;
 
     return newMessage;
     /*void* msgData = newMessage.data();
@@ -183,7 +185,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byt
 }
 
 // Creating ZMQ Message Body from 32-bit int
-QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byte parameterID, ZMQMessageHandler::ParameterType parameterType,
+QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
                                                 std::int32_t payload) {
     try {
         if (targetHostID == -1)
@@ -192,7 +194,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byt
         qDebug() << "Invalid target host ID";
     }
 
-    qDebug() << "Serialize int: " << payload;
+    //qDebug() << "Serialize int: " << payload;
 
     // Constructing new message
     QByteArray newMessage((qsizetype) 7, Qt::Uninitialized);
@@ -203,7 +205,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byt
     newMessage[3] = parameterID;                            // Parameter ID (from where do I retrieve it?)
     newMessage[4] = parameterID;                            // Parameter ID (from where do I retrieve it?)
     newMessage[5] = parameterType;                          // Parameter Type (from where do I retrieve it?)
-    newMessage[6] = getParameterDimension(parameterType);   // Parameter Dimensionality (in bytes) (from where do I retrieve it?)
+    newMessage[6] = getParameterDimension(parameterType) + 7;   // Parameter Message Dimensionality (in bytes) - i.e. size of the param. HEADER + VALUES (7+4)
 
     const char* payloadBytes = (char*) malloc(getParameterDimension(parameterType));
     std::int32_t val = payload;
@@ -213,7 +215,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byt
     std::string debugOut;
     std::int32_t _int = *(std::int32_t*) payloadBytes;
     debugOut = std::to_string(_int);
-    qDebug() << "Payload data: " + debugOut;
+    //qDebug() << "Payload data: " + debugOut;
 
     return newMessage;
     /*void* msgData = newMessage.data();
@@ -224,7 +226,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byt
 }
 
 // Creating ZMQ Message Body from float value
-QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byte parameterID, ZMQMessageHandler::ParameterType parameterType,
+QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
                                                 float payload) {
     try {
         if (targetHostID == -1)
@@ -232,7 +234,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byt
     } catch (int targetHostID) {
         qDebug() << "Invalid target host ID";
     }
-    qDebug() << "Serialize float: " << std::to_string(payload);
+    //qDebug() << "Serialize float: " << std::to_string(payload);
 
     // Constructing new message
     QByteArray newMessage((qsizetype) 7, Qt::Uninitialized);
@@ -243,7 +245,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byt
     newMessage[3] = parameterID;                            // Parameter ID (from where do I retrieve it?)
     newMessage[4] = parameterID;                            // Parameter ID (from where do I retrieve it?)
     newMessage[5] = parameterType;                          // Parameter Type (from where do I retrieve it?)
-    newMessage[6] = getParameterDimension(parameterType);   // Parameter Dimensionality (in bytes) (from where do I retrieve it?)
+    newMessage[6] = getParameterDimension(parameterType) + 7;   // Parameter Message Dimensionality (in bytes) - i.e. size of the param. HEADER + VALUES (7+4)
 
     const char* payloadBytes = (char*) malloc(getParameterDimension(parameterType));
     float val = payload;
@@ -264,7 +266,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byt
 }
 
 // Creating ZMQ Message Body from string value
-QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byte parameterID, ZMQMessageHandler::ParameterType parameterType,
+QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
                                                 std::string payload) {
     try {
         if (targetHostID == -1)
@@ -272,7 +274,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byt
     } catch (int targetHostID) {
         qDebug() << "Invalid target host ID";
     }
-    qDebug() << "Serialize serialize: " << payload;
+    //qDebug() << "Serialize serialize: " << payload;
 
     // Constructing new message
     QByteArray newMessage((qsizetype) 7, Qt::Uninitialized);
@@ -283,7 +285,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byt
     newMessage[3] = parameterID;                            // Parameter ID (from where do I retrieve it?)
     newMessage[4] = parameterID;                            // Parameter ID (from where do I retrieve it?)
     newMessage[5] = parameterType;                          // Parameter Type (from where do I retrieve it?)
-    newMessage[6] = getParameterDimension(parameterType);   // Parameter Dimensionality (in bytes) (from where do I retrieve it?)
+    newMessage[6] = getParameterDimension(parameterType) + 7;   // Parameter Message Dimensionality (in bytes) - i.e. size of the param. HEADER + VALUES (7+variable)
 
     payload.shrink_to_fit();
     const char* payloadBytes = (char*) malloc(payload.size());
@@ -291,7 +293,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byt
     newMessage.append(payloadBytes, (qsizetype) payload.size());
 
     std::string debugOut = std::any_cast<std::string>(payloadBytes);
-    qDebug() << "Payload data: " + debugOut;
+    //qDebug() << "Payload data: " + debugOut;
 
     return newMessage;
     /*void* msgData = newMessage.data();
@@ -303,7 +305,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byt
 
 
 // Creating ZMQ Message Body from float vector (VECTOR2-3-4, QUATERNION, COLOR)
-QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byte parameterID, ZMQMessageHandler::ParameterType parameterType,
+QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
                                                 std::vector<float> payload) {
     try {
         if (targetHostID == -1)
@@ -312,16 +314,19 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byt
         qDebug() << "Invalid target host ID";
     }
 
+    byte oID_1 = (byte) (objectID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
+    byte oID_2 = (byte) ((objectID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
+
     // Constructing new message
     QByteArray newMessage((qsizetype) 7, Qt::Uninitialized);
 
-    newMessage[0] = sceneID;                                // Scene ID (from where do I retrieve it?)
-    newMessage[1] = objectID;                               // Object ID (from where do I retrieve it?)
-    newMessage[2] = objectID;                               // Object ID (from where do I retrieve it?)
-    newMessage[3] = parameterID;                            // Parameter ID (from where do I retrieve it?)
-    newMessage[4] = parameterID;                            // Parameter ID (from where do I retrieve it?)
-    newMessage[5] = parameterType;                          // Parameter Type (from where do I retrieve it?)
-    newMessage[6] = getParameterDimension(parameterType);   // Parameter Dimensionality (in bytes) (from where do I retrieve it?)
+    newMessage[0] = sceneID;                                    // Scene ID (from where do I retrieve it?)
+    newMessage[1] = oID_1;                                      // Object ID byte 1 - not sure about provided value
+    newMessage[2] = oID_2;                                      // Object ID byte 2 
+    newMessage[3] = parameterID;                                // Parameter ID (from where do I retrieve it?)
+    newMessage[4] = parameterID;                                // Parameter ID (from where do I retrieve it?)
+    newMessage[5] = parameterType;                              // Parameter Type (from where do I retrieve it?)
+    newMessage[6] = getParameterDimension(parameterType) + 7;   // Parameter Message Dimensionality (in bytes) - i.e. size of the param. HEADER + VALUES (7+8/12/16)
 
     const char* payloadBytes = (char*)malloc(getParameterDimension(parameterType));
     SerializeVector((byte *)payloadBytes, payload, parameterType);
@@ -335,7 +340,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, byte objectID, byt
 
         debugOut = debugOut + std::to_string(_float) + " ";
     }
-    qDebug() << "Payload data: " + debugOut;
+    //qDebug() << "Payload data: " + debugOut;
 
     return newMessage;
     /*void* msgData = newMessage.data();
