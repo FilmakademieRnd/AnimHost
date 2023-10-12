@@ -7,7 +7,7 @@
 #include <pluginnodeinterface.h>
 #include "HistoryHelper.h"
 
-class QPushButton;
+class QLineEdit;
 
 class HISTORYPLUGINSHARED_EXPORT HistoryPlugin : public PluginNodeInterface
 {
@@ -16,7 +16,14 @@ class HISTORYPLUGINSHARED_EXPORT HistoryPlugin : public PluginNodeInterface
     Q_INTERFACES(PluginNodeInterface)
 
 private:
-    QPushButton* _pushButton;
+    
+    std::weak_ptr<AnimNodeData<PoseSequence>> _inPoseSeq;
+
+    std::shared_ptr<AnimNodeData<PoseSequence>> _outPoseSeq;
+    
+    int numHistoryFrames = 1;
+    
+    QLineEdit* _lineEdit;
 
     RingBuffer<Pose>* _poseHistory;
 
