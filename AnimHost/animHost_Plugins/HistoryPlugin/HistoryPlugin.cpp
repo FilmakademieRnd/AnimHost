@@ -1,4 +1,3 @@
-
 #include "HistoryPlugin.h"
 #include <QtWidgets>
 
@@ -82,16 +81,34 @@ std::shared_ptr<NodeData> HistoryPlugin::processOutData(QtNodes::PortIndex port)
 
 QWidget* HistoryPlugin::embeddedWidget()
 {
-	if (!_lineEdit) {
+	if (!widget) {
         _lineEdit = new QLineEdit();
         _lineEdit->setValidator(new QIntValidator(0, 100));
-        _lineEdit->setMaximumSize(_lineEdit->sizeHint());
+        auto lineSize= _lineEdit->sizeHint();
+
+
+        _lineEdit->setMaximumSize(lineSize.width()/2, lineSize.height());
+
+        _label = new QLabel("Past Frames");
+
+        _hLayout = new QHBoxLayout();
+        _hLayout->addWidget(_label);
+        _hLayout->addWidget(_lineEdit);
+
+        widget = new QWidget();
+        widget->setLayout(_hLayout);    
 
         connect(_lineEdit, &QLineEdit::textChanged, this, &HistoryPlugin::onButtonClicked);
         _lineEdit->setText(QString::number(numHistoryFrames));
+
+        widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
+            "QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"
+            "QLineEdit{background-color:rgb(25, 25, 25); border: 1px; border-color: rgb(60, 60, 60); border-radius: 4px; padding: 5px;}"
+            "QLabel{border: 1px; border-radius: 4px; padding: 5px;}"
+        );
 	}
 
-	return _lineEdit;
+	return widget;
 }
 
 void HistoryPlugin::onButtonClicked()

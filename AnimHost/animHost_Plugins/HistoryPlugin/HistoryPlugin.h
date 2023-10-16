@@ -4,10 +4,10 @@
 
 #include "HistoryPlugin_global.h"
 #include <QMetaType>
+#include <QtWidgets>
 #include <pluginnodeinterface.h>
 #include "HistoryHelper.h"
 
-class QLineEdit;
 
 class HISTORYPLUGINSHARED_EXPORT HistoryPlugin : public PluginNodeInterface
 {
@@ -22,10 +22,16 @@ private:
     std::shared_ptr<AnimNodeData<PoseSequence>> _outPoseSeq;
     
     int numHistoryFrames = 1;
-    
-    QLineEdit* _lineEdit;
 
-    RingBuffer<Pose>* _poseHistory;
+    RingBuffer<Pose>* _poseHistory = nullptr;
+
+private:
+
+    QWidget* widget = nullptr;
+    QHBoxLayout* _hLayout = nullptr;
+    QLabel* _label = nullptr;
+    QLineEdit* _lineEdit = nullptr;
+
 
 public:
     HistoryPlugin();
