@@ -64,6 +64,9 @@ void HistoryPlugin::run()
     if (auto sp_inPoseSeq = _inPoseSeq.lock()) {
         auto poseSeq = sp_inPoseSeq->getData();
 
+        // Indexing 1st element of posesequence. 
+        // We assume sequence in realtime scenario only contains one frame, the current frame.
+
         Pose pose = poseSeq->mPoseSequence[0];
 
         _poseHistory->updateBuffer(pose);
