@@ -21,8 +21,17 @@ void AssimpHelper::indexSkeletonHirarchyFormAssimpNode(Skeleton* pSkeleton, aiNo
 	int currentBoneIdx = *currentBoneCount;
 	pSkeleton->bone_names[pNode->mName.C_Str()] = currentBoneIdx;
 
+	// count children, exluding leaf bones
+	int num_valid_children = 0;
 
-	pSkeleton->bone_hierarchy[currentBoneIdx] = std::vector<int>(pNode->mNumChildren);
+	for (int child = 0; child < pNode->mNumChildren; child++) {
+		auto child_node = pNode->mChildren[child];
+		if (child_node->mNumChildren >= 1) {
+			num_valid_children++;
+		}
+	}
+
+	pSkeleton->bone_hierarchy[currentBoneIdx] = std::vector<int>(num_valid_children);
 
 	for (int child = 0; child < pNode->mNumChildren; child++) {
 

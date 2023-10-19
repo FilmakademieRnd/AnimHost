@@ -241,14 +241,14 @@ void AssimpLoaderPlugin::importAssimpData()
 	}
 
 	if (scene->HasAnimations()) {
-		for (int anim_idx = 0; anim_idx < scene->mNumAnimations; anim_idx++) {
-			//qDebug() << scene->mAnimations[anim_idx]->mName.C_Str() << "\n";
-			unsigned int numChannels = scene->mAnimations[anim_idx]->mNumChannels;
+		//for (int anim_idx = 0; anim_idx < scene->mNumAnimations; anim_idx++) {
+		//	//qDebug() << scene->mAnimations[anim_idx]->mName.C_Str() << "\n";
+		//	unsigned int numChannels = scene->mAnimations[anim_idx]->mNumChannels;
 
-			for (unsigned int ch_idx = 0; ch_idx < numChannels; ch_idx++) {
-				// qDebug() << scene->mAnimations[anim_idx]->mChannels[ch_idx]->mNodeName.C_Str() << "\n";
-			}
-		}
+		//	for (unsigned int ch_idx = 0; ch_idx < numChannels; ch_idx++) {
+		//		// qDebug() << scene->mAnimations[anim_idx]->mChannels[ch_idx]->mNodeName.C_Str() << "\n";
+		//	}
+		//}
 
 		QFileInfo fi(SourceFilePath);
 		_animation->getData()->sourceName = fi.fileName();
