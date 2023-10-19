@@ -3,6 +3,11 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include <glm/glm.hpp>
+
+#include <glm/gtx/quaternion.hpp>
+#include <glm/ext/quaternion_float.hpp>
+
 void AssimpHelper::buildSkeletonFormAssimpNode(Skeleton* pSkeleton, aiNode* pNodes)
 {
 	//Build Hirarchy
@@ -56,6 +61,7 @@ void AssimpHelper::setAnimationRestingPositionFromAssimpNode(const aiNode& pNode
 
 	pAnimation->mBones[bone_idx].mRestingTransform = AssimpHelper::ConvertMatrixToGLM(pNode.mTransformation);
 
+	pAnimation->mBones[bone_idx].restingRotation = glm::toQuat(pAnimation->mBones[bone_idx].mRestingTransform);
 
 
 	for (int child = 0; child < pNode.mNumChildren; child++) {

@@ -79,6 +79,7 @@ public:
     std::vector<KeyRotation> mRotationKeys;
     std::vector<KeyScale> mScaleKeys;
     glm::mat4 mRestingTransform;
+    glm::quat restingRotation;
 
 public:
     Bone(std::string name, int id, int numPos, int numRot, int numScl, glm::mat4 rest);
