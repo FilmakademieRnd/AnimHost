@@ -17,6 +17,7 @@ void AssimpHelper::buildSkeletonFormAssimpNode(Skeleton* pSkeleton, aiNode* pNod
 
 void AssimpHelper::indexSkeletonHirarchyFormAssimpNode(Skeleton* pSkeleton, aiNode* pNode, int* currentBoneCount)
 {
+
 	int currentBoneIdx = *currentBoneCount;
 	pSkeleton->bone_names[pNode->mName.C_Str()] = currentBoneIdx;
 
@@ -26,11 +27,15 @@ void AssimpHelper::indexSkeletonHirarchyFormAssimpNode(Skeleton* pSkeleton, aiNo
 	for (int child = 0; child < pNode->mNumChildren; child++) {
 
 		auto child_node = pNode->mChildren[child];
-		*currentBoneCount += 1;
+		if (child_node->mNumChildren >= 1) {
+			*currentBoneCount += 1;
 
-		pSkeleton->bone_hierarchy[currentBoneIdx][child] = *currentBoneCount;
-		AssimpHelper::indexSkeletonHirarchyFormAssimpNode(pSkeleton,child_node, currentBoneCount);
+			pSkeleton->bone_hierarchy[currentBoneIdx][child] = *currentBoneCount;
+			AssimpHelper::indexSkeletonHirarchyFormAssimpNode(pSkeleton, child_node, currentBoneCount);
+		}
 	}
+
+	
 }
 
 void AssimpHelper::setAnimationRestingPositionFromAssimpNode(const aiNode& pNode, const Skeleton& pSkeleton, Animation* pAnimation)
@@ -47,6 +52,7 @@ void AssimpHelper::setAnimationRestingPositionFromAssimpNode(const aiNode& pNode
 	for (int child = 0; child < pNode.mNumChildren; child++) {
 
 		auto child_node = pNode.mChildren[child];
-		AssimpHelper::setAnimationRestingPositionFromAssimpNode(*child_node,pSkeleton,pAnimation);
+		if(child_node->mNumChildren >= 1)
+			AssimpHelper::setAnimationRestingPositionFromAssimpNode(*child_node,pSkeleton,pAnimation);
 	}
 }
