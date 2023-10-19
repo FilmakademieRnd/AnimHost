@@ -149,8 +149,14 @@ void TracerUpdateSenderPlugin::run() {
     /*float floatExample = 78.3;
     QByteArray msgBodyFloat = msgSender->createMessageBody(0, 0, 0, ZMQMessageHandler::ParameterType::FLOAT, floatExample);*/
 
-    //std::vector<float> vec3Example = { 2.5, -7.4, 0 }; // To be substituted with REAL DATA (from sp_akeleton and sp_animation)
+    //std::vector<float> vec3Example = { 2.5, -7.4, 0 };
     //QByteArray msgBodyVec3 = msgSender->createMessageBody(0, 0, 0, ZMQMessageHandler::ParameterType::VECTOR3, vec3Example);
+ 
+    /*std::vector<float> quatExample = { -0.38, -0.07, 0.16, 0.91 };
+    std::vector<float> quatExample2 = { 0.06, 0.5, 0.86, 0.11 };
+    QByteArray msgBodyQuat = msgSender->createMessageBody(0, 3, 3, ZMQMessageHandler::ParameterType::QUATERNION, quatExample);
+    QByteArray msgQuat2 = msgSender->createMessageBody(0, 3, 47, ZMQMessageHandler::ParameterType::QUATERNION, quatExample2);
+    msgBodyQuat.append(msgQuat2);*/
 
     std::shared_ptr<AnimNodeData<Animation>> animNodeData = std::shared_ptr<AnimNodeData<Animation>>(_animIn);
     std::shared_ptr<Animation> animData = animNodeData->getData();
@@ -159,9 +165,10 @@ void TracerUpdateSenderPlugin::run() {
 
     // Example of message creation and 
     //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyBool));
-    //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyInt);
-    //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyFloat);
-    //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyVec3);
+    //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyInt));
+    //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyFloat));
+    //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyVec3));
+    //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyQuat));
 
     // create ZMQ and send it through AnimHostMessageSender
     zmq::message_t* new_msg = msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
@@ -176,18 +183,25 @@ void TracerUpdateSenderPlugin::run() {
 }
 
 void TracerUpdateSenderPlugin::SerializeAnimation(std::shared_ptr<Animation> animData, QByteArray* byteArray) {
-    for (std::int16_t i = 0; i < animData->mBones.size(); i++) {
-        // Getting Bone Object ID
-        std::int16_t boneID = 0;
-        boneID = animData->mBones[i].mID;
-        //qDebug() << "Bone ID: " << boneID;
+    // SceneID for testing
+    std::int32_t sceneID = 0;
+    // Character SceneObject for testing
+    std::int32_t sceneObjID = 3;
+    // Bone orientation IDs for testing
+    //std::int32_t parameterID[28] = { 3, 4, 5, 6, 7, 8, 28, 29, 30, 31, 9, 10, 11, 12, 51, 52, 53, 54, 47, 48, 49, 50 };
+    /*if ((int) animData->mBones.size() != sizeof(parameterID)/sizeof(std::int32_t)) {
+        qDebug() << "ParameterID array mismatch: " << animData->mBones.size() << " elements required, " << sizeof(parameterID)/sizeof(std::int32_t) << " provided";
+        return;
+    }*/
 
+    for (std::int16_t i = 1; i < animData->mBones.size(); i++) {
         // Getting Bone Object Rotation Quaternion
         glm::quat boneQuat = animData->mBones[i].GetOrientation(0);
         std::vector<float> boneQuatVector = { boneQuat.x, boneQuat.y, boneQuat.z, boneQuat.w }; // converting glm::quat in vector<float>
 
-        // How do I retrieve sceneID? Where is ParameterID placed?
-        QByteArray msgBoneQuat = msgSender->createMessageBody(0, i, 0, ZMQMessageHandler::ParameterType::QUATERNION, boneQuatVector);
+        qDebug() << i + 2 <<animData->mBones[i].mName << boneQuatVector;
+
+        QByteArray msgBoneQuat = msgSender->createMessageBody(sceneID, sceneObjID, i+2, ZMQMessageHandler::ParameterType::QUATERNION, boneQuatVector);
         byteArray->append(msgBoneQuat);
     }
 }

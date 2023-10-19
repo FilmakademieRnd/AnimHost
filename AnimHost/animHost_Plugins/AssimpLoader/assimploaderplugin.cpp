@@ -231,8 +231,9 @@ void AssimpLoaderPlugin::importAssimpData()
 	Assimp::Importer importer;
 	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 
+
 	const  aiScene* scene = importer.ReadFile(SourceFilePath.toStdString(),
-		aiProcess_SortByPType);
+		aiProcess_SortByPType | aiProcess_ConvertToLeftHanded);
 
 	if (nullptr == scene) {
 		qDebug() << Q_FUNC_INFO << "\n" << importer.GetErrorString();

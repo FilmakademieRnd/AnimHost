@@ -75,7 +75,7 @@ void AnimHostMessageSender::run() {
         QThread::msleep(1);
 
         qDebug() << "Message size: " << tempMsg->size();
-        qDebug() << "Sending message: " << debugOut;
+        //qDebug() << "Sending message: " << debugOut;
         int retunVal = sendSocket->send(*tempMsg);
 
         if (stop) {

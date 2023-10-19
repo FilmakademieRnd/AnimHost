@@ -314,18 +314,20 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
         qDebug() << "Invalid target host ID";
     }
 
-    byte oID_1 = (byte) (objectID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
-    byte oID_2 = (byte) ((objectID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
+    byte objID_1 = (byte) (objectID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
+    byte objID_2 = (byte) ((objectID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
+    byte parID_1 = (byte) (parameterID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
+    byte parID_2 = (byte) ((parameterID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
 
     // Constructing new message
     QByteArray newMessage((qsizetype) 7, Qt::Uninitialized);
 
-    newMessage[0] = sceneID;                                    // Scene ID (from where do I retrieve it?)
-    newMessage[1] = oID_1;                                      // Object ID byte 1 - not sure about provided value
-    newMessage[2] = oID_2;                                      // Object ID byte 2 
-    newMessage[3] = parameterID;                                // Parameter ID (from where do I retrieve it?)
-    newMessage[4] = parameterID;                                // Parameter ID (from where do I retrieve it?)
-    newMessage[5] = parameterType;                              // Parameter Type (from where do I retrieve it?)
+    newMessage[0] = sceneID;                                    // Scene ID
+    newMessage[1] = objID_1;                                    // Object ID byte 1
+    newMessage[2] = objID_2;                                    // Object ID byte 2 
+    newMessage[3] = parID_1;                                    // Parameter ID
+    newMessage[4] = parID_2;                                    // Parameter ID
+    newMessage[5] = parameterType;                              // Parameter Type
     newMessage[6] = getParameterDimension(parameterType) + 7;   // Parameter Message Dimensionality (in bytes) - i.e. size of the param. HEADER + VALUES (7+8/12/16)
 
     const char* payloadBytes = (char*)malloc(getParameterDimension(parameterType));
