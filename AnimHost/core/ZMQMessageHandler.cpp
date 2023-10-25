@@ -1,5 +1,9 @@
 #include "ZMQMessageHandler.h"
 
+ZMQMessageHandler::ZMQMessageHandler() {
+    
+}
+
 void ZMQMessageHandler::resume() {
     mutex.lock();
     _paused = false;

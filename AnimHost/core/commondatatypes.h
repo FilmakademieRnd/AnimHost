@@ -260,9 +260,44 @@ public:
 Q_DECLARE_METATYPE(RunSignal)
 Q_DECLARE_METATYPE(std::shared_ptr<RunSignal>)
 
+class ANIMHOSTCORESHARED_EXPORT SceneObject {
+    public:
+    int sceneID;
+    int objectID;
+    std::string objectName;
+
+    std::map<std::string, std::pair<int, unsigned char>> objectParams;
+    std::map<int, glm::quat> neutralPose;
+
+    public:
+    SceneObject(std::string name, int sID, int oID) :
+        sceneID { sID },
+        objectID { oID },
+        objectName { name },
+        objectParams {}, neutralPose {} {};
+
+    SceneObject() : sceneID { 0 }, objectID { 0 }, objectName { "" }, objectParams {}, neutralPose {} {};
+
+    COMMONDATA(sceneObject, SceneObject)
+
+};
+Q_DECLARE_METATYPE(SceneObject)
+Q_DECLARE_METATYPE(std::shared_ptr<SceneObject>)
+
+class ANIMHOSTCORESHARED_EXPORT SceneObjectSequence : public Sequence {
+    public:
+
+    std::vector<SceneObject> mSceneObjectSequence;
+    public:
+
+    SceneObjectSequence() { qDebug() << "SceneObjectSequence()"; };
+
+    COMMONDATA(SceneObjectSequence, SceneObjectSequence)
 
 
-
+};
+Q_DECLARE_METATYPE(SceneObjectSequence)
+Q_DECLARE_METATYPE(std::shared_ptr<SceneObjectSequence>)
 
 
 #endif // COMMONDATATYPES_H

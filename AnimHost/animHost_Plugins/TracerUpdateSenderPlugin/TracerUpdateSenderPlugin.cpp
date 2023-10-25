@@ -7,6 +7,11 @@
 TracerUpdateSenderPlugin::TracerUpdateSenderPlugin()
 {
     _pushButton = nullptr;
+    widget = nullptr;
+    _connectIPAddress = nullptr;
+    _ipAddressLayout = nullptr;
+    _ipAddress = "127.0.0.1";
+    _ipValidator = new QRegularExpressionValidator(ZMQMessageHandler::ipRegex, this);
 
     timer = new QTimer();
     timer->setTimerType(Qt::PreciseTimer);
@@ -16,7 +21,7 @@ TracerUpdateSenderPlugin::TracerUpdateSenderPlugin()
     localTime = timer->interval() % 128;
 
     zeroMQTickReceiverThread = new QThread();
-    tickReceiver = new TickReceiver(this, ipAddress, false, _updateSenderContext);
+    tickReceiver = new TickReceiver(this, _ipAddress, false, _updateSenderContext);
 
     tickReceiver->moveToThread(zeroMQTickReceiverThread);
     QObject::connect(tickReceiver, &TickReceiver::tick, this, &TracerUpdateSenderPlugin::ticked);
@@ -29,7 +34,6 @@ TracerUpdateSenderPlugin::~TracerUpdateSenderPlugin()
 {
     if (msgSender)
         msgSender->~AnimHostMessageSender();
-    //_updateSenderSocket->close();
     _updateSenderContext->close();
     timer->stop();
 
@@ -134,11 +138,10 @@ void TracerUpdateSenderPlugin::run() {
         return;
     }
 
-    tickReceiver->requestStart();
-    zeroMQTickReceiverThread->start();
-
-    msgSender = new AnimHostMessageSender(ipAddress, false, _updateSenderContext);
+    msgSender = new AnimHostMessageSender(_ipAddress, false, _updateSenderContext);
     zeroMQSenderThread = new QThread();
+
+    ///! DEBUGGING SAMPLE DATA USED TO TEST SENDING
 
     /*bool boolExample = true;
     QByteArray msgBodyBool = msgSender->createMessageBody(0, 0, 0, ZMQMessageHandler::ParameterType::BOOL, boolExample);*/
@@ -163,7 +166,7 @@ void TracerUpdateSenderPlugin::run() {
     QByteArray* msgBodyAnim = new QByteArray();
     SerializeAnimation(animData, msgBodyAnim);
 
-    // Example of message creation and 
+    // Example of message creation
     //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyBool));
     //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyInt));
     //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyFloat));
@@ -171,7 +174,7 @@ void TracerUpdateSenderPlugin::run() {
     //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyQuat));
 
     // create ZMQ and send it through AnimHostMessageSender
-    zmq::message_t* new_msg = msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
+    zmq::message_t* new_msg = msgSender->createMessage(_ipAddress[_ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
     byte* new_msg_data = (byte*) new_msg->data();
     msgSender->setMessage(new_msg);
 
@@ -224,12 +227,45 @@ std::shared_ptr<NodeData> TracerUpdateSenderPlugin::processOutData(QtNodes::Port
     return nullptr;
 }
 
-QWidget* TracerUpdateSenderPlugin::embeddedWidget()
-{
-    return nullptr;
+QWidget* TracerUpdateSenderPlugin::embeddedWidget() {
+    if (!_pushButton) {
+        _pushButton = new QPushButton("Connect");
+        _connectIPAddress = new QLineEdit();
+
+        _connectIPAddress->setText(_ipAddress);
+        _connectIPAddress->displayText();
+        _connectIPAddress->setValidator(_ipValidator);
+
+        _pushButton->resize(QSize(30, 30));
+        _ipAddressLayout = new QHBoxLayout();
+
+        _ipAddressLayout->addWidget(_connectIPAddress);
+        _ipAddressLayout->addWidget(_pushButton);
+
+        _ipAddressLayout->setSizeConstraint(QLayout::SetMinimumSize);
+
+        widget = new QWidget();
+
+        widget->setLayout(_ipAddressLayout);
+        connect(_pushButton, &QPushButton::released, this, &TracerUpdateSenderPlugin::onButtonClicked);
+    }
+
+    widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
+                          "QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"
+                          "QPushButton{border: 1px solid white; border-radius: 4px; padding: 5px; background-color:rgb(98, 139, 202);}"
+                          "QLabel{background-color:rgb(25, 25, 25); border: 1px; border-color: rgb(60, 60, 60); border-radius: 4px; padding: 5px;}"
+    );
+
+    return widget;
 }
 
-/*void TracerUpdateSenderPlugin::onButtonClicked()
-{
-	qDebug() << "Example Widget Clicked";
-}*/
+void TracerUpdateSenderPlugin::onButtonClicked() {
+    // Open ZMQ port to receive the scene
+    _ipAddress = _connectIPAddress->text();
+    tickReceiver->setIPAddress(_ipAddress);
+
+    tickReceiver->requestStart();
+    zeroMQTickReceiverThread->start();
+
+    qDebug() << "Attempting SEND connection to" << _ipAddress;
+}
