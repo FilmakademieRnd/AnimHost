@@ -6,7 +6,8 @@
 #include <glm/glm.hpp>
 
 #include <glm/gtx/quaternion.hpp>
-#include <glm/ext/quaternion_float.hpp>
+
+#include <glm/gtc/quaternion.hpp>
 
 void AssimpHelper::buildSkeletonFormAssimpNode(Skeleton* pSkeleton, aiNode* pNodes)
 {
@@ -26,27 +27,16 @@ void AssimpHelper::indexSkeletonHirarchyFormAssimpNode(Skeleton* pSkeleton, aiNo
 	int currentBoneIdx = *currentBoneCount;
 	pSkeleton->bone_names[pNode->mName.C_Str()] = currentBoneIdx;
 
-	// count children, exluding leaf bones
-	int num_valid_children = 0;
 
-	for (int child = 0; child < pNode->mNumChildren; child++) {
-		auto child_node = pNode->mChildren[child];
-		if (child_node->mNumChildren >= 1) {
-			num_valid_children++;
-		}
-	}
-
-	pSkeleton->bone_hierarchy[currentBoneIdx] = std::vector<int>(num_valid_children);
+	pSkeleton->bone_hierarchy[currentBoneIdx] = std::vector<int>(pNode->mNumChildren, -1);
 
 	for (int child = 0; child < pNode->mNumChildren; child++) {
 
 		auto child_node = pNode->mChildren[child];
-		if (child_node->mNumChildren >= 1) {
-			*currentBoneCount += 1;
+		*currentBoneCount += 1;
 
-			pSkeleton->bone_hierarchy[currentBoneIdx][child] = *currentBoneCount;
-			AssimpHelper::indexSkeletonHirarchyFormAssimpNode(pSkeleton, child_node, currentBoneCount);
-		}
+		pSkeleton->bone_hierarchy[currentBoneIdx][child] = *currentBoneCount;
+		AssimpHelper::indexSkeletonHirarchyFormAssimpNode(pSkeleton, child_node, currentBoneCount);
 	}
 
 	
@@ -58,16 +48,23 @@ void AssimpHelper::setAnimationRestingPositionFromAssimpNode(const aiNode& pNode
 
 	int bone_idx = pSkeleton.bone_names.at(name);
 
+	
+	
+	aiVector3D scale;
+	aiQuaternion quat;
+	aiVector3D pos;
+
+	pNode.mTransformation.Decompose(scale, quat, pos);
 
 	pAnimation->mBones[bone_idx].mRestingTransform = AssimpHelper::ConvertMatrixToGLM(pNode.mTransformation);
 
-	pAnimation->mBones[bone_idx].restingRotation = glm::toQuat(pAnimation->mBones[bone_idx].mRestingTransform);
+	pAnimation->mBones[bone_idx].restingRotation = AssimpHelper::ConvertQuaternionToGLM(quat);
 
+	qDebug() << name;
 
 	for (int child = 0; child < pNode.mNumChildren; child++) {
 
 		auto child_node = pNode.mChildren[child];
-		if(child_node->mNumChildren >= 1)
-			AssimpHelper::setAnimationRestingPositionFromAssimpNode(*child_node,pSkeleton,pAnimation);
+		AssimpHelper::setAnimationRestingPositionFromAssimpNode(*child_node,pSkeleton,pAnimation);
 	}
 }

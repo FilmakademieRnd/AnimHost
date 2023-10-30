@@ -7,8 +7,10 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include<glm/glm.hpp>
-#include <glm/ext/quaternion_float.hpp>
+#include <assimp/LogStream.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <commondatatypes.h>
 
 
@@ -58,6 +60,15 @@ public:
 
 	static void setAnimationRestingPositionFromAssimpNode(const aiNode& pNode, const Skeleton& pSkeleton, Animation* pAnimation);
 
+};
+
+
+class AssimpQTStream : public Assimp::LogStream {
+public:
+	// Write something using your own functionality
+	void write(const char* message) {
+		qDebug() << message;
+	}
 };
 
 

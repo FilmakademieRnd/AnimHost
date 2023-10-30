@@ -218,7 +218,7 @@ public:
         mPositionData = std::vector<glm::vec3>();
     };
     ~Pose() {};
-    Pose(const Pose& o) : mPositionData(o.mPositionData) { qDebug() << "Pose Copy"; };
+    Pose(const Pose& o) : mPositionData(o.mPositionData) {};
 
 
     COMMONDATA(pose, Pose)

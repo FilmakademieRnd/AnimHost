@@ -4,6 +4,8 @@
 #include "assimphelper.h"
 #include "animhosthelper.h"
 
+#include <assimp/DefaultLogger.hpp>
+
 
 #include <QFileInfo>
 #include <QDateTime>
@@ -94,10 +96,8 @@ std::shared_ptr<NodeData> AssimpLoaderPlugin::processOutData(QtNodes::PortIndex 
 	{
 		switch (port) {
 		case 0:
-			qDebug() << "	1. Collect Skeleton Info";
 			return _skeleton;
 		case 1:
-			qDebug() << "	2. Collect Animation Data";
 			return _animation;
 		default:
 			break;
@@ -119,8 +119,6 @@ void AssimpLoaderPlugin::run() {
 		Q_EMIT emitDataInvalidated(0);
 		Q_EMIT emitDataInvalidated(1);
 
-		qDebug() << "... Data Invalid Send ...";
-
 		SourceFilePath = file;
 		bDataValid = false;
 
@@ -130,13 +128,8 @@ void AssimpLoaderPlugin::run() {
 
 		importAssimpData();
 
-		qDebug() << "====== Send 0 Data Updated";
 		emitDataUpdate(0);
-		qDebug() << "====== Data 0 Updated Done";
-
-		qDebug() << "====== Send 1 Data Updated";
 		emitDataUpdate(1);
-		qDebug() << "====== Data 1 Updated Done";
 
 		qDebug() << "Process " << shorty << "... Done";
 
@@ -193,8 +186,15 @@ void AssimpLoaderPlugin::loadAnimationData(aiAnimation* pASSIMPAnimation, Skelet
 
 		auto channel = pASSIMPAnimation->mChannels[idx];
 		std::string name = channel->mNodeName.C_Str();
-
-		int boneIndex = pSkeleton->bone_names.at(name);
+		int boneIndex = -1;
+		try {
+			boneIndex = pSkeleton->bone_names.at(name);
+		}
+		catch(const std::out_of_range& e){
+			qDebug() << "Bone: " << name << "not found.";
+			continue;
+		}
+		
 
 		int numKeysRot = channel->mNumRotationKeys;
 		int numKeysPos = channel->mNumPositionKeys;
@@ -232,8 +232,25 @@ void AssimpLoaderPlugin::importAssimpData()
 	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 
 
+	// Create a logger instance
+	Assimp::DefaultLogger::create("", Assimp::Logger::VERBOSE);
+
+	// Now I am ready for logging my stuff
+	Assimp::DefaultLogger::get()->info("this is my info-call");
+
+
+	const unsigned int severity = Assimp::Logger::Debugging | Assimp::Logger::Info | Assimp::Logger::Err | Assimp::Logger::Warn;
+	Assimp::DefaultLogger::get()->attachStream(new AssimpQTStream, severity);
+
 	const  aiScene* scene = importer.ReadFile(SourceFilePath.toStdString(),
-		aiProcess_SortByPType | aiProcess_ConvertToLeftHanded);
+		aiProcess_SortByPType);
+
+	auto keys = scene->mMetaData->mKeys;
+
+	for (int i = 0; i < scene->mMetaData->mNumProperties; i++)
+	{
+		qDebug() << scene->mMetaData->mKeys[i].C_Str() << " :: " << *static_cast<int32_t*>(scene->mMetaData->mValues[i].mData) ;
+	}
 
 	if (nullptr == scene) {
 		qDebug() << Q_FUNC_INFO << "\n" << importer.GetErrorString();
@@ -242,15 +259,7 @@ void AssimpLoaderPlugin::importAssimpData()
 	}
 
 	if (scene->HasAnimations()) {
-		//for (int anim_idx = 0; anim_idx < scene->mNumAnimations; anim_idx++) {
-		//	//qDebug() << scene->mAnimations[anim_idx]->mName.C_Str() << "\n";
-		//	unsigned int numChannels = scene->mAnimations[anim_idx]->mNumChannels;
-
-		//	for (unsigned int ch_idx = 0; ch_idx < numChannels; ch_idx++) {
-		//		// qDebug() << scene->mAnimations[anim_idx]->mChannels[ch_idx]->mNodeName.C_Str() << "\n";
-		//	}
-		//}
-
+		
 		QFileInfo fi(SourceFilePath);
 		_animation->getData()->sourceName = fi.fileName();
 
@@ -289,7 +298,7 @@ QStringList AssimpLoaderPlugin::loadFilesFromDir()
 
 		QString directory = SourceDirectory;
 
-		QStringList filter = { "*.bvh","*.fbx" };
+		QStringList filter = { "*.bvh","*.fbx","*.glb"};
 
 
 		QDirIterator itr(directory, filter, QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);

@@ -80,7 +80,7 @@ void ZMQMessageHandler::SerializeVector(byte* dest, std::vector<float> _vector, 
         case ZMQMessageHandler::QUATERNION: {
             //qDebug() << "Quaternion";
             std::vector<float> quat = std::any_cast<std::vector<float>>(_vector);
-            float x = -quat[0];
+            float x = quat[0];
             float y = quat[1];
             float z = quat[2];
             float w = quat[3];

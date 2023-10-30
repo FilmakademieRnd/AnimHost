@@ -4,6 +4,9 @@
 #include "TickReceiver.h"
 
 
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+
 TracerUpdateSenderPlugin::TracerUpdateSenderPlugin()
 {
     _pushButton = nullptr;
@@ -155,10 +158,10 @@ void TracerUpdateSenderPlugin::run() {
     //std::vector<float> vec3Example = { 2.5, -7.4, 0 };
     //QByteArray msgBodyVec3 = msgSender->createMessageBody(0, 0, 0, ZMQMessageHandler::ParameterType::VECTOR3, vec3Example);
  
-    /*std::vector<float> quatExample = { -0.38, -0.07, 0.16, 0.91 };
+   /* std::vector<float> quatExample = { -0.38, -0.07, 0.16, 0.91 };
     std::vector<float> quatExample2 = { 0.06, 0.5, 0.86, 0.11 };
-    QByteArray msgBodyQuat = msgSender->createMessageBody(0, 3, 3, ZMQMessageHandler::ParameterType::QUATERNION, quatExample);
-    QByteArray msgQuat2 = msgSender->createMessageBody(0, 3, 47, ZMQMessageHandler::ParameterType::QUATERNION, quatExample2);
+    QByteArray msgBodyQuat = msgSender->createMessageBody(254, 3, 3, ZMQMessageHandler::ParameterType::QUATERNION, quatExample);
+    QByteArray msgQuat2 = msgSender->createMessageBody(254, 3, 47, ZMQMessageHandler::ParameterType::QUATERNION, quatExample2);
     msgBodyQuat.append(msgQuat2);*/
 
     std::shared_ptr<AnimNodeData<Animation>> animNodeData = std::shared_ptr<AnimNodeData<Animation>>(_animIn);
@@ -185,9 +188,15 @@ void TracerUpdateSenderPlugin::run() {
     zeroMQSenderThread->start();
 }
 
+/**
+ * .
+ * 
+ * \param animData
+ * \param byteArray
+ */
 void TracerUpdateSenderPlugin::SerializeAnimation(std::shared_ptr<Animation> animData, QByteArray* byteArray) {
     // SceneID for testing
-    std::int32_t sceneID = 0;
+    std::int32_t sceneID = 254;
     // Character SceneObject for testing
     std::int32_t sceneObjID = 3;
     // Bone orientation IDs for testing
@@ -197,10 +206,27 @@ void TracerUpdateSenderPlugin::SerializeAnimation(std::shared_ptr<Animation> ani
         return;
     }*/
 
-    for (std::int16_t i = 1; i < animData->mBones.size(); i++) {
+    for (std::int16_t i = 1; i < animData->mBones.size()-2; i++) {
         // Getting Bone Object Rotation Quaternion
         glm::quat boneQuat = animData->mBones[i].GetOrientation(0);
-        std::vector<float> boneQuatVector = { boneQuat.x, boneQuat.y, boneQuat.z, boneQuat.w }; // converting glm::quat in vector<float>
+        glm::quat boneRest = animData->mBones[i].restingRotation;
+
+        //boneQuat = boneQuat * boneRest;
+        
+        //boneQuat = boneRest;
+
+        /*glm::mat4 r_to_l = { 1.0,.0,.0,.0,
+                            .0,1.0,.0,.0,
+                            .0,.0, 1.0,.0,
+                            .0,.0,.0,1.0 };
+
+        glm::mat4 rot = glm::toMat4(boneQuat);
+
+        boneQuat = glm::toQuat(r_to_l * rot);*/
+
+
+
+        std::vector<float> boneQuatVector = { boneQuat.x * (-1.f), boneQuat.y, boneQuat.z,  boneQuat.w*(-1.f)}; // converting glm::quat in vector<float>
 
         qDebug() << i + 2 <<animData->mBones[i].mName << boneQuatVector;
 
