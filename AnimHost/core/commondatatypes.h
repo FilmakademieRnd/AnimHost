@@ -150,7 +150,7 @@ public:
         qDebug() << "Animation()";
     };
 
-    Animation(const Animation& o) : mBones(o.mBones) { qDebug() << "Animation Copy"; };
+    Animation(const Animation& o) : mBones(o.mBones), mDurationFrames(o.mDurationFrames), mDuration(o.mDuration) { qDebug() << "Animation Copy"; };
 
     Animation(Animation&& o) noexcept : mBones(std::move(o.mBones)) { qDebug() << "Animation Move"; };
 

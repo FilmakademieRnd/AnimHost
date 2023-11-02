@@ -226,7 +226,7 @@ void TracerUpdateSenderPlugin::SerializeAnimation(std::shared_ptr<Animation> ani
 
 
 
-        std::vector<float> boneQuatVector = { boneQuat.x * (-1.f), boneQuat.y, boneQuat.z,  boneQuat.w*(-1.f)}; // converting glm::quat in vector<float>
+        std::vector<float> boneQuatVector = { boneQuat.x, boneQuat.y, boneQuat.z,  boneQuat.w}; // converting glm::quat in vector<float>
 
         qDebug() << i + 2 <<animData->mBones[i].mName << boneQuatVector;
 
