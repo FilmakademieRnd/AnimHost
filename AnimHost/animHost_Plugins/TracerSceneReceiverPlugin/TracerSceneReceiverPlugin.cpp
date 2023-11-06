@@ -2,8 +2,7 @@
 #include "TracerSceneReceiverPlugin.h"
 #include "SceneReceiver.h"
 
-TracerSceneReceiverPlugin::TracerSceneReceiverPlugin()
-{
+TracerSceneReceiverPlugin::TracerSceneReceiverPlugin() {
     _pushButton = nullptr;
     widget = nullptr;
 	_connectIPAddress = nullptr;
@@ -16,25 +15,23 @@ TracerSceneReceiverPlugin::TracerSceneReceiverPlugin()
 	_updateSenderContext = new zmq::context_t(1);
 	zeroMQSceneReceiverThread = new QThread();
 	sceneReceiver = new SceneReceiver(this, _ipAddress, false, _updateSenderContext);
+	QObject::connect(sceneReceiver, &SceneReceiver::sceneReceived, this, &TracerSceneReceiverPlugin::onSceneReceived);
 
 	qDebug() << "TracerSceneReceiverPlugin created";
 }
 
-TracerSceneReceiverPlugin::~TracerSceneReceiverPlugin()
-{
+TracerSceneReceiverPlugin::~TracerSceneReceiverPlugin() {
     qDebug() << "~TracerSceneReceiverPlugin()";
 }
 
-unsigned int TracerSceneReceiverPlugin::nDataPorts(QtNodes::PortType portType) const
-{
+unsigned int TracerSceneReceiverPlugin::nDataPorts(QtNodes::PortType portType) const {
     if (portType == QtNodes::PortType::In)
         return 0;
     else            
         return 1 ;
 }
 
-NodeDataType TracerSceneReceiverPlugin::dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
-{
+NodeDataType TracerSceneReceiverPlugin::dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const {
     NodeDataType type;
     if (portType == QtNodes::PortType::In)
         return type;
@@ -42,18 +39,15 @@ NodeDataType TracerSceneReceiverPlugin::dataPortType(QtNodes::PortType portType,
         return AnimNodeData<SceneObjectSequence>::staticType();
 }
 
-void TracerSceneReceiverPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex)
-{
+void TracerSceneReceiverPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) {
     qDebug() << "TracerSceneReceiverPlugin setInData";
 }
 
-std::shared_ptr<NodeData> TracerSceneReceiverPlugin::processOutData(QtNodes::PortIndex port)
-{
+std::shared_ptr<NodeData> TracerSceneReceiverPlugin::processOutData(QtNodes::PortIndex port) {
 	return nullptr;
 }
 
-QWidget* TracerSceneReceiverPlugin::embeddedWidget()
-{
+QWidget* TracerSceneReceiverPlugin::embeddedWidget() {
 	if (!_pushButton) {
 		_pushButton = new QPushButton("Connect");
 		_connectIPAddress = new QLineEdit();
@@ -85,8 +79,7 @@ QWidget* TracerSceneReceiverPlugin::embeddedWidget()
 	return widget;
 }
 
-void TracerSceneReceiverPlugin::onButtonClicked()
-{
+void TracerSceneReceiverPlugin::onButtonClicked() {
 	// Open ZMQ port to receive the scene
 	_ipAddress = _connectIPAddress->text();
 	sceneReceiver->setIPAddress(_ipAddress);
@@ -95,6 +88,16 @@ void TracerSceneReceiverPlugin::onButtonClicked()
 	zeroMQSceneReceiverThread->start();
 
 	qDebug() << "Attempting RECEIVE connection to" << _ipAddress;
+}
+
+void TracerSceneReceiverPlugin::onSceneReceived(QByteArray* sceneMessage) {
+	// TODO: unpack scene description message
+	while (!sceneMessage->isEmpty()) {
+		// process message payload unit header
+		
+	}
+
+	qDebug() << "Parsing scene description";
 }
 
 void TracerSceneReceiverPlugin::run() {

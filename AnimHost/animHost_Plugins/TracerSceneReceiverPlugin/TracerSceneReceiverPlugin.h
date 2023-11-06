@@ -43,6 +43,7 @@ private:
     QThread* zeroMQSceneReceiverThread = nullptr;
 
     SceneReceiver* sceneReceiver;
+    SceneObjectSequence sceneDescription;
 
 public:
     TracerSceneReceiverPlugin();
@@ -65,6 +66,7 @@ public:
 
 private Q_SLOTS:
     void onButtonClicked();
+    void onSceneReceived(QByteArray* sceneMessage);
 
 };
 

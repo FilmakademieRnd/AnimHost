@@ -260,44 +260,44 @@ public:
 Q_DECLARE_METATYPE(RunSignal)
 Q_DECLARE_METATYPE(std::shared_ptr<RunSignal>)
 
-class ANIMHOSTCORESHARED_EXPORT SceneObject {
+class ANIMHOSTCORESHARED_EXPORT CharacterObject {
     public:
     int sceneID;
-    int objectID;
-    std::string objectName;
+    int characterID;
+    std::string characterName;
 
-    std::map<std::string, std::pair<int, unsigned char>> objectParams;
-    std::map<int, glm::quat> neutralPose;
+    std::vector<int> boneIDMap = {};
+    std::vector<glm::vec3> neutralBonePosition = {};
+    std::vector<glm::quat> neutralBoneRotation = {};
+    std::vector<glm::vec3> neutralBoneScale = {};
 
     public:
-    SceneObject(std::string name, int sID, int oID) :
+    CharacterObject(std::string name, int sID, int oID) :
         sceneID { sID },
-        objectID { oID },
-        objectName { name },
-        objectParams {}, neutralPose {} {};
+        characterID { oID },
+        characterName { name } { qDebug() << "CharacterObject()"; };
 
-    SceneObject() : sceneID { 0 }, objectID { 0 }, objectName { "" }, objectParams {}, neutralPose {} {};
+    CharacterObject() : sceneID { 0 }, characterID { 0 }, characterName { "" } { qDebug() << "CharacterObject()"; };
 
     COMMONDATA(sceneObject, SceneObject)
 
 };
-Q_DECLARE_METATYPE(SceneObject)
-Q_DECLARE_METATYPE(std::shared_ptr<SceneObject>)
+Q_DECLARE_METATYPE(CharacterObject)
+Q_DECLARE_METATYPE(std::shared_ptr<CharacterObject>)
 
-class ANIMHOSTCORESHARED_EXPORT SceneObjectSequence : public Sequence {
+class ANIMHOSTCORESHARED_EXPORT CharacterObjectSequence : public Sequence {
     public:
-
-    std::vector<SceneObject> mSceneObjectSequence;
+    // Collection of SceneObjects associated with their IDs (IDs are unique) 
+    std::vector<CharacterObject> mCharacterSequence;
+    
     public:
+    CharacterObjectSequence() { qDebug() << "CharacterObjectSequence()"; };
 
-    SceneObjectSequence() { qDebug() << "SceneObjectSequence()"; };
-
-    COMMONDATA(SceneObjectSequence, SceneObjectSequence)
+    COMMONDATA(characterSequence, CharacterObjectSequence)
 
 
 };
-Q_DECLARE_METATYPE(SceneObjectSequence)
-Q_DECLARE_METATYPE(std::shared_ptr<SceneObjectSequence>)
-
+Q_DECLARE_METATYPE(CharacterObjectSequence)
+Q_DECLARE_METATYPE(std::shared_ptr<CharacterObjectSequence>)
 
 #endif // COMMONDATATYPES_H

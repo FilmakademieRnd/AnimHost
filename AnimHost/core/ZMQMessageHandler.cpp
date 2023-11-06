@@ -156,18 +156,21 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
     } catch (int targetHostID) {
         qDebug() << "Invalid target host ID";
     }
-
     //qDebug() << "Serialize bool: " << payload;
+    byte objID_1 = (byte) (objectID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
+    byte objID_2 = (byte) ((objectID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
+    byte parID_1 = (byte) (parameterID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
+    byte parID_2 = (byte) ((parameterID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
 
     // Constructing new message
     QByteArray newMessage((qsizetype) 7, Qt::Uninitialized);
 
-    newMessage[0] = sceneID;                                // Scene ID (from where do I retrieve it?)
-    newMessage[1] = objectID;                               // Object ID (from where do I retrieve it?)
-    newMessage[2] = objectID;                               // Object ID (from where do I retrieve it?)
-    newMessage[3] = parameterID;                            // Parameter ID (from where do I retrieve it?)
-    newMessage[4] = parameterID;                            // Parameter ID (from where do I retrieve it?)
-    newMessage[5] = parameterType;                          // Parameter Type (from where do I retrieve it?)
+    newMessage[0] = sceneID;                                    // Scene ID
+    newMessage[1] = objID_1;                                    // Object ID byte 1
+    newMessage[2] = objID_2;                                    // Object ID byte 2 
+    newMessage[3] = parID_1;                                    // Parameter ID
+    newMessage[4] = parID_2;                                    // Parameter ID
+    newMessage[5] = parameterType;                              // Parameter Type
     newMessage[6] = getParameterDimension(parameterType) + 7;   // Parameter Message Dimensionality (in bytes) - i.e. size of the param. HEADER + VALUES (7+1)
 
     const char* payloadBytes = (char*) malloc(getParameterDimension(parameterType));
@@ -179,6 +182,10 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
     bool _bool = *(bool*) payloadBytes;
     debugOut = std::to_string(_bool);
     //qDebug() << "Payload data: " + debugOut;
+    byte objID_1 = (byte) (objectID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
+    byte objID_2 = (byte) ((objectID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
+    byte parID_1 = (byte) (parameterID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
+    byte parID_2 = (byte) ((parameterID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
 
     return newMessage;
     /*void* msgData = newMessage.data();
@@ -197,18 +204,21 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
     } catch (int targetHostID) {
         qDebug() << "Invalid target host ID";
     }
-
     //qDebug() << "Serialize int: " << payload;
+    byte objID_1 = (byte) (objectID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
+    byte objID_2 = (byte) ((objectID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
+    byte parID_1 = (byte) (parameterID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
+    byte parID_2 = (byte) ((parameterID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
 
     // Constructing new message
     QByteArray newMessage((qsizetype) 7, Qt::Uninitialized);
 
-    newMessage[0] = sceneID;                                // Scene ID (from where do I retrieve it?)
-    newMessage[1] = objectID;                               // Object ID (from where do I retrieve it?)
-    newMessage[2] = objectID;                               // Object ID (from where do I retrieve it?)
-    newMessage[3] = parameterID;                            // Parameter ID (from where do I retrieve it?)
-    newMessage[4] = parameterID;                            // Parameter ID (from where do I retrieve it?)
-    newMessage[5] = parameterType;                          // Parameter Type (from where do I retrieve it?)
+    newMessage[0] = sceneID;                                    // Scene ID
+    newMessage[1] = objID_1;                                    // Object ID byte 1
+    newMessage[2] = objID_2;                                    // Object ID byte 2 
+    newMessage[3] = parID_1;                                    // Parameter ID
+    newMessage[4] = parID_2;                                    // Parameter ID
+    newMessage[5] = parameterType;                              // Parameter Type
     newMessage[6] = getParameterDimension(parameterType) + 7;   // Parameter Message Dimensionality (in bytes) - i.e. size of the param. HEADER + VALUES (7+4)
 
     const char* payloadBytes = (char*) malloc(getParameterDimension(parameterType));
@@ -239,16 +249,20 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
         qDebug() << "Invalid target host ID";
     }
     //qDebug() << "Serialize float: " << std::to_string(payload);
+    byte objID_1 = (byte) (objectID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
+    byte objID_2 = (byte) ((objectID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
+    byte parID_1 = (byte) (parameterID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
+    byte parID_2 = (byte) ((parameterID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
 
     // Constructing new message
     QByteArray newMessage((qsizetype) 7, Qt::Uninitialized);
 
-    newMessage[0] = sceneID;                                // Scene ID (from where do I retrieve it?)
-    newMessage[1] = objectID;                               // Object ID (from where do I retrieve it?)
-    newMessage[2] = objectID;                               // Object ID (from where do I retrieve it?)
-    newMessage[3] = parameterID;                            // Parameter ID (from where do I retrieve it?)
-    newMessage[4] = parameterID;                            // Parameter ID (from where do I retrieve it?)
-    newMessage[5] = parameterType;                          // Parameter Type (from where do I retrieve it?)
+    newMessage[0] = sceneID;                                    // Scene ID
+    newMessage[1] = objID_1;                                    // Object ID byte 1
+    newMessage[2] = objID_2;                                    // Object ID byte 2 
+    newMessage[3] = parID_1;                                    // Parameter ID
+    newMessage[4] = parID_2;                                    // Parameter ID
+    newMessage[5] = parameterType;                              // Parameter Type
     newMessage[6] = getParameterDimension(parameterType) + 7;   // Parameter Message Dimensionality (in bytes) - i.e. size of the param. HEADER + VALUES (7+4)
 
     const char* payloadBytes = (char*) malloc(getParameterDimension(parameterType));
@@ -278,18 +292,22 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
     } catch (int targetHostID) {
         qDebug() << "Invalid target host ID";
     }
-    //qDebug() << "Serialize serialize: " << payload;
+    //qDebug() << "Serialize string: " << payload;
+    byte objID_1 = (byte) (objectID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
+    byte objID_2 = (byte) ((objectID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
+    byte parID_1 = (byte) (parameterID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
+    byte parID_2 = (byte) ((parameterID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
 
     // Constructing new message
     QByteArray newMessage((qsizetype) 7, Qt::Uninitialized);
 
-    newMessage[0] = sceneID;                                // Scene ID (from where do I retrieve it?)
-    newMessage[1] = objectID;                               // Object ID (from where do I retrieve it?)
-    newMessage[2] = objectID;                               // Object ID (from where do I retrieve it?)
-    newMessage[3] = parameterID;                            // Parameter ID (from where do I retrieve it?)
-    newMessage[4] = parameterID;                            // Parameter ID (from where do I retrieve it?)
-    newMessage[5] = parameterType;                          // Parameter Type (from where do I retrieve it?)
-    newMessage[6] = getParameterDimension(parameterType) + 7;   // Parameter Message Dimensionality (in bytes) - i.e. size of the param. HEADER + VALUES (7+variable)
+    newMessage[0] = sceneID;                                    // Scene ID
+    newMessage[1] = objID_1;                                    // Object ID byte 1
+    newMessage[2] = objID_2;                                    // Object ID byte 2 
+    newMessage[3] = parID_1;                                    // Parameter ID
+    newMessage[4] = parID_2;                                    // Parameter ID
+    newMessage[5] = parameterType;                              // Parameter Type
+    newMessage[6] = getParameterDimension(parameterType) + 7;   // Parameter Message Dimensionality (in bytes) - i.e. size of the param. HEADER + VALUES (7+var)
 
     payload.shrink_to_fit();
     const char* payloadBytes = (char*) malloc(payload.size());
@@ -317,7 +335,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
     } catch (int targetHostID) {
         qDebug() << "Invalid target host ID";
     }
-
+    //qDebug() << "Serialize float vector: " << std::to_string(payload);
     byte objID_1 = (byte) (objectID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
     byte objID_2 = (byte) ((objectID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
     byte parID_1 = (byte) (parameterID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits

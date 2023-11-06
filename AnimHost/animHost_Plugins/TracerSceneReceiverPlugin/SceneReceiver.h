@@ -84,19 +84,21 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
         qDebug() << "Processing message...";
 
         if (replyMsg->size() > 0) {
-            QByteArray msgArray = QByteArray((char*) replyMsg->data(), static_cast<int>(replyMsg->size())); // Convert message into explicit byte array
-            const MessageType msgType = static_cast<MessageType>(msgArray[2]);                              // Extract message type from byte array (always third byte)
+            QByteArray* msgArray = new QByteArray((char*) replyMsg->data(), static_cast<int>(replyMsg->size())); // Convert message into explicit byte array
+            const MessageType msgType = static_cast<MessageType>(msgArray->at(2));                              // Extract message type from byte array (always third byte)
 
-            //if tick received with time tickTime
+            // if the message type matches (should we create an ad-hoc message type for this?)
             if (msgType == MessageType::SYNC) { // Should we check also against Client ID?
-                // TODO: consume scene description message
-                // then return the unstructured data to TracerSceneReceiverPlugin
+                // consume scene description message (removing header)
+                msgArray->remove(0, 3);
+                // return the unstructured data to TracerSceneReceiverPlugin
+                sceneReceived(msgArray);
             }
         }    
     }
 
     Q_SIGNALS:
-    //void tick(int syncTime);
+    void sceneReceived(QByteArray* sceneDescription);
     void stopped();
 };
 #endif // SCENERECEIVER_H
