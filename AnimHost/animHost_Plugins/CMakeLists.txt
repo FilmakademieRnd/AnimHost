@@ -10,3 +10,5 @@ add_subdirectory(JointVelocityPlugin)
 add_subdirectory(DataExportPlugin)
 add_subdirectory(RunTriggerPlugin)
 add_subdirectory(HistoryPlugin)
+add_subdirectory(TracerSceneReceiverPlugin)
+

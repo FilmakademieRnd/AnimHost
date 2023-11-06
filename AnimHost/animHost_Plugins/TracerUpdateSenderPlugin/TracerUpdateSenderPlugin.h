@@ -8,6 +8,9 @@
 #include <QThread>
 #include <QTimer>
 #include <QPushButton>
+#include <QValidator>
+#include <QLineEdit>
+#include <QHBoxLayout>
 #include <pluginnodeinterface.h>
 #include <commondatatypes.h>
 #include <nodedatatypes.h>
@@ -26,9 +29,15 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TracerUpdateSenderPlugin : public Pl
     Q_INTERFACES(PluginNodeInterface)
 
 private:
-    QString ipAddress = "127.0.0.1"; // does it need to be settable from UI? (Probably)
-    zmq::context_t* _updateSenderContext = nullptr;
+    QWidget* widget;
+    QPushButton* _pushButton;
+    QLineEdit* _connectIPAddress;
+    QHBoxLayout* _ipAddressLayout;
+    QRegularExpressionValidator* _ipValidator;
 
+    QString _ipAddress;
+
+    zmq::context_t* _updateSenderContext = nullptr;
     QThread* zeroMQSenderThread = nullptr;
     QThread* zeroMQTickReceiverThread = nullptr;
     
@@ -41,7 +50,6 @@ private:
     void freeData(void* data, void* hint) {
         free(data);
     }
-    QPushButton* _pushButton;
 
     // Input animation data (of either type animation or pose...maybe both?!)
     std::weak_ptr<AnimNodeData<Skeleton>> _skeletonIn;
@@ -51,6 +59,9 @@ private:
     // Output animation data to be pushed to DataHub, stored in ZeroMQ message format (conversion to native array)
     std::vector<int> _animOut;
     int validData = -1;
+
+    // Serializes in the form of a byte array an animation frame represented by a list of quaternions (Animation data type)
+    void SerializeAnimation(std::shared_ptr<Animation> animData, QByteArray* byteArray);
 
 public:
     TracerUpdateSenderPlugin();
@@ -79,7 +90,7 @@ public:
     QString category() override { return "Output"; };  // Returns a category for the node
 
 private Q_SLOTS:
-    //void onButtonClicked();
+    void onButtonClicked();
     void run();
     void ticked(int externalTime);
 

@@ -27,9 +27,9 @@ void AnimHostMessageSender::requestStop() {
 }
 
 void AnimHostMessageSender::setMessage(zmq::message_t* msg) {
-    qDebug() << "Setting message of size " << msg->size();
+    //qDebug() << "Setting message of size " << msg->size();
     message.copy(msg);
-    qDebug() << "Setting message of size " << message.size();
+    //qDebug() << "Setting message of size " << message.size();
 
 }
 
@@ -75,7 +75,7 @@ void AnimHostMessageSender::run() {
         QThread::msleep(1);
 
         qDebug() << "Message size: " << tempMsg->size();
-        qDebug() << "Sending message: " << debugOut;
+        //qDebug() << "Sending message: " << debugOut;
         int retunVal = sendSocket->send(*tempMsg);
 
         if (stop) {

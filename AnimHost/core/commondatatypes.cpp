@@ -23,6 +23,7 @@ Bone::Bone(const Bone& o, int frame)
 	mNumKeysScale = 1;
 
 	mRestingTransform = o.mRestingTransform;
+	restingRotation = o.restingRotation;
 
 	this->mPositonKeys.push_back({ 0.0,  o.GetPosition(frame)});
 	this->mRotationKeys.push_back({ 0.0,  o.GetOrientation(frame)});

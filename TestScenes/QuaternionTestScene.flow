@@ -2,15 +2,15 @@
     "connections": [
         {
             "inPortIndex": 1,
-            "intNodeId": 2,
-            "outNodeId": 0,
-            "outPortIndex": 2
-        },
-        {
-            "inPortIndex": 1,
             "intNodeId": 1,
             "outNodeId": 0,
             "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 2,
+            "outNodeId": 0,
+            "outPortIndex": 2
         },
         {
             "inPortIndex": 2,
@@ -41,7 +41,7 @@
         {
             "id": 0,
             "internal-data": {
-                "dir": "C:\\Users\\m5963\\Documents\\100STYLE\\00_Test",
+                "dir": "C:\\Users\\m5963\\Documents\\AnimHost_TestData\\Animation",
                 "model-name": "Animation Import"
             },
             "position": {

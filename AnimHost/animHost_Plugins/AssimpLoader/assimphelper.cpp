@@ -3,6 +3,12 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include <glm/glm.hpp>
+
+#include <glm/gtx/quaternion.hpp>
+
+#include <glm/gtc/quaternion.hpp>
+
 void AssimpHelper::buildSkeletonFormAssimpNode(Skeleton* pSkeleton, aiNode* pNodes)
 {
 	//Build Hirarchy
@@ -17,11 +23,12 @@ void AssimpHelper::buildSkeletonFormAssimpNode(Skeleton* pSkeleton, aiNode* pNod
 
 void AssimpHelper::indexSkeletonHirarchyFormAssimpNode(Skeleton* pSkeleton, aiNode* pNode, int* currentBoneCount)
 {
+
 	int currentBoneIdx = *currentBoneCount;
 	pSkeleton->bone_names[pNode->mName.C_Str()] = currentBoneIdx;
 
 
-	pSkeleton->bone_hierarchy[currentBoneIdx] = std::vector<int>(pNode->mNumChildren);
+	pSkeleton->bone_hierarchy[currentBoneIdx] = std::vector<int>(pNode->mNumChildren, -1);
 
 	for (int child = 0; child < pNode->mNumChildren; child++) {
 
@@ -29,8 +36,10 @@ void AssimpHelper::indexSkeletonHirarchyFormAssimpNode(Skeleton* pSkeleton, aiNo
 		*currentBoneCount += 1;
 
 		pSkeleton->bone_hierarchy[currentBoneIdx][child] = *currentBoneCount;
-		AssimpHelper::indexSkeletonHirarchyFormAssimpNode(pSkeleton,child_node, currentBoneCount);
+		AssimpHelper::indexSkeletonHirarchyFormAssimpNode(pSkeleton, child_node, currentBoneCount);
 	}
+
+	
 }
 
 void AssimpHelper::setAnimationRestingPositionFromAssimpNode(const aiNode& pNode, const Skeleton& pSkeleton, Animation* pAnimation)
@@ -39,10 +48,19 @@ void AssimpHelper::setAnimationRestingPositionFromAssimpNode(const aiNode& pNode
 
 	int bone_idx = pSkeleton.bone_names.at(name);
 
+	
+	
+	aiVector3D scale;
+	aiQuaternion quat;
+	aiVector3D pos;
+
+	pNode.mTransformation.Decompose(scale, quat, pos);
 
 	pAnimation->mBones[bone_idx].mRestingTransform = AssimpHelper::ConvertMatrixToGLM(pNode.mTransformation);
 
+	pAnimation->mBones[bone_idx].restingRotation = AssimpHelper::ConvertQuaternionToGLM(quat);
 
+	qDebug() << name;
 
 	for (int child = 0; child < pNode.mNumChildren; child++) {
 

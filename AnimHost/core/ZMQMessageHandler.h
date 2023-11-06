@@ -8,6 +8,7 @@
 #include <QMultiMap>
 #include <QElapsedTimer>
 #include <QWaitCondition>
+#include <QValidator>
 
 #include <any>
 #include <stdio.h>
@@ -31,7 +32,15 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
    //Q_OBJECT
 
     public:
-    ZMQMessageHandler() {};
+    ZMQMessageHandler();
+    
+    // Regex for any integer between 0 and 255 (0/1 followed by two figures 0-9, OR 2 followed by a figure 0-4 and another 0-9, OR 25 and a figure 0-5)
+    inline static const QString ipRangeRegex = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])";
+    // Regex for an ip address (4 ints between 0-255 interleaved by a ".")
+    inline static const QRegularExpression ipRegex = QRegularExpression("^" + ipRangeRegex
+                                                                   + "(\\." + ipRangeRegex + ")"
+                                                                   + "(\\." + ipRangeRegex + ")"
+                                                                   + "(\\." + ipRangeRegex + ")$");
 
     //request this process to start working
     virtual void requestStart() = 0; // TO BE IMPLEMENTED in concrete class
@@ -87,6 +96,15 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
         return targetHostID;
     }
 
+    void setIPAddress(QString newIPAddress) {
+        if (ipRegex.match(newIPAddress).isValid()) {
+            ipAddress = newIPAddress;
+            qDebug() << "New IP Address set!";
+        } else {
+            qDebug() << "Invalid IP Address" << newIPAddress;
+        }
+    }
+
     // Converting elements in data into bytes
     /*void Serialize(byte* dest, bool _value);
     void Serialize(byte* dest, int _value);
@@ -95,15 +113,15 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
 
     zmq::message_t* createMessage(byte targetHostID, byte time, ZMQMessageHandler::MessageType messageType,
                                   QByteArray* body);
-    QByteArray createMessageBody(byte SceneID, byte objectID, byte ParameterID, ZMQMessageHandler::ParameterType paramType,
+    QByteArray createMessageBody(byte SceneID, int objectID, int ParameterID, ZMQMessageHandler::ParameterType paramType,
                                  bool payload);
-    QByteArray createMessageBody(byte SceneID, byte objectID, byte ParameterID, ZMQMessageHandler::ParameterType paramType,
+    QByteArray createMessageBody(byte SceneID, int objectID, int ParameterID, ZMQMessageHandler::ParameterType paramType,
                                  std::int32_t payload);
-    QByteArray createMessageBody(byte SceneID, byte objectID, byte ParameterID, ZMQMessageHandler::ParameterType paramType,
+    QByteArray createMessageBody(byte SceneID, int objectID, int ParameterID, ZMQMessageHandler::ParameterType paramType,
                                  float payload);
-    QByteArray createMessageBody(byte sceneID, byte objectID, byte parameterID, ZMQMessageHandler::ParameterType parameterType,
+    QByteArray createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
                                  std::string payload);
-    QByteArray createMessageBody(byte SceneID, byte objectID, byte ParameterID, ZMQMessageHandler::ParameterType paramType,
+    QByteArray createMessageBody(byte SceneID, int objectID, int ParameterID, ZMQMessageHandler::ParameterType paramType,
                                  std::vector<float> payload);
 
     protected:
