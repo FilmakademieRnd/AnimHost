@@ -9,14 +9,12 @@ set_target_properties (JointVelocityPlugin PROPERTIES
 
 target_include_directories(JointVelocityPlugin PUBLIC
     ../PluginInterface
-    ../../../glm
 )
 
-target_compile_definitions(JointVelocityPlugin PUBLIC
+target_compile_definitions(JointVelocityPlugin PRIVATE
     JOINTVELOCITYPLUGIN_LIBRARY
 )
 
 target_link_libraries(JointVelocityPlugin PUBLIC
     PluginInterface
-    AnimHostCore
 )

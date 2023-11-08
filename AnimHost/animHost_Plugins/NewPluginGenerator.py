@@ -105,7 +105,7 @@ target_include_directories({name}Plugin PUBLIC
     ../../../glm
 )
 
-target_compile_definitions({name}Plugin PUBLIC
+target_compile_definitions({name}Plugin PRIVAT
     {name.upper()}PLUGIN_LIBRARY
 )
 
@@ -256,7 +256,7 @@ target_include_directories({name}Plugin PUBLIC
     ../../../glm
 )
 
-target_compile_definitions({name}Plugin PUBLIC
+target_compile_definitions({name}Plugin PRIVATE
     {name.upper()}PLUGIN_LIBRARY
 )
 

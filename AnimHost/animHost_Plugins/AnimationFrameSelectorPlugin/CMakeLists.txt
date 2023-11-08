@@ -9,14 +9,12 @@ set_target_properties (AnimationFrameSelectorPlugin PROPERTIES
 
 target_include_directories(AnimationFrameSelectorPlugin PUBLIC
     ../PluginNodeInterface
-    ../../../glm
 )
 
-target_compile_definitions(AnimationFrameSelectorPlugin PUBLIC
+target_compile_definitions(AnimationFrameSelectorPlugin PRIVATE
     ANIMATIONFRAMESELECTORPLUGIN_LIBRARY
 )
 
 target_link_libraries(AnimationFrameSelectorPlugin PUBLIC
     PluginNodeInterface
-    AnimHostCore
 )

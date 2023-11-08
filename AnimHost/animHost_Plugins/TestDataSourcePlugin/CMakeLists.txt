@@ -4,10 +4,9 @@ qt_add_library(TestDataSourcePlugin
 )
 target_include_directories(TestDataSourcePlugin PUBLIC
     ../PluginInterface
-    ../../../glm
 )
 
-target_compile_definitions(TestDataSourcePlugin PUBLIC
+target_compile_definitions(TestDataSourcePlugin PRIVATE
     TESTDATASOURCEPLUGIN_LIBRARY
 )
 
