@@ -11,4 +11,4 @@ add_subdirectory(DataExportPlugin)
 add_subdirectory(RunTriggerPlugin)
 add_subdirectory(HistoryPlugin)
 add_subdirectory(TracerSceneReceiverPlugin)
-
+add_subdirectory(ModeAdaptivePreprocessPlugin)
