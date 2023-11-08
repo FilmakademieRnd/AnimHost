@@ -5,7 +5,7 @@
 #include <QList>
 #include <QString>
 #include <QVariant>
-#include "../../core/commondatatypes.h"
+#include <commondatatypes.h>
 #include "plugininterface_global.h"
 
 //!

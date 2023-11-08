@@ -43,6 +43,8 @@ void JointPositionPlugin::run(QVariantList in, QVariantList& out)
     std::function<void(glm::mat4, int)> lBuildPose;
     lBuildPose = [&](glm::mat4 currentT, int currentBone) {
 
+
+        //currently not used (positional keys seem to include offsets)
         glm::mat4 transform = animation->mBones[currentBone].GetRestingTransform();
 
         glm::vec4 result = glm::vec4(0.0, 0.0, 0.0, 1.0);

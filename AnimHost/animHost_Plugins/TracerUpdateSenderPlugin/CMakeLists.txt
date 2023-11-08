@@ -11,11 +11,9 @@ set_target_properties (TracerUpdateSenderPlugin PROPERTIES
 
 target_include_directories(TracerUpdateSenderPlugin PUBLIC
     ../PluginNodeInterface
-    ../../../glm
-    ../../core
 )
 
-target_compile_definitions(TracerUpdateSenderPlugin PUBLIC
+target_compile_definitions(TracerUpdateSenderPlugin PRIVATE
     TRACERUPDATESENDERPLUGIN_LIBRARY
 )
 
@@ -25,7 +23,4 @@ target_link_directories(AnimHostCore PUBLIC
 
 target_link_libraries(TracerUpdateSenderPlugin PUBLIC
     PluginNodeInterface
-    Qt::Core
-    AnimHostCore
-    libzmq-mt-4_3_5
 )
