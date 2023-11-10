@@ -5,7 +5,6 @@
 #include "ZMQMessageHandler.h"
 #include "TracerSceneReceiverPlugin.h"
 
-//#include <QObject>
 #include <QMutex>
 #include <QThread>
 #include <nzmqt/nzmqt.hpp>
@@ -24,6 +23,14 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
         _stop = true;
         _working = false;
         _paused = false;
+
+        receiveSocket = new zmq::socket_t(*context, zmq::socket_type::req);
+
+        // THIS TRIGGERS NULLPOINTER-RELATED EXCEPTION
+        // open socket
+        /*receiveSocket = new zmq::socket_t(*context, zmq::socket_type::req);
+        receiveSocket->connect(QString("tcp://" + ipAddress + ":5555").toLatin1().data());
+        receiveSocket->setsockopt(ZMQ_REQ, "request scene", 0);*/
     }
 
     SceneReceiver(QString m_ipAddress, bool m_debugState, zmq::context_t* m_context) {
@@ -33,6 +40,14 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
         _stop = true;
         _working = false;
         _paused = false;
+
+        receiveSocket = new zmq::socket_t(*context, zmq::socket_type::req);
+
+        // THIS TRIGGERS NULLPOINTER-RELATED EXCEPTION
+        // open socket
+        /*receiveSocket = new zmq::socket_t(*context, zmq::socket_type::req);
+        receiveSocket->connect(QString("tcp://" + ipAddress + ":5555").toLatin1().data());
+        receiveSocket->setsockopt(ZMQ_REQ, "request scene", 0);*/
     };
 
     ~SceneReceiver() {
@@ -59,44 +74,57 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
         mutex.unlock();
     };
 
+    void sendRequest(QString newIPAddress, QString request) {
+        //! (Re-)connect to newIPAddress
+        /*if (receiveSocket->connected())
+            receiveSocket->disconnect(QString("tcp://" + ipAddress + ":5555").toLatin1().data());
+        setIPAddress(newIPAddress);
+        receiveSocket->connect(QString("tcp://" + ipAddress + ":5555").toLatin1().data());*/
+
+        receiveSocket->connect(QString("tcp://" + ipAddress + ":5555").toLatin1().data());
+
+        //! requesting the character list in the TRACER client scene
+        requestMsg.rebuild(request.toLatin1().data(), request.size());
+        qDebug() << "Requesting Scene" << request.toLatin1().data() << "(size " << request.size() << ")";
+        receiveSocket->send(requestMsg);
+
+        receiveSocket->recv(&replyMsg);
+        qDebug() << "Reply received!";
+
+        // replyMsg will contain a series of bytes representing all the Character Packages in the scene
+        if (replyMsg.size() > 0) {
+            QByteArray* msgArray = new QByteArray((char*) replyMsg.data(), static_cast<int>(replyMsg.size())); // Convert message into explicit byte array
+            passCharacterByteArray(msgArray); // Pass byte array to TracerSceneReceiverPlugin
+        }
+    }
+
     private:
     zmq::socket_t* receiveSocket = nullptr;
     TracerSceneReceiverPlugin* TSRPlugin = nullptr;
+    zmq::message_t requestMsg {};
+    zmq::message_t replyMsg {};
 
     public Q_SLOTS:
 
     void run() {
-        // open socket
-        receiveSocket = new zmq::socket_t(*context, zmq::socket_type::req);
-        receiveSocket->connect(QString("tcp://" + ipAddress + ":5554").toLatin1().data()); //TODO: check correct port!!!
-        receiveSocket->setsockopt(ZMQ_DEALER, "request scene", 0);
+        //// open socket
+        ////receiveSocket = new zmq::socket_t(*context, zmq::socket_type::req);
+        //receiveSocket->connect(QString("tcp://" + ipAddress + ":5555").toLatin1().data());
+        //receiveSocket->setsockopt(ZMQ_REQ, "request scene", 0);
 
-        zmq::pollitem_t pollItem = { static_cast<void*>(*receiveSocket), 0, ZMQ_POLLIN, 0 };
+        ////! Listen for reply message
+        //receiveSocket->recv(replyMsg);
+        //qDebug() << "Reply received!";
 
-        QString request = "Scene request";
-        zmq::message_t* requestMsg = new zmq::message_t(request.data(), request.size());
-        zmq::message_t* replyMsg = new zmq::message_t();
-
-        receiveSocket->send(*requestMsg);
-        qDebug() << "Waiting for Scene Reply message...";
-        // listen for reply
-        receiveSocket->recv(replyMsg);
-        qDebug() << "Processing message...";
-
-        if (replyMsg->size() > 0) {
-            QByteArray msgArray = QByteArray((char*) replyMsg->data(), static_cast<int>(replyMsg->size())); // Convert message into explicit byte array
-            const MessageType msgType = static_cast<MessageType>(msgArray[2]);                              // Extract message type from byte array (always third byte)
-
-            //if tick received with time tickTime
-            if (msgType == MessageType::SYNC) { // Should we check also against Client ID?
-                // TODO: consume scene description message
-                // then return the unstructured data to TracerSceneReceiverPlugin
-            }
-        }    
+        //// replyMsg will contain a series of bytes representing all the Character Packages in the scene
+        //if (replyMsg->size() > 0) {
+        //    QByteArray* msgArray = new QByteArray((char*) replyMsg->data(), static_cast<int>(replyMsg->size())); // Convert message into explicit byte array
+        //    passCharacterByteArray(msgArray); // Pass byte array to TracerSceneReceiverPlugin
+        //}
     }
 
     Q_SIGNALS:
-    //void tick(int syncTime);
     void stopped();
+    void passCharacterByteArray(QByteArray* msgArray);
 };
 #endif // SCENERECEIVER_H

@@ -30,7 +30,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMe
         _paused = false;
     }
     ~AnimHostMessageSender() {
-        sendSocket->close();
+        //sendSocket->close();
     }
 
     //request this process to start working

@@ -264,42 +264,55 @@ public:
 };
 Q_DECLARE_METATYPE(std::shared_ptr<RunSignal>)
 
-class ANIMHOSTCORESHARED_EXPORT SceneObject {
+class ANIMHOSTCORESHARED_EXPORT CharacterPackage {
     public:
-    int sceneID;
+    int sceneID; // unclear from where I can get it
     int objectID;
-    std::string objectName;
+    std::string objectName; // TODO: get name from VPET SceneNode 
 
-    std::map<std::string, std::pair<int, unsigned char>> objectParams;
-    std::map<int, glm::quat> neutralPose;
+    std::vector<int> boneIDs;
+    std::vector<glm::vec3> tposeBonePos;
+    std::vector<glm::quat> tposeBoneRot;
+    std::vector<glm::vec3> tposeBoneScale;
 
     public:
-    SceneObject(std::string name, int sID, int oID) :
+    CharacterPackage(std::string name, int sID, int oID) :
         sceneID { sID },
         objectID { oID },
         objectName { name },
-        objectParams {}, neutralPose {} {};
+        boneIDs {},
+        tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {} {};
+    
+    CharacterPackage() : sceneID { 0 }, objectID { 0 }, objectName { "" }, boneIDs {}, tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {} {};
 
-    SceneObject() : sceneID { 0 }, objectID { 0 }, objectName { "" }, objectParams {}, neutralPose {} {};
-
-    COMMONDATA(sceneObject, SceneObject)
+    COMMONDATA(characterPackage, CharacterPackage)
 
 };
+<<<<<<< Updated upstream
 Q_DECLARE_METATYPE(std::shared_ptr<SceneObject>)
+=======
+Q_DECLARE_METATYPE(CharacterPackage)
+Q_DECLARE_METATYPE(std::shared_ptr<CharacterPackage>)
+>>>>>>> Stashed changes
 
-class ANIMHOSTCORESHARED_EXPORT SceneObjectSequence : public Sequence {
+class ANIMHOSTCORESHARED_EXPORT CharacterPackageSequence : public Sequence {
     public:
 
-    std::vector<SceneObject> mSceneObjectSequence;
+    std::vector<CharacterPackage> mCharacterPackageSequence;
     public:
 
-    SceneObjectSequence() { qDebug() << "SceneObjectSequence()"; };
+    CharacterPackageSequence() : mCharacterPackageSequence {} { qDebug() << "CharacterPackageSequence()"; };
 
-    COMMONDATA(SceneObjectSequence, SceneObjectSequence)
+    COMMONDATA(characterPackageSequence, CharacterPackageSequence)
 
 
 };
+<<<<<<< Updated upstream
 Q_DECLARE_METATYPE(std::shared_ptr<SceneObjectSequence>)
+=======
+Q_DECLARE_METATYPE(CharacterPackageSequence)
+Q_DECLARE_METATYPE(std::shared_ptr<CharacterPackageSequence>)
+>>>>>>> Stashed changes
 
 
 #endif // COMMONDATATYPES_H
