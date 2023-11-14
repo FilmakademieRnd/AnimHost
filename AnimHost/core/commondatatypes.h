@@ -1,13 +1,7 @@
 #ifndef COMMONDATATYPES_H
 #define COMMONDATATYPES_H
 
-#include <QtCore/qglobal.h>
-
-#if defined(ANIMHOSTCORE_LIBRARY)
-#define ANIMHOSTCORESHARED_EXPORT Q_DECL_EXPORT
-#else
-#define ANIMHOSTCORESHARED_EXPORT Q_DECL_IMPORT
-#endif
+#include "animhostcore_global.h"
 
 #include <QObject>
 #include <QString>
@@ -100,7 +94,7 @@ public:
     COMMONDATA(bone, Bone)
 
 };
-Q_DECLARE_METATYPE(Bone)
+Q_DECLARE_METATYPE(std::shared_ptr<Bone>)
 
 //! Skeleton holds maps to retreive bone names given an ID and vice versa
 //! It also stores the bone hierarchy (every bone ID is associated with an array of the IDs of its own children)
@@ -127,7 +121,7 @@ public:
 
     COMMONDATA(skeleton, Skeleton)
 };
-Q_DECLARE_METATYPE(Skeleton)
+Q_DECLARE_METATYPE(std::shared_ptr<Skeleton>)
 
 //! Animation data structure:
 //! Duration in seconds and in frames
@@ -159,7 +153,6 @@ public:
     COMMONDATA(animation, Animation)
 
 };
-Q_DECLARE_METATYPE(Animation)
 Q_DECLARE_METATYPE(std::shared_ptr<Animation>)
 
 
@@ -174,13 +167,12 @@ public:
 
 public: 
     JointVelocity() {
-        mJointVelocity = std::vector<glm::vec3>();
+       mJointVelocity = std::vector<glm::vec3>();
     };
     
     COMMONDATA(jointVelocity, JointVelocity)
 
 };
-Q_DECLARE_METATYPE(JointVelocity)
 Q_DECLARE_METATYPE(std::shared_ptr<JointVelocity>)
 
 //! Sequence of joint velocities
@@ -192,13 +184,19 @@ public:
 public:
     JointVelocitySequence() {};
 
+    glm::vec2 GetRootVelocityAtFrame(int FrameIndex) {
+
+        // We assume the root bone is always at index 0 in the velocity data.
+        //Support different coordinate Systems
+        return glm::vec2(mJointVelocitySequence[FrameIndex].mJointVelocity[0].x, 
+            mJointVelocitySequence[FrameIndex].mJointVelocity[0].z);
+    }
+
 
     COMMONDATA(jointVelocitySequence, JointVelocitySequence)
 
 
 };
-
-Q_DECLARE_METATYPE(JointVelocitySequence)
 Q_DECLARE_METATYPE(std::shared_ptr<JointVelocitySequence>)
 
 
@@ -214,18 +212,17 @@ public:
     std::vector<glm::vec3> mPositionData;
 
 public:
-    Pose() { 
+    Pose() {
         mPositionData = std::vector<glm::vec3>();
     };
-    ~Pose() {};
-    Pose(const Pose& o) : mPositionData(o.mPositionData) {};
+
+    //Pose(const Pose& o) : mPositionData(o.mPositionData) {};
 
 
     COMMONDATA(pose, Pose)
 
     
 };
-Q_DECLARE_METATYPE(Pose)
 Q_DECLARE_METATYPE(std::shared_ptr<Pose>)
 
 //! Sequence of poses
@@ -238,11 +235,19 @@ public:
 
     PoseSequence() { qDebug() << "PoseSequence()"; };
 
+
+    glm::vec2 GetRootPositionAtFrame(int FrameIndex) {
+
+        // We assume the root bone is always at index 0 in the positional data.
+        //Support different coordinate Systems
+        return glm::vec2(mPoseSequence[FrameIndex].mPositionData[0].x, 
+            mPoseSequence[FrameIndex].mPositionData[0].z);
+            
+            
+    }
+
     COMMONDATA(poseSequence, PoseSequence)
-
-
 };
-Q_DECLARE_METATYPE(PoseSequence)
 Q_DECLARE_METATYPE(std::shared_ptr<PoseSequence>)
 
 
@@ -257,47 +262,48 @@ public:
 
 
 };
-Q_DECLARE_METATYPE(RunSignal)
 Q_DECLARE_METATYPE(std::shared_ptr<RunSignal>)
 
-class ANIMHOSTCORESHARED_EXPORT CharacterObject {
+class ANIMHOSTCORESHARED_EXPORT CharacterPackage {
     public:
-    int sceneID;
-    int characterID;
-    std::string characterName;
+    int sceneID; // unclear from where I can get it
+    int objectID;
+    std::string objectName; // TODO: get name from VPET SceneNode 
 
-    std::vector<int> boneIDMap = {};
-    std::vector<glm::vec3> neutralBonePosition = {};
-    std::vector<glm::quat> neutralBoneRotation = {};
-    std::vector<glm::vec3> neutralBoneScale = {};
+    std::vector<int> boneIDs;
+    std::vector<glm::vec3> tposeBonePos;
+    std::vector<glm::quat> tposeBoneRot;
+    std::vector<glm::vec3> tposeBoneScale;
 
     public:
-    CharacterObject(std::string name, int sID, int oID) :
+    CharacterPackage(std::string name, int sID, int oID) :
         sceneID { sID },
-        characterID { oID },
-        characterName { name } { qDebug() << "CharacterObject()"; };
-
-    CharacterObject() : sceneID { 0 }, characterID { 0 }, characterName { "" } { qDebug() << "CharacterObject()"; };
-
-    COMMONDATA(sceneObject, SceneObject)
-
-};
-Q_DECLARE_METATYPE(CharacterObject)
-Q_DECLARE_METATYPE(std::shared_ptr<CharacterObject>)
-
-class ANIMHOSTCORESHARED_EXPORT CharacterObjectSequence : public Sequence {
-    public:
-    // Collection of SceneObjects associated with their IDs (IDs are unique) 
-    std::vector<CharacterObject> mCharacterSequence;
+        objectID { oID },
+        objectName { name },
+        boneIDs {},
+        tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {} {};
     
-    public:
-    CharacterObjectSequence() { qDebug() << "CharacterObjectSequence()"; };
+    CharacterPackage() : sceneID { 0 }, objectID { 0 }, objectName { "" }, boneIDs {}, tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {} {};
 
-    COMMONDATA(characterSequence, CharacterObjectSequence)
-
+    COMMONDATA(characterPackage, CharacterPackage)
 
 };
-Q_DECLARE_METATYPE(CharacterObjectSequence)
-Q_DECLARE_METATYPE(std::shared_ptr<CharacterObjectSequence>)
+Q_DECLARE_METATYPE(CharacterPackage)
+Q_DECLARE_METATYPE(std::shared_ptr<CharacterPackage>)
+
+
+class ANIMHOSTCORESHARED_EXPORT CharacterPackageSequence : public Sequence {
+    public:
+
+    std::vector<CharacterPackage> mCharacterPackageSequence;
+
+    public:
+    CharacterPackageSequence() : mCharacterPackageSequence {} { qDebug() << "CharacterPackageSequence()"; };
+
+    COMMONDATA(characterPackageSequence, CharacterPackageSequence)
+      
+};
+Q_DECLARE_METATYPE(CharacterPackageSequence)
+Q_DECLARE_METATYPE(std::shared_ptr<CharacterPackageSequence>)
 
 #endif // COMMONDATATYPES_H

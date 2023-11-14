@@ -12,6 +12,8 @@ void AnimHostMessageSender::requestStart() {
     _stop = false;
     _paused = false;
     qDebug() << "AnimHost Message Sender requested to start";// in Thread "<<thread()->currentThreadId();
+
+    sendSocket = new zmq::socket_t(*context, zmq::socket_type::pub); // publisher socket
     mutex.unlock();
 }
 
@@ -35,7 +37,7 @@ void AnimHostMessageSender::setMessage(zmq::message_t* msg) {
 
 void AnimHostMessageSender::run() {
 
-    sendSocket = new zmq::socket_t(*context, zmq::socket_type::pub); // publisher socket
+    //sendSocket = new zmq::socket_t(*context, zmq::socket_type::pub); // publisher socket
     sendSocket->connect(QString("tcp://" + ipAddress + ":5557").toLatin1().data());
 
     /*zmq::pollitem_t items[] = {

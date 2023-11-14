@@ -10,14 +10,12 @@ set_target_properties (DataExportPlugin PROPERTIES
 
 target_include_directories(DataExportPlugin PUBLIC
     ../PluginNodeInterface
-    ../../../glm
 )
 
-target_compile_definitions(DataExportPlugin PUBLIC
+target_compile_definitions(DataExportPlugin PRIVATE
     DATAEXPORTPLUGIN_LIBRARY
 )
 
 target_link_libraries(DataExportPlugin PUBLIC
     PluginNodeInterface
-    AnimHostCore
 )

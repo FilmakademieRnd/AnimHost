@@ -37,7 +37,7 @@ private:
     QRegularExpressionValidator* _ipValidator;
     QString _ipAddress;
 
-    SceneObjectSequence sceneObjectList;
+    CharacterPackageSequence* characterList = nullptr;
 
     zmq::context_t* _updateSenderContext = nullptr;
     QThread* zeroMQSceneReceiverThread = nullptr;
@@ -64,9 +64,13 @@ public:
 
     QWidget* embeddedWidget() override;
 
+Q_SIGNALS:
+    void connectSceneReceiver(QString newIPAddress, QString request);
+
 private Q_SLOTS:
     void onButtonClicked();
-    void onSceneReceived(QByteArray* sceneMessage);
+
+    void processCharacterByteData(QByteArray* charByteData);
 
 };
 

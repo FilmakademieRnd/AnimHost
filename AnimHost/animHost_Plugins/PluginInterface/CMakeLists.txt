@@ -12,14 +12,11 @@ target_compile_definitions(PluginInterface PUBLIC
 )
 
 target_include_directories(PluginInterface PUBLIC
-    ../../../glm
-    ../../../assimp/include
     ../../core/QTNodes/include
 )
 
 target_link_libraries(PluginInterface PUBLIC
-    Qt::Core
-    Qt::Gui
+    AnimHostCore
 )
 
 

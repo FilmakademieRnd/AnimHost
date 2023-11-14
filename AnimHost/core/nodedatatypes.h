@@ -1,9 +1,10 @@
 #ifndef NODEDATATYPES_H
 #define NODEDATATYPES_H
-
+#include "animhostcore_global.h"
 
 #define NODE_EDITOR_SHARED 1
 #include "QtNodes/NodeData"
+
 #include "commondatatypes.h"
 
 using QtNodes::NodeData;
@@ -26,7 +27,7 @@ protected:
 
 //! Templated class making common data types available for using in Qt nodes and Qt reflection system
 //! 
-template <typename T> class ANIMHOSTCORESHARED_EXPORT AnimNodeData : public AnimNodeDataBase
+template <typename T> class AnimNodeData : public AnimNodeDataBase
 {
 public:
 

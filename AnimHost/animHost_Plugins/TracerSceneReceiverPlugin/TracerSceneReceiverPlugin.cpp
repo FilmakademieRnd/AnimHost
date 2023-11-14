@@ -12,10 +12,16 @@ TracerSceneReceiverPlugin::TracerSceneReceiverPlugin() {
 	// Validation Regex initialization for the QLineEdit Widget of the plugin
 	_ipValidator = new QRegularExpressionValidator(ZMQMessageHandler::ipRegex, this);
 
+	characterList = new CharacterPackageSequence();
+
 	_updateSenderContext = new zmq::context_t(1);
 	zeroMQSceneReceiverThread = new QThread();
 	sceneReceiver = new SceneReceiver(this, _ipAddress, false, _updateSenderContext);
 	QObject::connect(sceneReceiver, &SceneReceiver::sceneReceived, this, &TracerSceneReceiverPlugin::onSceneReceived);
+
+	sceneReceiver->moveToThread(zeroMQSceneReceiverThread);
+	QObject::connect(sceneReceiver, &SceneReceiver::passCharacterByteArray, this, &TracerSceneReceiverPlugin::processCharacterByteData);
+	QObject::connect(this, &TracerSceneReceiverPlugin::connectSceneReceiver, sceneReceiver, &SceneReceiver::sendRequest);
 
 	qDebug() << "TracerSceneReceiverPlugin created";
 }
@@ -36,7 +42,7 @@ NodeDataType TracerSceneReceiverPlugin::dataPortType(QtNodes::PortType portType,
     if (portType == QtNodes::PortType::In)
         return type;
     else
-        return AnimNodeData<SceneObjectSequence>::staticType();
+        return AnimNodeData<CharacterPackageSequence>::staticType();
 }
 
 void TracerSceneReceiverPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) {
@@ -79,15 +85,16 @@ QWidget* TracerSceneReceiverPlugin::embeddedWidget() {
 	return widget;
 }
 
-void TracerSceneReceiverPlugin::onButtonClicked() {
-	// Open ZMQ port to receive the scene
+void TracerSceneReceiverPlugin::onButtonClicked()
+{
+	//! Set IP Address
 	_ipAddress = _connectIPAddress->text();
-	sceneReceiver->setIPAddress(_ipAddress);
+	//sceneReceiver->setIPAddress(_ipAddress);
+	
+	//! Send signal to SceneReceiver to request characters
+	connectSceneReceiver(_ipAddress, "characters");
 
-	sceneReceiver->requestStart();
-	zeroMQSceneReceiverThread->start();
-
-	qDebug() << "Attempting RECEIVE connection to" << _ipAddress;
+	//qDebug() << "Attempting RECEIVE connection to" << _ipAddress;
 }
 
 void TracerSceneReceiverPlugin::onSceneReceived(QByteArray* sceneMessage) {
@@ -101,5 +108,87 @@ void TracerSceneReceiverPlugin::onSceneReceived(QByteArray* sceneMessage) {
 }
 
 void TracerSceneReceiverPlugin::run() {
+	qDebug() << "TracerSceneReceiverPlugin running..." ;
 
+	sceneReceiver->requestStart();
+	zeroMQSceneReceiverThread->start();
+}
+
+//!
+//! Gets a QByteArray from the SceneReceiver thread.
+//! Parses the bytes populating a CharacterPackageSequence
+//! 
+void TracerSceneReceiverPlugin::processCharacterByteData(QByteArray* characterByteArray) {
+	int byteCounter = 0; //! "Bookmark" for reading the array and skipping uninteresting sequences of bytes
+
+	//! Execute until all the QByteArray has been read
+	while (characterByteArray->size() > byteCounter + 4) {
+		//! Parsing and populating data for a single CharacterPackage
+		CharacterPackage character;
+		
+		//! Get number of bones (not to be saved in CharacterPackage) - int32
+		int32_t nBones; memcpy(&nBones, characterByteArray->sliced(byteCounter, 4).data(), sizeof(nBones)); // Copies byte values directly into the new variable, which interprets it as the correct type
+		byteCounter += 4;
+		//! Get number of skeleton objects (not to be saved in CharacterPackage) - int32
+		int32_t nSkeletonObjs; memcpy(&nSkeletonObjs, characterByteArray->sliced(byteCounter, 4), sizeof(nSkeletonObjs));
+		byteCounter += 4;
+
+		//! TODO: get sceneID
+		//character.sceneID = ?
+
+		//! Get objectID - int32
+		memcpy(&character.objectID, characterByteArray->sliced(byteCounter, 4), sizeof(character.objectID));
+		byteCounter += 4;
+
+		//! TODO: get object name
+		//character.objectName = ?
+
+		//! Populating bone IDs - int32[]
+		for (int i = 0; i < nBones; i++) {
+			int32_t id; memcpy(&id, characterByteArray->sliced(byteCounter, 4), sizeof(id));
+			character.boneIDs.push_back(id);
+			byteCounter += 4;
+		}
+
+		//! Skipping skeletonMapping
+		byteCounter += 4 * nSkeletonObjs;
+
+		//! Populating T-Pose bone Positions - float[] - size in bytes 4*3*N_bones
+		for (int i = 0; i < nBones; i++) {
+			float x; memcpy(&x, characterByteArray->sliced(byteCounter, 4), sizeof(x));
+			byteCounter += 4;
+			float y; memcpy(&y, characterByteArray->sliced(byteCounter, 4), sizeof(y));
+			byteCounter += 4;
+			float z; memcpy(&z, characterByteArray->sliced(byteCounter, 4), sizeof(z));
+			byteCounter += 4;
+			character.tposeBonePos.push_back(glm::vec3(x, y, z));
+		}
+
+		//! Populating T-Pose bone Rotation - float[] - size in bytes 4*4*N_bones
+		for (int i = 0; i < nBones; i++) {
+			float w; memcpy(&w, characterByteArray->sliced(byteCounter, 4), sizeof(w)); // w SHOULD be the first element of the quaternion
+			byteCounter += 4;
+			float x; memcpy(&x, characterByteArray->sliced(byteCounter, 4), sizeof(x));
+			byteCounter += 4;
+			float y; memcpy(&y, characterByteArray->sliced(byteCounter, 4), sizeof(y));
+			byteCounter += 4;
+			float z; memcpy(&z, characterByteArray->sliced(byteCounter, 4), sizeof(z));
+			byteCounter += 4;
+			character.tposeBoneRot.push_back(glm::quat(w, x, y, z));
+		}
+
+		//! Populating T-Pose bone Scale - float[] - size in bytes 4*3*N_bones
+		for (int i = 0; i < nBones; i++) {
+			float x; memcpy(&x, characterByteArray->sliced(byteCounter, 4), sizeof(x));
+			byteCounter += 4;
+			float y; memcpy(&y, characterByteArray->sliced(byteCounter, 4), sizeof(y));
+			byteCounter += 4;
+			float z; memcpy(&z, characterByteArray->sliced(byteCounter, 4), sizeof(z));
+			byteCounter += 4;
+			character.tposeBoneScale.push_back(glm::vec3(x, y, z));
+		}
+		
+		//! Adding character to the characterList
+		characterList->mCharacterPackageSequence.push_back(character);
+	}
 }

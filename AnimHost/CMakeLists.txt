@@ -6,6 +6,8 @@ set(target_name AnimHost)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_AUTOMOC ON)
+
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE PATH "set config types" FORCE)
 set(CMAKE_DEBUG_POSTFIX _d)
 

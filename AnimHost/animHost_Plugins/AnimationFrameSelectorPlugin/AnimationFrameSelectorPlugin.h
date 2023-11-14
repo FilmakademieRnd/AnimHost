@@ -19,6 +19,13 @@ private:
     QWidget* _widget;
     QSlider* _slider;
 
+    QLabel* _l1;
+    QLabel* _l2;
+    QLabel* _l3;
+    QLabel* _l4;
+
+private:
+
     std::weak_ptr<AnimNodeData<Animation>> _animationIn;
     std::shared_ptr<AnimNodeData<Animation>> _animationOut;
 

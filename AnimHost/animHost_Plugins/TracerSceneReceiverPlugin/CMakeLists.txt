@@ -11,11 +11,9 @@ set_target_properties (TracerSceneReceiverPlugin PROPERTIES
 
 target_include_directories(TracerSceneReceiverPlugin PUBLIC
     ../PluginNodeInterface
-    ../../../glm
-    ../../core
 )
 
-target_compile_definitions(TracerSceneReceiverPlugin PUBLIC
+target_compile_definitions(TracerSceneReceiverPlugin PRIVATE
     TRACERSCENERECEIVERPLUGIN_LIBRARY
 )
 
@@ -25,7 +23,4 @@ target_link_directories(AnimHostCore PUBLIC
 
 target_link_libraries(TracerSceneReceiverPlugin PUBLIC
     PluginNodeInterface
-    AnimHostCore
-    Qt::Core
-    libzmq-mt-4_3_5
 )
