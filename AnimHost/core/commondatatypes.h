@@ -288,31 +288,22 @@ class ANIMHOSTCORESHARED_EXPORT CharacterPackage {
     COMMONDATA(characterPackage, CharacterPackage)
 
 };
-<<<<<<< Updated upstream
-Q_DECLARE_METATYPE(std::shared_ptr<SceneObject>)
-=======
 Q_DECLARE_METATYPE(CharacterPackage)
 Q_DECLARE_METATYPE(std::shared_ptr<CharacterPackage>)
->>>>>>> Stashed changes
+
 
 class ANIMHOSTCORESHARED_EXPORT CharacterPackageSequence : public Sequence {
     public:
 
     std::vector<CharacterPackage> mCharacterPackageSequence;
-    public:
 
+    public:
     CharacterPackageSequence() : mCharacterPackageSequence {} { qDebug() << "CharacterPackageSequence()"; };
 
     COMMONDATA(characterPackageSequence, CharacterPackageSequence)
-
-
+      
 };
-<<<<<<< Updated upstream
-Q_DECLARE_METATYPE(std::shared_ptr<SceneObjectSequence>)
-=======
 Q_DECLARE_METATYPE(CharacterPackageSequence)
 Q_DECLARE_METATYPE(std::shared_ptr<CharacterPackageSequence>)
->>>>>>> Stashed changes
-
 
 #endif // COMMONDATATYPES_H
