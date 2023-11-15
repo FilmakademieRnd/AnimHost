@@ -13,6 +13,8 @@ class ANIMHOSTCORESHARED_EXPORT AnimHostHelper
 public:
 	static QString shortenFilePath(const QString& filePath, int maxLength);
 
+	static void ForwardKinematics(const Skeleton& skeleton, const Animation& animation, std::vector<glm::mat4>& outTransforms, int frame);
+
 };
 
 

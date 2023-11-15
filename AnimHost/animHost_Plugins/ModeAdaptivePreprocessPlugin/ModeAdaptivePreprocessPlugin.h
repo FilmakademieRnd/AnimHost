@@ -31,9 +31,30 @@ private:
     BoneSelectionWidget* _boneSelect = nullptr;
 
 private: 
-    std::vector<glm::vec2> posTrajectory;
-    std::vector<glm::vec2> rotTrajectory;
-    std::vector<glm::vec2> velTrajectory;
+    /* Input Data */
+
+    std::vector<glm::vec2> posTrajectory; /*!< 2D Trajectory positions ground plane.*/
+    std::vector<glm::vec2> forwardTrajectory /*!< 2D Trajectory of forward Vector. Hip orientation projected onto ground plane.*/;
+    std::vector<glm::vec2> velTrajectory; /*!< 2D Trajectory of characters root velocities.*/
+    std::vector<float> desSpeedTrajectory; /*!< 2D Trajectory of characters target root velocities.*/
+    std::vector<char> oneHotActionType; /*!< One-hot encoded action types along trajectory.*/
+    std::vector<glm::vec3> relativeJointPosition; /*!< Current joint positions relative to root position.*/
+    std::vector<glm::quat> relativeJoitnRotations;
+    std::vector<glm::vec3> relativeJointVelocities; 
+
+    /* Output Data */
+
+    std::vector<glm::vec2> predPosTrajectory;
+    std::vector<glm::vec2> predForwardTrajectory;
+    std::vector<glm::vec2> predVelTrajectory;
+    std::vector<glm::vec3> predRelativeJointPosition;
+    std::vector<glm::quat> predRelativJoitnRotations;
+    std::vector<glm::vec3> predRelativeJointVelocities;
+
+    glm::vec2 predRootTranslation;
+    glm::vec2 predRootVelocity;
+    float predRootAngularVelocity;
+
     
 
 public:
@@ -52,6 +73,8 @@ public:
     std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;
     void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
     void run() override;
+
+    void processRelativeRotations();
 
     QWidget* embeddedWidget() override;
 

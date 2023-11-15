@@ -5,7 +5,10 @@
 
 #include <glm/gtx/quaternion.hpp>
 #include <glm/ext/quaternion_float.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
+
 #include <commondatatypes.h>
+#include <animhosthelper.h>
 
 
 ModeAdaptivePreprocessPlugin::ModeAdaptivePreprocessPlugin()
@@ -114,9 +117,35 @@ void ModeAdaptivePreprocessPlugin::run()
             glm::vec2 sample = poseSequenceIn->GetRootPositionAtFrame(pastFrameStartIdx + i);
             posTrajectory[i] = sample - curretRefPos;
         }
+        qDebug() << "Pose Sequence";
     }
 
+    forwardTrajectory = std::vector<glm::vec2>(numSamples);
 
+    if (auto sp_animation = _animationIn.lock()) {
+        auto animation = sp_animation->getData();
+
+        glm::quat currentRefRot = animation->mBones[0].GetOrientation(referenceFrame);
+        auto frameRT = glm::toMat4(currentRefRot);
+
+
+        //Forward-Vector
+        auto forward = glm::vec4(1.0,  0, 0, 0);
+        forward = frameRT * forward;
+
+        glm::vec2 refForward2d = glm::normalize(glm::vec2(forward.x, forward.z));
+
+        for (int i = 0; i < numSamples; i++) {
+            glm::quat rot = animation->mBones[0].GetOrientation(pastFrameStartIdx + i);
+            auto RT = glm::toMat4(rot);
+            auto tmpfwrd = glm::vec4(1.0, 0, 0, 0);
+            tmpfwrd = frameRT * tmpfwrd;
+
+            forwardTrajectory[i] = glm::normalize(glm::vec2(tmpfwrd.x, tmpfwrd.z)) - refForward2d;
+        }
+        qDebug() << "forward";
+
+    }
 
     velTrajectory = std::vector<glm::vec2>(numSamples);
 
@@ -129,27 +158,74 @@ void ModeAdaptivePreprocessPlugin::run()
             glm::vec2 sample = velSeq->GetRootVelocityAtFrame(pastFrameStartIdx + i);
             velTrajectory[i] = sample - currentRefVel;
         }
+
+        qDebug() << "velocity";
     }
 
-    rotTrajectory = std::vector<glm::vec2>(numSamples);
 
+    desSpeedTrajectory = std::vector<float>(numSamples);
+
+    if (auto sp_velSeq = _jointVelocitySequenceIn.lock()) {
+        auto velSeq = sp_velSeq->getData();
+
+        for (int i = 0; i < numSamples; i++) {
+            glm::vec2 sample = velSeq->GetRootVelocityAtFrame(pastFrameStartIdx + i);
+            desSpeedTrajectory[i] = glm::length(sample);
+        }
+
+        qDebug() << "speed";
+    }
+
+    if (auto sp_poseSeq = _poseSequenceIn.lock()) {
+        auto poseSequenceIn = sp_poseSeq->getData();
+
+        relativeJointPosition = std::vector<glm::vec3>(poseSequenceIn->mPoseSequence[referenceFrame].mPositionData.size());
+
+        for (int i = 0; i < poseSequenceIn->mPoseSequence[referenceFrame].mPositionData.size(); i++) {
+            glm::vec3 curretRefPos = poseSequenceIn->mPoseSequence[referenceFrame].mPositionData[i];
+
+            //TODO skip root
+      
+            relativeJointPosition[i] = curretRefPos;
+        }
+        qDebug() << "jointpos";
+    }
+
+    
     if (auto sp_animation = _animationIn.lock()) {
         auto animation = sp_animation->getData();
+        
+        if (auto sp_skeleton = _skeletonIn.lock()) {
+            
+            auto skeleton = sp_skeleton->getData();
 
-        glm::quat currentRefRot = animation->mBones[0].GetOrientation(referenceFrame);
+            relativeJoitnRotations = std::vector<glm::quat>(skeleton->mNumBones);
 
-        //auto rT = animation->mBones[0].GetRestingTransform();
-        auto frameRT = glm::toMat4(currentRefRot);
+            std::vector<glm::mat4> transforms;
+            AnimHostHelper::ForwardKinematics(*skeleton, *animation, transforms, referenceFrame);
 
+            for (int i = 0; i < transforms.size(); i++) {
+                glm::vec3 scale;
+                glm::quat rotation;
+                glm::vec3 translation;
+                glm::vec3 skew;
+                glm::vec4 perspective;
 
-        //assumption
-        auto forward = glm::vec4(1.0,  0, 0, 0);
- 
+                glm::decompose(transforms[i], scale, rotation, translation, skew, perspective);
 
-        forward = frameRT * forward;
-
-        auto forward2d = glm::vec2(forward.x, forward.z);
-
+                rotation = glm::conjugate(rotation);
+                relativeJoitnRotations[i] = rotation;
+            }
+            qDebug() << "jointrot";
+        }
+    }
+    
+    if (auto sp_velSeq = _jointVelocitySequenceIn.lock()) {
+        auto velSeq = sp_velSeq->getData();
+        relativeJointVelocities = std::vector<glm::vec3>(velSeq->mJointVelocitySequence[referenceFrame].mJointVelocity.size());
+        for (int i = 0; i < relativeJointVelocities.size(); i++) {
+            relativeJointVelocities[i] = velSeq->mJointVelocitySequence[referenceFrame].mJointVelocity[i];
+        }
     }
 
 
@@ -164,6 +240,13 @@ void ModeAdaptivePreprocessPlugin::run()
     //build velocities
 
 }
+
+
+void ModeAdaptivePreprocessPlugin::processRelativeRotations() {
+
+}
+
+
 
 std::shared_ptr<NodeData> ModeAdaptivePreprocessPlugin::processOutData(QtNodes::PortIndex port)
 {
