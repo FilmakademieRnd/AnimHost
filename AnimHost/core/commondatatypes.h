@@ -271,6 +271,7 @@ class ANIMHOSTCORESHARED_EXPORT CharacterPackage {
     std::string objectName; // TODO: get name from VPET SceneNode 
 
     std::vector<int> boneIDs;
+    std::vector<int> skeletonObjIDs;
     std::vector<glm::vec3> tposeBonePos;
     std::vector<glm::quat> tposeBoneRot;
     std::vector<glm::vec3> tposeBoneScale;

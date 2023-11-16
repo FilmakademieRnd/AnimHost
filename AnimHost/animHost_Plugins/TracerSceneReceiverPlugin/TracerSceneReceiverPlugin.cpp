@@ -133,8 +133,8 @@ void TracerSceneReceiverPlugin::processCharacterByteData(QByteArray* characterBy
 		int32_t nSkeletonObjs; memcpy(&nSkeletonObjs, characterByteArray->sliced(byteCounter, 4), sizeof(nSkeletonObjs));
 		byteCounter += 4;
 
-		//! TODO: get sceneID
-		//character.sceneID = ?
+		//! Get sceneID
+		character.sceneID = _ipAddress.back().digitValue();
 
 		//! Get objectID - int32
 		memcpy(&character.objectID, characterByteArray->sliced(byteCounter, 4), sizeof(character.objectID));
@@ -151,10 +151,14 @@ void TracerSceneReceiverPlugin::processCharacterByteData(QByteArray* characterBy
 		}
 
 		//! Skipping skeletonMapping
-		byteCounter += 4 * nSkeletonObjs;
+		for (int i = 0; i < nSkeletonObjs; i++) {
+			int32_t id; memcpy(&id, characterByteArray->sliced(byteCounter, 4), sizeof(id));
+			character.skeletonObjIDs.push_back(id);
+			byteCounter += 4;
+		}
 
 		//! Populating T-Pose bone Positions - float[] - size in bytes 4*3*N_bones
-		for (int i = 0; i < nBones; i++) {
+		for (int i = 0; i < nSkeletonObjs; i++) {
 			float x; memcpy(&x, characterByteArray->sliced(byteCounter, 4), sizeof(x));
 			byteCounter += 4;
 			float y; memcpy(&y, characterByteArray->sliced(byteCounter, 4), sizeof(y));
@@ -165,20 +169,20 @@ void TracerSceneReceiverPlugin::processCharacterByteData(QByteArray* characterBy
 		}
 
 		//! Populating T-Pose bone Rotation - float[] - size in bytes 4*4*N_bones
-		for (int i = 0; i < nBones; i++) {
-			float w; memcpy(&w, characterByteArray->sliced(byteCounter, 4), sizeof(w)); // w SHOULD be the first element of the quaternion
-			byteCounter += 4;
+		for (int i = 0; i < nSkeletonObjs; i++) {
 			float x; memcpy(&x, characterByteArray->sliced(byteCounter, 4), sizeof(x));
 			byteCounter += 4;
 			float y; memcpy(&y, characterByteArray->sliced(byteCounter, 4), sizeof(y));
 			byteCounter += 4;
 			float z; memcpy(&z, characterByteArray->sliced(byteCounter, 4), sizeof(z));
 			byteCounter += 4;
+			float w; memcpy(&w, characterByteArray->sliced(byteCounter, 4), sizeof(w));
+			byteCounter += 4;
 			character.tposeBoneRot.push_back(glm::quat(w, x, y, z));
 		}
 
 		//! Populating T-Pose bone Scale - float[] - size in bytes 4*3*N_bones
-		for (int i = 0; i < nBones; i++) {
+		for (int i = 0; i < nSkeletonObjs; i++) {
 			float x; memcpy(&x, characterByteArray->sliced(byteCounter, 4), sizeof(x));
 			byteCounter += 4;
 			float y; memcpy(&y, characterByteArray->sliced(byteCounter, 4), sizeof(y));

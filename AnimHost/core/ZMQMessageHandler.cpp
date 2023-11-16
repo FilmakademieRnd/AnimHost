@@ -181,11 +181,6 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
     std::string debugOut;
     bool _bool = *(bool*) payloadBytes;
     debugOut = std::to_string(_bool);
-    //qDebug() << "Payload data: " + debugOut;
-    byte objID_1 = (byte) (objectID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
-    byte objID_2 = (byte) ((objectID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
-    byte parID_1 = (byte) (parameterID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
-    byte parID_2 = (byte) ((parameterID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
 
     return newMessage;
     /*void* msgData = newMessage.data();

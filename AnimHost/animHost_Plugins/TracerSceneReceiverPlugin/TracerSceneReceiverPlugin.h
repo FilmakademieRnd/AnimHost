@@ -43,7 +43,7 @@ private:
     QThread* zeroMQSceneReceiverThread = nullptr;
 
     SceneReceiver* sceneReceiver;
-    SceneObjectSequence sceneDescription;
+    //SceneObjectSequence sceneDescription;
 
 public:
     TracerSceneReceiverPlugin();
@@ -61,6 +61,7 @@ public:
     std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;
     void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
     void run() override;
+    void onSceneReceived(QByteArray* sceneMessage);
 
     QWidget* embeddedWidget() override;
 
@@ -69,7 +70,6 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void onButtonClicked();
-
     void processCharacterByteData(QByteArray* charByteData);
 
 };

@@ -78,8 +78,7 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
         //! (Re-)connect to newIPAddress
         /*if (receiveSocket->connected())
             receiveSocket->disconnect(QString("tcp://" + ipAddress + ":5555").toLatin1().data());
-        setIPAddress(newIPAddress);
-        receiveSocket->connect(QString("tcp://" + ipAddress + ":5555").toLatin1().data());*/
+        setIPAddress(newIPAddress);*/
 
         receiveSocket->connect(QString("tcp://" + ipAddress + ":5555").toLatin1().data());
 
@@ -125,6 +124,7 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
 
     Q_SIGNALS:
     void stopped();
-    void passCharacterByteArray(QByteArray* msgArray);
+    void passCharacterByteArray(QByteArray* CharacterMsgArray);
+    void sceneReceived(QByteArray* sceneMsgArray);
 };
 #endif // SCENERECEIVER_H
