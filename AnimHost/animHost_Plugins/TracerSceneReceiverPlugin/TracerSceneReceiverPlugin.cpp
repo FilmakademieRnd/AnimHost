@@ -12,12 +12,12 @@ TracerSceneReceiverPlugin::TracerSceneReceiverPlugin() {
 	// Validation Regex initialization for the QLineEdit Widget of the plugin
 	_ipValidator = new QRegularExpressionValidator(ZMQMessageHandler::ipRegex, this);
 
-	characterList = new CharacterPackageSequence();
+	characterListOut = std::make_shared<AnimNodeData<CharacterPackageSequence>>();
 
-	_updateSenderContext = new zmq::context_t(1);
+	_sceneReceiverContext = new zmq::context_t(1);
 	zeroMQSceneReceiverThread = new QThread();
-	sceneReceiver = new SceneReceiver(this, _ipAddress, false, _updateSenderContext);
-	QObject::connect(sceneReceiver, &SceneReceiver::sceneReceived, this, &TracerSceneReceiverPlugin::onSceneReceived);
+	sceneReceiver = new SceneReceiver(this, _ipAddress, false, _sceneReceiverContext);
+	//QObject::connect(sceneReceiver, &SceneReceiver::sceneReceived, this, &TracerSceneReceiverPlugin::onSceneReceived);
 
 	sceneReceiver->moveToThread(zeroMQSceneReceiverThread);
 	QObject::connect(sceneReceiver, &SceneReceiver::passCharacterByteArray, this, &TracerSceneReceiverPlugin::processCharacterByteData);
@@ -50,7 +50,7 @@ void TracerSceneReceiverPlugin::processInData(std::shared_ptr<NodeData> data, Qt
 }
 
 std::shared_ptr<NodeData> TracerSceneReceiverPlugin::processOutData(QtNodes::PortIndex port) {
-	return nullptr;
+	return characterListOut;
 }
 
 QWidget* TracerSceneReceiverPlugin::embeddedWidget() {
@@ -120,9 +120,11 @@ void TracerSceneReceiverPlugin::run() {
 //! 
 void TracerSceneReceiverPlugin::processCharacterByteData(QByteArray* characterByteArray) {
 	int byteCounter = 0; //! "Bookmark" for reading the array and skipping uninteresting sequences of bytes
-
+	
+	//! Clear current list of CharacterPackages
+	characterListOut.get()->getData()->mCharacterPackageSequence.clear();
 	//! Execute until all the QByteArray has been read
-	while (characterByteArray->size() > byteCounter + 4) {
+	while (characterByteArray->size() > byteCounter) {
 		//! Parsing and populating data for a single CharacterPackage
 		CharacterPackage character;
 		
@@ -193,6 +195,8 @@ void TracerSceneReceiverPlugin::processCharacterByteData(QByteArray* characterBy
 		}
 		
 		//! Adding character to the characterList
-		characterList->mCharacterPackageSequence.push_back(character);
+		characterListOut.get()->getData()->mCharacterPackageSequence.push_back(character);
 	}
+	qDebug() << "Number of character received from VPET:" << characterListOut.get()->getData()->mCharacterPackageSequence.size();
+	emitDataUpdate(0);
 }
