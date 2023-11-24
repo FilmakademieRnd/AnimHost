@@ -2,11 +2,13 @@
 #include "animhostnode.h"
 #include "animhostoperationnode.h"
 #include "sourcedatanode.h"
+
+#include "commondatatypes.h"
+
 #include <iostream>
 #include <QCoreApplication>
 #include <QPluginLoader>
 #include <QCryptographicHash>
-
 
 //!
 //! \brief Constructor of AnimHost class
@@ -16,9 +18,19 @@ AnimHost::AnimHost()
 
     qRegisterMetaType<std::shared_ptr<Pose>>("Pose");
     qRegisterMetaType<std::shared_ptr<PoseSequence>>("PoseSequence");
-    qRegisterMetaType<std::shared_ptr<JointVelocitySequence>>("JointVelocitySequence");
-    qRegisterMetaType<std::shared_ptr<Skeleton>>("Skeleton"); 
+
+    qRegisterMetaType<std::shared_ptr<Skeleton>>("Skeleton");
+
+    qRegisterMetaType<std::shared_ptr<Bone>>("Bone");
+
     qRegisterMetaType<std::shared_ptr<Animation>>("Animation");
+
+    qRegisterMetaType<std::shared_ptr<JointVelocity>>("JointVelocity");
+    qRegisterMetaType<std::shared_ptr<JointVelocitySequence>>("JointVelocitySequence");
+
+    qRegisterMetaType<std::shared_ptr<CharacterPackage>>("SceneObject");
+    qRegisterMetaType<std::shared_ptr<CharacterPackageSequence>>("SceneObjectSequence");
+ 
     qRegisterMetaType<std::shared_ptr<RunSignal>>("RunSignal");
 
 

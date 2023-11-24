@@ -1,16 +1,15 @@
 #ifndef ANIMHOST_H
 #define ANIMHOST_H
 
+#include <animhostcore_global.h>
+
+#include "plugininterface.h"
+#include "pluginnodeinterface.h"
+
 #include <QObject>
 #include <QFileInfo>
 #include <QDirIterator>
-#include "plugininterface.h"
-#include "pluginnodeinterface.h"
 #include <QMultiMap>
-
-#include "commondatatypes.h"
-
-#define NODE_EDITOR_SHARED 1
 
 #include <QtNodes/ConnectionStyle>
 #include <QtNodes/DataFlowGraphModel>
@@ -25,9 +24,10 @@ using QtNodes::DataFlowGraphModel;
 using QtNodes::GraphicsView;
 using QtNodes::NodeDelegateModelRegistry;
 
+
 class ANIMHOSTCORESHARED_EXPORT AnimHost : public QObject
 {
-    //Q_OBJECT
+    Q_OBJECT
 
 public:
     //functions
@@ -44,12 +44,6 @@ private:
     //variables
     QMultiMap<QString, std::shared_ptr<PluginInterface>> plugins;
     void createNodeFromPlugin(std::shared_ptr<PluginInterface> plugin);
-
-
-    //functions
-
-
-
 
 protected:
 };

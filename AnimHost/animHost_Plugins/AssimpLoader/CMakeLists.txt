@@ -9,13 +9,10 @@ set_target_properties (AssimpLoader PROPERTIES
 )
 
 target_include_directories(AssimpLoader PUBLIC
-    ../PluginNodeInterface
-    ../../core/DataLoader
-    ../../../glm
     ../../../assimp/include
 )
 
-target_compile_definitions(AssimpLoader PUBLIC
+target_compile_definitions(AssimpLoader PRIVATE
     ASSIMPLOADERPLUGIN_LIBRARY
 )
 
@@ -25,11 +22,7 @@ target_link_directories(AnimHostCore PUBLIC
 
 target_link_libraries(AssimpLoader PUBLIC
     PluginNodeInterface
-    Qt::Core
-    Qt::Gui
-    Qt::Widgets
     assimp-vc143-mtd
-    AnimHostCore
 )
 
 

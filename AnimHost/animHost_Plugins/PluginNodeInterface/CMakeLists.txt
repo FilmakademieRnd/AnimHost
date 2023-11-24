@@ -11,9 +11,9 @@ target_compile_definitions(PluginNodeInterface PUBLIC
     PLUGINNODEINTERFACE_LIBRARY
 )
 
+target_include_directories(PluginNodeInterface INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+
 target_include_directories(PluginNodeInterface PUBLIC
-    ../../../glm
-    ../../../assimp/include
     ../../core/QTNodes/include
     ../PluginInterface
 )
@@ -23,12 +23,5 @@ target_link_directories(PluginNodeInterface PRIVATE
 )
 
 target_link_libraries(PluginNodeInterface PUBLIC
-    Qt::Core
-    Qt::Gui
     PluginInterface
-    QTNodes
-    AnimHostCore
 )
-
-
-

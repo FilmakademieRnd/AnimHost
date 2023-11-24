@@ -23,8 +23,18 @@ TracerUpdateSenderPlugin::TracerUpdateSenderPlugin()
 
     localTime = timer->interval() % 128;
 
-    zeroMQTickReceiverThread = new QThread();
-    tickReceiver = new TickReceiver(this, _ipAddress, false, _updateSenderContext);
+    if (!msgSender) // trying to avoid multiple instances
+        msgSender = new AnimHostMessageSender(_ipAddress, false, _updateSenderContext);
+    if (!zeroMQSenderThread) // trying to avoid multiple instances
+        zeroMQSenderThread = new QThread();
+
+    msgSender->moveToThread(zeroMQSenderThread);
+    QObject::connect(zeroMQSenderThread, &QThread::started, msgSender, &AnimHostMessageSender::run);
+
+    if(!tickReceiver)
+        tickReceiver = new TickReceiver(this, _ipAddress, false, _updateSenderContext);
+    if(!zeroMQTickReceiverThread)
+        zeroMQTickReceiverThread = new QThread();
 
     tickReceiver->moveToThread(zeroMQTickReceiverThread);
     QObject::connect(tickReceiver, &TickReceiver::tick, this, &TracerUpdateSenderPlugin::ticked);
@@ -141,9 +151,6 @@ void TracerUpdateSenderPlugin::run() {
         return;
     }
 
-    msgSender = new AnimHostMessageSender(_ipAddress, false, _updateSenderContext);
-    zeroMQSenderThread = new QThread();
-
     ///! DEBUGGING SAMPLE DATA USED TO TEST SENDING
 
     /*bool boolExample = true;
@@ -180,9 +187,6 @@ void TracerUpdateSenderPlugin::run() {
     zmq::message_t* new_msg = msgSender->createMessage(_ipAddress[_ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
     byte* new_msg_data = (byte*) new_msg->data();
     msgSender->setMessage(new_msg);
-
-    msgSender->moveToThread(zeroMQSenderThread);
-    QObject::connect(zeroMQSenderThread, &QThread::started, msgSender, &AnimHostMessageSender::run);
 
     msgSender->requestStart();
     zeroMQSenderThread->start();

@@ -37,12 +37,13 @@ private:
     QRegularExpressionValidator* _ipValidator;
     QString _ipAddress;
 
-    SceneObjectSequence sceneObjectList;
+    std::shared_ptr<AnimNodeData<CharacterPackageSequence>> characterListOut;
 
-    zmq::context_t* _updateSenderContext = nullptr;
+    zmq::context_t* _sceneReceiverContext = nullptr;
     QThread* zeroMQSceneReceiverThread = nullptr;
 
     SceneReceiver* sceneReceiver;
+    //SceneObjectSequence sceneDescription;
 
 public:
     TracerSceneReceiverPlugin();
@@ -60,11 +61,16 @@ public:
     std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;
     void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
     void run() override;
+    void onSceneReceived(QByteArray* sceneMessage);
 
     QWidget* embeddedWidget() override;
 
+Q_SIGNALS:
+    void connectSceneReceiver(QString newIPAddress, QString request);
+
 private Q_SLOTS:
     void onButtonClicked();
+    void processCharacterByteData(QByteArray* charByteData);
 
 };
 

@@ -9,17 +9,15 @@ set_target_properties (JointPositionPlugin PROPERTIES
 
 target_include_directories(JointPositionPlugin PUBLIC
     ../PluginInterface
-    ../../../glm
 )
 
 
-target_compile_definitions(JointPositionPlugin PUBLIC
+target_compile_definitions(JointPositionPlugin PRIVATE
     JOINTPOSITIONPLUGIN_LIBRARY
 )
 
 target_link_libraries(JointPositionPlugin PUBLIC
     PluginInterface
-    AnimHostCore
 )
 
 

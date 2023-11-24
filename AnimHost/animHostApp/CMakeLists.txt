@@ -9,7 +9,6 @@ target_include_directories(${target_name} PRIVATE
     ${CMAKE_SOURCE_DIR}/core
     ${CMAKE_SOURCE_DIR}/animHost_Plugins/PluginInterface
     ${CMAKE_SOURCE_DIR}/animHost_Plugins/
-    ../../glm
 )
 
 target_link_directories(${target_name} PRIVATE 

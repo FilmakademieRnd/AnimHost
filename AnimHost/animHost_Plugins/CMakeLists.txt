@@ -11,3 +11,5 @@ add_subdirectory(DataExportPlugin)
 add_subdirectory(RunTriggerPlugin)
 add_subdirectory(TracerSceneReceiverPlugin)
 add_subdirectory(CoordinateConverterPlugin)
+add_subdirectory(CharacterSelectorPlugin)
+

@@ -1,6 +1,6 @@
 
 #include "AnimationFrameSelectorPlugin.h"
-#include <QPushButton>
+#include <QtWidgets>
 
 AnimationFrameSelectorPlugin::AnimationFrameSelectorPlugin()
 {
@@ -56,6 +56,11 @@ void AnimationFrameSelectorPlugin::processInData(std::shared_ptr<NodeData> data,
 
         int duration = spAnimation->getData()->mDurationFrames;
         _slider->setMaximum(duration - 1);
+        _slider->setTickInterval(duration/3);
+
+        _l2->setText(QString::number((_slider->maximum() / 3) * 1));
+        _l3->setText(QString::number((_slider->maximum() / 3) * 2));
+        _l4->setText(QString::number(_slider->maximum()));
 
     }
     else {
@@ -71,11 +76,39 @@ QWidget* AnimationFrameSelectorPlugin::embeddedWidget()
 
         _widget = new QWidget();
 
-        _slider = new QSlider(Qt::Horizontal, _widget);
+        _slider = new QSlider(Qt::Horizontal);
+        _slider->setTickInterval(_slider->maximum() / 3);
+        _slider->setTickPosition(QSlider::TicksBelow);
         _slider->setTracking(false);
+
+        _l1 = new QLabel("0");
+        _l2 = new QLabel(QString::number((_slider->maximum() / 3)*1));
+        _l3 = new QLabel(QString::number((_slider->maximum() / 3)*2));
+        _l4 = new QLabel(QString::number(_slider->maximum()));
+
+        _l1->setAlignment(Qt::AlignCenter);
+        _l2->setAlignment(Qt::AlignCenter);
+        _l3->setAlignment(Qt::AlignCenter);
+        _l4->setAlignment(Qt::AlignCenter);
+
+        QGridLayout* layout = new QGridLayout;
+
+        layout->addWidget(_slider, 0, 1, 1, 6);
+        layout->addWidget(_l1, 1, 0, 1, 2,Qt::AlignCenter);
+        layout->addWidget(_l2, 1, 2, 1, 2,Qt::AlignCenter);
+        layout->addWidget(_l3, 1, 4, 1, 2,Qt::AlignCenter);
+        layout->addWidget(_l4, 1, 6, 1, 2,Qt::AlignCenter);
+
+        _widget->setLayout(layout);
 
         connect(_slider, &QSlider::valueChanged, this, &AnimationFrameSelectorPlugin::onFrameChange);
 	}
+
+    _widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
+        "QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"
+        "QPushButton{border: 1px solid white; border-radius: 4px; padding: 5px; background-color:rgb(98, 139, 202);}"
+        "QLabel{padding: 5px;}"
+    );
 
 	return _widget;
 }

@@ -9,14 +9,12 @@ set_target_properties (RunTriggerPlugin PROPERTIES
 
 target_include_directories(RunTriggerPlugin PUBLIC
     ../PluginNodeInterface
-    ../../../glm
 )
 
-target_compile_definitions(RunTriggerPlugin PUBLIC
+target_compile_definitions(RunTriggerPlugin PRIVATE
     RUNTRIGGERPLUGIN_LIBRARY
 )
 
 target_link_libraries(RunTriggerPlugin PUBLIC
     PluginNodeInterface
-    AnimHostCore
 )
