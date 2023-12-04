@@ -45,6 +45,9 @@ TracerUpdateSenderPlugin::TracerUpdateSenderPlugin()
 
 TracerUpdateSenderPlugin::~TracerUpdateSenderPlugin()
 {
+    zeroMQSenderThread->quit(); zeroMQSenderThread->wait();
+    zeroMQTickReceiverThread->quit(); zeroMQTickReceiverThread->wait();
+
     if (msgSender)
         msgSender->~AnimHostMessageSender();
     _updateSenderContext->close();
@@ -53,48 +56,20 @@ TracerUpdateSenderPlugin::~TracerUpdateSenderPlugin()
     qDebug() << "~TracerUpdateSenderPlugin()";
 }
 
-//unsigned int TracerUpdateSenderPlugin::nPorts(QtNodes::PortType portType) const
-//{
-//    if (portType == QtNodes::PortType::In)
-//        // 3 INPUT ports: 1 Animation (pos/rot/scale of bones) + 1 Skeleton (to access bone hierarchy), 1 Pose (position of character joints in character space)
-//        return 3;
-//    else            
-//        // No OUTPUT ports, output stream on ZeroMQ Socket
-//        return 0;
-//}
-
 unsigned int TracerUpdateSenderPlugin::nDataPorts(QtNodes::PortType portType) const {
     if (portType == QtNodes::PortType::In)
-        return 3;
+        return 2;
     else
         return 0;
 }
-
-//NodeDataType TracerUpdateSenderPlugin::dataType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
-//{
-//    NodeDataType type;
-//    if (portType == QtNodes::PortType::In)  // INPUT Ports DataTypes
-//        if (portIndex == 0)
-//            return AnimNodeData<Skeleton>::staticType();
-//        else if (portIndex == 1)
-//            return AnimNodeData<Animation>::staticType();
-//        else if (portIndex == 2)
-//            return AnimNodeData<Pose>::staticType();
-//        else
-//            return type;
-//    else                                    // OUTPUT Ports DataTypes 
-//        return type;
-//}
 
 NodeDataType TracerUpdateSenderPlugin::dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const {
     NodeDataType type;
     if (portType == QtNodes::PortType::In)  // INPUT Ports DataTypes
         if (portIndex == 0)
-            return AnimNodeData<Skeleton>::staticType();
-        else if (portIndex == 1)
             return AnimNodeData<Animation>::staticType();
-        else if (portIndex == 2)
-            return AnimNodeData<Pose>::staticType();
+        else if (portIndex == 1)
+            return AnimNodeData<CharacterPackage>::staticType();
         else
             return type;
     else                                    // OUTPUT Ports DataTypes 
@@ -106,13 +81,10 @@ void TracerUpdateSenderPlugin::processInData(std::shared_ptr<NodeData> data, QtN
     if (!data) {
         switch (portIndex) {
             case 0:
-                _skeletonIn.reset();
-                break;
-            case 1:
                 _animIn.reset();
                 break;
-            case 2:
-                _poseIn.reset();
+            case 1:
+                _characterIn.reset();
                 break;
 
             default:
@@ -123,13 +95,10 @@ void TracerUpdateSenderPlugin::processInData(std::shared_ptr<NodeData> data, QtN
 
     switch (portIndex) {
         case 0:
-            _skeletonIn = std::static_pointer_cast<AnimNodeData<Skeleton>>(data);
-            break;
-        case 1:
             _animIn = std::static_pointer_cast<AnimNodeData<Animation>>(data);
             break;
-        case 2:
-            _poseIn = std::static_pointer_cast<AnimNodeData<Pose>>(data);
+        case 1:
+            _characterIn = std::static_pointer_cast<AnimNodeData<CharacterPackage>>(data);
             break;
 
         default:
@@ -143,11 +112,11 @@ void TracerUpdateSenderPlugin::run() {
 
     qDebug() << "TracerUpdateSenderPlugin running...";
 
-    auto sp_skeleton = _skeletonIn.lock();
+    auto sp_character = _characterIn.lock();
     auto sp_animation = _animIn.lock();
     
     // if either skeleton or animation data are NOT set and valid
-    if (!sp_skeleton || !sp_animation) {
+    if (!sp_character || !sp_animation) {
         return;
     }
 
@@ -171,10 +140,11 @@ void TracerUpdateSenderPlugin::run() {
     QByteArray msgQuat2 = msgSender->createMessageBody(254, 3, 47, ZMQMessageHandler::ParameterType::QUATERNION, quatExample2);
     msgBodyQuat.append(msgQuat2);*/
 
-    std::shared_ptr<AnimNodeData<Animation>> animNodeData = std::shared_ptr<AnimNodeData<Animation>>(_animIn);
-    std::shared_ptr<Animation> animData = animNodeData->getData();
+    std::shared_ptr<Animation> animData = _animIn.lock()->getData();
+    std::shared_ptr<CharacterPackage> chpkg = _characterIn.lock()->getData();
     QByteArray* msgBodyAnim = new QByteArray();
-    SerializeAnimation(animData, msgBodyAnim);
+    
+    SerializeAnimation(animData, chpkg, msgBodyAnim);
 
     // Example of message creation
     //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyBool));
@@ -188,8 +158,11 @@ void TracerUpdateSenderPlugin::run() {
     byte* new_msg_data = (byte*) new_msg->data();
     msgSender->setMessage(new_msg);
 
-    msgSender->requestStart();
-    zeroMQSenderThread->start();
+    // This does not seem to be correct...the Thread is already started...
+    if (!zeroMQSenderThread->isRunning()) {
+        msgSender->requestStart();
+        zeroMQSenderThread->start();
+    }
 }
 
 /**
@@ -198,43 +171,29 @@ void TracerUpdateSenderPlugin::run() {
  * \param animData
  * \param byteArray
  */
-void TracerUpdateSenderPlugin::SerializeAnimation(std::shared_ptr<Animation> animData, QByteArray* byteArray) {
+void TracerUpdateSenderPlugin::SerializeAnimation(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterPackage> character, QByteArray* byteArray) {
     // SceneID for testing
-    std::int32_t sceneID = 254;
+    std::int32_t sceneID = 0;
+    
     // Character SceneObject for testing
-    std::int32_t sceneObjID = 3;
+    //std::int32_t sceneObjID = 3;
     // Bone orientation IDs for testing
     //std::int32_t parameterID[28] = { 3, 4, 5, 6, 7, 8, 28, 29, 30, 31, 9, 10, 11, 12, 51, 52, 53, 54, 47, 48, 49, 50 };
     /*if ((int) animData->mBones.size() != sizeof(parameterID)/sizeof(std::int32_t)) {
         qDebug() << "ParameterID array mismatch: " << animData->mBones.size() << " elements required, " << sizeof(parameterID)/sizeof(std::int32_t) << " provided";
         return;
     }*/
-
-    for (std::int16_t i = 1; i < animData->mBones.size()-2; i++) {
+    
+    for (std::int16_t i = 1; i < character->skeletonObjIDs.size(); i++) {
         // Getting Bone Object Rotation Quaternion
-        glm::quat boneQuat = animData->mBones[i].GetOrientation(0);
-        glm::quat boneRest = animData->mBones[i].restingRotation;
+        glm::quat boneQuat = animData->mBones.at(i).GetOrientation(0);
 
-        //boneQuat = boneQuat * boneRest;
-        
-        //boneQuat = boneRest;
+        std::vector<float> boneQuatVector = { boneQuat.x, boneQuat.y, boneQuat.z,  boneQuat.w }; // converting glm::quat in vector<float>
 
-        /*glm::mat4 r_to_l = { 1.0,.0,.0,.0,
-                            .0,1.0,.0,.0,
-                            .0,.0, 1.0,.0,
-                            .0,.0,.0,1.0 };
+        qDebug() << i <<animData->mBones[i].mName << boneQuatVector;
 
-        glm::mat4 rot = glm::toMat4(boneQuat);
-
-        boneQuat = glm::toQuat(r_to_l * rot);*/
-
-
-
-        std::vector<float> boneQuatVector = { boneQuat.x, boneQuat.y, boneQuat.z,  boneQuat.w}; // converting glm::quat in vector<float>
-
-        qDebug() << i + 2 <<animData->mBones[i].mName << boneQuatVector;
-
-        QByteArray msgBoneQuat = msgSender->createMessageBody(sceneID, sceneObjID, i+2, ZMQMessageHandler::ParameterType::QUATERNION, boneQuatVector);
+        //.......................................................................................i+2 necessary because the rotation of the first bone will have ParameterID = 3 (0 = objPos, 1 = objRot, 2 = objScale), while the order is the same
+        QByteArray msgBoneQuat = msgSender->createMessageBody(sceneID, character->sceneObjectID, i+2, ZMQMessageHandler::ParameterType::QUATERNION, boneQuatVector);
         byteArray->append(msgBoneQuat);
     }
 }
@@ -245,7 +204,8 @@ void TracerUpdateSenderPlugin::ticked(int externalTime) {
     localTime = externalTime;
     timer->stop();
     timer->start(localTime);
-    msgSender->resume();
+    if(zeroMQSenderThread->isRunning())
+        msgSender->resume();
 }
 
 std::shared_ptr<NodeData> TracerUpdateSenderPlugin::outData(QtNodes::PortIndex port)

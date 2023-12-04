@@ -74,34 +74,57 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
         mutex.unlock();
     };
 
-    void sendRequest(QString newIPAddress, QString request) {
-        //! (Re-)connect to newIPAddress
-        /*if (receiveSocket->connected())
-            receiveSocket->disconnect(QString("tcp://" + ipAddress + ":5555").toLatin1().data());
-        setIPAddress(newIPAddress);*/
-
-        receiveSocket->connect(QString("tcp://" + ipAddress + ":5555").toLatin1().data());
-
-        //! requesting the character list in the TRACER client scene
-        requestMsg.rebuild(request.toLatin1().data(), request.size());
-        qDebug() << "Requesting Scene" << request.toLatin1().data() << "(size " << request.size() << ")";
+    //! requesting the Character Package list in the TRACER client scene
+    void requestSceneCharacterData() {
+        requestMsg.rebuild("characters", 10);
+        qDebug() << "Requesting character packages";
         receiveSocket->send(requestMsg);
 
-        receiveSocket->recv(&replyMsg);
+        receiveSocket->recv(&replyCharMsg);
         qDebug() << "Reply received!";
 
-        // replyMsg will contain a series of bytes representing all the Character Packages in the scene
-        if (replyMsg.size() > 0) {
-            QByteArray* msgArray = new QByteArray((char*) replyMsg.data(), static_cast<int>(replyMsg.size())); // Convert message into explicit byte array
-            passCharacterByteArray(msgArray); // Pass byte array to TracerSceneReceiverPlugin
-        }
+        QByteArray* charPkgArray = new QByteArray();
+        // replyCharMsg will contain a series of bytes representing all the Scene Nodes in the scene
+        if (replyCharMsg.size() > 0)
+            charPkgArray->append((char*)replyCharMsg.data(), replyCharMsg.size());
+            //memcpy(charPkgArray->data(), replyCharMsg.data(), replyCharMsg.size());
+            //charPkgArray->push_back((char*) replyCharMsg.data()); // Convert message into explicit byte array
+
+        passCharacterByteArray(charPkgArray); // Pass byte array to TracerSceneReceiverPlugin to be parsed as chracter packages
+    }
+
+    //! requesting the SceneNode list in the TRACER client scene
+    void requestSceneNodeData() {    
+        requestMsg.rebuild("nodes", 5);
+        qDebug() << "Requesting nodes";
+        receiveSocket->send(requestMsg);
+
+        receiveSocket->recv(&replyNodeMsg);
+        qDebug() << "Reply received!";
+
+        QByteArray* nodesArray = new QByteArray();
+        // replyNodeMsg will contain a series of bytes representing all the Scene Nodes in the scene
+        if (replyNodeMsg.size() > 0)
+            nodesArray->append((char*) replyNodeMsg.data(), replyNodeMsg.size());
+
+        passSceneNodeByteArray(nodesArray); // Pass byte array to TracerSceneReceiverPlugin to be parsed as scene nodes
+    }
+
+    void connectSocket(QString newIPAddress) {
+        //! (Re-)connect to newIPAddress
+        /*if (receiveSocket->connected())
+            receiveSocket->disconnect(QString("tcp://" + ipAddress + ":5555").toLatin1().data()); //disconnect throws unexpected exception*/
+
+        setIPAddress(newIPAddress);
+        receiveSocket->connect(QString("tcp://" + ipAddress + ":5555").toLatin1().data());
     }
 
     private:
     zmq::socket_t* receiveSocket = nullptr;
     TracerSceneReceiverPlugin* TSRPlugin = nullptr;
     zmq::message_t requestMsg {};
-    zmq::message_t replyMsg {};
+    zmq::message_t replyNodeMsg {};
+    zmq::message_t replyCharMsg {};
 
     public Q_SLOTS:
 
@@ -124,7 +147,8 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
 
     Q_SIGNALS:
     void stopped();
-    void passCharacterByteArray(QByteArray* CharacterMsgArray);
+    void passCharacterByteArray(QByteArray* characterMsgArray);
+    void passSceneNodeByteArray(QByteArray* sceneNodeMsgArray);
     void sceneReceived(QByteArray* sceneMsgArray);
 };
 #endif // SCENERECEIVER_H

@@ -43,7 +43,6 @@ private:
     QThread* zeroMQSceneReceiverThread = nullptr;
 
     SceneReceiver* sceneReceiver;
-    //SceneObjectSequence sceneDescription;
 
 public:
     TracerSceneReceiverPlugin();
@@ -65,12 +64,16 @@ public:
 
     QWidget* embeddedWidget() override;
 
+    enum NodeType { GROUP, GEO, LIGHT, CAMERA, SKINNEDMESH };
+
 Q_SIGNALS:
-    void connectSceneReceiver(QString newIPAddress, QString request);
+    void requestCharacterData();
+    void requestSceneNodeData();
 
 private Q_SLOTS:
     void onButtonClicked();
-    void processCharacterByteData(QByteArray* charByteData);
+    void processCharacterByteData(QByteArray* charByteArray);
+    void processSceneNodeByteData(QByteArray* nodeByteArray);
 
 };
 

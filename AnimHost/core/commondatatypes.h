@@ -266,25 +266,38 @@ Q_DECLARE_METATYPE(std::shared_ptr<RunSignal>)
 
 class ANIMHOSTCORESHARED_EXPORT CharacterPackage {
     public:
-    int sceneID; // unclear from where I can get it
-    int objectID;
-    std::string objectName; // TODO: get name from VPET SceneNode 
+    int sceneID;
+    int sceneObjectID;
+    std::string objectName;
+    int rootBoneID;
 
-    std::vector<int> boneIDs;
+    std::vector<int> boneMapping;
     std::vector<int> skeletonObjIDs;
     std::vector<glm::vec3> tposeBonePos;
     std::vector<glm::quat> tposeBoneRot;
     std::vector<glm::vec3> tposeBoneScale;
 
     public:
-    CharacterPackage(std::string name, int sID, int oID) :
+    CharacterPackage(std::string name, int sID, int soID, int rbID) :
         sceneID { sID },
-        objectID { oID },
+        sceneObjectID { soID },
+        rootBoneID { rbID },
         objectName { name },
-        boneIDs {},
+        boneMapping {},
         tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {} {};
     
-    CharacterPackage() : sceneID { 0 }, objectID { 0 }, objectName { "" }, boneIDs {}, tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {} {};
+    CharacterPackage() : sceneID { 0 }, sceneObjectID {0}, rootBoneID { 0 }, objectName { "" }, boneMapping {}, tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {} {};
+
+    void fill(const CharacterPackage& _otherChPkg) {
+        sceneID = _otherChPkg.sceneID;
+        rootBoneID = _otherChPkg.rootBoneID;
+        objectName = _otherChPkg.objectName;
+        boneMapping = _otherChPkg.boneMapping;
+        skeletonObjIDs = _otherChPkg.skeletonObjIDs;
+        tposeBonePos = _otherChPkg.tposeBonePos;
+        tposeBoneRot = _otherChPkg.tposeBoneRot;
+        tposeBoneScale = _otherChPkg.tposeBoneScale;
+    }
 
     COMMONDATA(characterPackage, CharacterPackage)
 
