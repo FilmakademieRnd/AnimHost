@@ -69,6 +69,8 @@ public:
     void writeCSVPoseSequenceData();
     void writeBinaryPoseSequenceData();
 
+    void writeBinarySkeletonData();
+
     void exportJointVelocitySequence();
     void writeCSVJointVelocitySequence();
     void writeBinaryJointVelocitySequence();

@@ -139,6 +139,7 @@ void DataExportPlugin::run()
         if (auto sp_poseSeq = _poseSequenceIn.lock() && bWritePoseSequence) {
             // Do Stuff
             if (auto sp_skeleton = _skeletonIn.lock()) {
+                writeBinarySkeletonData();
                 exportPoseSequenceData();
             }
         }
@@ -298,6 +299,45 @@ void DataExportPlugin::writeBinaryPoseSequenceData() {
         out.writeRawData((char*)&poseSequenceIn->mPoseSequence[frame].mPositionData[0], sizeframe);
     }
        
+}
+
+void DataExportPlugin::writeBinarySkeletonData() {
+    auto skeletonIn = _skeletonIn.lock()->getData();
+
+    qDebug() << "Write skeleton data to binary file " << sizeof(int);
+
+
+
+    QFile file(exportDirectory + "data.json");
+
+    file.open(QIODevice::WriteOnly);
+
+    int boneCount = skeletonIn->mNumBones;
+
+    //for(auto iter = skeletonIn->bone_names.begin(); iter != skeletonIn->bone_names.end(); ++iter)
+    //{
+    //    auto k = iter->first;
+
+    //    qDebug() << k;
+    //    //ignore value
+    //    //Value v = iter->second;
+    //}
+    //out.writeRawData((char*)&boneCount, sizeof(int));
+
+    QJsonObject outDataDescription;
+
+    outDataDescription["numBones"] = boneCount;
+
+    QJsonArray boneNames;
+
+    for (const auto& bonePair : skeletonIn->bone_names) {
+        
+        boneNames.append(QString(bonePair.first.c_str()));
+    }
+
+    outDataDescription["boneNames"] = boneNames;
+
+    file.write(QJsonDocument(outDataDescription).toJson());
 }
 
 //long long option_1(std::size_t bytes)
