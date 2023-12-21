@@ -21,8 +21,8 @@ private:
     QWidget* _widget;
     QVBoxLayout* _selectionLayout;
     QComboBox* _selectionMenu;
-    std::weak_ptr<AnimNodeData<CharacterPackageSequence>> _characterListIn;
-    std::shared_ptr<AnimNodeData<CharacterPackage>> _characterOut;
+    std::weak_ptr<AnimNodeData<CharacterObjectSequence>> _characterListIn;
+    std::shared_ptr<AnimNodeData<CharacterObject>> _characterOut;
 
 public:
     CharacterSelectorPlugin();

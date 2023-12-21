@@ -138,14 +138,11 @@ zmq::message_t* ZMQMessageHandler::createMessage(byte targetHostID, byte time, Z
 
     newMessage.append(*body);
 
-    const char* msgData = newMessage.data();
+    const void* msgData = newMessage.constData();
     //const byte* msgDataByte = (byte*)newMessage.constData();
     size_t msgSize = newMessage.size();
-    std::string msgString = newMessage.toStdString();
-    zmq::message_t* zmqNewMessage = new zmq::message_t(msgSize);
-    size_t zmqMsgSize = zmqNewMessage->size();
-    zmqNewMessage->rebuild(newMessage.data(), msgSize);
-    void* newMsgData = zmqNewMessage->data(); // just for debug
+    zmq::message_t* zmqNewMessage = new zmq::message_t(msgData, msgSize);
+    byte* newMsgData = (byte*)zmqNewMessage->data(); // just for debug
 
     return zmqNewMessage;
 }

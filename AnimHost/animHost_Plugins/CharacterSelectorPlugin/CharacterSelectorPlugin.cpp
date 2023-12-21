@@ -12,7 +12,7 @@ CharacterSelectorPlugin::CharacterSelectorPlugin()
     _selectionMenu = new QComboBox();
     connect(_selectionMenu, &QComboBox::currentIndexChanged, this, &CharacterSelectorPlugin::onChangedSelection);
 
-    _characterOut = std::make_shared<AnimNodeData<CharacterPackage>>();
+    _characterOut = std::make_shared<AnimNodeData<CharacterObject>>();
     
     qDebug() << "CharacterSelectorPlugin created";
 }
@@ -34,9 +34,9 @@ NodeDataType CharacterSelectorPlugin::dataPortType(QtNodes::PortType portType, Q
 {
     NodeDataType type;
     if (portType == QtNodes::PortType::In)
-        return AnimNodeData<CharacterPackageSequence>::staticType();
+        return AnimNodeData<CharacterObjectSequence>::staticType();
     else
-        return AnimNodeData<CharacterPackage>::staticType();
+        return AnimNodeData<CharacterObject>::staticType();
 }
 
 void CharacterSelectorPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex)
@@ -44,11 +44,11 @@ void CharacterSelectorPlugin::processInData(std::shared_ptr<NodeData> data, QtNo
     if (!data) {
         Q_EMIT dataInvalidated(0);
     }
-    _characterListIn = std::static_pointer_cast<AnimNodeData<CharacterPackageSequence>>(data);
+    _characterListIn = std::static_pointer_cast<AnimNodeData<CharacterObjectSequence>>(data);
 
     if (auto spCharacterList = _characterListIn.lock()) {
         _selectionMenu->clear();
-        for (CharacterPackage chpkg : spCharacterList->getData()->mCharacterPackageSequence) {
+        for (CharacterObject chpkg : spCharacterList->getData()->mCharacterObjectSequence) {
             qDebug() << "Received Character" << chpkg.objectName << "with ID" << chpkg.sceneObjectID;
             _selectionMenu->addItem(QString::fromStdString(chpkg.objectName));
         }
@@ -86,13 +86,7 @@ void CharacterSelectorPlugin::onChangedSelection(int index)
     if (index >= 0) {
         if (auto spCharacterList = _characterListIn.lock()) {
             //! Overwrite _characterOut with new selected element
-            CharacterPackage selectedCharacter = spCharacterList->getData()->mCharacterPackageSequence.at(index);
-
-            //auto qvChar = QVariant::fromValue(selectedCharacter);
-
-            //auto whatever = qvChar.value<CharacterPackage>();
-
-            //_characterOut->setVariant(qvChar);
+            CharacterObject selectedCharacter = spCharacterList->getData()->mCharacterObjectSequence.at(index);
             _characterOut->getData()->fill(selectedCharacter);
             emitDataUpdate(0);
         }

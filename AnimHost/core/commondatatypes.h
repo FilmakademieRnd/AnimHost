@@ -264,12 +264,15 @@ public:
 };
 Q_DECLARE_METATYPE(std::shared_ptr<RunSignal>)
 
-class ANIMHOSTCORESHARED_EXPORT CharacterPackage {
+// TODO: class SceneNodeObject
+// Copying it directly from TRACER?
+
+class ANIMHOSTCORESHARED_EXPORT CharacterObject { // TODO: CharacterObject inheriting from SceneNodeObject
     public:
-    int sceneID;
+    int sceneID; // to be found by requesting TRACER Header
     int sceneObjectID;
-    std::string objectName;
     int rootBoneID;
+    std::string objectName;
 
     std::vector<int> boneMapping;
     std::vector<int> skeletonObjIDs;
@@ -278,46 +281,46 @@ class ANIMHOSTCORESHARED_EXPORT CharacterPackage {
     std::vector<glm::vec3> tposeBoneScale;
 
     public:
-    CharacterPackage(std::string name, int sID, int soID, int rbID) :
+    CharacterObject(std::string name, int sID, int soID, int rbID) :
         sceneID { sID },
         sceneObjectID { soID },
         rootBoneID { rbID },
         objectName { name },
-        boneMapping {},
+        boneMapping {}, skeletonObjIDs {},
         tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {} {};
     
-    CharacterPackage() : sceneID { 0 }, sceneObjectID {0}, rootBoneID { 0 }, objectName { "" }, boneMapping {}, tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {} {};
+    CharacterObject() : sceneID { 0 }, sceneObjectID {0}, rootBoneID { 0 }, objectName { "" }, boneMapping {}, tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {} {};
 
-    void fill(const CharacterPackage& _otherChPkg) {
-        sceneID = _otherChPkg.sceneID;
-        rootBoneID = _otherChPkg.rootBoneID;
-        objectName = _otherChPkg.objectName;
-        boneMapping = _otherChPkg.boneMapping;
-        skeletonObjIDs = _otherChPkg.skeletonObjIDs;
-        tposeBonePos = _otherChPkg.tposeBonePos;
-        tposeBoneRot = _otherChPkg.tposeBoneRot;
-        tposeBoneScale = _otherChPkg.tposeBoneScale;
+    void fill(const CharacterObject& _otherChObj) {
+        sceneID = _otherChObj.sceneID;
+        rootBoneID = _otherChObj.rootBoneID;
+        objectName = _otherChObj.objectName;
+        boneMapping = _otherChObj.boneMapping;
+        skeletonObjIDs = _otherChObj.skeletonObjIDs;
+        tposeBonePos = _otherChObj.tposeBonePos;
+        tposeBoneRot = _otherChObj.tposeBoneRot;
+        tposeBoneScale = _otherChObj.tposeBoneScale;
     }
 
-    COMMONDATA(characterPackage, CharacterPackage)
+    COMMONDATA(characterObject, CharacterObject)
 
 };
-Q_DECLARE_METATYPE(CharacterPackage)
-Q_DECLARE_METATYPE(std::shared_ptr<CharacterPackage>)
+Q_DECLARE_METATYPE(CharacterObject)
+Q_DECLARE_METATYPE(std::shared_ptr<CharacterObject>)
 
 
-class ANIMHOSTCORESHARED_EXPORT CharacterPackageSequence : public Sequence {
+class ANIMHOSTCORESHARED_EXPORT CharacterObjectSequence : public Sequence { // TODO: changing it to SceneNodeSequence?
     public:
 
-    std::vector<CharacterPackage> mCharacterPackageSequence;
+    std::vector<CharacterObject> mCharacterObjectSequence;
 
     public:
-    CharacterPackageSequence() : mCharacterPackageSequence {} { qDebug() << "CharacterPackageSequence()"; };
+    CharacterObjectSequence() : mCharacterObjectSequence {} { qDebug() << "CharacterObjectSequence()"; };
 
-    COMMONDATA(characterPackageSequence, CharacterPackageSequence)
+    COMMONDATA(characterObjectSequence, CharacterObjectSequence)
       
 };
-Q_DECLARE_METATYPE(CharacterPackageSequence)
-Q_DECLARE_METATYPE(std::shared_ptr<CharacterPackageSequence>)
+Q_DECLARE_METATYPE(CharacterObjectSequence)
+Q_DECLARE_METATYPE(std::shared_ptr<CharacterObjectSequence>)
 
 #endif // COMMONDATATYPES_H

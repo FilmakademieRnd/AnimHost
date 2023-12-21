@@ -69,7 +69,7 @@ NodeDataType TracerUpdateSenderPlugin::dataPortType(QtNodes::PortType portType, 
         if (portIndex == 0)
             return AnimNodeData<Animation>::staticType();
         else if (portIndex == 1)
-            return AnimNodeData<CharacterPackage>::staticType();
+            return AnimNodeData<CharacterObject>::staticType();
         else
             return type;
     else                                    // OUTPUT Ports DataTypes 
@@ -98,7 +98,7 @@ void TracerUpdateSenderPlugin::processInData(std::shared_ptr<NodeData> data, QtN
             _animIn = std::static_pointer_cast<AnimNodeData<Animation>>(data);
             break;
         case 1:
-            _characterIn = std::static_pointer_cast<AnimNodeData<CharacterPackage>>(data);
+            _characterIn = std::static_pointer_cast<AnimNodeData<CharacterObject>>(data);
             break;
 
         default:
@@ -141,10 +141,10 @@ void TracerUpdateSenderPlugin::run() {
     msgBodyQuat.append(msgQuat2);*/
 
     std::shared_ptr<Animation> animData = _animIn.lock()->getData();
-    std::shared_ptr<CharacterPackage> chpkg = _characterIn.lock()->getData();
+    std::shared_ptr<CharacterObject> chobj = _characterIn.lock()->getData();
     QByteArray* msgBodyAnim = new QByteArray();
     
-    SerializeAnimation(animData, chpkg, msgBodyAnim);
+    SerializeAnimation(animData, chobj, msgBodyAnim);
 
     // Example of message creation
     //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyBool));
@@ -171,7 +171,7 @@ void TracerUpdateSenderPlugin::run() {
  * \param animData
  * \param byteArray
  */
-void TracerUpdateSenderPlugin::SerializeAnimation(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterPackage> character, QByteArray* byteArray) {
+void TracerUpdateSenderPlugin::SerializeAnimation(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character, QByteArray* byteArray) {
     // SceneID for testing
     std::int32_t sceneID = 0;
     

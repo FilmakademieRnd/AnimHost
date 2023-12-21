@@ -110,6 +110,8 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
         passSceneNodeByteArray(nodesArray); // Pass byte array to TracerSceneReceiverPlugin to be parsed as scene nodes
     }
 
+    // TODO: requesting the header of the TRACER client
+
     void connectSocket(QString newIPAddress) {
         //! (Re-)connect to newIPAddress
         /*if (receiveSocket->connected())
@@ -129,14 +131,6 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
     public Q_SLOTS:
 
     void run() {
-        //// open socket
-        ////receiveSocket = new zmq::socket_t(*context, zmq::socket_type::req);
-        //receiveSocket->connect(QString("tcp://" + ipAddress + ":5555").toLatin1().data());
-        //receiveSocket->setsockopt(ZMQ_REQ, "request scene", 0);
-
-        ////! Listen for reply message
-        //receiveSocket->recv(replyMsg);
-        //qDebug() << "Reply received!";
 
         //// replyMsg will contain a series of bytes representing all the Character Packages in the scene
         //if (replyMsg->size() > 0) {

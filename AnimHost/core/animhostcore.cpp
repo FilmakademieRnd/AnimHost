@@ -28,8 +28,8 @@ AnimHost::AnimHost()
     qRegisterMetaType<std::shared_ptr<JointVelocity>>("JointVelocity");
     qRegisterMetaType<std::shared_ptr<JointVelocitySequence>>("JointVelocitySequence");
 
-    qRegisterMetaType<std::shared_ptr<CharacterPackage>>("CharacterPackage");
-    qRegisterMetaType<std::shared_ptr<CharacterPackageSequence>>("CharacterPackageSequence");
+    qRegisterMetaType<std::shared_ptr<CharacterObject>>("CharacterObject");
+    qRegisterMetaType<std::shared_ptr<CharacterObjectSequence>>("CharacterObjectSequence");
  
     qRegisterMetaType<std::shared_ptr<RunSignal>>("RunSignal");
 
