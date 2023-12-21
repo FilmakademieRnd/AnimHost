@@ -54,14 +54,22 @@ private:
     // Input animation data (of either type animation or pose...maybe both?!)
     std::weak_ptr<AnimNodeData<Skeleton>> _skeletonIn;
     std::weak_ptr<AnimNodeData<Animation>> _animIn;
+<<<<<<< Updated upstream
     std::weak_ptr<AnimNodeData<Pose>> _poseIn;
+=======
+    std::weak_ptr<AnimNodeData<CharacterObject>> _characterIn;
+>>>>>>> Stashed changes
 
     // Output animation data to be pushed to DataHub, stored in ZeroMQ message format (conversion to native array)
     std::vector<int> _animOut;
     int validData = -1;
 
     // Serializes in the form of a byte array an animation frame represented by a list of quaternions (Animation data type)
+<<<<<<< Updated upstream
     void SerializeAnimation(std::shared_ptr<Animation> animData, QByteArray* byteArray);
+=======
+    void SerializeAnimation(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character, QByteArray* byteArray);
+>>>>>>> Stashed changes
 
 public:
     TracerUpdateSenderPlugin();

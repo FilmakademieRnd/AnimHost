@@ -37,7 +37,11 @@ private:
     QRegularExpressionValidator* _ipValidator;
     QString _ipAddress;
 
+<<<<<<< Updated upstream
     CharacterPackageSequence* characterList = nullptr;
+=======
+    std::shared_ptr<AnimNodeData<CharacterObjectSequence>> characterListOut;
+>>>>>>> Stashed changes
 
     zmq::context_t* _updateSenderContext = nullptr;
     QThread* zeroMQSceneReceiverThread = nullptr;

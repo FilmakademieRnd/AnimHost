@@ -264,7 +264,7 @@ public:
 };
 Q_DECLARE_METATYPE(std::shared_ptr<RunSignal>)
 
-class ANIMHOSTCORESHARED_EXPORT CharacterPackage {
+class ANIMHOSTCORESHARED_EXPORT CharacterObject {
     public:
     int sceneID; // unclear from where I can get it
     int objectID;
@@ -276,34 +276,54 @@ class ANIMHOSTCORESHARED_EXPORT CharacterPackage {
     std::vector<glm::vec3> tposeBoneScale;
 
     public:
+<<<<<<< Updated upstream
     CharacterPackage(std::string name, int sID, int oID) :
+=======
+    CharacterObject(std::string name, int sID, int soID, int rbID) :
+>>>>>>> Stashed changes
         sceneID { sID },
         objectID { oID },
         objectName { name },
         boneIDs {},
         tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {} {};
     
+<<<<<<< Updated upstream
     CharacterPackage() : sceneID { 0 }, objectID { 0 }, objectName { "" }, boneIDs {}, tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {} {};
+=======
+    CharacterObject() : sceneID { 0 }, sceneObjectID {0}, rootBoneID { 0 }, objectName { "" }, boneMapping {}, tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {} {};
 
-    COMMONDATA(characterPackage, CharacterPackage)
+    void fill(const CharacterObject& _otherChPkg) {
+        sceneID = _otherChPkg.sceneID;
+        sceneObjectID = _otherChPkg.sceneObjectID;
+        rootBoneID = _otherChPkg.rootBoneID;
+        objectName = _otherChPkg.objectName;
+        boneMapping = _otherChPkg.boneMapping;
+        skeletonObjIDs = _otherChPkg.skeletonObjIDs;
+        tposeBonePos = _otherChPkg.tposeBonePos;
+        tposeBoneRot = _otherChPkg.tposeBoneRot;
+        tposeBoneScale = _otherChPkg.tposeBoneScale;
+    }
+>>>>>>> Stashed changes
+
+    COMMONDATA(characterObject, CharacterObject)
 
 };
-Q_DECLARE_METATYPE(CharacterPackage)
-Q_DECLARE_METATYPE(std::shared_ptr<CharacterPackage>)
+Q_DECLARE_METATYPE(CharacterObject)
+Q_DECLARE_METATYPE(std::shared_ptr<CharacterObject>)
 
 
-class ANIMHOSTCORESHARED_EXPORT CharacterPackageSequence : public Sequence {
+class ANIMHOSTCORESHARED_EXPORT CharacterObjectSequence : public Sequence {
     public:
 
-    std::vector<CharacterPackage> mCharacterPackageSequence;
+    std::vector<CharacterObject> mCharacterObjectSequence;
 
     public:
-    CharacterPackageSequence() : mCharacterPackageSequence {} { qDebug() << "CharacterPackageSequence()"; };
+    CharacterObjectSequence() : mCharacterObjectSequence {} { qDebug() << "CharacterObjectSequence()"; };
 
-    COMMONDATA(characterPackageSequence, CharacterPackageSequence)
+    COMMONDATA(characterObjectSequence, CharacterObjectSequence)
       
 };
-Q_DECLARE_METATYPE(CharacterPackageSequence)
-Q_DECLARE_METATYPE(std::shared_ptr<CharacterPackageSequence>)
+Q_DECLARE_METATYPE(CharacterObjectSequence)
+Q_DECLARE_METATYPE(std::shared_ptr<CharacterObjectSequence>)
 
 #endif // COMMONDATATYPES_H

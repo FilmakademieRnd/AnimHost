@@ -92,9 +92,13 @@ NodeDataType TracerUpdateSenderPlugin::dataPortType(QtNodes::PortType portType, 
         if (portIndex == 0)
             return AnimNodeData<Skeleton>::staticType();
         else if (portIndex == 1)
+<<<<<<< Updated upstream
             return AnimNodeData<Animation>::staticType();
         else if (portIndex == 2)
             return AnimNodeData<Pose>::staticType();
+=======
+            return AnimNodeData<CharacterObject>::staticType();
+>>>>>>> Stashed changes
         else
             return type;
     else                                    // OUTPUT Ports DataTypes 
@@ -126,10 +130,14 @@ void TracerUpdateSenderPlugin::processInData(std::shared_ptr<NodeData> data, QtN
             _skeletonIn = std::static_pointer_cast<AnimNodeData<Skeleton>>(data);
             break;
         case 1:
+<<<<<<< Updated upstream
             _animIn = std::static_pointer_cast<AnimNodeData<Animation>>(data);
             break;
         case 2:
             _poseIn = std::static_pointer_cast<AnimNodeData<Pose>>(data);
+=======
+            _characterIn = std::static_pointer_cast<AnimNodeData<CharacterObject>>(data);
+>>>>>>> Stashed changes
             break;
 
         default:
@@ -171,10 +179,18 @@ void TracerUpdateSenderPlugin::run() {
     QByteArray msgQuat2 = msgSender->createMessageBody(254, 3, 47, ZMQMessageHandler::ParameterType::QUATERNION, quatExample2);
     msgBodyQuat.append(msgQuat2);*/
 
+<<<<<<< Updated upstream
     std::shared_ptr<AnimNodeData<Animation>> animNodeData = std::shared_ptr<AnimNodeData<Animation>>(_animIn);
     std::shared_ptr<Animation> animData = animNodeData->getData();
     QByteArray* msgBodyAnim = new QByteArray();
     SerializeAnimation(animData, msgBodyAnim);
+=======
+    std::shared_ptr<Animation> animData = _animIn.lock()->getData();
+    std::shared_ptr<CharacterObject> chobj = _characterIn.lock()->getData();
+    QByteArray* msgBodyAnim = new QByteArray();
+    
+    SerializeAnimation(animData, chobj, msgBodyAnim);
+>>>>>>> Stashed changes
 
     // Example of message creation
     //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyBool));
@@ -184,12 +200,22 @@ void TracerUpdateSenderPlugin::run() {
     //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyQuat));
 
     // create ZMQ and send it through AnimHostMessageSender
-    zmq::message_t* new_msg = msgSender->createMessage(_ipAddress[_ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
+    zmq::message_t* new_msg = msgSender->createMessage(1, localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
     byte* new_msg_data = (byte*) new_msg->data();
     msgSender->setMessage(new_msg);
 
+<<<<<<< Updated upstream
     msgSender->requestStart();
     zeroMQSenderThread->start();
+=======
+    // This does not seem to be correct...the Thread is already started...
+    if (!zeroMQSenderThread->isRunning()) {
+        msgSender->requestStart();
+        zeroMQSenderThread->start();
+    } else {
+        msgSender->resume();
+    }
+>>>>>>> Stashed changes
 }
 
 /**
@@ -198,9 +224,17 @@ void TracerUpdateSenderPlugin::run() {
  * \param animData
  * \param byteArray
  */
+<<<<<<< Updated upstream
 void TracerUpdateSenderPlugin::SerializeAnimation(std::shared_ptr<Animation> animData, QByteArray* byteArray) {
     // SceneID for testing
     std::int32_t sceneID = 254;
+=======
+void TracerUpdateSenderPlugin::SerializeAnimation(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character, QByteArray* byteArray) {
+    // SceneID for testing
+    // TODO: retreive it from Unity Scene Header
+    std::int32_t sceneID = 254;
+    
+>>>>>>> Stashed changes
     // Character SceneObject for testing
     std::int32_t sceneObjID = 3;
     // Bone orientation IDs for testing
@@ -209,6 +243,7 @@ void TracerUpdateSenderPlugin::SerializeAnimation(std::shared_ptr<Animation> ani
         qDebug() << "ParameterID array mismatch: " << animData->mBones.size() << " elements required, " << sizeof(parameterID)/sizeof(std::int32_t) << " provided";
         return;
     }*/
+<<<<<<< Updated upstream
 
     for (std::int16_t i = 1; i < animData->mBones.size()-2; i++) {
         // Getting Bone Object Rotation Quaternion
@@ -236,6 +271,27 @@ void TracerUpdateSenderPlugin::SerializeAnimation(std::shared_ptr<Animation> ani
 
         QByteArray msgBoneQuat = msgSender->createMessageBody(sceneID, sceneObjID, i+2, ZMQMessageHandler::ParameterType::QUATERNION, boneQuatVector);
         byteArray->append(msgBoneQuat);
+=======
+    
+    for (std::int16_t i = 1; i < animData->mBones.size(); i++) {
+        // Skipping bones with uninitialised/invalid mapping
+        //if (character->boneMapping.at(i) >= 0) {
+        if (true){
+              
+            //std:int32_t skeletonObjID = character->skeletonObjIDs.at(character->boneMapping.at(i) - character->rootBoneID); // Keeping the ID in the range [0, skeletonObjIDs.size()] 
+
+            // Getting Bone Object Rotation Quaternion
+            // paramID - 3 necessary because the first 3 SkeletonObjects are not bones (they represent root object, alpha_joints and alpha_surfaces respectively)
+            glm::quat boneQuat = animData->mBones.at(i).GetOrientation(0);
+            std::vector<float> boneQuatVector = { boneQuat.x, boneQuat.y, boneQuat.z,  boneQuat.w }; // converting glm::quat in vector<float>
+
+            qDebug() << i+2 << "From Animation Data" << animData->mBones[i].mName << boneQuatVector;
+
+            //.......................................................................................i+3 necessary because the rotation of the first bone will have ParameterID = 3 (0 = objPos, 1 = objRot, 2 = objScale), while the order is the same
+            QByteArray msgBoneQuat = msgSender->createMessageBody(sceneID, character->sceneObjectID, i+2, ZMQMessageHandler::ParameterType::QUATERNION, boneQuatVector);
+            byteArray->append(msgBoneQuat);
+        }
+>>>>>>> Stashed changes
     }
 }
 
