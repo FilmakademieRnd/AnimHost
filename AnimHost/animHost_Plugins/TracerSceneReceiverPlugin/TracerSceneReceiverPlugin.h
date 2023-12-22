@@ -60,8 +60,7 @@ public:
     std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;
     void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
     void run() override;
-    void onSceneReceived(QByteArray* sceneMessage);
-
+    
     QWidget* embeddedWidget() override;
 
     enum NodeType { GROUP, GEO, LIGHT, CAMERA, SKINNEDMESH };
@@ -69,11 +68,13 @@ public:
 Q_SIGNALS:
     void requestCharacterData();
     void requestSceneNodeData();
+    void requestHeaderData();
 
 private Q_SLOTS:
     void onButtonClicked();
     void processCharacterByteData(QByteArray* charByteArray);
     void processSceneNodeByteData(QByteArray* nodeByteArray);
+    //void processHeaderByteData(QByteArray* headerByteArray);
 
 };
 

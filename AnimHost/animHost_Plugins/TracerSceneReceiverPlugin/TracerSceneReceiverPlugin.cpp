@@ -20,8 +20,10 @@ TracerSceneReceiverPlugin::TracerSceneReceiverPlugin() {
 	sceneReceiver->moveToThread(zeroMQSceneReceiverThread);
 	QObject::connect(sceneReceiver, &SceneReceiver::passCharacterByteArray, this, &TracerSceneReceiverPlugin::processCharacterByteData);
 	QObject::connect(sceneReceiver, &SceneReceiver::passSceneNodeByteArray, this, &TracerSceneReceiverPlugin::processSceneNodeByteData);
+	//QObject::connect(sceneReceiver, &SceneReceiver::passHeaderByteArray, this, &TracerSceneReceiverPlugin::processHeaderByteData);
 	QObject::connect(this, &TracerSceneReceiverPlugin::requestCharacterData, sceneReceiver, &SceneReceiver::requestSceneCharacterData);
 	QObject::connect(this, &TracerSceneReceiverPlugin::requestSceneNodeData, sceneReceiver, &SceneReceiver::requestSceneNodeData);
+	//QObject::connect(this, &TracerSceneReceiverPlugin::requestHeaderData, sceneReceiver, &SceneReceiver::requestHeaderData);
 
 	qDebug() << "TracerSceneReceiverPlugin created";
 }
@@ -89,23 +91,14 @@ void TracerSceneReceiverPlugin::onButtonClicked()
 {
 	//! Set IP Address
 	_ipAddress = _connectIPAddress->text();
-	//sceneReceiver->setIPAddress(_ipAddress);
-	sceneReceiver->connectSocket(_ipAddress);
+
+	// TODO: Reconnecting the socket requires a correct shut-down process before creating a new connection. To be refactored.
+	//sceneReceiver->connectSocket(_ipAddress);
 
 	//! Send signal to SceneReceiver to request characters
 	requestSceneNodeData();
 
 	//qDebug() << "Attempting RECEIVE connection to" << _ipAddress;
-}
-
-void TracerSceneReceiverPlugin::onSceneReceived(QByteArray* sceneMessage) {
-	// TODO: unpack scene description message
-	while (!sceneMessage->isEmpty()) {
-		// process message payload unit header
-		
-	}
-
-	qDebug() << "Parsing scene description";
 }
 
 void TracerSceneReceiverPlugin::run() {
@@ -116,6 +109,8 @@ void TracerSceneReceiverPlugin::run() {
 
 	emitRunNextNode();
 }
+
+// TODO: Implement processHeaderByteData(QByteArray* headerByteArray) {}
 
 //!
 //! Gets a QByteArray from the SceneReceiver thread.
@@ -216,14 +211,15 @@ void TracerSceneReceiverPlugin::processCharacterByteData(QByteArray* characterBy
 //! 
 void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeByteArray) {
 	int nodeByteCounter = 0;  //! "Bookmark" for reading the scene node byte array and skipping uninteresting sequences of bytes
-	int sceneNodeCounter = 0; //! Counting the sceneNodes that are editable in order to retrieve the sceneObjectID used for the ParameterUpdateMessage
-	CharacterObjectSequence complementaryCharList;
+	int sceneNodeCounter = 0; //! Counting the sceneNodes in order to calculate the objectID
+	int activeSceneNodeCounter = 0; //! Counting the sceneNodes that are editable in order to retrieve the sceneObjectID used for the ParameterUpdateMessage
+	//SceneNodeSequence nodeList; // To be populated with all the nodes in the received scene. To be exposed to every other AnimHost plugin
 
 	while (sceneNodeByteArray->size() > nodeByteCounter) {
-		CharacterObject character;
-
 		int32_t sceneNodeType; memcpy(&sceneNodeType, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(sceneNodeType)).data(), sizeof(sceneNodeType)); // Copies byte values directly into the new variable, which interprets it as the correct type
 		nodeByteCounter += sizeof(sceneNodeType);
+
+		sceneNodeCounter++;
 
 		//! Parsing base fields (shared between all nodes)
 		// Components: 1*bool + 1*int + 3*float + 3*float + 4*float + 64*byte
@@ -232,8 +228,9 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 		// - bool editable
 		bool editableFlag; memcpy(&editableFlag, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(editableFlag)).data(), sizeof(editableFlag)); // Copies byte values directly into the new variable, which interprets it as the correct type
 		nodeByteCounter += sizeof(editableFlag);
-		sceneNodeCounter += editableFlag; //! Incrementing sceneNodeCounter if editableFlag = TRUE
+		activeSceneNodeCounter += editableFlag; //! Incrementing activeSceneNodeCounter if editableFlag = TRUE
 		// - int  childCount
+		//int32_t childCount; memcpy(&childCount, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(childCount)).data(), sizeof(childCount)); // Copies byte values directly into the new variable, which interprets it as the correct type
 		nodeByteCounter += 4;
 		// - vec3 position
 		//glm::vec3 objPos; memcpy(&objPos, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(objPos)).data(), sizeof(objPos));
@@ -250,7 +247,8 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 
 		switch (sceneNodeType) {
 			case SKINNEDMESH:
-				character.sceneObjectID = sceneNodeCounter;
+				CharacterObject character;
+				character.sceneObjectID = activeSceneNodeCounter;
 				character.objectName = nodeName;
 
 				//! extract information from Skinned Mesh Scene Node
@@ -259,9 +257,9 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 				
 				// Skip GEO fields (24 bytes)
 				nodeByteCounter += 24;
-				// Skip bindPoseLength (int) and rootBoneID (int)
-				nodeByteCounter += 8;
-				// Skip ID of the root bone (int)
+				// Skip bindPoseLength (int)
+				nodeByteCounter += 4;
+				// Save ID of the root bone (int)
 				int32_t rootID; memcpy(&rootID, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(rootID)).data(), sizeof(rootID)); // Copies byte values directly into the new variable, which interprets it as the correct type
 				nodeByteCounter += sizeof(rootID);
 				character.rootBoneID = rootID;
@@ -316,6 +314,8 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 				nodeByteCounter += 136;
 				break;
 			default:
+				// TODO: Create and populate SceneNodeObject
+				// TODO: Add latest SceneNodeObject to the global SceneNodeSequence/SceneDescription (which should be accessible throughout AnimHost)
 				break;
 		}
 	}

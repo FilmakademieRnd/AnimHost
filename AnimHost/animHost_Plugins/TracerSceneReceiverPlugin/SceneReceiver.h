@@ -111,6 +111,7 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
     }
 
     // TODO: requesting the header of the TRACER client
+    //void requestHeaderData() {}
 
     void connectSocket(QString newIPAddress) {
         //! (Re-)connect to newIPAddress
@@ -130,19 +131,12 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
 
     public Q_SLOTS:
 
-    void run() {
-
-        //// replyMsg will contain a series of bytes representing all the Character Packages in the scene
-        //if (replyMsg->size() > 0) {
-        //    QByteArray* msgArray = new QByteArray((char*) replyMsg->data(), static_cast<int>(replyMsg->size())); // Convert message into explicit byte array
-        //    passCharacterByteArray(msgArray); // Pass byte array to TracerSceneReceiverPlugin
-        //}
-    }
+    void run() {}
 
     Q_SIGNALS:
     void stopped();
     void passCharacterByteArray(QByteArray* characterMsgArray);
     void passSceneNodeByteArray(QByteArray* sceneNodeMsgArray);
-    void sceneReceived(QByteArray* sceneMsgArray);
+    //void passHeaderByteData(QByteArray* headerMsgArray);
 };
 #endif // SCENERECEIVER_H
