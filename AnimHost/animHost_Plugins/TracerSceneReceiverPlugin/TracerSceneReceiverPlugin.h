@@ -74,7 +74,7 @@ private Q_SLOTS:
     void onButtonClicked();
     void processCharacterByteData(QByteArray* charByteArray);
     void processSceneNodeByteData(QByteArray* nodeByteArray);
-    //void processHeaderByteData(QByteArray* headerByteArray);
+    void processHeaderByteData(QByteArray* headerByteArray);
 
 };
 

@@ -20,10 +20,10 @@ TracerSceneReceiverPlugin::TracerSceneReceiverPlugin() {
 	sceneReceiver->moveToThread(zeroMQSceneReceiverThread);
 	QObject::connect(sceneReceiver, &SceneReceiver::passCharacterByteArray, this, &TracerSceneReceiverPlugin::processCharacterByteData);
 	QObject::connect(sceneReceiver, &SceneReceiver::passSceneNodeByteArray, this, &TracerSceneReceiverPlugin::processSceneNodeByteData);
-	//QObject::connect(sceneReceiver, &SceneReceiver::passHeaderByteArray, this, &TracerSceneReceiverPlugin::processHeaderByteData);
+	QObject::connect(sceneReceiver, &SceneReceiver::passHeaderByteArray, this, &TracerSceneReceiverPlugin::processHeaderByteData);
 	QObject::connect(this, &TracerSceneReceiverPlugin::requestCharacterData, sceneReceiver, &SceneReceiver::requestSceneCharacterData);
 	QObject::connect(this, &TracerSceneReceiverPlugin::requestSceneNodeData, sceneReceiver, &SceneReceiver::requestSceneNodeData);
-	//QObject::connect(this, &TracerSceneReceiverPlugin::requestHeaderData, sceneReceiver, &SceneReceiver::requestHeaderData);
+	QObject::connect(this, &TracerSceneReceiverPlugin::requestHeaderData, sceneReceiver, &SceneReceiver::requestHeaderData);
 
 	qDebug() << "TracerSceneReceiverPlugin created";
 }
@@ -96,7 +96,9 @@ void TracerSceneReceiverPlugin::onButtonClicked()
 	//sceneReceiver->connectSocket(_ipAddress);
 
 	//! Send signal to SceneReceiver to request characters
+	//requestHeaderData();
 	requestSceneNodeData();
+	//requestCharacterData();
 
 	//qDebug() << "Attempting RECEIVE connection to" << _ipAddress;
 }
@@ -109,8 +111,6 @@ void TracerSceneReceiverPlugin::run() {
 
 	emitRunNextNode();
 }
-
-// TODO: Implement processHeaderByteData(QByteArray* headerByteArray) {}
 
 //!
 //! Gets a QByteArray from the SceneReceiver thread.
@@ -245,9 +245,9 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 		std::string nodeName = QString(sceneNodeByteArray->sliced(nodeByteCounter, 64)).toStdString(); // Save name of the scene object (string)
 		nodeByteCounter += 64;
 
+		CharacterObject character;
 		switch (sceneNodeType) {
 			case SKINNEDMESH:
-				CharacterObject character;
 				character.sceneObjectID = activeSceneNodeCounter;
 				character.objectName = nodeName;
 
@@ -319,4 +319,12 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 				break;
 		}
 	}
+}
+
+// TODO: Implement processHeaderByteData(QByteArray* headerByteArray) {}
+void TracerSceneReceiverPlugin::processHeaderByteData(QByteArray* headerByteArray) {
+	// - float lightIntensityFactor
+	// - byte  senderID
+	unsigned char senderID; memcpy(&senderID, headerByteArray->sliced(4, sizeof(senderID)).data(), sizeof(senderID)); // Copies byte values directly into the new variable, which interprets it as the correct type
+	ZMQMessageHandler::setTargetHostID(senderID);
 }

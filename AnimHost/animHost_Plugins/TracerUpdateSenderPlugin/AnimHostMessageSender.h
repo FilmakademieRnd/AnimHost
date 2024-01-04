@@ -84,7 +84,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMe
     protected slots:
     //create a new sync message
     void createSyncMessage(int time) {
-        syncMessage[0] = targetHostID;
+        syncMessage[0] = getTargetHostID();
         syncMessage[1] = time;
         syncMessage[2] = MessageType::SYNC;
 

@@ -1,8 +1,8 @@
 #include "ZMQMessageHandler.h"
 
-ZMQMessageHandler::ZMQMessageHandler() {
-    
-}
+byte ZMQMessageHandler::targetHostID = 0;
+
+ZMQMessageHandler::ZMQMessageHandler() {}
 
 void ZMQMessageHandler::resume() {
     mutex.lock();
@@ -120,6 +120,7 @@ void ZMQMessageHandler::SerializeVector(byte* dest, std::vector<float> _vector, 
 // Creating ZMQ Message from existing QByteArray
 zmq::message_t* ZMQMessageHandler::createMessage(byte targetHostID, byte time, ZMQMessageHandler::MessageType messageType, QByteArray* body) {
     try {
+        byte targetHostID = getTargetHostID();
         if (targetHostID == -1)
             throw (targetHostID);
     } catch (int targetHostID) {
@@ -151,6 +152,7 @@ zmq::message_t* ZMQMessageHandler::createMessage(byte targetHostID, byte time, Z
 QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
                                                 bool payload) {
     try {
+        byte targetHostID = getTargetHostID();
         if (targetHostID == -1)
             throw (targetHostID);
     } catch (int targetHostID) {
@@ -174,6 +176,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
     newMessage[6] = getParameterDimension(parameterType) + 7;   // Parameter Message Dimensionality (in bytes) - i.e. size of the param. HEADER + VALUES (7+1)
 
     const char* payloadBytes = (char*) malloc(getParameterDimension(parameterType));
+    assert(payloadBytes != NULL);
     bool val = payload;
     std::memcpy((byte*) payloadBytes, &val, sizeof(bool));
     newMessage.append(payloadBytes, (qsizetype) getParameterDimension(parameterType));
@@ -194,6 +197,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
 QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
                                                 std::int32_t payload) {
     try {
+        byte targetHostID = getTargetHostID();
         if (targetHostID == -1)
             throw (targetHostID);
     } catch (int targetHostID) {
@@ -217,6 +221,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
     newMessage[6] = getParameterDimension(parameterType) + 7;   // Parameter Message Dimensionality (in bytes) - i.e. size of the param. HEADER + VALUES (7+4)
 
     const char* payloadBytes = (char*) malloc(getParameterDimension(parameterType));
+    assert(payloadBytes != NULL);
     std::int32_t val = payload;
     std::memcpy((byte*) payloadBytes, &val, sizeof(std::int32_t));
     newMessage.append(payloadBytes, (qsizetype) getParameterDimension(parameterType));
@@ -238,6 +243,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
 QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
                                                 float payload) {
     try {
+        byte targetHostID = getTargetHostID();
         if (targetHostID == -1)
             throw (targetHostID);
     } catch (int targetHostID) {
@@ -261,6 +267,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
     newMessage[6] = getParameterDimension(parameterType) + 7;   // Parameter Message Dimensionality (in bytes) - i.e. size of the param. HEADER + VALUES (7+4)
 
     const char* payloadBytes = (char*) malloc(getParameterDimension(parameterType));
+    assert(payloadBytes != NULL);
     float val = payload;
     std::memcpy((byte*) payloadBytes, &val, sizeof(float));
     newMessage.append(payloadBytes, (qsizetype) getParameterDimension(parameterType));
@@ -282,6 +289,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
 QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
                                                 std::string payload) {
     try {
+        byte targetHostID = getTargetHostID();
         if (targetHostID == -1)
             throw (targetHostID);
     } catch (int targetHostID) {
@@ -306,6 +314,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
 
     payload.shrink_to_fit();
     const char* payloadBytes = (char*) malloc(payload.size());
+    assert(payloadBytes != NULL);
     std::memcpy((byte*) payloadBytes, &payload, payload.size());
     newMessage.append(payloadBytes, (qsizetype) payload.size());
 
@@ -325,6 +334,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
 QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
                                                 std::vector<float> payload) {
     try {
+        byte targetHostID = getTargetHostID();
         if (targetHostID == -1)
             throw (targetHostID);
     } catch (int targetHostID) {
@@ -348,6 +358,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
     newMessage[6] = getParameterDimension(parameterType) + 7;   // Parameter Message Dimensionality (in bytes) - i.e. size of the param. HEADER + VALUES (7+8/12/16)
 
     const char* payloadBytes = (char*)malloc(getParameterDimension(parameterType));
+    assert(payloadBytes != NULL);
     SerializeVector((byte *)payloadBytes, payload, parameterType);
     newMessage.append(payloadBytes, (qsizetype) getParameterDimension(parameterType));
 

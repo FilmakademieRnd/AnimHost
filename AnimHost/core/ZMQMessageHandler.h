@@ -88,12 +88,12 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     //    UNKNOWN = 100
     //};
 
-    void setTargetHostID(byte _targetHostID) {
-        targetHostID = _targetHostID;
+    static void setTargetHostID(byte _targetHostID) {
+        ZMQMessageHandler::targetHostID = _targetHostID;
     }
 
-    byte getTargetHostID() {
-        return targetHostID;
+    static byte getTargetHostID() {
+        return ZMQMessageHandler::targetHostID;
     }
 
     void setIPAddress(QString newIPAddress) {
@@ -127,8 +127,8 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     protected:
 
     //id displayed as clientID for messages redistributed through syncServer
-    byte targetHostID = 0;
-
+    static byte targetHostID;
+    
     //if true process is stopped
     bool _stop = true;
 
@@ -154,7 +154,7 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     zmq::message_t message;
 
     //syncMessage: includes targetHostID, timestamp? and size of the message (as defined by MessageType enum)
-    byte syncMessage[3] = { targetHostID,0,MessageType::EMPTY };
+    byte syncMessage[3] = { getTargetHostID(), 0, MessageType::EMPTY };
 
     //server IP
     QString ipAddress;
@@ -197,7 +197,7 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     protected slots:
     //create a new sync message
     void createSyncMessage(int time) {
-        syncMessage[0] = targetHostID;
+        syncMessage[0] = getTargetHostID();
         syncMessage[1] = time;
         syncMessage[2] = MessageType::SYNC;
 
