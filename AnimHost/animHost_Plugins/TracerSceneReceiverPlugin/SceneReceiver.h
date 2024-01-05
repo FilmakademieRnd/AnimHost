@@ -87,9 +87,7 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
         QByteArray* charPkgArray = new QByteArray();
         // replyCharMsg will contain a series of bytes representing all the Scene Nodes in the scene
         if (replyCharMsg.size() > 0)
-            charPkgArray->append((char*)replyCharMsg.data(), replyCharMsg.size());
-            //memcpy(charPkgArray->data(), replyCharMsg.data(), replyCharMsg.size());
-            //charPkgArray->push_back((char*) replyCharMsg.data()); // Convert message into explicit byte array
+            charPkgArray->append((char*)replyCharMsg.data(), replyCharMsg.size()); // Convert message into explicit byte array
 
         passCharacterByteArray(charPkgArray); // Pass byte array to TracerSceneReceiverPlugin to be parsed as chracter packages
     }

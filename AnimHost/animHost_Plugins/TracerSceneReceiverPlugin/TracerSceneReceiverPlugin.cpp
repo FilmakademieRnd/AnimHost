@@ -93,7 +93,7 @@ void TracerSceneReceiverPlugin::onButtonClicked()
 	_ipAddress = _connectIPAddress->text();
 
 	// TODO: Reconnecting the socket requires a correct shut-down process before creating a new connection. To be refactored.
-	//sceneReceiver->connectSocket(_ipAddress);
+	sceneReceiver->connectSocket(_ipAddress); // DO NOT COMMENT THIS LINE
 
 	//! Send signal to SceneReceiver to request characters
 	//requestHeaderData();
@@ -227,7 +227,7 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 		// Fields
 		// - bool editable
 		bool editableFlag; memcpy(&editableFlag, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(editableFlag)).data(), sizeof(editableFlag)); // Copies byte values directly into the new variable, which interprets it as the correct type
-		nodeByteCounter += sizeof(editableFlag);
+		nodeByteCounter += 4;
 		activeSceneNodeCounter += editableFlag; //! Incrementing activeSceneNodeCounter if editableFlag = TRUE
 		// - int  childCount
 		//int32_t childCount; memcpy(&childCount, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(childCount)).data(), sizeof(childCount)); // Copies byte values directly into the new variable, which interprets it as the correct type
@@ -319,6 +319,9 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 				break;
 		}
 	}
+	qDebug() << "Number of character received from VPET:" << characterListOut.get()->getData()->mCharacterObjectSequence.size();
+
+	emitDataUpdate(0);
 }
 
 // TODO: Implement processHeaderByteData(QByteArray* headerByteArray) {}
