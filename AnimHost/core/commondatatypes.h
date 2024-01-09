@@ -264,42 +264,80 @@ public:
 };
 Q_DECLARE_METATYPE(std::shared_ptr<RunSignal>)
 
-// TODO: class SceneNodeObject
-// Copying it directly from TRACER?
-
-class ANIMHOSTCORESHARED_EXPORT CharacterObject { // TODO: CharacterObject inheriting from SceneNodeObject
+class ANIMHOSTCORESHARED_EXPORT SceneNodeObject {
     public:
-    int sceneID; // to be found by requesting TRACER Header
     int sceneObjectID;
-    int rootBoneID;
+    int characterRootID;
     std::string objectName;
 
+    glm::vec3 pos;
+    glm::vec4 rot;
+    glm::vec3 scl;
+
+    SceneNodeObject() : sceneObjectID { 0 }, characterRootID { 0 }, objectName { "" }, pos {glm::vec3(0)}, rot { glm::vec4(0) }, scl { glm::vec3(0) } {};
+
+    SceneNodeObject(int soID, int crID, std::string name) :
+        sceneObjectID { soID }, characterRootID { crID }, objectName { name }, pos { glm::vec3(0) }, rot { glm::vec4(0) }, scl { glm::vec3(0) } {};
+
+    SceneNodeObject(int soID, int crID, std::string name, glm::vec3 p, glm::vec4 r, glm::vec3 s) :
+        sceneObjectID { soID }, characterRootID { crID }, objectName { name }, pos { p }, rot { r }, scl { s } {};
+
+    COMMONDATA(sceneNodeObject, SceneNodeObject)
+};
+Q_DECLARE_METATYPE(SceneNodeObject)
+Q_DECLARE_METATYPE(std::shared_ptr<SceneNodeObject>)
+
+class ANIMHOSTCORESHARED_EXPORT CharacterObject :public SceneNodeObject {
+    public:
+    int rootBoneID;
     std::vector<int> boneMapping;
     std::vector<int> skeletonObjIDs;
     std::vector<glm::vec3> tposeBonePos;
     std::vector<glm::quat> tposeBoneRot;
     std::vector<glm::vec3> tposeBoneScale;
+    
+    glm::vec3 boundExtents;
+    glm::vec3 boundCenter;
+    std::vector <glm::mat4> bindPoses;
+
+    std::vector<int> sceneNodeSkinnedGeoIDs;
+    std::vector<std::vector<int>> skinnedMeshBoneIDs;
 
     public:
-    CharacterObject(std::string name, int sID, int soID, int rbID) :
-        sceneID { sID },
-        sceneObjectID { soID },
-        rootBoneID { rbID },
-        objectName { name },
-        boneMapping {}, skeletonObjIDs {},
-        tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {} {};
+    CharacterObject(int soID, int oID, std::string name) :
+        SceneNodeObject ( soID, oID, name ),
+        rootBoneID {}, boneMapping {}, skeletonObjIDs {},
+        tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {},
+        sceneNodeSkinnedGeoIDs {}, boundExtents {}, boundCenter {}, bindPoses {}, skinnedMeshBoneIDs {} {};
     
-    CharacterObject() : sceneID { 0 }, sceneObjectID {0}, rootBoneID { 0 }, objectName { "" }, boneMapping {}, tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {} {};
+    CharacterObject() :
+        SceneNodeObject(),
+        rootBoneID {}, boneMapping {}, skeletonObjIDs {},
+        tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {},
+        sceneNodeSkinnedGeoIDs {}, boundExtents {}, boundCenter {}, bindPoses {}, skinnedMeshBoneIDs {} {};
 
     void fill(const CharacterObject& _otherChObj) {
-        sceneID = _otherChObj.sceneID;
-        rootBoneID = _otherChObj.rootBoneID;
+        sceneObjectID = _otherChObj.sceneObjectID;
+        characterRootID = _otherChObj.characterRootID;
         objectName = _otherChObj.objectName;
+
+        pos = _otherChObj.pos;
+        rot = _otherChObj.rot;
+        scl = _otherChObj.scl;
+        
+        rootBoneID = _otherChObj.rootBoneID;
         boneMapping = _otherChObj.boneMapping;
         skeletonObjIDs = _otherChObj.skeletonObjIDs;
         tposeBonePos = _otherChObj.tposeBonePos;
         tposeBoneRot = _otherChObj.tposeBoneRot;
         tposeBoneScale = _otherChObj.tposeBoneScale;
+
+        sceneNodeSkinnedGeoIDs = _otherChObj.sceneNodeSkinnedGeoIDs;
+        boundExtents = _otherChObj.boundExtents;
+        boundCenter = _otherChObj.boundCenter;
+        bindPoses = _otherChObj.bindPoses;
+
+        skinnedMeshBoneIDs = _otherChObj.skinnedMeshBoneIDs;
     }
 
     COMMONDATA(characterObject, CharacterObject)
@@ -308,8 +346,21 @@ class ANIMHOSTCORESHARED_EXPORT CharacterObject { // TODO: CharacterObject inher
 Q_DECLARE_METATYPE(CharacterObject)
 Q_DECLARE_METATYPE(std::shared_ptr<CharacterObject>)
 
+class ANIMHOSTCORESHARED_EXPORT SceneNodeObjectSequence : public Sequence {
+    public:
 
-class ANIMHOSTCORESHARED_EXPORT CharacterObjectSequence : public Sequence { // TODO: changing it to SceneNodeSequence?
+    std::vector<SceneNodeObject> mSceneNodeObjectSequence;
+
+    public:
+    SceneNodeObjectSequence() : mSceneNodeObjectSequence {} { qDebug() << "SceneNodeObjectSequence()"; };
+
+    COMMONDATA(sceneNodeObjectSequence, SceneNodeObjectSequence)
+
+};
+Q_DECLARE_METATYPE(SceneNodeObjectSequence)
+Q_DECLARE_METATYPE(std::shared_ptr<SceneNodeObjectSequence>)
+
+class ANIMHOSTCORESHARED_EXPORT CharacterObjectSequence : public Sequence {
     public:
 
     std::vector<CharacterObject> mCharacterObjectSequence;

@@ -21,7 +21,7 @@ TracerSceneReceiverPlugin::TracerSceneReceiverPlugin() {
 	QObject::connect(sceneReceiver, &SceneReceiver::passCharacterByteArray, this, &TracerSceneReceiverPlugin::processCharacterByteData);
 	QObject::connect(sceneReceiver, &SceneReceiver::passSceneNodeByteArray, this, &TracerSceneReceiverPlugin::processSceneNodeByteData);
 	QObject::connect(sceneReceiver, &SceneReceiver::passHeaderByteArray, this, &TracerSceneReceiverPlugin::processHeaderByteData);
-	QObject::connect(this, &TracerSceneReceiverPlugin::requestCharacterData, sceneReceiver, &SceneReceiver::requestSceneCharacterData);
+	QObject::connect(this, &TracerSceneReceiverPlugin::requestCharacterData, sceneReceiver, &SceneReceiver::requestCharacterData);
 	QObject::connect(this, &TracerSceneReceiverPlugin::requestSceneNodeData, sceneReceiver, &SceneReceiver::requestSceneNodeData);
 	QObject::connect(this, &TracerSceneReceiverPlugin::requestHeaderData, sceneReceiver, &SceneReceiver::requestHeaderData);
 
@@ -97,8 +97,8 @@ void TracerSceneReceiverPlugin::onButtonClicked()
 
 	//! Send signal to SceneReceiver to request characters
 	//requestHeaderData();
-	requestSceneNodeData();
-	//requestCharacterData();
+	requestCharacterData();
+	//! requestSceneNodeData() is then called after processCharacterData() is done (i.e. at thew end of its body)
 
 	//qDebug() << "Attempting RECEIVE connection to" << _ipAddress;
 }
@@ -113,7 +113,7 @@ void TracerSceneReceiverPlugin::run() {
 }
 
 //!
-//! Gets a QByteArray from the SceneReceiver thread.
+//! Gets a QByteArray representing the list of characters in the scene from the SceneReceiver thread.
 //! Parses the bytes populating a CharacterObjectSequence
 //! 
 void TracerSceneReceiverPlugin::processCharacterByteData(QByteArray* characterByteArray) {
@@ -132,16 +132,9 @@ void TracerSceneReceiverPlugin::processCharacterByteData(QByteArray* characterBy
 		//! Get number of skeleton objects (not to be saved in CharacterPackage) - int32
 		int32_t nSkeletonObjs; memcpy(&nSkeletonObjs, characterByteArray->sliced(charByteCounter, 4), sizeof(nSkeletonObjs));
 		charByteCounter += 4;
-
-		//! Get sceneID
-		character.sceneID = _ipAddress.back().digitValue();
-
-		//! Get ID of the Scene Object as seen by Unity - int32
-		memcpy(&character.sceneObjectID, characterByteArray->sliced(charByteCounter, 4), sizeof(character.sceneObjectID));
-		charByteCounter += 4;
 		
 		//! Get ID of the root bone - int32
-		memcpy(&character.rootBoneID, characterByteArray->sliced(charByteCounter, 4), sizeof(character.rootBoneID));
+		memcpy(&character.characterRootId, characterByteArray->sliced(charByteCounter, 4), sizeof(character.characterRootId));
 		charByteCounter += 4;
 
 		//! Populating bone mapping (which Unity HumanBone object corresponds to which element of the skeleton obj vector) - int32[]
@@ -192,17 +185,17 @@ void TracerSceneReceiverPlugin::processCharacterByteData(QByteArray* characterBy
 			charByteCounter += 4;
 			character.tposeBoneScale.push_back(glm::vec3(x, y, z));
 		}
-
-		//! Get object name
-		character.objectName = QString(characterByteArray->sliced(charByteCounter, 256)).toStdString(); // the object name has a fixed 256 bytes length
-		charByteCounter += 256;
 		
 		//! Adding character to the characterList
 		characterListOut->getData()->mCharacterObjectSequence.push_back(character);
 	}
 	qDebug() << "Number of character received from VPET:" << characterListOut.get()->getData()->mCharacterObjectSequence.size();
 
-	emitDataUpdate(0);
+	// Do not emit Update because not ALL of the data has been processed
+	//emitDataUpdate(0);
+	
+	//! Requesting the complete Scenegraph in order to "fill in the blanks" of the CharacterObject
+	requestSceneNodeData();
 }
 
 //!
@@ -212,8 +205,11 @@ void TracerSceneReceiverPlugin::processCharacterByteData(QByteArray* characterBy
 void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeByteArray) {
 	int nodeByteCounter = 0;  //! "Bookmark" for reading the scene node byte array and skipping uninteresting sequences of bytes
 	int sceneNodeCounter = 0; //! Counting the sceneNodes in order to calculate the objectID
-	int activeSceneNodeCounter = 0; //! Counting the sceneNodes that are editable in order to retrieve the sceneObjectID used for the ParameterUpdateMessage
-	//SceneNodeSequence nodeList; // To be populated with all the nodes in the received scene. To be exposed to every other AnimHost plugin
+	int editableSceneNodeCounter = 0; //! Counting the sceneNodes that are editable in order to retrieve the sceneObjectID used for the ParameterUpdateMessage
+	//SceneNodeObjectSequence nodeList; // To be populated with all the nodes in the received scene. To be exposed to every other AnimHost plugin
+
+	int characterCounter = 0;
+	CharacterObject currentChar;
 
 	while (sceneNodeByteArray->size() > nodeByteCounter) {
 		int32_t sceneNodeType; memcpy(&sceneNodeType, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(sceneNodeType)).data(), sizeof(sceneNodeType)); // Copies byte values directly into the new variable, which interprets it as the correct type
@@ -228,55 +224,87 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 		// - bool editable
 		bool editableFlag; memcpy(&editableFlag, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(editableFlag)).data(), sizeof(editableFlag)); // Copies byte values directly into the new variable, which interprets it as the correct type
 		nodeByteCounter += 4;
-		activeSceneNodeCounter += editableFlag; //! Incrementing activeSceneNodeCounter if editableFlag = TRUE
+		editableSceneNodeCounter += editableFlag; //! Incrementing activeSceneNodeCounter if editableFlag = TRUE
 		// - int  childCount
 		//int32_t childCount; memcpy(&childCount, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(childCount)).data(), sizeof(childCount)); // Copies byte values directly into the new variable, which interprets it as the correct type
 		nodeByteCounter += 4;
 		// - vec3 position
-		//glm::vec3 objPos; memcpy(&objPos, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(objPos)).data(), sizeof(objPos));
-		nodeByteCounter += 12;
+		glm::vec3 objPos; memcpy(&objPos, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(objPos)).data(), sizeof(objPos));
+		nodeByteCounter += sizeof(objPos);
 		// - vec3 scale
-		//glm::vec3 objScale; memcpy(&objScale, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(objPos)).data(), sizeof(objScale));
-		nodeByteCounter += 12;
+		glm::vec3 objScale; memcpy(&objScale, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(objPos)).data(), sizeof(objScale));
+		nodeByteCounter += sizeof(objScale);
 		// - vec4 rotation
-		//glm::vec4 objRot; memcpy(&objRot, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(objPos)).data(), sizeof(objRot));
-		nodeByteCounter += 16;
+		glm::vec4 objRot; memcpy(&objRot, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(objPos)).data(), sizeof(objRot));
+		nodeByteCounter += sizeof(objRot);
 		// - char[] (fixed 64 char length)
 		std::string nodeName = QString(sceneNodeByteArray->sliced(nodeByteCounter, 64)).toStdString(); // Save name of the scene object (string)
 		nodeByteCounter += 64;
 
-		CharacterObject character;
+		// if the current node has the same ID as the characterRootID of the currently selected character in the characterListOut
+		// fill its sceneObjectID and objectName fields
+		if (sceneNodeCounter == characterListOut->getData()->mCharacterObjectSequence.at(characterCounter).characterRootID) {
+			currentChar = characterListOut->getData()->mCharacterObjectSequence.at(characterCounter);
+
+			currentChar.sceneObjectID = editableSceneNodeCounter;
+			currentChar.objectName = nodeName;
+
+			currentChar.pos = objPos;
+			currentChar.rot = objRot;
+			currentChar.scl = objScale;
+
+			characterCounter++;
+		}
+
+		
 		switch (sceneNodeType) {
 			case SKINNEDMESH:
-				character.sceneObjectID = activeSceneNodeCounter;
-				character.objectName = nodeName;
-
+				// Save the objectID of the SceneNodeSkinnedGeo that holds that information (needed for treacability)
+				currentChar.sceneNodeSkinnedGeoIDs.push_back(sceneNodeCounter);
+				
 				//! extract information from Skinned Mesh Scene Node
 				// Components: GEO.size + int + int + 3*float + 3*float + 99*16*float + 99*int
 				// Size:             24 +   4 +   4 +      12 +      12 +        6336 +    396 = 6900
 				
 				// Skip GEO fields (24 bytes)
 				nodeByteCounter += 24;
-				// Skip bindPoseLength (int)
-				nodeByteCounter += 4;
+				// Save bindPoseLength (int) for later
+				int32_t bindPoseLength; memcpy(&bindPoseLength, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(bindPoseLength)).data(), sizeof(bindPoseLength)); // Copies byte values directly into the new variable, which interprets it as the correct type
+				nodeByteCounter += sizeof(bindPoseLength);
 				// Save ID of the root bone (int)
-				int32_t rootID; memcpy(&rootID, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(rootID)).data(), sizeof(rootID)); // Copies byte values directly into the new variable, which interprets it as the correct type
-				nodeByteCounter += sizeof(rootID);
-				character.rootBoneID = rootID;
-				// Skip boundExtents and boundCenter (2*3 floats)
-				nodeByteCounter += 24;
-				// Skip bind poses (99*16 floats) - for now...
-				nodeByteCounter += 6336;
+				int32_t rootBoneID; memcpy(&rootBoneID, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(rootBoneID)).data(), sizeof(rootBoneID)); // Copies byte values directly into the new variable, which interprets it as the correct type
+				nodeByteCounter += sizeof(rootBoneID);
+				currentChar.rootBoneID = rootBoneID;
+				// Save bounding box dimensions (3 floats)
+				glm::vec3 boundExtents; memcpy(&boundExtents, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(boundExtents)).data(), sizeof(boundExtents));
+				nodeByteCounter += sizeof(boundExtents);
+				currentChar.boundExtents = boundExtents;
+				// Save bounding box center (3 floats)
+				glm::vec3 boundCenter; memcpy(&boundCenter, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(boundCenter)).data(), sizeof(boundCenter));
+				nodeByteCounter += sizeof(boundCenter);
+				currentChar.boundExtents = boundCenter;
+				// Save bind poses (99*16 floats)
+				for (int i = 0; i < 99; i++) {
+					if (i >= bindPoseLength)
+						break;
+
+					glm::mat4 bindPose; memcpy(&bindPose, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(bindPose)).data(), sizeof(bindPose)); // Copies byte values directly into the new variable, which interprets it as the correct type
+					nodeByteCounter += sizeof(bindPose);
+					currentChar.bindPoses.push_back(bindPose);
+				}
 				// Read SkinnedMeshObj-to-Bone Mapping, it's going to be used to map parameterIDs to bone names
+				std::vector<int> smbIDs;
 				for (int i = 0; i < 99; i++) {
 					int32_t boneID; memcpy(&boneID, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(boneID)).data(), sizeof(boneID)); // Copies byte values directly into the new variable, which interprets it as the correct type
 					nodeByteCounter += sizeof(boneID);
-					if (boneID > 0) // add read ID to the boneMapping array only if initialised (non-zero value)
-						character.boneMapping.push_back(boneID);
-				}
+					if (boneID == -1)
+						break;
 
-				//! Adding character to the characterList
-				characterListOut->getData()->mCharacterObjectSequence.push_back(character);
+					smbIDs.push_back(boneID);
+				}
+				// Adding this mapping to the list of possible mappings of the character
+				currentChar.skinnedMeshBoneIDs.push_back(smbIDs);
+
 				break;
 			case GEO:
 				//! skip Scene Node

@@ -75,7 +75,7 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
     };
 
     //! requesting the Character Package list in the TRACER client scene
-    void requestSceneCharacterData() {
+    void requestCharacterData() {
         std::string charReq = "characters";
         requestMsg.rebuild(charReq.c_str(), charReq.size());
         qDebug() << "Requesting character packages";
