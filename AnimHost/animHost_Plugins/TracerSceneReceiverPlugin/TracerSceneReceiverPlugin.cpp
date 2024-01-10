@@ -128,61 +128,61 @@ void TracerSceneReceiverPlugin::processCharacterByteData(QByteArray* characterBy
 		
 		//! Get number of bones (not to be saved in CharacterPackage) - int32
 		int32_t nBones; memcpy(&nBones, characterByteArray->sliced(charByteCounter, 4).data(), sizeof(nBones)); // Copies byte values directly into the new variable, which interprets it as the correct type
-		charByteCounter += 4;
+		charByteCounter += sizeof(nBones);
 		//! Get number of skeleton objects (not to be saved in CharacterPackage) - int32
 		int32_t nSkeletonObjs; memcpy(&nSkeletonObjs, characterByteArray->sliced(charByteCounter, 4), sizeof(nSkeletonObjs));
-		charByteCounter += 4;
+		charByteCounter += sizeof(nSkeletonObjs);
 		
 		//! Get ID of the root bone - int32
 		memcpy(&character.characterRootID, characterByteArray->sliced(charByteCounter, 4), sizeof(character.characterRootID));
-		charByteCounter += 4;
+		charByteCounter += sizeof(character.characterRootID);
 
 		//! Populating bone mapping (which Unity HumanBone object corresponds to which element of the skeleton obj vector) - int32[]
 		for (int i = 0; i < nBones; i++) {
 			int32_t id; memcpy(&id, characterByteArray->sliced(charByteCounter, 4), sizeof(id));
+			charByteCounter += sizeof(id);
 			character.boneMapping.push_back(id);
-			charByteCounter += 4;
 		}
 
 		//! Populating skeleton object IDs (ParameterIDs of the actual bones as seen by Unity) - int32[]
 		for (int i = 0; i < nSkeletonObjs; i++) {
 			int32_t id; memcpy(&id, characterByteArray->sliced(charByteCounter, 4), sizeof(id));
+			charByteCounter += sizeof(id);
 			character.skeletonObjIDs.push_back(id);
-			charByteCounter += 4;
 		}
 
 		//! Populating T-Pose bone Positions - float[] - size in bytes 4*3*N_bones
 		for (int i = 0; i < nSkeletonObjs; i++) {
 			float x; memcpy(&x, characterByteArray->sliced(charByteCounter, 4), sizeof(x));
-			charByteCounter += 4;
+			charByteCounter += sizeof(x);
 			float y; memcpy(&y, characterByteArray->sliced(charByteCounter, 4), sizeof(y));
-			charByteCounter += 4;
+			charByteCounter += sizeof(y);
 			float z; memcpy(&z, characterByteArray->sliced(charByteCounter, 4), sizeof(z));
-			charByteCounter += 4;
+			charByteCounter += sizeof(z);
 			character.tposeBonePos.push_back(glm::vec3(x, y, z));
 		}
 
 		//! Populating T-Pose bone Rotation - float[] - size in bytes 4*4*N_bones
 		for (int i = 0; i < nSkeletonObjs; i++) {
 			float x; memcpy(&x, characterByteArray->sliced(charByteCounter, 4), sizeof(x));
-			charByteCounter += 4;
+			charByteCounter += sizeof(x);
 			float y; memcpy(&y, characterByteArray->sliced(charByteCounter, 4), sizeof(y));
-			charByteCounter += 4;
+			charByteCounter += sizeof(y);
 			float z; memcpy(&z, characterByteArray->sliced(charByteCounter, 4), sizeof(z));
-			charByteCounter += 4;
+			charByteCounter += sizeof(z);
 			float w; memcpy(&w, characterByteArray->sliced(charByteCounter, 4), sizeof(w));
-			charByteCounter += 4;
+			charByteCounter += sizeof(w);
 			character.tposeBoneRot.push_back(glm::quat(w, x, y, z));
 		}
 
 		//! Populating T-Pose bone Scale - float[] - size in bytes 4*3*N_bones
 		for (int i = 0; i < nSkeletonObjs; i++) {
 			float x; memcpy(&x, characterByteArray->sliced(charByteCounter, 4), sizeof(x));
-			charByteCounter += 4;
+			charByteCounter += sizeof(x);
 			float y; memcpy(&y, characterByteArray->sliced(charByteCounter, 4), sizeof(y));
-			charByteCounter += 4;
+			charByteCounter += sizeof(y);
 			float z; memcpy(&z, characterByteArray->sliced(charByteCounter, 4), sizeof(z));
-			charByteCounter += 4;
+			charByteCounter += sizeof(z);
 			character.tposeBoneScale.push_back(glm::vec3(x, y, z));
 		}
 		
@@ -209,13 +209,11 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 	//SceneNodeObjectSequence nodeList; // To be populated with all the nodes in the received scene. To be exposed to every other AnimHost plugin
 
 	int characterCounter = 0;
-	CharacterObject currentChar;
+	CharacterObject* currentChar;
 
 	while (sceneNodeByteArray->size() > nodeByteCounter) {
 		int32_t sceneNodeType; memcpy(&sceneNodeType, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(sceneNodeType)).data(), sizeof(sceneNodeType)); // Copies byte values directly into the new variable, which interprets it as the correct type
 		nodeByteCounter += sizeof(sceneNodeType);
-
-		sceneNodeCounter++;
 
 		//! Parsing base fields (shared between all nodes)
 		// Components: 1*bool + 1*int + 3*float + 3*float + 4*float + 64*byte
@@ -238,20 +236,23 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 		glm::vec4 objRot; memcpy(&objRot, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(objPos)).data(), sizeof(objRot));
 		nodeByteCounter += sizeof(objRot);
 		// - char[] (fixed 64 char length)
-		std::string nodeName = QString(sceneNodeByteArray->sliced(nodeByteCounter, 64)).toStdString(); // Save name of the scene object (string)
+		QString nodeName = QString(sceneNodeByteArray->sliced(nodeByteCounter, 64)); // Save name of the scene object (string)
 		nodeByteCounter += 64;
+		nodeName.shrink_to_fit();
 
 		// if the current node has the same ID as the characterRootID of the currently selected character in the characterListOut
+		// ...and the characterCounter is smaller than the size of the list of characters (to avoid OutOfBounds error)
 		// fill its sceneObjectID and objectName fields
-		if (sceneNodeCounter == characterListOut->getData()->mCharacterObjectSequence.at(characterCounter).characterRootID) {
-			currentChar = characterListOut->getData()->mCharacterObjectSequence.at(characterCounter);
+		if (characterCounter < characterListOut->getData()->mCharacterObjectSequence.size() &&
+			sceneNodeCounter == characterListOut->getData()->mCharacterObjectSequence.at(characterCounter).characterRootID) {
+			currentChar = &characterListOut->getData()->mCharacterObjectSequence.at(characterCounter);
 
-			currentChar.sceneObjectID = editableSceneNodeCounter;
-			currentChar.objectName = nodeName;
+			currentChar->sceneObjectID = editableSceneNodeCounter;
+			currentChar->objectName = nodeName.toStdString();
 
-			currentChar.pos = objPos;
-			currentChar.rot = objRot;
-			currentChar.scl = objScale;
+			currentChar->pos = objPos;
+			currentChar->rot = objRot;
+			currentChar->scl = objScale;
 
 			characterCounter++;
 		}
@@ -286,21 +287,20 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 						break;
 
 					glm::mat4 bindPose; memcpy(&bindPose, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(bindPose)).data(), sizeof(bindPose)); // Copies byte values directly into the new variable, which interprets it as the correct type
-					nodeByteCounter += sizeof(bindPose);
 					skinnedMesh.bindPoses.push_back(bindPose);
 				}
+				nodeByteCounter += (99 * 16 * 4);
 				// Read SkinnedMeshObj-to-Bone Mapping, it's going to be used to map parameterIDs to bone names
 				for (int i = 0; i < 99; i++) {
 					int32_t boneID; memcpy(&boneID, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(boneID)).data(), sizeof(boneID)); // Copies byte values directly into the new variable, which interprets it as the correct type
-					nodeByteCounter += sizeof(boneID);
 					if (boneID == -1)
 						break;
 
 					skinnedMesh.boneMapIDs.push_back(boneID);
 				}
-				
+				nodeByteCounter += (99 * 4);
 				// Add the filled SkinnedMeshRenderer object to the currently active CharacterObject
-				currentChar.skinnedMeshList.push_back(skinnedMesh);
+				currentChar->skinnedMeshList.push_back(skinnedMesh);
 
 				break;
 			case GEO:
@@ -343,6 +343,9 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 				// TODO: Add latest SceneNodeObject to the global SceneNodeSequence/SceneDescription (which should be accessible throughout AnimHost)
 				break;
 		}
+
+		// After processing the current SceneNode increment the counter
+		sceneNodeCounter++;
 	}
 	qDebug() << "Number of character received from VPET:" << characterListOut.get()->getData()->mCharacterObjectSequence.size();
 
