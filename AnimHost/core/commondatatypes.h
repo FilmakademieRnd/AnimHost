@@ -266,7 +266,7 @@ Q_DECLARE_METATYPE(std::shared_ptr<RunSignal>)
 
 class ANIMHOSTCORESHARED_EXPORT SceneNodeObject {
     public:
-    int sceneObjectID;
+    int sceneObjectID; //! ID of the object 
     int characterRootID;
     std::string objectName;
 
@@ -287,34 +287,45 @@ class ANIMHOSTCORESHARED_EXPORT SceneNodeObject {
 Q_DECLARE_METATYPE(SceneNodeObject)
 Q_DECLARE_METATYPE(std::shared_ptr<SceneNodeObject>)
 
+class ANIMHOSTCORESHARED_EXPORT SkinnedMeshComponent {
+    public:
+    int id;
+    glm::vec3 boundExtents;
+    glm::vec3 boundCenter;
+    std::vector <glm::mat4> bindPoses;
+    std::vector<int> boneMapIDs;
+
+    public:
+    SkinnedMeshComponent() :
+        id {0}, boundExtents { glm::vec3(0) }, boundCenter { glm::vec3(0) }, bindPoses {}, boneMapIDs {} {};
+
+    COMMONDATA(skinnedMeshComponent, SkinnedMeshComponent)
+};
+Q_DECLARE_METATYPE(SkinnedMeshComponent)
+Q_DECLARE_METATYPE(std::shared_ptr<SkinnedMeshComponent>)
+
 class ANIMHOSTCORESHARED_EXPORT CharacterObject :public SceneNodeObject {
     public:
-    int rootBoneID;
     std::vector<int> boneMapping;
     std::vector<int> skeletonObjIDs;
     std::vector<glm::vec3> tposeBonePos;
     std::vector<glm::quat> tposeBoneRot;
     std::vector<glm::vec3> tposeBoneScale;
     
-    glm::vec3 boundExtents;
-    glm::vec3 boundCenter;
-    std::vector <glm::mat4> bindPoses;
-
-    std::vector<int> sceneNodeSkinnedGeoIDs;
-    std::vector<std::vector<int>> skinnedMeshBoneIDs;
+    std::vector<SkinnedMeshComponent> skinnedMeshList;
 
     public:
     CharacterObject(int soID, int oID, std::string name) :
         SceneNodeObject ( soID, oID, name ),
-        rootBoneID {}, boneMapping {}, skeletonObjIDs {},
+        boneMapping {}, skeletonObjIDs {},
         tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {},
-        sceneNodeSkinnedGeoIDs {}, boundExtents {}, boundCenter {}, bindPoses {}, skinnedMeshBoneIDs {} {};
+        skinnedMeshList {} {};
     
     CharacterObject() :
         SceneNodeObject(),
-        rootBoneID {}, boneMapping {}, skeletonObjIDs {},
+        boneMapping {}, skeletonObjIDs {},
         tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {},
-        sceneNodeSkinnedGeoIDs {}, boundExtents {}, boundCenter {}, bindPoses {}, skinnedMeshBoneIDs {} {};
+        skinnedMeshList {} {};
 
     void fill(const CharacterObject& _otherChObj) {
         sceneObjectID = _otherChObj.sceneObjectID;
@@ -325,19 +336,13 @@ class ANIMHOSTCORESHARED_EXPORT CharacterObject :public SceneNodeObject {
         rot = _otherChObj.rot;
         scl = _otherChObj.scl;
         
-        rootBoneID = _otherChObj.rootBoneID;
         boneMapping = _otherChObj.boneMapping;
         skeletonObjIDs = _otherChObj.skeletonObjIDs;
         tposeBonePos = _otherChObj.tposeBonePos;
         tposeBoneRot = _otherChObj.tposeBoneRot;
         tposeBoneScale = _otherChObj.tposeBoneScale;
 
-        sceneNodeSkinnedGeoIDs = _otherChObj.sceneNodeSkinnedGeoIDs;
-        boundExtents = _otherChObj.boundExtents;
-        boundCenter = _otherChObj.boundCenter;
-        bindPoses = _otherChObj.bindPoses;
-
-        skinnedMeshBoneIDs = _otherChObj.skinnedMeshBoneIDs;
+        skinnedMeshList = _otherChObj.skinnedMeshList;
     }
 
     COMMONDATA(characterObject, CharacterObject)

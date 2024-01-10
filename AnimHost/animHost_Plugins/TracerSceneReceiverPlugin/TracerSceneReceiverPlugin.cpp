@@ -134,7 +134,7 @@ void TracerSceneReceiverPlugin::processCharacterByteData(QByteArray* characterBy
 		charByteCounter += 4;
 		
 		//! Get ID of the root bone - int32
-		memcpy(&character.characterRootId, characterByteArray->sliced(charByteCounter, 4), sizeof(character.characterRootId));
+		memcpy(&character.characterRootID, characterByteArray->sliced(charByteCounter, 4), sizeof(character.characterRootID));
 		charByteCounter += 4;
 
 		//! Populating bone mapping (which Unity HumanBone object corresponds to which element of the skeleton obj vector) - int32[]
@@ -256,11 +256,12 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 			characterCounter++;
 		}
 
-		
+		SkinnedMeshComponent skinnedMesh;
 		switch (sceneNodeType) {
 			case SKINNEDMESH:
-				// Save the objectID of the SceneNodeSkinnedGeo that holds that information (needed for treacability)
-				currentChar.sceneNodeSkinnedGeoIDs.push_back(sceneNodeCounter);
+				//! Read the data encapsulated in the SceneNodeSkinnedGeo and save it in a SkinnedMeshRenderer object
+				
+				skinnedMesh.id = sceneNodeCounter;
 				
 				//! extract information from Skinned Mesh Scene Node
 				// Components: GEO.size + int + int + 3*float + 3*float + 99*16*float + 99*int
@@ -271,18 +272,14 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 				// Save bindPoseLength (int) for later
 				int32_t bindPoseLength; memcpy(&bindPoseLength, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(bindPoseLength)).data(), sizeof(bindPoseLength)); // Copies byte values directly into the new variable, which interprets it as the correct type
 				nodeByteCounter += sizeof(bindPoseLength);
-				// Save ID of the root bone (int)
-				int32_t rootBoneID; memcpy(&rootBoneID, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(rootBoneID)).data(), sizeof(rootBoneID)); // Copies byte values directly into the new variable, which interprets it as the correct type
-				nodeByteCounter += sizeof(rootBoneID);
-				currentChar.rootBoneID = rootBoneID;
 				// Save bounding box dimensions (3 floats)
 				glm::vec3 boundExtents; memcpy(&boundExtents, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(boundExtents)).data(), sizeof(boundExtents));
 				nodeByteCounter += sizeof(boundExtents);
-				currentChar.boundExtents = boundExtents;
+				skinnedMesh.boundExtents = boundExtents;
 				// Save bounding box center (3 floats)
 				glm::vec3 boundCenter; memcpy(&boundCenter, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(boundCenter)).data(), sizeof(boundCenter));
 				nodeByteCounter += sizeof(boundCenter);
-				currentChar.boundExtents = boundCenter;
+				skinnedMesh.boundCenter = boundCenter;
 				// Save bind poses (99*16 floats)
 				for (int i = 0; i < 99; i++) {
 					if (i >= bindPoseLength)
@@ -290,20 +287,20 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 
 					glm::mat4 bindPose; memcpy(&bindPose, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(bindPose)).data(), sizeof(bindPose)); // Copies byte values directly into the new variable, which interprets it as the correct type
 					nodeByteCounter += sizeof(bindPose);
-					currentChar.bindPoses.push_back(bindPose);
+					skinnedMesh.bindPoses.push_back(bindPose);
 				}
 				// Read SkinnedMeshObj-to-Bone Mapping, it's going to be used to map parameterIDs to bone names
-				std::vector<int> smbIDs;
 				for (int i = 0; i < 99; i++) {
 					int32_t boneID; memcpy(&boneID, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(boneID)).data(), sizeof(boneID)); // Copies byte values directly into the new variable, which interprets it as the correct type
 					nodeByteCounter += sizeof(boneID);
 					if (boneID == -1)
 						break;
 
-					smbIDs.push_back(boneID);
+					skinnedMesh.boneMapIDs.push_back(boneID);
 				}
-				// Adding this mapping to the list of possible mappings of the character
-				currentChar.skinnedMeshBoneIDs.push_back(smbIDs);
+				
+				// Add the filled SkinnedMeshRenderer object to the currently active CharacterObject
+				currentChar.skinnedMeshList.push_back(skinnedMesh);
 
 				break;
 			case GEO:
