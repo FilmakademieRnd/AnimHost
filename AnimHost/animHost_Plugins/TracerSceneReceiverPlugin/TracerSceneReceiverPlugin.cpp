@@ -209,7 +209,7 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 	//SceneNodeObjectSequence nodeList; // To be populated with all the nodes in the received scene. To be exposed to every other AnimHost plugin
 
 	int characterCounter = 0;
-	CharacterObject* currentChar;
+	CharacterObject* currentChar = new CharacterObject();
 
 	while (sceneNodeByteArray->size() > nodeByteCounter) {
 		int32_t sceneNodeType; memcpy(&sceneNodeType, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(sceneNodeType)).data(), sizeof(sceneNodeType)); // Copies byte values directly into the new variable, which interprets it as the correct type
@@ -258,6 +258,7 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 		}
 
 		SkinnedMeshComponent skinnedMesh;
+		int i = 0;
 		switch (sceneNodeType) {
 			case SKINNEDMESH:
 				//! Read the data encapsulated in the SceneNodeSkinnedGeo and save it in a SkinnedMeshRenderer object
@@ -281,24 +282,28 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 				glm::vec3 boundCenter; memcpy(&boundCenter, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(boundCenter)).data(), sizeof(boundCenter));
 				nodeByteCounter += sizeof(boundCenter);
 				skinnedMesh.boundCenter = boundCenter;
-				// Save bind poses (99*16 floats)
-				for (int i = 0; i < 99; i++) {
-					if (i >= bindPoseLength)
-						break;
-
+				 
+				// Save bind poses (bindPoseLength * 16) but 99*16 floats have to be skipped in the end anyway
+				while (i < 99 && i < bindPoseLength) { // i starts from 0, initialized at line 261
 					glm::mat4 bindPose; memcpy(&bindPose, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(bindPose)).data(), sizeof(bindPose)); // Copies byte values directly into the new variable, which interprets it as the correct type
 					skinnedMesh.bindPoses.push_back(bindPose);
+					nodeByteCounter += sizeof(bindPose); i++;
 				}
-				nodeByteCounter += (99 * 16 * 4);
-				// Read SkinnedMeshObj-to-Bone Mapping, it's going to be used to map parameterIDs to bone names
-				for (int i = 0; i < 99; i++) {
-					int32_t boneID; memcpy(&boneID, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(boneID)).data(), sizeof(boneID)); // Copies byte values directly into the new variable, which interprets it as the correct type
+				nodeByteCounter += ((99 - i) * 16 * 4); // skipping unused bytes
+				i = 0; // resetting i for next loop
+				int32_t boneID;
+				// Read SkinnedMeshObj-to-Bone Mapping, it's going to be used to get parameterIDs for the parameter update messages
+				while (i < 99) {
+					memcpy(&boneID, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(boneID)).data(), sizeof(boneID)); // Copies byte values directly into the new variable, which interprets it as the correct type
+					// if boneID reads -1 then ignore it and abort the loop
 					if (boneID == -1)
 						break;
-
+					// otherwise, save the value, and increment the counters
 					skinnedMesh.boneMapIDs.push_back(boneID);
+					nodeByteCounter += sizeof(boneID); i++;
 				}
-				nodeByteCounter += (99 * 4);
+				// skip the remaining unused bytes
+				nodeByteCounter += ((99 - i) * 4);
 				// Add the filled SkinnedMeshRenderer object to the currently active CharacterObject
 				currentChar->skinnedMeshList.push_back(skinnedMesh);
 

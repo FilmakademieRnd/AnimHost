@@ -184,7 +184,7 @@ void TracerUpdateSenderPlugin::SerializeAnimation(std::shared_ptr<Animation> ani
         return;
     }*/
     
-    for (std::int16_t i = 1; i < character->skeletonObjIDs.size(); i++) {
+    for (std::int16_t i = 0; i < character->skinnedMeshList.at(0).boneMapIDs.size(); i++) {
         // Getting Bone Object Rotation Quaternion
         glm::quat boneQuat = animData->mBones.at(i).GetOrientation(0);
 
@@ -192,8 +192,9 @@ void TracerUpdateSenderPlugin::SerializeAnimation(std::shared_ptr<Animation> ani
 
         qDebug() << i <<animData->mBones[i].mName << boneQuatVector;
 
-        //.......................................................................................i+2 necessary because the rotation of the first bone will have ParameterID = 3 (0 = objPos, 1 = objRot, 2 = objScale), while the order is the same
-        QByteArray msgBoneQuat = msgSender->createMessageBody(sceneID, character->sceneObjectID, i+2, ZMQMessageHandler::ParameterType::QUATERNION, boneQuatVector);
+        int parameterID = character->skinnedMeshList.at(0).boneMapIDs.at(i) - character->characterRootID; // the parameterID is essentially the distance (in nodes) between the parent node of the character and the bone to be addressed in its subtree
+        //.......................................................................................i+3 necessary because the rotation of the first bone will have ParameterID = 3 (0 = objPos, 1 = objRot, 2 = objScale), while the order is the same
+        QByteArray msgBoneQuat = msgSender->createMessageBody(sceneID, character->sceneObjectID, parameterID, ZMQMessageHandler::ParameterType::QUATERNION, boneQuatVector);
         byteArray->append(msgBoneQuat);
     }
 }
