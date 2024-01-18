@@ -1,8 +1,20 @@
 #include "ZMQMessageHandler.h"
 
-byte ZMQMessageHandler::targetHostID = 0;
+byte ZMQMessageHandler::targetSceneID = 0;
 
-ZMQMessageHandler::ZMQMessageHandler() {}
+QString ZMQMessageHandler::ownIP = "";
+
+QList<QHostAddress> ZMQMessageHandler::ipList;
+
+ZMQMessageHandler::ZMQMessageHandler() {
+    ZMQMessageHandler::ipList = QNetworkInterface::allAddresses();
+    ZMQMessageHandler::ipList.removeIf([] (QHostAddress ipAddress) { return ipAddress.protocol() == 1; }); // remove entry if protocol is IPv6
+
+    //debug
+    for (QHostAddress ipAddress : ZMQMessageHandler::ipList) {
+        qDebug() << ipAddress.toString();
+    }
+}
 
 void ZMQMessageHandler::resume() {
     mutex.lock();
@@ -118,46 +130,42 @@ void ZMQMessageHandler::SerializeVector(byte* dest, std::vector<float> _vector, 
 
 
 // Creating ZMQ Message from existing QByteArray
-zmq::message_t* ZMQMessageHandler::createMessage(byte targetHostID, byte time, ZMQMessageHandler::MessageType messageType, QByteArray* body) {
-    try {
+void ZMQMessageHandler::createNewMessage(byte time, ZMQMessageHandler::MessageType messageType, QByteArray* body) {
+    /*try {
         byte targetHostID = getTargetHostID();
         if (targetHostID == -1)
             throw (targetHostID);
     } catch (int targetHostID) {
         qDebug() << "Invalid target host ID";
-    }
+    }*/
 
-    qDebug() << "Creating ZMQ Message from existing QByteArray";
+    qDebug() << "Creating ZMQ Message from existing QByteArray. OwnID =" << ZMQMessageHandler::getOwnID();
 
     // Constructing new message
-    QByteArray newMessage((qsizetype) 3, Qt::Uninitialized);
-
+    message->clear();
+    
     // Header
-    newMessage[0] = targetHostID;                           // Target Client ID
-    newMessage[1] = time;                                   // Time
-    newMessage[2] = messageType;                            // Message Type
+    message->insert(0, ZMQMessageHandler::getOwnID());          // OwnID 
+    message->insert(1, time);                                   // Time
+    message->insert(2, messageType);                            // Message Type
 
-    newMessage.append(*body);
+    message->append(*body);
 
-    const void* msgData = newMessage.constData();
+    //message = &newMessage;
+
+    //const void* msgData = newMessage.constData();
     //const byte* msgDataByte = (byte*)newMessage.constData();
-    size_t msgSize = newMessage.size();
-    zmq::message_t* zmqNewMessage = new zmq::message_t(msgData, msgSize);
-    byte* newMsgData = (byte*)zmqNewMessage->data(); // just for debug
-
-    return zmqNewMessage;
+    //size_t msgSize = newMessage.size();
+    //zmq::message_t* zmqNewMessage = new zmq::message_t(msgSize);
+    //memcpy(zmqNewMessage, newMessage.constData(), msgSize);
+    //byte* newMsgData = new byte[msgSize]; // just for debug
+    //int zmqNewMsgSize = zmqNewMessage->size(); //debug
+    //memcpy(newMsgData, zmqNewMessage->data(), zmqNewMsgSize); //debug
 }
 
 // Creating ZMQ Message Body from bool value
 QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
                                                 bool payload) {
-    try {
-        byte targetHostID = getTargetHostID();
-        if (targetHostID == -1)
-            throw (targetHostID);
-    } catch (int targetHostID) {
-        qDebug() << "Invalid target host ID";
-    }
     //qDebug() << "Serialize bool: " << payload;
     byte objID_1 = (byte) (objectID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
     byte objID_2 = (byte) ((objectID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
@@ -196,13 +204,6 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
 // Creating ZMQ Message Body from 32-bit int
 QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
                                                 std::int32_t payload) {
-    try {
-        byte targetHostID = getTargetHostID();
-        if (targetHostID == -1)
-            throw (targetHostID);
-    } catch (int targetHostID) {
-        qDebug() << "Invalid target host ID";
-    }
     //qDebug() << "Serialize int: " << payload;
     byte objID_1 = (byte) (objectID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
     byte objID_2 = (byte) ((objectID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
@@ -242,13 +243,6 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
 // Creating ZMQ Message Body from float value
 QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
                                                 float payload) {
-    try {
-        byte targetHostID = getTargetHostID();
-        if (targetHostID == -1)
-            throw (targetHostID);
-    } catch (int targetHostID) {
-        qDebug() << "Invalid target host ID";
-    }
     //qDebug() << "Serialize float: " << std::to_string(payload);
     byte objID_1 = (byte) (objectID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
     byte objID_2 = (byte) ((objectID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
@@ -288,13 +282,6 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
 // Creating ZMQ Message Body from string value
 QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
                                                 std::string payload) {
-    try {
-        byte targetHostID = getTargetHostID();
-        if (targetHostID == -1)
-            throw (targetHostID);
-    } catch (int targetHostID) {
-        qDebug() << "Invalid target host ID";
-    }
     //qDebug() << "Serialize string: " << payload;
     byte objID_1 = (byte) (objectID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
     byte objID_2 = (byte) ((objectID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
@@ -333,12 +320,13 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
 // Creating ZMQ Message Body from float vector (VECTOR2-3-4, QUATERNION, COLOR)
 QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
                                                 std::vector<float> payload) {
+    byte targetSceneID;
     try {
-        byte targetHostID = getTargetHostID();
-        if (targetHostID == -1)
-            throw (targetHostID);
-    } catch (int targetHostID) {
-        qDebug() << "Invalid target host ID";
+        targetSceneID = getTargetSceneID();
+        if (targetSceneID == -1)
+            throw (targetSceneID);
+    } catch (int targetSceneID) {
+        qDebug() << "Invalid target scene ID";
     }
     //qDebug() << "Serialize float vector: " << std::to_string(payload);
     byte objID_1 = (byte) (objectID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
@@ -349,7 +337,7 @@ QByteArray ZMQMessageHandler::createMessageBody(byte sceneID, int objectID, int 
     // Constructing new message
     QByteArray newMessage((qsizetype) 7, Qt::Uninitialized);
 
-    newMessage[0] = sceneID;                                    // Scene ID
+    newMessage[0] = targetSceneID;                              // Scene ID
     newMessage[1] = objID_1;                                    // Object ID byte 1
     newMessage[2] = objID_2;                                    // Object ID byte 2 
     newMessage[3] = parID_1;                                    // Parameter ID

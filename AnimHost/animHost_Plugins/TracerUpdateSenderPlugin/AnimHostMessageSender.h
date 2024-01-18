@@ -18,11 +18,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMe
 
     public:
     AnimHostMessageSender() {}
-    AnimHostMessageSender(QString m_ipAddress) {
-        ipAddress = m_ipAddress;
-    }
-    AnimHostMessageSender(QString m_ipAddress, bool m_debugState, zmq::context_t * m_context) {
-        ipAddress = m_ipAddress;
+    AnimHostMessageSender(bool m_debugState, zmq::context_t * m_context) {
         _debug = m_debugState;
         context = m_context;
         _stop = true;
@@ -39,7 +35,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMe
     //request this process to stop working
     void requestStop() override;
 
-    void setMessage(zmq::message_t* msg);
+    //void setMessage(QByteArray* msg);
 
     private:
 
@@ -80,21 +76,6 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMe
     public Q_SLOTS:
     //execute operations
     void run();
-
-    protected slots:
-    //create a new sync message
-    void createSyncMessage(int time) {
-        syncMessage[0] = getTargetHostID();
-        syncMessage[1] = time;
-        syncMessage[2] = MessageType::SYNC;
-
-        // increase local time for controlling client timeouts
-        m_time++;
-    }
-
-    //protected slots:
-    //create a new sync message
-    //void createSyncMessage(int time);
 };
 
 #endif // ANIMHOSTMESSAGESENDER_H

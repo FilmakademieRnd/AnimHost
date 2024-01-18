@@ -16,9 +16,8 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
 
 	public:
 	TickReceiver() {}
-    TickReceiver(TracerUpdateSenderPlugin* m_TUSPlugin, QString m_ipAddress, bool m_debugState, zmq::context_t* m_context) {
+    TickReceiver(TracerUpdateSenderPlugin* m_TUSPlugin, bool m_debugState, zmq::context_t* m_context) {
         TUSPlugin = m_TUSPlugin;
-        ipAddress = m_ipAddress;
         _debug = m_debugState;
         context = m_context;
         _stop = true;
@@ -26,8 +25,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
         _paused = false;
     }
 
-    TickReceiver(QString m_ipAddress, bool m_debugState, zmq::context_t* m_context) {
-        ipAddress = m_ipAddress;
+    TickReceiver(bool m_debugState, zmq::context_t* m_context) {
         _debug = m_debugState;
         context = m_context;
         _stop = true;
@@ -68,7 +66,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
     void run() {
         // open socket
         receiveSocket = new zmq::socket_t(*context, zmq::socket_type::sub);
-        receiveSocket->connect(QString("tcp://" + ipAddress + ":5556").toLatin1().data());
+        receiveSocket->connect(QString("tcp://" + ZMQMessageHandler::ownIP + ":5556").toLatin1().data());
         receiveSocket->setsockopt(ZMQ_SUBSCRIBE, "client", 0);
 
         zmq::pollitem_t pollItem = { static_cast<void*>(*receiveSocket), 0, ZMQ_POLLIN, 0 };

@@ -9,7 +9,7 @@
 #include <QTimer>
 #include <QPushButton>
 #include <QValidator>
-#include <QLineEdit>
+#include <QComboBox>
 #include <QHBoxLayout>
 #include <pluginnodeinterface.h>
 #include <commondatatypes.h>
@@ -31,7 +31,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TracerUpdateSenderPlugin : public Pl
 private:
     QWidget* widget;
     QPushButton* _pushButton;
-    QLineEdit* _connectIPAddress;
+    QComboBox* _selectIPAddress;
     QHBoxLayout* _ipAddressLayout;
     QRegularExpressionValidator* _ipValidator;
 
@@ -54,13 +54,15 @@ private:
     // Input animation data (of either type animation or pose...maybe both?!)
     std::weak_ptr<AnimNodeData<Animation>> _animIn;
     std::weak_ptr<AnimNodeData<CharacterObject>> _characterIn;
+    std::weak_ptr<AnimNodeData<SceneNodeObjectSequence>> _sceneNodeListIn;
 
     // Output animation data to be pushed to DataHub, stored in ZeroMQ message format (conversion to native array)
     std::vector<int> _animOut;
     int validData = -1;
 
     // Serializes in the form of a byte array an animation frame represented by a list of quaternions (Animation data type)
-    void SerializeAnimation(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character, QByteArray* byteArray);
+    void SerializeAnimation(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character,
+                            std::shared_ptr<SceneNodeObjectSequence> sceneNodeList, QByteArray* byteArray);
 
 public:
     TracerUpdateSenderPlugin();
@@ -89,6 +91,7 @@ public:
     QString category() override { return "Output"; };  // Returns a category for the node
 
 private Q_SLOTS:
+    void onChangedSelection(int index);
     void onButtonClicked();
     void run();
     void ticked(int externalTime);

@@ -13,6 +13,7 @@ TracerSceneReceiverPlugin::TracerSceneReceiverPlugin() {
 	_ipValidator = new QRegularExpressionValidator(ZMQMessageHandler::ipRegex, this);
 
 	characterListOut = std::make_shared<AnimNodeData<CharacterObjectSequence>>();
+	sceneNodeListOut = std::make_shared<AnimNodeData<SceneNodeObjectSequence>>();
 
 	_sceneReceiverContext = new zmq::context_t(1);
 	zeroMQSceneReceiverThread = new QThread();
@@ -36,7 +37,7 @@ unsigned int TracerSceneReceiverPlugin::nDataPorts(QtNodes::PortType portType) c
     if (portType == QtNodes::PortType::In)
         return 0;
     else            
-        return 1 ;
+        return 2 ;
 }
 
 NodeDataType TracerSceneReceiverPlugin::dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const {
@@ -44,7 +45,12 @@ NodeDataType TracerSceneReceiverPlugin::dataPortType(QtNodes::PortType portType,
     if (portType == QtNodes::PortType::In)
         return type;
     else
-        return AnimNodeData<CharacterObjectSequence>::staticType();
+		if (portIndex == 0)
+			return AnimNodeData<CharacterObjectSequence>::staticType();
+		else if (portIndex == 1)
+			return AnimNodeData<SceneNodeObjectSequence>::staticType();
+		else
+			return type;
 }
 
 void TracerSceneReceiverPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) {
@@ -52,7 +58,11 @@ void TracerSceneReceiverPlugin::processInData(std::shared_ptr<NodeData> data, Qt
 }
 
 std::shared_ptr<NodeData> TracerSceneReceiverPlugin::processOutData(QtNodes::PortIndex port) {
-	return characterListOut;
+	if (port == 0)
+		return characterListOut;
+	else if (port == 1)
+		return sceneNodeListOut;
+	
 }
 
 QWidget* TracerSceneReceiverPlugin::embeddedWidget() {
@@ -96,7 +106,7 @@ void TracerSceneReceiverPlugin::onButtonClicked()
 	sceneReceiver->connectSocket(_ipAddress); // DO NOT COMMENT THIS LINE
 
 	//! Send signal to SceneReceiver to request characters
-	//requestHeaderData();
+	requestHeaderData();
 	requestCharacterData();
 	//! requestSceneNodeData() is then called after processCharacterData() is done (i.e. at thew end of its body)
 
@@ -206,7 +216,6 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 	int nodeByteCounter = 0;  //! "Bookmark" for reading the scene node byte array and skipping uninteresting sequences of bytes
 	int sceneNodeCounter = 0; //! Counting the sceneNodes in order to calculate the objectID
 	int editableSceneNodeCounter = 0; //! Counting the sceneNodes that are editable in order to retrieve the sceneObjectID used for the ParameterUpdateMessage
-	//SceneNodeObjectSequence nodeList; // To be populated with all the nodes in the received scene. To be exposed to every other AnimHost plugin
 
 	int characterCounter = 0;
 	CharacterObject* currentChar = new CharacterObject();
@@ -237,29 +246,36 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 		nodeByteCounter += sizeof(objRot);
 		// - char[] (fixed 64 char length)
 		QString nodeName = QString(sceneNodeByteArray->sliced(nodeByteCounter, 64)); // Save name of the scene object (string)
+		nodeName.remove(QChar('\0'));
 		nodeByteCounter += 64;
 		nodeName.shrink_to_fit();
 
-		// if the current node has the same ID as the characterRootID of the currently selected character in the characterListOut
-		// ...and the characterCounter is smaller than the size of the list of characters (to avoid OutOfBounds error)
-		// fill its sceneObjectID and objectName fields
-		if (characterCounter < characterListOut->getData()->mCharacterObjectSequence.size() &&
-			sceneNodeCounter == characterListOut->getData()->mCharacterObjectSequence.at(characterCounter).characterRootID) {
-			currentChar = &characterListOut->getData()->mCharacterObjectSequence.at(characterCounter);
-
-			currentChar->sceneObjectID = editableSceneNodeCounter;
-			currentChar->objectName = nodeName.toStdString();
-
-			currentChar->pos = objPos;
-			currentChar->rot = objRot;
-			currentChar->scl = objScale;
-
-			characterCounter++;
-		}
-
+		SceneNodeObject sceneNode;
 		SkinnedMeshComponent skinnedMesh;
 		int i = 0;
 		switch (sceneNodeType) {
+			case CHARACTER:
+				// if the current character has the same ID as the characterRootID of the currently selected character in the characterListOut
+				// ...and the characterCounter is smaller than the size of the list of characters (to avoid OutOfBounds error)
+				// fill its sceneObjectID and objectName fields
+				if (characterCounter < characterListOut->getData()->mCharacterObjectSequence.size() &&
+					sceneNodeCounter == characterListOut->getData()->mCharacterObjectSequence.at(characterCounter).characterRootID) {
+					currentChar = &characterListOut->getData()->mCharacterObjectSequence.at(characterCounter);
+
+					currentChar->sceneObjectID = editableSceneNodeCounter;
+					currentChar->objectName = nodeName.toStdString();
+
+					currentChar->pos = objPos;
+					currentChar->rot = objRot;
+					currentChar->scl = objScale;
+
+					characterCounter++;
+				}
+
+				// Adding the characterObject also to the list of all the scene nodes in the scene to retain the same structure wrt the original scene
+				sceneNodeListOut.get()->getData()->mSceneNodeObjectSequence.push_back(*currentChar);
+
+				break;
 			case SKINNEDMESH:
 				//! Read the data encapsulated in the SceneNodeSkinnedGeo and save it in a SkinnedMeshRenderer object
 				
@@ -274,6 +290,9 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 				// Save bindPoseLength (int) for later
 				int32_t bindPoseLength; memcpy(&bindPoseLength, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(bindPoseLength)).data(), sizeof(bindPoseLength)); // Copies byte values directly into the new variable, which interprets it as the correct type
 				nodeByteCounter += sizeof(bindPoseLength);
+				// Save characterRootID (int) for later
+				int32_t characterRootID; memcpy(&characterRootID, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(characterRootID)).data(), sizeof(characterRootID)); // Copies byte values directly into the new variable, which interprets it as the correct type
+				nodeByteCounter += sizeof(characterRootID);
 				// Save bounding box dimensions (3 floats)
 				glm::vec3 boundExtents; memcpy(&boundExtents, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(boundExtents)).data(), sizeof(boundExtents));
 				nodeByteCounter += sizeof(boundExtents);
@@ -304,8 +323,22 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 				}
 				// skip the remaining unused bytes
 				nodeByteCounter += ((99 - i) * 4);
+
+				// Double-check that the characterRootID of the skinnedMesh coincides with the one already present in the current character
+				// This proves that this skinnedMesh belogs to the current character
+				assert(characterRootID == currentChar->characterRootID);
 				// Add the filled SkinnedMeshRenderer object to the currently active CharacterObject
 				currentChar->skinnedMeshList.push_back(skinnedMesh);
+
+				// Adding a barebone placeholder SceneNodeObject in order to retain the order of the received scene node list
+				sceneNode.sceneObjectID = -1;
+				sceneNode.characterRootID = currentChar->characterRootID;
+				sceneNode.objectName = nodeName.toStdString();
+				sceneNode.pos = objPos;
+				sceneNode.rot = objRot;
+				sceneNode.scl = objScale;
+
+				sceneNodeListOut.get()->getData()->mSceneNodeObjectSequence.push_back(sceneNode);
 
 				break;
 			case GEO:
@@ -343,15 +376,27 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 				// - float aperture
 				nodeByteCounter += 136;
 				break;
-			default:
-				// TODO: Create and populate SceneNodeObject
+			case GROUP:
+				// Create and populate SceneNodeObject
+				sceneNode.sceneObjectID = (editableFlag? editableSceneNodeCounter : -1); // If this node is editable assign sceneObjectID, otherwise assign -1 (non-editable)
+				sceneNode.characterRootID = -1; // This should/could be changed so that a descendent bone can have a "reference" to the character root
+				sceneNode.objectName = nodeName.toStdString();
+				sceneNode.pos = objPos;
+				sceneNode.rot = objRot;
+				sceneNode.scl = objScale;
+
 				// TODO: Add latest SceneNodeObject to the global SceneNodeSequence/SceneDescription (which should be accessible throughout AnimHost)
+				sceneNodeListOut.get()->getData()->mSceneNodeObjectSequence.push_back(sceneNode);
+
+				break;
+			default:
 				break;
 		}
 
 		// After processing the current SceneNode increment the counter
 		sceneNodeCounter++;
 	}
+	qDebug() << "Number of scene nodes received from VPET:" << sceneNodeListOut.get()->getData()->mSceneNodeObjectSequence.size();
 	qDebug() << "Number of character received from VPET:" << characterListOut.get()->getData()->mCharacterObjectSequence.size();
 
 	emitDataUpdate(0);
@@ -362,5 +407,5 @@ void TracerSceneReceiverPlugin::processHeaderByteData(QByteArray* headerByteArra
 	// - float lightIntensityFactor
 	// - byte  senderID
 	unsigned char senderID; memcpy(&senderID, headerByteArray->sliced(4, sizeof(senderID)).data(), sizeof(senderID)); // Copies byte values directly into the new variable, which interprets it as the correct type
-	ZMQMessageHandler::setTargetHostID(senderID);
+	ZMQMessageHandler::setTargetSceneID(senderID);
 }

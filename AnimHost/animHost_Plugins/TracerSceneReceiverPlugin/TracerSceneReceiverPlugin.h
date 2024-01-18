@@ -5,7 +5,6 @@
 #include "TracerSceneReceiverPlugin_global.h"
 #include "ZMQMessageHandler.h"
 
-
 #include <QMetaType>
 #include <QThread>
 #include <QTimer>
@@ -38,6 +37,7 @@ private:
     QString _ipAddress;
 
     std::shared_ptr<AnimNodeData<CharacterObjectSequence>> characterListOut;
+    std::shared_ptr<AnimNodeData<SceneNodeObjectSequence>> sceneNodeListOut;
 
     zmq::context_t* _sceneReceiverContext = nullptr;
     QThread* zeroMQSceneReceiverThread = nullptr;
@@ -63,7 +63,7 @@ public:
     
     QWidget* embeddedWidget() override;
 
-    enum NodeType { GROUP, GEO, LIGHT, CAMERA, SKINNEDMESH };
+    enum NodeType { GROUP, GEO, LIGHT, CAMERA, SKINNEDMESH, CHARACTER };
 
 Q_SIGNALS:
     void requestCharacterData();

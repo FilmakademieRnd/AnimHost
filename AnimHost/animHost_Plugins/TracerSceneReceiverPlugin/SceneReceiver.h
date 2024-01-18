@@ -15,9 +15,9 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
 
     public:
     SceneReceiver() {}
-    SceneReceiver(TracerSceneReceiverPlugin* m_TSRPlugin, QString m_ipAddress, bool m_debugState, zmq::context_t* m_context) {
+    SceneReceiver(TracerSceneReceiverPlugin* m_TSRPlugin, QString _senderIP, bool m_debugState, zmq::context_t* m_context) {
         TSRPlugin = m_TSRPlugin;
-        ipAddress = m_ipAddress;
+        senderIP = _senderIP;
         _debug = m_debugState;
         context = m_context;
         _stop = true;
@@ -33,8 +33,8 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
         receiveSocket->setsockopt(ZMQ_REQ, "request scene", 0);*/
     }
 
-    SceneReceiver(QString m_ipAddress, bool m_debugState, zmq::context_t* m_context) {
-        ipAddress = m_ipAddress;
+    SceneReceiver(QString _senderIP, bool m_debugState, zmq::context_t* m_context) {
+        senderIP = _senderIP;
         _debug = m_debugState;
         context = m_context;
         _stop = true;
@@ -133,12 +133,14 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
         /*if (receiveSocket->connected())
             receiveSocket->disconnect(QString("tcp://" + ipAddress + ":5555").toLatin1().data()); //disconnect throws unexpected exception*/
 
-        setIPAddress(newIPAddress);
-        receiveSocket->connect(QString("tcp://" + ipAddress + ":5555").toLatin1().data());
+        senderIP = newIPAddress;
+        receiveSocket->connect(QString("tcp://" + senderIP + ":5555").toLatin1().data());
     }
 
     private:
     zmq::socket_t* receiveSocket = nullptr;
+    QString senderIP;
+
     TracerSceneReceiverPlugin* TSRPlugin = nullptr;
     zmq::message_t requestMsg {};
     zmq::message_t replyNodeMsg {};

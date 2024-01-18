@@ -2,6 +2,8 @@
 #define ZMQMESSAGEHANDLER_H
 
 #include <QtCore/QObject>
+#include <QtNetwork/QNetworkInterface>
+#include <QtNetwork/QHostAddress>
 #include "commondatatypes.h"
 #include <QMutex>
 #include <QObject>
@@ -88,17 +90,36 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     //    UNKNOWN = 100
     //};
 
-    static void setTargetHostID(byte _targetHostID) {
-        ZMQMessageHandler::targetHostID = _targetHostID;
+    static QList<QHostAddress> getIPList() {
+        return ZMQMessageHandler::ipList;
     }
 
-    static byte getTargetHostID() {
-        return ZMQMessageHandler::targetHostID;
+    static QString getOwnIP() {
+        return ZMQMessageHandler::ownIP;
     }
 
-    void setIPAddress(QString newIPAddress) {
+    static byte getOwnID() {
+        qsizetype lastDotPos = 0; // qsizetype = int64
+
+        if (ZMQMessageHandler::ownIP.contains(".")) {
+          lastDotPos = ZMQMessageHandler::ownIP.lastIndexOf("."); // saving the index of the last occurence of a dot in the string
+          return ZMQMessageHandler::ownIP.sliced(lastDotPos + 1).toUShort(); // everyithing after the last dot is considered the client's own ID (byte = ushort = uchar = uint8)
+        } else {
+            return 0;
+        }
+    }
+
+    static void setTargetSceneID(byte _targetSceneID) {
+        ZMQMessageHandler::targetSceneID = _targetSceneID;
+    }
+
+    static byte getTargetSceneID() {
+        return ZMQMessageHandler::targetSceneID;
+    }
+
+    static void setIPAddress(QString newIPAddress) {
         if (ipRegex.match(newIPAddress).isValid()) {
-            ipAddress = newIPAddress;
+            ZMQMessageHandler::ownIP = newIPAddress;
             qDebug() << "New IP Address set!";
         } else {
             qDebug() << "Invalid IP Address" << newIPAddress;
@@ -111,8 +132,8 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     void Serialize(byte* dest, float _value);*/
     void SerializeVector(byte* dest, std::vector<float> _vector, ZMQMessageHandler::ParameterType type);
 
-    zmq::message_t* createMessage(byte targetHostID, byte time, ZMQMessageHandler::MessageType messageType,
-                                  QByteArray* body);
+    void createNewMessage(byte time, ZMQMessageHandler::MessageType messageType, QByteArray* body);
+
     QByteArray createMessageBody(byte SceneID, int objectID, int ParameterID, ZMQMessageHandler::ParameterType paramType,
                                  bool payload);
     QByteArray createMessageBody(byte SceneID, int objectID, int ParameterID, ZMQMessageHandler::ParameterType paramType,
@@ -125,9 +146,13 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
                                  std::vector<float> payload);
 
     protected:
+    static QList<QHostAddress> ipList;
+
+    //client's own IP address
+    static QString ownIP;
 
     //id displayed as clientID for messages redistributed through syncServer
-    static byte targetHostID;
+    static byte targetSceneID;
     
     //if true process is stopped
     bool _stop = true;
@@ -150,14 +175,12 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     //zeroMQ context
     zmq::context_t* context = nullptr;
 
-    //zeroMQ message exposed to be populated before being passed along the data pipeline
-    zmq::message_t message;
+    //Byte Array exposed to be populated before being passed along the data pipeline
+    QByteArray* message = new QByteArray();
 
-    //syncMessage: includes targetHostID, timestamp? and size of the message (as defined by MessageType enum)
-    byte syncMessage[3] = { getTargetHostID(), 0, MessageType::EMPTY };
-
-    //server IP
-    QString ipAddress;
+    //syncMessage: includes targetHostID???, timestamp? and size of the message (as defined by MessageType enum)
+    // TO BE CHECKED!!!!
+    byte syncMessage[3] = { 0, 0, MessageType::EMPTY };
 
     //map of last states
     QMap<QByteArray, QByteArray> objectStateMap;
@@ -197,10 +220,12 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     protected slots:
     //create a new sync message
     void createSyncMessage(int time) {
-        syncMessage[0] = getTargetHostID();
+        int myID = 1; // Which is myID actually?
+
+        syncMessage[0] = myID;
         syncMessage[1] = time;
         syncMessage[2] = MessageType::SYNC;
-
+        
         // increase local time for controlling client timeouts
         m_time++;
     }

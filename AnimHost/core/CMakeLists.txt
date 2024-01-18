@@ -25,6 +25,7 @@ target_link_libraries(AnimHostCore PUBLIC
     Qt6::Core
     Qt6::Gui
     Qt6::Widgets
+    Qt6::Network
     libzmq-mt-4_3_5
     QTNodes
 )
