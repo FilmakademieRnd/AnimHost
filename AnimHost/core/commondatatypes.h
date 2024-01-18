@@ -184,12 +184,28 @@ public:
 public:
     JointVelocitySequence() {};
 
-    glm::vec2 GetRootVelocityAtFrame(int FrameIndex) {
+    /// <summary>
+    /// Return the Velocity of the Root Bone. We assume root bone is the 1st element of the skeletal structure.
+    /// </summary>
+    /// <param name="FrameIndex"></param>
+    /// <returns>Returns the x & z component of the velocity vector. We assume x & Z define the ground plane.</returns>
+    glm::vec2 GetRootVelocityAtFrame2D(int FrameIndex) {
 
-        // We assume the root bone is always at index 0 in the velocity data.
-        //Support different coordinate Systems
         return glm::vec2(mJointVelocitySequence[FrameIndex].mJointVelocity[0].x, 
             mJointVelocitySequence[FrameIndex].mJointVelocity[0].z);
+    }
+
+    /// <summary>
+    /// Return the Velocity of the Root Bone. We assume root bone is the 1st element of the skeletal structure.
+    /// </summary>
+    /// <param name="FrameIndex"></param>
+    /// <returns></returns>
+    glm::vec3 GetRootVelocityAtFrame(int FrameIndex) {
+        return GetVelocityAtFrame(FrameIndex,0);
+    }
+
+    glm::vec3 GetVelocityAtFrame(int FrameIndex, int BoneIndx) {
+        return glm::vec3(mJointVelocitySequence[FrameIndex].mJointVelocity[BoneIndx]);
     }
 
 
@@ -240,10 +256,16 @@ public:
 
         // We assume the root bone is always at index 0 in the positional data.
         //Support different coordinate Systems
-        return glm::vec2(mPoseSequence[FrameIndex].mPositionData[0].x, 
-            mPoseSequence[FrameIndex].mPositionData[0].z);
+        return GetPositionAtFrame(FrameIndex, 0);
             
-            
+    }
+
+    glm::vec2 GetPositionAtFrame(int FrameIndex, int boneIndex) {
+
+        // We assume the root bone is always at index 0 in the positional data.
+        //Support different coordinate Systems
+        return glm::vec2(mPoseSequence[FrameIndex].mPositionData[boneIndex].x,
+            mPoseSequence[FrameIndex].mPositionData[boneIndex].z);
     }
 
     COMMONDATA(poseSequence, PoseSequence)

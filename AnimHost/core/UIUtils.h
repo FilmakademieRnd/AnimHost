@@ -24,7 +24,7 @@ public:
 	QString GetSelectedBone();
 
 Q_SIGNALS:
-	void currentBoneChanged(const QString& text);
+	void currentBoneChanged(const int text);
 
 };
 #endif // ANIMHOST_UI_UTIL_H

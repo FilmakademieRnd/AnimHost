@@ -21,6 +21,8 @@ private:
     int pastSamples = 6;
     int futureSamples = 5; // past samples + reference frame + future samples = numSamples
 
+    int rootbone_idx = 0;
+
 private:
     std::weak_ptr<AnimNodeData<Skeleton>> _skeletonIn;
     std::weak_ptr<AnimNodeData<PoseSequence>> _poseSequenceIn;
@@ -39,7 +41,7 @@ private:
     std::vector<float> desSpeedTrajectory; /*!< 2D Trajectory of characters target root velocities.*/
     std::vector<char> oneHotActionType; /*!< One-hot encoded action types along trajectory.*/
     std::vector<glm::vec3> relativeJointPosition; /*!< Current joint positions relative to root position.*/
-    std::vector<glm::quat> relativeJoitnRotations;
+    std::vector<glm::quat> relativeJointRotations;
     std::vector<glm::vec3> relativeJointVelocities; 
 
     /* Output Data */
@@ -48,8 +50,20 @@ private:
     std::vector<glm::vec2> predForwardTrajectory;
     std::vector<glm::vec2> predVelTrajectory;
     std::vector<glm::vec3> predRelativeJointPosition;
-    std::vector<glm::quat> predRelativJoitnRotations;
+    std::vector<glm::quat> predRelativJointRotations;
     std::vector<glm::vec3> predRelativeJointVelocities;
+
+    std::vector<std::vector<float>> rootSequenceData;
+    std::vector<std::vector<float>> Y_RootSequenceData;
+    
+    
+    std::vector<std::vector<glm::vec3>> sequenceRelativeJointPosition;
+    std::vector<std::vector<glm::vec3>> Y_SequenceRelativeJointPosition;
+    std::vector<std::vector<glm::quat>> sequenceRelativJointRotations;
+    std::vector<std::vector<glm::quat>> Y_SequenceRelativJointRotations;
+    std::vector<std::vector<glm::vec3>> sequenceRelativeJointVelocities;
+    std::vector<std::vector<glm::vec3>> Y_SequenceRelativeJointVelocities;
+    std::vector<glm::vec3> Y_SequenceDeltaUpdate;
 
     glm::vec2 predRootTranslation;
     glm::vec2 predRootVelocity;
@@ -78,8 +92,12 @@ public:
 
     QWidget* embeddedWidget() override;
 
+
+private:
+    void writeDataToCSV();
+
 private Q_SLOTS:
-    void onRootBoneSelectionChanged(const QString& text);
+    void onRootBoneSelectionChanged(const int text);
 
 };
 

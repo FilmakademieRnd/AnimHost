@@ -50,12 +50,14 @@ void AnimHostHelper::ForwardKinematics(const Skeleton& skeleton, const Animation
         glm::vec3 pos = animation.mBones[currentBone].GetPosition(frame);
         glm::mat4 translation(1.0f);
 
-        if (currentBone == 0) {
+        /*if (currentBone == 0) {
             translation = glm::translate(translation, glm::vec3(0.0, pos.y, 0.0));
         }
         else {
             translation = glm::translate(translation, pos);
-        }
+        }*/
+
+        translation = glm::translate(translation, pos);
 
         glm::mat4 local_transform = translation * rotation * scale;
 
@@ -68,5 +70,9 @@ void AnimHostHelper::ForwardKinematics(const Skeleton& skeleton, const Animation
             buildTranforms(globalT, i);
         }
     };
+
+    int initcurrentBone = 0; //todo set specific root bone idx
+    glm::mat4 initcurrentPos(1.0f);
+    buildTranforms(initcurrentPos, initcurrentBone);
 
 }

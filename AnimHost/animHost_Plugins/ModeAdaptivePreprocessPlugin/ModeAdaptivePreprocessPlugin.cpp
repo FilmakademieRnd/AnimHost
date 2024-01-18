@@ -6,6 +6,7 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/ext/quaternion_float.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
+#include <glm/gtx/vector_angle.hpp>
 
 #include <commondatatypes.h>
 #include <animhosthelper.h>
@@ -102,9 +103,7 @@ void ModeAdaptivePreprocessPlugin::run()
 	//2nd expand to multiple frames
 	//3rd create valid training data
 
-	int referenceFrame = 14;
-
-	int pastFrameStartIdx = referenceFrame - pastSamples;
+	int referenceFrame, pastFrameStartIdx = 0;
 
 	if (auto sp_poseSeq = _poseSequenceIn.lock()) {
 		auto poseSequenceIn = sp_poseSeq->getData();
@@ -118,99 +117,272 @@ void ModeAdaptivePreprocessPlugin::run()
 				if (auto sp_skeleton = _skeletonIn.lock()) {
 					auto skeleton = sp_skeleton->getData();
 
+					int start = pastSamples;
+					int end = animation->mDurationFrames - futureSamples-2;
+					qDebug() << "DEBUG MANN :: Duration: " << animation->mDurationFrames << ", Root IDX: " << rootbone_idx;
 
-// Positional Trajectory
+					rootSequenceData.clear();
+					sequenceRelativeJointPosition.clear();
+					sequenceRelativeJointVelocities.clear();
+					sequenceRelativJointRotations.clear();
 
-					posTrajectory = std::vector<glm::vec2>(numSamples);
-					glm::vec2 curretRefPos = poseSequenceIn->GetRootPositionAtFrame(referenceFrame);
+					Y_RootSequenceData.clear();
+					Y_SequenceRelativeJointPosition.clear();
+					Y_SequenceRelativeJointVelocities.clear();
+					Y_SequenceRelativJointRotations.clear();
 
-					for (int i = 0; i < numSamples; i++) {
-						glm::vec2 sample = poseSequenceIn->GetRootPositionAtFrame(pastFrameStartIdx + i);
-						posTrajectory[i] = sample - curretRefPos;
+					for (int frameCounter = start; frameCounter <= end; frameCounter++) {
+
+						referenceFrame = frameCounter;
+						pastFrameStartIdx = referenceFrame - pastSamples;
+
+						//qDebug() << "DEBUG MANN :: Reference Frame: " << referenceFrame << ", Past Start Frame: " << pastFrameStartIdx;
+
+						fprintf(stderr, QString("\r Processing Frame: %1 / %2").arg(frameCounter).arg(end).toLatin1().data());
+
+						//Prepare Root Positions
+						posTrajectory = std::vector<glm::vec2>(numSamples);
+						glm::vec2 curretRefPos = poseSequenceIn->GetPositionAtFrame(referenceFrame, rootbone_idx);
+
+						//Prepare Direction
+						forwardTrajectory = std::vector<glm::vec2>(numSamples);
+						glm::quat currentRefRot = animation->mBones[rootbone_idx].GetOrientation(referenceFrame);
+						auto frameRT = glm::toMat4(currentRefRot);
+						auto forward = currentRefRot * glm::vec3(1.0, 0.0, 0.0);
+						//forward = frameRT * forward;
+						glm::vec2 refForward2d = glm::normalize(glm::vec2(forward.x, forward.z));
+
+
+						//Prepare Velocity
+						velTrajectory = std::vector<glm::vec2>(numSamples);
+						glm::vec2 currentRefVel = velSeq->GetVelocityAtFrame(referenceFrame, rootbone_idx); //!!!!!
+
+						//Prepare Speed
+						desSpeedTrajectory = std::vector<float>(numSamples);
+
+						//Get Reference Rotation (converted to matrix)
+						glm::quat referenceRotation = animation->mBones[rootbone_idx].GetOrientation(referenceFrame);
+						glm::quat inverseReferenceRotation = glm::inverse(referenceRotation);
+						//Define a forwardvector match forward of assimp
+						auto forwardBaseVector = glm::vec4(0, 0, 1.0, 0);
+
+
+
+						for (int i = 0; i < numSamples; i++) {
+							// Positional Trajectory
+							glm::vec2 samplePos = poseSequenceIn->GetPositionAtFrame(pastFrameStartIdx + i, rootbone_idx); // x-z as ground plane assumed!?
+							posTrajectory[i] = samplePos - curretRefPos;
+
+							//Orientate positional trajectory to face always forward (TEST)
+							glm::vec3 temp(posTrajectory[i].x, 0, posTrajectory[i].y);
+							temp = inverseReferenceRotation * temp;
+							posTrajectory[i] = { temp.x, temp.z };
+
+							//Get matrix from each sample and transform forward
+							glm::quat sampleRotation = animation->mBones[rootbone_idx].GetOrientation(pastFrameStartIdx + i);
+							//Transform newly generated forward vector with inverse transform of reference rotation
+							auto sampleForward = sampleRotation * forwardBaseVector;
+							auto relativeSampleForward = inverseReferenceRotation * sampleForward;
+
+
+							//grab only ground floor components (X&Y ?)
+							forwardTrajectory[i] = glm::normalize(glm::vec2(relativeSampleForward.x, relativeSampleForward.z));
+
+
+							//Velocity
+							glm::vec3 sampleVel = velSeq->GetVelocityAtFrame(pastFrameStartIdx + i, rootbone_idx);
+							auto relativeSampleVelocity = inverseReferenceRotation * sampleVel;
+							//auto relativeSampleVelocity = sampleVel;
+							velTrajectory[i] = glm::vec2(relativeSampleVelocity.x, relativeSampleVelocity.z);// Ground Plane?
+
+							//Speed
+							desSpeedTrajectory[i] = glm::length(sampleVel);
+						}
+
+						//Flatten Root Trajectory data into single vector.
+						std::vector<float> rootTrajectoryData;
+
+						for (int i = 0; i < numSamples; i++) {
+							rootTrajectoryData.push_back(posTrajectory[i].x);
+							rootTrajectoryData.push_back(posTrajectory[i].y);
+							rootTrajectoryData.push_back(forwardTrajectory[i].x);
+							rootTrajectoryData.push_back(forwardTrajectory[i].y);
+							rootTrajectoryData.push_back(velTrajectory[i].x);
+							rootTrajectoryData.push_back(velTrajectory[i].y);
+							rootTrajectoryData.push_back(desSpeedTrajectory[i]);
+						}
+
+						rootSequenceData.push_back(rootTrajectoryData); // Collect flattened data for whole sequence
+
+
+						// Joint Position
+						relativeJointPosition = std::vector<glm::vec3>(poseSequenceIn->mPoseSequence[referenceFrame].mPositionData.size());
+
+						glm::vec3 referencePosition = poseSequenceIn->mPoseSequence[referenceFrame - 1].mPositionData[rootbone_idx];
+
+						//todo only children
+						for (int i = 0; i < poseSequenceIn->mPoseSequence[referenceFrame].mPositionData.size(); i++) {
+							glm::vec3 samplePosition = poseSequenceIn->mPoseSequence[referenceFrame].mPositionData[i];
+
+							//TODO skip root
+
+							relativeJointPosition[i] = samplePosition - referencePosition;
+						}
+
+						sequenceRelativeJointPosition.push_back(relativeJointPosition);
+
+
+						// Joint Rotations
+						relativeJointRotations = std::vector<glm::quat>(skeleton->mNumBones);
+
+						glm::quat referenceJointRotation = animation->mBones[rootbone_idx].GetOrientation(referenceFrame - 1);
+						glm::quat inverseReferenceJointRotation = glm::inverse(referenceJointRotation);
+
+						std::vector<glm::mat4> transforms;
+						AnimHostHelper::ForwardKinematics(*skeleton, *animation, transforms, referenceFrame);
+
+						for (int i = 0; i < transforms.size(); i++) {
+							glm::vec3 scale;
+							glm::quat rotation;
+							glm::vec3 translation;
+							glm::vec3 skew;
+							glm::vec4 perspective;
+
+							glm::decompose(transforms[i], scale, rotation, translation, skew, perspective);
+							rotation = glm::conjugate(rotation);
+
+							relativeJointRotations[i] = rotation * inverseReferenceJointRotation;
+						}
+
+						sequenceRelativJointRotations.push_back(relativeJointRotations);
+
+
+						// Joint Velocities
+						relativeJointVelocities = std::vector<glm::vec3>(velSeq->mJointVelocitySequence[referenceFrame - 1].mJointVelocity.size());
+
+						for (int i = 0; i < relativeJointVelocities.size(); i++) {
+							relativeJointVelocities[i] = inverseReferenceJointRotation * velSeq->mJointVelocitySequence[referenceFrame].mJointVelocity[i];
+						}
+
+						sequenceRelativeJointVelocities.push_back(relativeJointVelocities);
+
+
+///Results Network Output
+
+						/// Position Trajectory
+						std::vector<glm::vec2> ouputRootTrajectory;
+						glm::vec2 outputRefPos = poseSequenceIn->GetPositionAtFrame(referenceFrame + 1, rootbone_idx);
+
+						//Prepare Velocity
+						std::vector<glm::vec2> outputVelTrajectory;
+						glm::vec2 outputRefVel = velSeq->GetVelocityAtFrame(referenceFrame + 1, rootbone_idx);
+
+						//Prepare Rotation
+						std::vector<glm::vec2> outputFwdTrajectory;
+						glm::quat outputRefRot = animation->mBones[rootbone_idx].GetOrientation(referenceFrame + 1);
+						glm::quat invOutputRefRot = glm::inverse(outputRefRot);
+
+						for (int i = 6; i < numSamples; i++) {
+							// Position
+							glm::vec2 samplePos = poseSequenceIn->GetPositionAtFrame(pastFrameStartIdx + 1 + i, rootbone_idx) - outputRefPos;
+							glm::vec3 temp(samplePos.x, 0, samplePos.y);
+							temp = invOutputRefRot * temp;
+							ouputRootTrajectory.push_back({ temp.x, temp.z });
+
+							//Velocity
+							glm::vec3 sampleVel = velSeq->GetVelocityAtFrame(pastFrameStartIdx + 1 + i, rootbone_idx);
+							auto relativeSampleVelocity = inverseReferenceRotation * sampleVel;
+							//auto relativeSampleVelocity = sampleVel;
+							outputVelTrajectory.push_back({ relativeSampleVelocity.x, relativeSampleVelocity.z });// Ground Plane?
+
+							//Direction
+							//Get matrix from each sample and transform forward
+							glm::quat sampleRotation = animation->mBones[rootbone_idx].GetOrientation(pastFrameStartIdx + 1 + i);
+							auto sampleForward = sampleRotation * forwardBaseVector;
+							auto relativeSampleForward = invOutputRefRot * sampleForward;
+							//grab only ground floor components (X&Y ?)
+							outputFwdTrajectory.push_back({ relativeSampleForward.x, relativeSampleForward.z });
+						}
+
+						//Flatten Root Trajectory data into single vector.
+						std::vector<float> out_rootTrajectoryData;
+
+						for (int i = 0; i < ouputRootTrajectory.size(); i++) {
+							out_rootTrajectoryData.push_back(ouputRootTrajectory[i].x);
+							out_rootTrajectoryData.push_back(ouputRootTrajectory[i].y);
+							out_rootTrajectoryData.push_back(outputFwdTrajectory[i].x);
+							out_rootTrajectoryData.push_back(outputFwdTrajectory[i].y);
+							out_rootTrajectoryData.push_back(outputVelTrajectory[i].x);
+							out_rootTrajectoryData.push_back(outputVelTrajectory[i].y);
+						}
+
+						Y_RootSequenceData.push_back(out_rootTrajectoryData); // Collect flattened data for whole sequence
+
+						//Output Joint Positions
+						std::vector<glm::vec3> OutputJointPosition = std::vector<glm::vec3>(poseSequenceIn->mPoseSequence[referenceFrame].mPositionData.size());
+						glm::vec3 outputReferencePosition = poseSequenceIn->mPoseSequence[referenceFrame].mPositionData[rootbone_idx];
+
+						//todo only children
+						for (int i = 0; i < poseSequenceIn->mPoseSequence[referenceFrame].mPositionData.size(); i++) {
+							glm::vec3 samplePosition = poseSequenceIn->mPoseSequence[referenceFrame].mPositionData[i];
+
+							//TODO skip root
+
+							OutputJointPosition[i] = samplePosition - outputReferencePosition;
+						}
+						Y_SequenceRelativeJointPosition.push_back(OutputJointPosition);
+
+						//Output Joint Rotations
+
+						std::vector<glm::quat> OutputJointRotations = std::vector<glm::quat>(skeleton->mNumBones);
+
+						glm::quat outputRefJointRotation = animation->mBones[rootbone_idx].GetOrientation(referenceFrame);
+						glm::quat invOutputRefJointRotation = glm::inverse(outputRefJointRotation);
+
+						std::vector<glm::mat4> OutputTransforms;
+						AnimHostHelper::ForwardKinematics(*skeleton, *animation, transforms, referenceFrame);
+
+						for (int i = 0; i < transforms.size(); i++) {
+							glm::vec3 scale;
+							glm::quat rotation;
+							glm::vec3 translation;
+							glm::vec3 skew;
+							glm::vec4 perspective;
+
+							glm::decompose(transforms[i], scale, rotation, translation, skew, perspective);
+							rotation = glm::conjugate(rotation);
+
+							OutputJointRotations[i] = rotation * invOutputRefJointRotation;
+						}
+
+						Y_SequenceRelativJointRotations.push_back(OutputJointRotations);
+
+						//Output Joint Velocities
+						std::vector<glm::vec3> OutputJointVelocities = std::vector<glm::vec3>(velSeq->mJointVelocitySequence[referenceFrame].mJointVelocity.size());
+
+						for (int i = 0; i < relativeJointVelocities.size(); i++) {
+							relativeJointVelocities[i] = invOutputRefJointRotation * velSeq->mJointVelocitySequence[referenceFrame].mJointVelocity[i];
+						}
+
+						Y_SequenceRelativeJointVelocities.push_back(OutputJointVelocities);
+
+						//Get Reference Rotation (converted to matrix)
+						glm::quat nextFrameRotation = animation->mBones[rootbone_idx].GetOrientation(referenceFrame + 1);
+						//glm::quat inverseReferenceRotation = glm::inverse(referenceRotation);
+						glm::quat testRot = inverseReferenceRotation * nextFrameRotation;
+
+						auto angle = glm::orientedAngle({ 0.0, 1.0f }, forwardTrajectory[7]);
+
+						glm::vec2 testPos = outputRefPos - curretRefPos;
+
+						glm::vec3 relativePos = inverseReferenceRotation* glm::vec3(testPos.x , 0.0 , testPos.y);
+						testPos = { relativePos.x, relativePos.z };
+
+						glm::vec3 delta = { testPos, angle };
+						Y_SequenceDeltaUpdate.push_back(delta);
 					}
-					qDebug() << "Pose Sequence";
-
-// Forward-Vector & Delta
-
-					forwardTrajectory = std::vector<glm::vec2>(numSamples);
-					glm::quat currentRefRot = animation->mBones[0].GetOrientation(referenceFrame);
-					auto frameRT = glm::toMat4(currentRefRot);
-
-					// Assumed Forward Vector in ASSIMP Coord System. 
-					auto forward = glm::vec4(1.0, 0, 0, 0);
-					forward = frameRT * forward;
-
-					glm::vec2 refForward2d = glm::normalize(glm::vec2(forward.x, forward.z));
-					for (int i = 0; i < numSamples; i++) {
-						glm::quat rot = animation->mBones[0].GetOrientation(pastFrameStartIdx + i);
-						auto RT = glm::toMat4(rot);
-						auto tmpfwrd = glm::vec4(1.0, 0, 0, 0);
-						tmpfwrd = frameRT * tmpfwrd;
-
-						forwardTrajectory[i] = glm::normalize(glm::vec2(tmpfwrd.x, tmpfwrd.z)) - refForward2d;
-					}
-					qDebug() << "forward";
-
-// Velocity Trajectory
-
-					velTrajectory = std::vector<glm::vec2>(numSamples);
-					glm::vec2 currentRefVel = velSeq->GetRootVelocityAtFrame(referenceFrame);
-
-					for (int i = 0; i < numSamples; i++) {
-						glm::vec2 sample = velSeq->GetRootVelocityAtFrame(pastFrameStartIdx + i);
-						velTrajectory[i] = sample - currentRefVel;
-					}
-
-					qDebug() << "velocity";
-
-// Speed Trajectory
-
-					desSpeedTrajectory = std::vector<float>(numSamples);
-					for (int i = 0; i < numSamples; i++) {
-						glm::vec2 sample = velSeq->GetRootVelocityAtFrame(pastFrameStartIdx + i);
-						desSpeedTrajectory[i] = glm::length(sample);
-					}
-
-					qDebug() << "speed";
-
-// Joint Position
-
-					relativeJointPosition = std::vector<glm::vec3>(poseSequenceIn->mPoseSequence[referenceFrame].mPositionData.size());
-
-					for (int i = 0; i < poseSequenceIn->mPoseSequence[referenceFrame].mPositionData.size(); i++) {
-						glm::vec3 curretRefPos = poseSequenceIn->mPoseSequence[referenceFrame].mPositionData[i];
-
-						//TODO skip root
-
-						relativeJointPosition[i] = curretRefPos;
-					}
-					qDebug() << "jointpos";
-
-// Joint Rotations
-
-					relativeJoitnRotations = std::vector<glm::quat>(skeleton->mNumBones);
-					std::vector<glm::mat4> transforms;
-					AnimHostHelper::ForwardKinematics(*skeleton, *animation, transforms, referenceFrame);
-
-					for (int i = 0; i < transforms.size(); i++) {
-						glm::vec3 scale;
-						glm::quat rotation;
-						glm::vec3 translation;
-						glm::vec3 skew;
-						glm::vec4 perspective;
-
-						glm::decompose(transforms[i], scale, rotation, translation, skew, perspective);
-
-						rotation = glm::conjugate(rotation);
-						relativeJoitnRotations[i] = rotation;
-					}
-					qDebug() << "jointrot";
-
-// Joint Velocities
-					relativeJointVelocities = std::vector<glm::vec3>(velSeq->mJointVelocitySequence[referenceFrame].mJointVelocity.size());
-					for (int i = 0; i < relativeJointVelocities.size(); i++) {
-						relativeJointVelocities[i] = velSeq->mJointVelocitySequence[referenceFrame].mJointVelocity[i];
-					}
+					
+					writeDataToCSV();
 				}
 			}
 		}
@@ -283,9 +455,221 @@ QWidget* ModeAdaptivePreprocessPlugin::embeddedWidget()
 	return _widget;
 }
 
-void ModeAdaptivePreprocessPlugin::onRootBoneSelectionChanged(const QString& text)
+/// <summary>
+/// Write generated data to CSV.
+/// For Testing Only.
+/// </summary>
+void ModeAdaptivePreprocessPlugin::writeDataToCSV()
 {
-	qDebug() << "Root Bone changed: " << text;
+
+	if (auto sp_poseSeq = _poseSequenceIn.lock()) {
+		auto poseSequenceIn = sp_poseSeq->getData();
+
+		if (auto sp_animation = _animationIn.lock()) {
+			auto animation = sp_animation->getData();
+
+			if (auto sp_velSeq = _jointVelocitySequenceIn.lock()) {
+				auto velSeq = sp_velSeq->getData();
+
+				if (auto sp_skeleton = _skeletonIn.lock()) {
+					auto skeleton = sp_skeleton->getData();
+
+
+					qDebug() << "Write Pose Data to CSV File";
+
+					QString directory = QDir::toNativeSeparators(QFileDialog::getExistingDirectory(nullptr, "Import Animation", "C://"));
+					QString exportDirectory = directory + "/";
+
+					QString file_name_in = QString("seq_in_%1.csv").arg(poseSequenceIn->dataSetID);
+					
+					QFile file(exportDirectory + file_name_in);
+
+
+					file.open(QIODevice::WriteOnly | QIODevice::Text);
+					QTextStream out(&file);
+
+					//Write Header
+					
+					out << "seq_id";
+
+					for (int i = 0; i < numSamples; i++) {
+						out << ",root_pos_x_" << i;
+						out << ",root_pos_y_" << i;
+						out << ",root_fwd_x_" << i;
+						out << ",root_fwd_y_" << i;
+						out << ",root_vel_x_" << i;
+						out << ",root_vel_y_" << i;
+						out << ",root_speed_" << i;
+					};
+
+
+					qDebug() << poseSequenceIn->mPoseSequence[0].mPositionData.size() << "  and bone Size:" << skeleton->mNumBones;
+					for (int i = 0; i < poseSequenceIn->mPoseSequence[0].mPositionData.size(); i++) {
+						QString boneName = QString::fromStdString(skeleton->bone_names_reverse.at(i));
+						out << ",jpos_x_" << boneName;
+						out << ",jpos_y_" << boneName;
+						out << ",jpos_z_" << boneName;
+
+						out << ",jrot_x_" << boneName;
+						out << ",jrot_y_" << boneName;
+						out << ",jrot_z_" << boneName;
+						out << ",jrot_W_" << boneName;
+
+						out << ",jvel_x_" << boneName;
+						out << ",jvel_y_" << boneName;
+						out << ",jvel_z_" << boneName;
+
+					}
+					out << "\n";
+
+					for (int idx = 0; idx < rootSequenceData.size(); idx++) {
+						out << poseSequenceIn->dataSetID << ",";
+						
+						for (int i = 0; i < rootSequenceData[idx].size(); i++) {
+							out << rootSequenceData[idx][i] << ",";
+						}
+
+						for (int i = 0; i < poseSequenceIn->mPoseSequence[0].mPositionData.size(); i++) {
+							out << sequenceRelativeJointPosition[idx][i].x << ",";
+							out << sequenceRelativeJointPosition[idx][i].y << ",";
+							out << sequenceRelativeJointPosition[idx][i].z << ",";
+							
+							out << sequenceRelativJointRotations[idx][i].x << ",";
+							out << sequenceRelativJointRotations[idx][i].y << ",";
+							out << sequenceRelativJointRotations[idx][i].z << ",";
+							out << sequenceRelativJointRotations[idx][i].w << ",";
+
+							out << sequenceRelativeJointVelocities[idx][i].x << ",";
+							out << sequenceRelativeJointVelocities[idx][i].y << ",";
+							out << sequenceRelativeJointVelocities[idx][i].z;
+							if (i < poseSequenceIn->mPoseSequence[0].mPositionData.size() - 1) {
+								out << ",";
+							}
+
+						}
+						out << "\n";
+					}
+
+					file.close();
+
+
+					//Write Header Output
+					QString file_name_out = QString("seq_out_%1.csv").arg(poseSequenceIn->dataSetID);
+					QFile fileY(exportDirectory + file_name_out);
+					fileY.open(QIODevice::WriteOnly | QIODevice::Text);
+					QTextStream outY(&fileY);
+
+					outY << "seq_id";
+
+					outY << ",delta_x";
+					outY << ",delta_y";
+					outY << ",delta_angle";
+
+					//Root Trajectory. start index at 6 for future steps
+					for (int i = 6; i < numSamples; i++) {
+						outY << ",out_root_pos_x_" << i;
+						outY << ",out_root_pos_y_" << i;
+						outY << ",out_root_fwd_x_" << i;
+						outY << ",out_root_fwd_y_" << i;
+						outY << ",out_root_vel_x_" << i;
+						outY << ",out_root_vel_y_" << i;
+						//outY << ",out_root_speed_" << i;
+					};
+
+
+					qDebug() << poseSequenceIn->mPoseSequence[0].mPositionData.size() << " and bone size:" << skeleton->mNumBones;
+					for (int i = 0; i < poseSequenceIn->mPoseSequence[0].mPositionData.size(); i++) {
+						QString boneName = QString::fromStdString(skeleton->bone_names_reverse.at(i));
+						outY << ",out_jpos_x_" << boneName;
+						outY << ",out_jpos_y_" << boneName;
+						outY << ",out_jpos_z_" << boneName;
+			
+						outY << ",out_jrot_x_" << boneName;
+						outY << ",out_jrot_y_" << boneName;
+						outY << ",out_jrot_z_" << boneName;
+						outY << ",out_jrot_W_" << boneName;
+
+						outY << ",out_jvel_x_" << boneName;
+						outY << ",out_jvel_y_" << boneName;
+						outY << ",out_jvel_z_" << boneName;
+
+					}
+					outY << "\n";
+
+					for (int idx = 0; idx < Y_RootSequenceData.size(); idx++) {
+						outY << poseSequenceIn->dataSetID << ",";
+						outY << Y_SequenceDeltaUpdate[idx].x << ",";
+						outY << Y_SequenceDeltaUpdate[idx].y << ",";
+						outY << Y_SequenceDeltaUpdate[idx].z << ",";
+
+
+						for (int i = 0; i < Y_RootSequenceData[idx].size(); i++) {
+							outY << Y_RootSequenceData[idx][i] << ",";
+						}
+
+						for (int i = 0; i < poseSequenceIn->mPoseSequence[0].mPositionData.size(); i++) {
+							outY << Y_SequenceRelativeJointPosition[idx][i].x << ",";
+							outY << Y_SequenceRelativeJointPosition[idx][i].y << ",";
+							outY << Y_SequenceRelativeJointPosition[idx][i].z << ",";
+
+							outY << Y_SequenceRelativJointRotations[idx][i].x << ",";
+							outY << Y_SequenceRelativJointRotations[idx][i].y << ",";
+							outY << Y_SequenceRelativJointRotations[idx][i].z << ",";
+							outY << Y_SequenceRelativJointRotations[idx][i].w << ",";
+
+							outY << Y_SequenceRelativeJointVelocities[idx][i].x << ",";
+							outY << Y_SequenceRelativeJointVelocities[idx][i].y << ",";
+							outY << Y_SequenceRelativeJointVelocities[idx][i].z;
+							if (i < poseSequenceIn->mPoseSequence[0].mPositionData.size() - 1) {
+								outY << ",";
+							}
+
+						}
+						outY << "\n";
+					}
+
+
+				}
+			}
+		}
+	}
+
+
+
+
+			/*		for (int frame = 0; frame < poseSequenceIn->mPoseSequence.size(); frame++) {
+						out << poseSequenceIn->dataSetID << ",";
+						for (int bone = 0; bone < skeletonIn->mNumBones; bone++) {
+							out << poseSequenceIn->mPoseSequence[frame].mPositionData[bone].x << ",";
+							out << poseSequenceIn->mPoseSequence[frame].mPositionData[bone].y << ",";
+							out << poseSequenceIn->mPoseSequence[frame].mPositionData[bone].z;
+							if (bone != skeletonIn->mNumBones - 1)
+								out << ",";
+
+						}
+						out << "\n";
+					}*/
+}
+
+void ModeAdaptivePreprocessPlugin::onRootBoneSelectionChanged(const int indx)
+{
+	if (auto sp_skeleton = _skeletonIn.lock()) {
+		auto skeleton = sp_skeleton->getData();
+
+		auto selected = skeleton->bone_names.at(_boneSelect->GetSelectedBone().toStdString());
+
+		if (rootbone_idx != selected) {
+			rootbone_idx = selected;
+
+			qDebug() << "selected bone list idx" << selected << " selcetion " << _boneSelect->GetSelectedBone();
+
+			run();
+		}
+
+		
+	}
+
+
 }
 
 

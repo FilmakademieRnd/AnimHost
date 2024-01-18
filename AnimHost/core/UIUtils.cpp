@@ -20,7 +20,7 @@ BoneSelectionWidget::BoneSelectionWidget(QWidget* parent ) : QWidget(parent)
 
 	this->setLayout(layout);
 
-	QObject::connect(comboBox, &QComboBox::currentTextChanged, this, &BoneSelectionWidget::currentBoneChanged);
+	QObject::connect(comboBox, &QComboBox::activated, this, &BoneSelectionWidget::currentBoneChanged);
 }
 
 void BoneSelectionWidget::UpdateBoneSelection(const Skeleton& skeleton)

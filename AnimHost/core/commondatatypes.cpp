@@ -45,7 +45,7 @@ glm::quat Bone::GetOrientation(int frame) const
 {
 	if (mRotationKeys.size() == 0)
 	{
-		return glm::quat();
+		return glm::quat(1,0,0,0);
 	}
 	else
 	{
