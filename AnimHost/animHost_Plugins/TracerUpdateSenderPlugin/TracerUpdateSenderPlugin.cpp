@@ -156,9 +156,7 @@ void TracerUpdateSenderPlugin::SerializeAnimation(std::shared_ptr<Animation> ani
         std::string boneName = sceneNodeList->mSceneNodeObjectSequence.at(boneID).objectName;
         int animDataBoneID = -1;
         for (int j = 0; j < animData->mBones.size(); j++) {
-            std::string animDataBoneName = animData->mBones.at(j).mName;
-            int strComparison = boneName.compare(animDataBoneName);
-            if (strComparison == 0) {
+            if (boneName.compare(animData->mBones.at(j).mName) == 0) {
                 animDataBoneID = j;
                 break;
             }
