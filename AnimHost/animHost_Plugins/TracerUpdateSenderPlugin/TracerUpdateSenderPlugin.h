@@ -30,7 +30,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TracerUpdateSenderPlugin : public Pl
 
 private:
     QWidget* widget;
-    QPushButton* _pushButton;
+    QPushButton* _sendUpdateButton;
     QComboBox* _selectIPAddress;
     QHBoxLayout* _ipAddressLayout;
     QRegularExpressionValidator* _ipValidator;
@@ -43,6 +43,8 @@ private:
     
     QTimer* timer;
     int localTime = 0;
+
+    bool loop = true;
 
     AnimHostMessageSender* msgSender = nullptr;
     TickReceiver* tickReceiver = nullptr;
@@ -61,8 +63,8 @@ private:
     int validData = -1;
 
     // Serializes in the form of a byte array an animation frame represented by a list of quaternions (Animation data type)
-    void SerializeAnimation(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character,
-                            std::shared_ptr<SceneNodeObjectSequence> sceneNodeList, QByteArray* byteArray);
+    void SerializePose(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character,
+                            std::shared_ptr<SceneNodeObjectSequence> sceneNodeList, QByteArray* byteArray, int frame = 0);
 
 public:
     TracerUpdateSenderPlugin();

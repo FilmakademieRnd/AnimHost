@@ -9,14 +9,12 @@
 
 TracerUpdateSenderPlugin::TracerUpdateSenderPlugin()
 {
-    _pushButton = nullptr;
-    widget = new QWidget();
-    _selectIPAddress = new QComboBox();
-    _ipAddressLayout = new QHBoxLayout();
-    _ipAddress = ZMQMessageHandler::getIPList().at(0).toString();
-    _ipValidator = new QRegularExpressionValidator(ZMQMessageHandler::ipRegex, this);
-
-    connect(_selectIPAddress, &QComboBox::currentIndexChanged, this, &TracerUpdateSenderPlugin::onChangedSelection);
+    _sendUpdateButton = nullptr;
+    widget = nullptr;
+    _selectIPAddress = nullptr;
+    _ipAddressLayout = nullptr;
+    _ipAddress = nullptr;
+    _ipValidator = nullptr;
 
     timer = new QTimer();
     timer->setTimerType(Qt::PreciseTimer);
@@ -128,8 +126,8 @@ void TracerUpdateSenderPlugin::run() {
  * \param animData
  * \param byteArray
  */
-void TracerUpdateSenderPlugin::SerializeAnimation(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character,
-                                                  std::shared_ptr<SceneNodeObjectSequence> sceneNodeList, QByteArray* byteArray) {
+void TracerUpdateSenderPlugin::SerializePose(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character,
+                                                  std::shared_ptr<SceneNodeObjectSequence> sceneNodeList, QByteArray* byteArray, int frame) {
     // Target Scene ID
     int targetSceneID = ZMQMessageHandler::getTargetSceneID();
 
@@ -144,8 +142,6 @@ void TracerUpdateSenderPlugin::SerializeAnimation(std::shared_ptr<Animation> ani
 
     int rootBoneID = character->skinnedMeshList.at(0).boneMapIDs.at(0);
     for (ushort i = 0; i < character->skinnedMeshList.at(0).boneMapIDs.size(); i++) {
-        
-
         // boneMapIDs contains the parameterID to boneID mapping
         //      parameterID (= i+3)                 id to be sent in the update message to the rendering application, the offset (+3) is necessary because the first 3 parameters are ALWAYS rootPos, rootRot, rootScl
         //      boneID      (= boneMapIDs.at(i))    id to be used to get BONE NAME given the list of SceneNodes in the received scene
@@ -163,8 +159,11 @@ void TracerUpdateSenderPlugin::SerializeAnimation(std::shared_ptr<Animation> ani
         }
         assert(animDataBoneID >= 0);
 
+        Bone selectedBone = animData->mBones.at(animDataBoneID);
+
         // Getting Bone Object Rotation Quaternion
-        glm::quat boneQuat = animData->mBones.at(animDataBoneID).GetOrientation(0);
+        //if (selectedBone.mRotationKeys(frame))
+        glm::quat boneQuat = selectedBone.GetOrientation(frame);
 
         std::vector<float> boneQuatVector = { boneQuat.x, boneQuat.y, boneQuat.z,  boneQuat.w }; // converting glm::quat in vector<float>
 
@@ -195,33 +194,39 @@ std::shared_ptr<NodeData> TracerUpdateSenderPlugin::processOutData(QtNodes::Port
 }
 
 QWidget* TracerUpdateSenderPlugin::embeddedWidget() {
-    if (!_pushButton) {
-        _pushButton = new QPushButton("Send Update");
+    if (!widget) {
+        _sendUpdateButton = new QPushButton("Send Animation");
+        _selectIPAddress = new QComboBox();
+        _ipAddressLayout = new QHBoxLayout();
+        _ipAddress = ZMQMessageHandler::getIPList().at(0).toString();
+        _ipValidator = new QRegularExpressionValidator(ZMQMessageHandler::ipRegex, this);
+
+        connect(_selectIPAddress, &QComboBox::currentIndexChanged, this, &TracerUpdateSenderPlugin::onChangedSelection);
 
         for (QHostAddress ipAddress : ZMQMessageHandler::getIPList()) {
             _selectIPAddress->addItem(ipAddress.toString());
         }
         _selectIPAddress->setValidator(_ipValidator);
 
-        _pushButton->resize(QSize(30, 30));
+        _sendUpdateButton->resize(QSize(30, 30));
         _ipAddressLayout = new QHBoxLayout();
 
         _ipAddressLayout->addWidget(_selectIPAddress);
-        _ipAddressLayout->addWidget(_pushButton);
+        _ipAddressLayout->addWidget(_sendUpdateButton);
 
         _ipAddressLayout->setSizeConstraint(QLayout::SetMinimumSize);
 
         widget = new QWidget();
-
         widget->setLayout(_ipAddressLayout);
-        connect(_pushButton, &QPushButton::released, this, &TracerUpdateSenderPlugin::onButtonClicked);
-    }
+        connect(_sendUpdateButton, &QPushButton::released, this, &TracerUpdateSenderPlugin::onButtonClicked);
 
-    widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
-                          "QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"
-                          "QPushButton{border: 1px solid white; border-radius: 4px; padding: 5px; background-color:rgb(98, 139, 202);}"
-                          "QLabel{background-color:rgb(25, 25, 25); border: 1px; border-color: rgb(60, 60, 60); border-radius: 4px; padding: 5px;}"
-    );
+        widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
+                              "QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"
+                              "QPushButton{border: 1px solid white; border-radius: 4px; padding: 5px; background-color:rgb(98, 139, 202);}"
+                              "QLabel{background-color:rgb(25, 25, 25); border: 1px; border-color: rgb(60, 60, 60); border-radius: 4px; padding: 5px;}"
+        );
+
+    }
 
     return widget;
 }
@@ -270,7 +275,41 @@ void TracerUpdateSenderPlugin::onButtonClicked() {
     std::shared_ptr<SceneNodeObjectSequence> sceneNodeList = sp_sceneNodeList->getData();
     QByteArray* msgBodyAnim = new QByteArray();
 
-    SerializeAnimation(animData, chobj, sceneNodeList, msgBodyAnim);
+    // The length of the animation is defined by the bones that has the more frames
+    int animDataSize = 0;
+    for (Bone bone : animData->mBones) {
+        int boneFrames = bone.mRotationKeys.size();
+        if (boneFrames > animDataSize)
+            animDataSize = boneFrames;
+    }
+
+    // Define duration single frame (default 33)
+    int frameDurationMillisec = 33;
+    if (animData->mDuration > 0) {
+        frameDurationMillisec = (animData->mDuration * 1000) / animData->mDurationFrames;
+    }
+
+    // send poses sequentially
+    for (int frame = 0; frame < animDataSize; frame++) {
+        QThread::msleep(frameDurationMillisec);
+
+        SerializePose(animData, chobj, sceneNodeList, msgBodyAnim, frame);
+
+        // create ZMQ and send it through AnimHostMessageSender
+        msgSender->createNewMessage(localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
+
+        // This does not seem to be correct...the Thread is already started...
+        if (!zeroMQSenderThread->isRunning()) {
+            msgSender->requestStart();
+            zeroMQSenderThread->start();
+        } else {
+            msgSender->resume();
+        }
+
+        // if loop enabled reset frame to 0 at the end of the animation (except when the animation has only one frame)
+        if (loop && frame > 0 && frame == animData->mBones.at(0).mRotationKeys.size() - 1)
+            frame = 0;
+    }
 
     // Example of message creation
     //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyBool));
@@ -279,16 +318,5 @@ void TracerUpdateSenderPlugin::onButtonClicked() {
     //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyVec3));
     //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyQuat));
 
-    // create ZMQ and send it through AnimHostMessageSender
-    msgSender->createNewMessage(localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
-
-    // This does not seem to be correct...the Thread is already started...
-    if (!zeroMQSenderThread->isRunning()) {
-        msgSender->requestStart();
-        zeroMQSenderThread->start();
-    } else {
-        msgSender->resume();
-    }
-
-    qDebug() << "Attempting SEND connection to" << ZMQMessageHandler::getOwnIP();
+    qDebug() << "Attempting SEND connection on" << ZMQMessageHandler::getOwnIP();
 }
