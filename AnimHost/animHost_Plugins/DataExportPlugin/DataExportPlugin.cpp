@@ -136,21 +136,18 @@ void DataExportPlugin::run()
 {
     if (!exportDirectory.isEmpty()) {
 
-        if (auto sp_poseSeq = _poseSequenceIn.lock() && bWritePoseSequence) {
-            // Do Stuff
-            if (auto sp_skeleton = _skeletonIn.lock()) {
-                writeBinarySkeletonData();
+        if (auto sp_skeleton = _skeletonIn.lock()) {
+            writeBinarySkeletonData();
+
+            if (auto sp_poseSeq = _poseSequenceIn.lock() && bWritePoseSequence) {
                 exportPoseSequenceData();
             }
-        }
 
-        if (auto sp_jointVelSeq = _jointVelocitySequenceIn.lock() && bWriteJointVelocity) {
-
-            if (auto sp_skeleton = _skeletonIn.lock()) {
+            if (auto sp_jointVelSeq = _jointVelocitySequenceIn.lock() && bWriteJointVelocity) {
                 exportJointVelocitySequence();
             }
-
         }
+        emitRunNextNode();
     }
 }
 
@@ -308,7 +305,7 @@ void DataExportPlugin::writeBinarySkeletonData() {
 
 
 
-    QFile file(exportDirectory + "data.json");
+    QFile file(exportDirectory + "skeleton_data.json");
 
     file.open(QIODevice::WriteOnly);
 
@@ -365,6 +362,52 @@ void DataExportPlugin::exportJointVelocitySequence() {
 
 void DataExportPlugin::writeCSVJointVelocitySequence() {
 
+    auto skeletonIn = _skeletonIn.lock()->getData();
+    auto jointVelSeqIn = _jointVelocitySequenceIn.lock()->getData();
+
+    qDebug() << "Write Joint Velocity Data to CSV File";
+
+
+    QFile file(exportDirectory + "joint_velocity.csv");
+
+    if (bOverwriteJointVelSeq) {
+        file.open(QIODevice::WriteOnly | QIODevice::Text);
+    }
+    else {
+        file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append);
+    }
+
+
+    QTextStream out(&file);
+
+    if (bOverwriteJointVelSeq) {
+        out << "seq_id,";
+        out << "frame,";
+        for (int i = 0; i < skeletonIn->mNumBones; i++) {
+            out << QString::fromStdString(skeletonIn->bone_names_reverse.at(i)) << "_x,";
+            out << QString::fromStdString(skeletonIn->bone_names_reverse.at(i)) << "_y,";
+            out << QString::fromStdString(skeletonIn->bone_names_reverse.at(i)) << "_z";
+            if (i != skeletonIn->mNumBones - 1)
+                out << ",";
+        }
+        out << "\n";
+
+        bOverwriteJointVelSeq = false;
+    }
+
+    for (int frame = 0; frame < jointVelSeqIn->mJointVelocitySequence.size(); frame++) {
+        out << jointVelSeqIn->dataSetID << ",";
+        out << frame << ",";
+        for (int bone = 0; bone < skeletonIn->mNumBones; bone++) {
+            out << jointVelSeqIn->mJointVelocitySequence[frame].mJointVelocity[bone].x << ",";
+            out << jointVelSeqIn->mJointVelocitySequence[frame].mJointVelocity[bone].y << ",";
+            out << jointVelSeqIn->mJointVelocitySequence[frame].mJointVelocity[bone].z;
+            if (bone != skeletonIn->mNumBones - 1)
+                out << ",";
+
+        }
+        out << "\n";
+    }
 } 
 
 void DataExportPlugin::writeBinaryJointVelocitySequence() {

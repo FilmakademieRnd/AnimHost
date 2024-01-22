@@ -2,6 +2,8 @@
 #define GLM_FORCE_SWIZZLE
 #include "ModeAdaptivePreprocessPlugin.h"
 
+#include <QElapsedTimer>
+
 
 #include <glm/gtx/quaternion.hpp>
 #include <glm/ext/quaternion_float.hpp>
@@ -21,6 +23,7 @@ ModeAdaptivePreprocessPlugin::~ModeAdaptivePreprocessPlugin()
 {
 	qDebug() << "~ModeAdaptivePreprocessPlugin()";
 }
+
 
 unsigned int ModeAdaptivePreprocessPlugin::nDataPorts(QtNodes::PortType portType) const
 {
@@ -483,74 +486,85 @@ void ModeAdaptivePreprocessPlugin::writeDataToCSV()
 					QString file_name_in = QString("seq_in_%1.csv").arg(poseSequenceIn->dataSetID);
 					
 					QFile file(exportDirectory + file_name_in);
-
+					QElapsedTimer timer;
 
 					file.open(QIODevice::WriteOnly | QIODevice::Text);
 					QTextStream out(&file);
-
+					timer.start();
 					//Write Header
-					
-					out << "seq_id";
+					QString header = "";
+					header += "seq_id";
+					header += ",frame";
 
 					for (int i = 0; i < numSamples; i++) {
-						out << ",root_pos_x_" << i;
-						out << ",root_pos_y_" << i;
-						out << ",root_fwd_x_" << i;
-						out << ",root_fwd_y_" << i;
-						out << ",root_vel_x_" << i;
-						out << ",root_vel_y_" << i;
-						out << ",root_speed_" << i;
+						header += ",root_pos_x_" + QString::number(i);
+						header += ",root_pos_y_" + QString::number(i);
+						header += ",root_fwd_x_" + QString::number(i);
+						header += ",root_fwd_y_" + QString::number(i);
+						header += ",root_vel_x_" + QString::number(i);
+						header += ",root_vel_y_" + QString::number(i);
+						header += ",root_speed_" + QString::number(i);
 					};
 
 
 					qDebug() << poseSequenceIn->mPoseSequence[0].mPositionData.size() << "  and bone Size:" << skeleton->mNumBones;
 					for (int i = 0; i < poseSequenceIn->mPoseSequence[0].mPositionData.size(); i++) {
 						QString boneName = QString::fromStdString(skeleton->bone_names_reverse.at(i));
-						out << ",jpos_x_" << boneName;
-						out << ",jpos_y_" << boneName;
-						out << ",jpos_z_" << boneName;
+						header += ",jpos_x_" + boneName;
+						header += ",jpos_y_" + boneName;
+						header += ",jpos_z_" + boneName;
 
-						out << ",jrot_x_" << boneName;
-						out << ",jrot_y_" << boneName;
-						out << ",jrot_z_" << boneName;
-						out << ",jrot_W_" << boneName;
+						header += ",jrot_x_" + boneName;
+						header += ",jrot_y_" + boneName;
+						header += ",jrot_z_" + boneName;
+						header += ",jrot_W_" + boneName;
 
-						out << ",jvel_x_" << boneName;
-						out << ",jvel_y_" << boneName;
-						out << ",jvel_z_" << boneName;
+						header += ",jvel_x_" + boneName;
+						header += ",jvel_y_" + boneName;
+						header += ",jvel_z_" + boneName;
 
 					}
-					out << "\n";
+					header += "\n";
+					out << header;
+					//out << "\n";
+
+					QString dataString = "";
 
 					for (int idx = 0; idx < rootSequenceData.size(); idx++) {
-						out << poseSequenceIn->dataSetID << ",";
+						dataString += QString::number(poseSequenceIn->dataSetID) + ",";
+						dataString += QString::number(pastSamples + idx) + ",";
 						
 						for (int i = 0; i < rootSequenceData[idx].size(); i++) {
-							out << rootSequenceData[idx][i] << ",";
+							dataString += QString::number(rootSequenceData[idx][i]) + ",";
 						}
 
 						for (int i = 0; i < poseSequenceIn->mPoseSequence[0].mPositionData.size(); i++) {
-							out << sequenceRelativeJointPosition[idx][i].x << ",";
-							out << sequenceRelativeJointPosition[idx][i].y << ",";
-							out << sequenceRelativeJointPosition[idx][i].z << ",";
+							dataString += QString::number(sequenceRelativeJointPosition[idx][i].x) + ",";
+							dataString += QString::number(sequenceRelativeJointPosition[idx][i].y) + ",";
+							dataString += QString::number(sequenceRelativeJointPosition[idx][i].z) + ",";
 							
-							out << sequenceRelativJointRotations[idx][i].x << ",";
-							out << sequenceRelativJointRotations[idx][i].y << ",";
-							out << sequenceRelativJointRotations[idx][i].z << ",";
-							out << sequenceRelativJointRotations[idx][i].w << ",";
+							dataString += QString::number(sequenceRelativJointRotations[idx][i].x) + ",";
+							dataString += QString::number(sequenceRelativJointRotations[idx][i].y) + ",";
+							dataString += QString::number(sequenceRelativJointRotations[idx][i].z) + ",";
+							dataString += QString::number(sequenceRelativJointRotations[idx][i].w) + ",";
 
-							out << sequenceRelativeJointVelocities[idx][i].x << ",";
-							out << sequenceRelativeJointVelocities[idx][i].y << ",";
-							out << sequenceRelativeJointVelocities[idx][i].z;
+							dataString += QString::number(sequenceRelativeJointVelocities[idx][i].x) + ",";
+							dataString += QString::number(sequenceRelativeJointVelocities[idx][i].y) + ",";
+							dataString += QString::number(sequenceRelativeJointVelocities[idx][i].z);
 							if (i < poseSequenceIn->mPoseSequence[0].mPositionData.size() - 1) {
-								out << ",";
+								dataString += ",";
 							}
 
 						}
-						out << "\n";
+						dataString += "\n";
 					}
+					out << dataString;
 
 					file.close();
+					auto elapsed = timer.elapsed();
+
+					qDebug() << "Time taken by the code snippet: " << elapsed << "milliseconds";
+
 
 
 					//Write Header Output
@@ -559,20 +573,25 @@ void ModeAdaptivePreprocessPlugin::writeDataToCSV()
 					fileY.open(QIODevice::WriteOnly | QIODevice::Text);
 					QTextStream outY(&fileY);
 
-					outY << "seq_id";
+					timer.restart();
 
-					outY << ",delta_x";
-					outY << ",delta_y";
-					outY << ",delta_angle";
+					header = "";
+
+					header += "seq_id";
+					header += ",frame";
+
+					header += ",delta_x";
+					header += ",delta_y";
+					header += ",delta_angle";
 
 					//Root Trajectory. start index at 6 for future steps
 					for (int i = 6; i < numSamples; i++) {
-						outY << ",out_root_pos_x_" << i;
-						outY << ",out_root_pos_y_" << i;
-						outY << ",out_root_fwd_x_" << i;
-						outY << ",out_root_fwd_y_" << i;
-						outY << ",out_root_vel_x_" << i;
-						outY << ",out_root_vel_y_" << i;
+						header += ",out_root_pos_x_" + i;
+						header += ",out_root_pos_y_" + i;
+						header += ",out_root_fwd_x_" + i;
+						header += ",out_root_fwd_y_" + i;
+						header += ",out_root_vel_x_" + i;
+						header += ",out_root_vel_y_" + i;
 						//outY << ",out_root_speed_" << i;
 					};
 
@@ -580,75 +599,65 @@ void ModeAdaptivePreprocessPlugin::writeDataToCSV()
 					qDebug() << poseSequenceIn->mPoseSequence[0].mPositionData.size() << " and bone size:" << skeleton->mNumBones;
 					for (int i = 0; i < poseSequenceIn->mPoseSequence[0].mPositionData.size(); i++) {
 						QString boneName = QString::fromStdString(skeleton->bone_names_reverse.at(i));
-						outY << ",out_jpos_x_" << boneName;
-						outY << ",out_jpos_y_" << boneName;
-						outY << ",out_jpos_z_" << boneName;
+						header += ",out_jpos_x_" + boneName;
+						header += ",out_jpos_y_" + boneName;
+						header += ",out_jpos_z_" + boneName;
 			
-						outY << ",out_jrot_x_" << boneName;
-						outY << ",out_jrot_y_" << boneName;
-						outY << ",out_jrot_z_" << boneName;
-						outY << ",out_jrot_W_" << boneName;
+						header += ",out_jrot_x_" + boneName;
+						header += ",out_jrot_y_" + boneName;
+						header += ",out_jrot_z_" + boneName;
+						header += ",out_jrot_W_" + boneName;
 
-						outY << ",out_jvel_x_" << boneName;
-						outY << ",out_jvel_y_" << boneName;
-						outY << ",out_jvel_z_" << boneName;
+						header += ",out_jvel_x_" + boneName;
+						header += ",out_jvel_y_" + boneName;
+						header += ",out_jvel_z_" + boneName;
 
 					}
-					outY << "\n";
+					header += "\n";
+					outY << header;
+
+					dataString = "";
 
 					for (int idx = 0; idx < Y_RootSequenceData.size(); idx++) {
-						outY << poseSequenceIn->dataSetID << ",";
-						outY << Y_SequenceDeltaUpdate[idx].x << ",";
-						outY << Y_SequenceDeltaUpdate[idx].y << ",";
-						outY << Y_SequenceDeltaUpdate[idx].z << ",";
+						dataString += QString::number(poseSequenceIn->dataSetID) + ",";
+						dataString += QString::number(pastSamples + idx) + ",";
+						dataString += QString::number(Y_SequenceDeltaUpdate[idx].x) + ",";
+						dataString += QString::number(Y_SequenceDeltaUpdate[idx].y) + ",";
+						dataString += QString::number(Y_SequenceDeltaUpdate[idx].z) + ",";
 
 
 						for (int i = 0; i < Y_RootSequenceData[idx].size(); i++) {
-							outY << Y_RootSequenceData[idx][i] << ",";
+							dataString += QString::number(Y_RootSequenceData[idx][i]) + ",";
 						}
 
 						for (int i = 0; i < poseSequenceIn->mPoseSequence[0].mPositionData.size(); i++) {
-							outY << Y_SequenceRelativeJointPosition[idx][i].x << ",";
-							outY << Y_SequenceRelativeJointPosition[idx][i].y << ",";
-							outY << Y_SequenceRelativeJointPosition[idx][i].z << ",";
+							dataString += QString::number(Y_SequenceRelativeJointPosition[idx][i].x) + ",";
+							dataString += QString::number(Y_SequenceRelativeJointPosition[idx][i].y) + ",";
+							dataString += QString::number(Y_SequenceRelativeJointPosition[idx][i].z) + ",";
 
-							outY << Y_SequenceRelativJointRotations[idx][i].x << ",";
-							outY << Y_SequenceRelativJointRotations[idx][i].y << ",";
-							outY << Y_SequenceRelativJointRotations[idx][i].z << ",";
-							outY << Y_SequenceRelativJointRotations[idx][i].w << ",";
+							dataString += QString::number(Y_SequenceRelativJointRotations[idx][i].x) + ",";
+							dataString += QString::number(Y_SequenceRelativJointRotations[idx][i].y) + ",";
+							dataString += QString::number(Y_SequenceRelativJointRotations[idx][i].z) + ",";
+							dataString += QString::number(Y_SequenceRelativJointRotations[idx][i].w) + ",";
 
-							outY << Y_SequenceRelativeJointVelocities[idx][i].x << ",";
-							outY << Y_SequenceRelativeJointVelocities[idx][i].y << ",";
-							outY << Y_SequenceRelativeJointVelocities[idx][i].z;
+							dataString += QString::number(Y_SequenceRelativeJointVelocities[idx][i].x) + ",";
+							dataString += QString::number(Y_SequenceRelativeJointVelocities[idx][i].y) + ",";
+							dataString += QString::number(Y_SequenceRelativeJointVelocities[idx][i].z);
 							if (i < poseSequenceIn->mPoseSequence[0].mPositionData.size() - 1) {
-								outY << ",";
+								dataString += ",";
 							}
-
 						}
-						outY << "\n";
+						dataString += "\n";
 					}
+					outY << dataString;
 
+					elapsed = timer.elapsed();
+					qDebug() << "Time taken by the code snippet: " << elapsed << "milliseconds";
 
 				}
 			}
 		}
 	}
-
-
-
-
-			/*		for (int frame = 0; frame < poseSequenceIn->mPoseSequence.size(); frame++) {
-						out << poseSequenceIn->dataSetID << ",";
-						for (int bone = 0; bone < skeletonIn->mNumBones; bone++) {
-							out << poseSequenceIn->mPoseSequence[frame].mPositionData[bone].x << ",";
-							out << poseSequenceIn->mPoseSequence[frame].mPositionData[bone].y << ",";
-							out << poseSequenceIn->mPoseSequence[frame].mPositionData[bone].z;
-							if (bone != skeletonIn->mNumBones - 1)
-								out << ",";
-
-						}
-						out << "\n";
-					}*/
 }
 
 void ModeAdaptivePreprocessPlugin::onRootBoneSelectionChanged(const int indx)
@@ -664,12 +673,8 @@ void ModeAdaptivePreprocessPlugin::onRootBoneSelectionChanged(const int indx)
 			qDebug() << "selected bone list idx" << selected << " selcetion " << _boneSelect->GetSelectedBone();
 
 			run();
-		}
-
-		
+		}		
 	}
-
-
 }
 
 

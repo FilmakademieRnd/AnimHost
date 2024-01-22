@@ -30,6 +30,7 @@ void JointVelocityPlugin::run(QVariantList in, QVariantList& out)
     jointVelocitySequence->sourceName = poseSequenceIn->sourceName;
 
     std::vector<glm::vec3> temp(poseSequenceIn->mPoseSequence[0].mPositionData.size(), glm::vec3(0.0f, 0.0f, 0.0f));
+    qDebug() << "Sequence Size: " << poseSequenceIn->mPoseSequence.size();
 
     for (int frame = 0; frame < poseSequenceIn->mPoseSequence.size(); frame++) {
         
