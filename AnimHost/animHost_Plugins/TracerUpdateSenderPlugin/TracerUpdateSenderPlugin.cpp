@@ -148,8 +148,10 @@ void TracerUpdateSenderPlugin::SerializePose(std::shared_ptr<Animation> animData
         //      boneName                            name to be used to get BONE QUATERNION from the animation data
         // This WILL NOT WORK for RETARGETED animations
         
+        // Getting boneName given the parameterID
         int boneID = character->skinnedMeshList.at(0).boneMapIDs.at(i);
         std::string boneName = sceneNodeList->mSceneNodeObjectSequence.at(boneID).objectName;
+        // boneName search (sequential...any ideas on how to make it faster?)
         int animDataBoneID = -1;
         for (int j = 0; j < animData->mBones.size(); j++) {
             if (boneName.compare(animData->mBones.at(j).mName) == 0) {
@@ -162,7 +164,6 @@ void TracerUpdateSenderPlugin::SerializePose(std::shared_ptr<Animation> animData
         Bone selectedBone = animData->mBones.at(animDataBoneID);
 
         // Getting Bone Object Rotation Quaternion
-        //if (selectedBone.mRotationKeys(frame))
         glm::quat boneQuat = selectedBone.GetOrientation(frame);
 
         std::vector<float> boneQuatVector = { boneQuat.x, boneQuat.y, boneQuat.z,  boneQuat.w }; // converting glm::quat in vector<float>
@@ -283,8 +284,9 @@ void TracerUpdateSenderPlugin::onButtonClicked() {
             animDataSize = boneFrames;
     }
 
-    // Define duration single frame (default 33)
+    // Define duration single frame (default 33 = ~30fps) - [40 = 25fps] - [42 = ~24fps] - [17 = ~60fps]
     int frameDurationMillisec = 33;
+    // In case the animation has a valid duration metadata, computing the duration of each frame
     if (animData->mDuration > 0) {
         frameDurationMillisec = (animData->mDuration * 1000) / animData->mDurationFrames;
     }

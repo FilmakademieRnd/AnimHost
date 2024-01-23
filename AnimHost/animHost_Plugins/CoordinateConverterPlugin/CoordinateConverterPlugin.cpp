@@ -123,6 +123,12 @@ QWidget* CoordinateConverterPlugin::embeddedWidget()
         widget = new QWidget();
 
         widget->setLayout(_layout);
+
+        QObject::connect(xButton, &QCheckBox::stateChanged, this, &CoordinateConverterPlugin::onChangedCheck);
+        QObject::connect(yButton, &QCheckBox::stateChanged, this, &CoordinateConverterPlugin::onChangedCheck);
+        QObject::connect(zButton, &QCheckBox::stateChanged, this, &CoordinateConverterPlugin::onChangedCheck);
+        QObject::connect(wButton, &QCheckBox::stateChanged, this, &CoordinateConverterPlugin::onChangedCheck);
+        QObject::connect(swapYzButton, &QCheckBox::stateChanged, this, &CoordinateConverterPlugin::onChangedCheck);
 	}
 
     widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
@@ -201,7 +207,8 @@ glm::vec3 CoordinateConverterPlugin::ConvertToTargetSystem(const glm::vec3& vecI
     return vecOut;
 }
 
-void CoordinateConverterPlugin::onButtonClicked()
+void CoordinateConverterPlugin::onChangedCheck(int check)
 {
+    run();
 	qDebug() << "Example Widget Clicked";
 }

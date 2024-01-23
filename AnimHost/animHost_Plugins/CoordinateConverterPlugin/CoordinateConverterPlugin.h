@@ -60,7 +60,7 @@ private:
     glm::vec3 ConvertToTargetSystem(const glm::vec3& matIn, bool flipYZ = false, bool negX = false, bool negY = false, bool negZ = false, bool negW = false);
 
 private Q_SLOTS:
-    void onButtonClicked();
+    void onChangedCheck(int check);
 
 };
 

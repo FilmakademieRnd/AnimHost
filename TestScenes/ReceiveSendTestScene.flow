@@ -8,14 +8,14 @@
         },
         {
             "inPortIndex": 0,
-            "intNodeId": 2,
-            "outNodeId": 0,
+            "intNodeId": 8,
+            "outNodeId": 2,
             "outPortIndex": 0
         },
         {
             "inPortIndex": 0,
-            "intNodeId": 1,
-            "outNodeId": 2,
+            "intNodeId": 2,
+            "outNodeId": 0,
             "outPortIndex": 0
         },
         {
@@ -29,12 +29,6 @@
             "intNodeId": 0,
             "outNodeId": 3,
             "outPortIndex": 0
-        },
-        {
-            "inPortIndex": 1,
-            "intNodeId": 1,
-            "outNodeId": 2,
-            "outPortIndex": 1
         },
         {
             "inPortIndex": 0,
@@ -59,6 +53,24 @@
             "intNodeId": 1,
             "outNodeId": 6,
             "outPortIndex": 2
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 8,
+            "outNodeId": 2,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 1,
+            "outNodeId": 8,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 1,
+            "outNodeId": 8,
+            "outPortIndex": 0
         }
     ],
     "nodes": [
@@ -74,13 +86,23 @@
             }
         },
         {
+            "id": 8,
+            "internal-data": {
+                "model-name": "CoordinateConverterPlugin"
+            },
+            "position": {
+                "x": 372.0680770321241,
+                "y": -233.28077845664936
+            }
+        },
+        {
             "id": 1,
             "internal-data": {
                 "model-name": "TracerUpdateSenderPlugin"
             },
             "position": {
-                "x": 396.99591840806175,
-                "y": -88.23615620077776
+                "x": 674.2424131983131,
+                "y": -91.8452821684615
             }
         },
         {
@@ -119,8 +141,8 @@
                 "model-name": "CharacterSelectorPlugin"
             },
             "position": {
-                "x": -2.075754603303551,
-                "y": -90.84575105961225
+                "x": -6.012982931685826,
+                "y": -88.87713689542105
             }
         }
     ]
