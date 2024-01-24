@@ -18,6 +18,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMe
 
     public:
     AnimHostMessageSender() {}
+
     AnimHostMessageSender(bool m_debugState, zmq::context_t * m_context) {
         _debug = m_debugState;
         context = m_context;
@@ -35,36 +36,38 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMe
     //request this process to stop working
     void requestStop() override;
 
-    //void setMessage(QByteArray* msg);
+    void setAnimationAndSceneData(std::shared_ptr<Animation> ad, std::shared_ptr<CharacterObject> co, std::shared_ptr<SceneNodeObjectSequence> snl);
+
+    QByteArray createMessageBody(byte SceneID, int objectID, int ParameterID, ZMQMessageHandler::ParameterType paramType,
+                                 bool payload);
+    QByteArray createMessageBody(byte SceneID, int objectID, int ParameterID, ZMQMessageHandler::ParameterType paramType,
+                                 std::int32_t payload);
+    QByteArray createMessageBody(byte SceneID, int objectID, int ParameterID, ZMQMessageHandler::ParameterType paramType,
+                                 float payload);
+    QByteArray createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
+                                 std::string payload);
+    QByteArray createMessageBody(byte SceneID, int objectID, int ParameterID, ZMQMessageHandler::ParameterType paramType,
+                                 std::vector<float> payload);
+
+    void SerializeVector(byte* dest, std::vector<float> _vector, ZMQMessageHandler::ParameterType type);
+
+    // Serializes in the form of a byte array an animation frame represented by a list of quaternions (Animation data type)
+    void SerializePose(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character,
+                       std::shared_ptr<SceneNodeObjectSequence> sceneNodeList, QByteArray* byteArray, int frame = 0);
+
+    //! Does the sent animation loop?
+    bool loop = false;
+
+    std::shared_ptr<Animation> animData = nullptr;
+    std::shared_ptr<CharacterObject> charObj = nullptr;
+    std::shared_ptr<SceneNodeObjectSequence> sceneNodeList = nullptr;
 
     private:
-
     // ZeroMQ Socket used to send animation data
     zmq::socket_t* sendSocket = nullptr;
 
-    //id displayed as clientID for messages redistributed through syncServer
-    //byte targetHostID;
-
     //syncMessage
     //byte syncMessage[3] = { targetHostID,0,MessageType::EMPTY };
-
-    //server IP
-    //QString IPadress;
-
-    //map of last states
-    //QMap<QByteArray, QByteArray> objectStateMap;
-
-    //map of ping timings
-    //QMap<byte, unsigned int> pingMap;
-
-    //map of last states
-    //QMultiMap<byte, QByteArray> lockMap;
-
-    //the local elapsed time in seconds since object has been created.
-    //unsigned int m_time = 0;
-
-    //static const unsigned int m_pingTimeout = 4;
-
 
     signals:
     //signal emitted when process requests to work

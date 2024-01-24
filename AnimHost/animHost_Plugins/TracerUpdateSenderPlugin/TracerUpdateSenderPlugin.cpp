@@ -12,6 +12,7 @@ TracerUpdateSenderPlugin::TracerUpdateSenderPlugin()
     _sendUpdateButton = nullptr;
     widget = nullptr;
     _selectIPAddress = nullptr;
+    _loopCheck = nullptr;
     _ipAddressLayout = nullptr;
     _ipAddress = nullptr;
     _ipValidator = nullptr;
@@ -21,7 +22,7 @@ TracerUpdateSenderPlugin::TracerUpdateSenderPlugin()
     timer->start(0);
     _updateSenderContext = new zmq::context_t(1);
 
-    localTime = timer->interval() % 128;
+    localTime = timer->interval() % 120; // Do I need to change this?
 
     if (!msgSender) // trying to avoid multiple instances
         msgSender = new AnimHostMessageSender(false, _updateSenderContext);
@@ -120,61 +121,6 @@ void TracerUpdateSenderPlugin::run() {
     qDebug() << "TracerUpdateSenderPlugin running...";
 }
 
-/**
- * .
- * 
- * \param animData
- * \param byteArray
- */
-void TracerUpdateSenderPlugin::SerializePose(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character,
-                                                  std::shared_ptr<SceneNodeObjectSequence> sceneNodeList, QByteArray* byteArray, int frame) {
-    // Target Scene ID
-    int targetSceneID = ZMQMessageHandler::getTargetSceneID();
-
-    // Character SceneObject for testing
-    //std::int32_t sceneObjID = 3;
-    // Bone orientation IDs for testing
-    //std::int32_t parameterID[28] = { 3, 4, 5, 6, 7, 8, 28, 29, 30, 31, 9, 10, 11, 12, 51, 52, 53, 54, 47, 48, 49, 50 };
-    /*if ((int) animData->mBones.size() != sizeof(parameterID)/sizeof(std::int32_t)) {
-        qDebug() << "ParameterID array mismatch: " << animData->mBones.size() << " elements required, " << sizeof(parameterID)/sizeof(std::int32_t) << " provided";
-        return;
-    }*/
-
-    int rootBoneID = character->skinnedMeshList.at(0).boneMapIDs.at(0);
-    for (ushort i = 0; i < character->skinnedMeshList.at(0).boneMapIDs.size(); i++) {
-        // boneMapIDs contains the parameterID to boneID mapping
-        //      parameterID (= i+3)                 id to be sent in the update message to the rendering application, the offset (+3) is necessary because the first 3 parameters are ALWAYS rootPos, rootRot, rootScl
-        //      boneID      (= boneMapIDs.at(i))    id to be used to get BONE NAME given the list of SceneNodes in the received scene
-        //      boneName                            name to be used to get BONE QUATERNION from the animation data
-        // This WILL NOT WORK for RETARGETED animations
-        
-        // Getting boneName given the parameterID
-        int boneID = character->skinnedMeshList.at(0).boneMapIDs.at(i);
-        std::string boneName = sceneNodeList->mSceneNodeObjectSequence.at(boneID).objectName;
-        // boneName search (sequential...any ideas on how to make it faster?)
-        int animDataBoneID = -1;
-        for (int j = 0; j < animData->mBones.size(); j++) {
-            if (boneName.compare(animData->mBones.at(j).mName) == 0) {
-                animDataBoneID = j;
-                break;
-            }
-        }
-        assert(animDataBoneID >= 0);
-
-        Bone selectedBone = animData->mBones.at(animDataBoneID);
-
-        // Getting Bone Object Rotation Quaternion
-        glm::quat boneQuat = selectedBone.GetOrientation(frame);
-
-        std::vector<float> boneQuatVector = { boneQuat.x, boneQuat.y, boneQuat.z,  boneQuat.w }; // converting glm::quat in vector<float>
-
-        qDebug() << i << boneID << boneName << animData->mBones.at(animDataBoneID).mName << boneQuatVector;
-
-        QByteArray msgBoneQuat = msgSender->createMessageBody(targetSceneID, character->sceneObjectID, i+3, ZMQMessageHandler::ParameterType::QUATERNION, boneQuatVector);
-        byteArray->append(msgBoneQuat);
-    }
-}
-
 // When TICK is received message sender is enabled
 // This Tick-Slot is connected to the Tick-Signal in the TickRecieverThread
 void TracerUpdateSenderPlugin::ticked(int externalTime) {
@@ -198,11 +144,12 @@ QWidget* TracerUpdateSenderPlugin::embeddedWidget() {
     if (!widget) {
         _sendUpdateButton = new QPushButton("Send Animation");
         _selectIPAddress = new QComboBox();
-        _ipAddressLayout = new QHBoxLayout();
+        _loopCheck = new QCheckBox("Loop");
         _ipAddress = ZMQMessageHandler::getIPList().at(0).toString();
         _ipValidator = new QRegularExpressionValidator(ZMQMessageHandler::ipRegex, this);
 
         connect(_selectIPAddress, &QComboBox::currentIndexChanged, this, &TracerUpdateSenderPlugin::onChangedSelection);
+        connect(_loopCheck, &QCheckBox::stateChanged, this, &TracerUpdateSenderPlugin::onLoopCheck);
 
         for (QHostAddress ipAddress : ZMQMessageHandler::getIPList()) {
             _selectIPAddress->addItem(ipAddress.toString());
@@ -213,6 +160,7 @@ QWidget* TracerUpdateSenderPlugin::embeddedWidget() {
         _ipAddressLayout = new QHBoxLayout();
 
         _ipAddressLayout->addWidget(_selectIPAddress);
+        _ipAddressLayout->addWidget(_loopCheck);
         _ipAddressLayout->addWidget(_sendUpdateButton);
 
         _ipAddressLayout->setSizeConstraint(QLayout::SetMinimumSize);
@@ -243,6 +191,11 @@ void TracerUpdateSenderPlugin::onChangedSelection(int index) {
     qDebug() << "New IP Address:" << ZMQMessageHandler::getOwnIP();
 }
 
+void TracerUpdateSenderPlugin::onLoopCheck(int state) {
+    // loop is false when checkbox is unchecked, true otherwise
+    msgSender->loop = (state != Qt::Unchecked);
+}
+
 void TracerUpdateSenderPlugin::onButtonClicked() {
     auto sp_character = _characterIn.lock();
     auto sp_animation = _animIn.lock();
@@ -250,6 +203,9 @@ void TracerUpdateSenderPlugin::onButtonClicked() {
 
     // abort if any shared pointer is invalid
     assert(sp_character && sp_animation && sp_sceneNodeList);
+
+    // Set animation, character and scene data (necessary for creating a pose update message) in the message sender object
+    msgSender->setAnimationAndSceneData(sp_animation->getData(), sp_character->getData(), sp_sceneNodeList->getData());
 
     ///! DEBUGGING SAMPLE DATA USED TO TEST SENDING
 
@@ -271,47 +227,13 @@ void TracerUpdateSenderPlugin::onButtonClicked() {
     QByteArray msgQuat2 = msgSender->createMessageBody(254, 3, 47, ZMQMessageHandler::ParameterType::QUATERNION, quatExample2);
     msgBodyQuat.append(msgQuat2);*/
 
-    std::shared_ptr<Animation> animData = sp_animation->getData();
-    std::shared_ptr<CharacterObject> chobj = sp_character->getData();
-    std::shared_ptr<SceneNodeObjectSequence> sceneNodeList = sp_sceneNodeList->getData();
-    QByteArray* msgBodyAnim = new QByteArray();
-
-    // The length of the animation is defined by the bones that has the more frames
-    int animDataSize = 0;
-    for (Bone bone : animData->mBones) {
-        int boneFrames = bone.mRotationKeys.size();
-        if (boneFrames > animDataSize)
-            animDataSize = boneFrames;
-    }
-
-    // Define duration single frame (default 33 = ~30fps) - [40 = 25fps] - [42 = ~24fps] - [17 = ~60fps]
-    int frameDurationMillisec = 33;
-    // In case the animation has a valid duration metadata, computing the duration of each frame
-    if (animData->mDuration > 0) {
-        frameDurationMillisec = (animData->mDuration * 1000) / animData->mDurationFrames;
-    }
-
-    // send poses sequentially
-    for (int frame = 0; frame < animDataSize; frame++) {
-        QThread::msleep(frameDurationMillisec);
-
-        SerializePose(animData, chobj, sceneNodeList, msgBodyAnim, frame);
-
-        // create ZMQ and send it through AnimHostMessageSender
-        msgSender->createNewMessage(localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
-
-        // This does not seem to be correct...the Thread is already started...
-        if (!zeroMQSenderThread->isRunning()) {
-            msgSender->requestStart();
-            zeroMQSenderThread->start();
-        } else {
-            msgSender->resume();
-        }
-
-        // if loop enabled reset frame to 0 at the end of the animation (except when the animation has only one frame)
-        if (loop && frame > 0 && frame == animData->mBones.at(0).mRotationKeys.size() - 1)
-            frame = 0;
-    }
+    // This does not seem to be correct...the Thread is already started...
+    if (!zeroMQSenderThread->isRunning()) {
+        msgSender->requestStart();
+        zeroMQSenderThread->start();
+    } else {
+        msgSender->resume();
+    }   
 
     // Example of message creation
     //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyBool));
@@ -319,6 +241,4 @@ void TracerUpdateSenderPlugin::onButtonClicked() {
     //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyFloat));
     //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyVec3));
     //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyQuat));
-
-    qDebug() << "Attempting SEND connection on" << ZMQMessageHandler::getOwnIP();
 }

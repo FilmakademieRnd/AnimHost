@@ -37,14 +37,26 @@
             "outPortIndex": 2
         },
         {
+            "inPortIndex": 1,
+            "intNodeId": 1,
+            "outNodeId": 8,
+            "outPortIndex": 1
+        },
+        {
             "inPortIndex": 0,
             "intNodeId": 1,
+            "outNodeId": 8,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 8,
             "outNodeId": 0,
             "outPortIndex": 0
         },
         {
             "inPortIndex": 1,
-            "intNodeId": 1,
+            "intNodeId": 8,
             "outNodeId": 0,
             "outPortIndex": 2
         }
@@ -62,23 +74,23 @@
             }
         },
         {
+            "id": 8,
+            "internal-data": {
+                "model-name": "CoordinateConverterPlugin"
+            },
+            "position": {
+                "x": 48.800600305480884,
+                "y": -230.74837705893674
+            }
+        },
+        {
             "id": 1,
             "internal-data": {
                 "model-name": "TracerUpdateSenderPlugin"
             },
             "position": {
-                "x": 410.77621755739966,
-                "y": -141.38873863393837
-            }
-        },
-        {
-            "id": 2,
-            "internal-data": {
-                "model-name": "AnimationFrameSelectorPlugin"
-            },
-            "position": {
-                "x": 139.6190232244099,
-                "y": -396.70107743677084
+                "x": 409.0377498743076,
+                "y": -89.16265356918962
             }
         },
         {
@@ -107,8 +119,8 @@
                 "model-name": "CharacterSelectorPlugin"
             },
             "position": {
-                "x": -4.044368767494689,
-                "y": 72.54922456825179
+                "x": 3.258181507397296,
+                "y": 45.55474747128503
             }
         }
     ]

@@ -10,6 +10,7 @@
 #include <QPushButton>
 #include <QValidator>
 #include <QComboBox>
+#include <QCheckBox>
 #include <QHBoxLayout>
 #include <pluginnodeinterface.h>
 #include <commondatatypes.h>
@@ -32,6 +33,7 @@ private:
     QWidget* widget;
     QPushButton* _sendUpdateButton;
     QComboBox* _selectIPAddress;
+    QCheckBox* _loopCheck;
     QHBoxLayout* _ipAddressLayout;
     QRegularExpressionValidator* _ipValidator;
 
@@ -62,10 +64,6 @@ private:
     std::vector<int> _animOut;
     int validData = -1;
 
-    // Serializes in the form of a byte array an animation frame represented by a list of quaternions (Animation data type)
-    void SerializePose(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character,
-                            std::shared_ptr<SceneNodeObjectSequence> sceneNodeList, QByteArray* byteArray, int frame = 0);
-
 public:
     TracerUpdateSenderPlugin();
     ~TracerUpdateSenderPlugin();
@@ -95,6 +93,7 @@ public:
 private Q_SLOTS:
     void onChangedSelection(int index);
     void onButtonClicked();
+    void onLoopCheck(int state);
     void run();
     void ticked(int externalTime);
 

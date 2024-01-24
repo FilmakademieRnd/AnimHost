@@ -130,20 +130,8 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     /*void Serialize(byte* dest, bool _value);
     void Serialize(byte* dest, int _value);
     void Serialize(byte* dest, float _value);*/
-    void SerializeVector(byte* dest, std::vector<float> _vector, ZMQMessageHandler::ParameterType type);
 
     void createNewMessage(byte time, ZMQMessageHandler::MessageType messageType, QByteArray* body);
-
-    QByteArray createMessageBody(byte SceneID, int objectID, int ParameterID, ZMQMessageHandler::ParameterType paramType,
-                                 bool payload);
-    QByteArray createMessageBody(byte SceneID, int objectID, int ParameterID, ZMQMessageHandler::ParameterType paramType,
-                                 std::int32_t payload);
-    QByteArray createMessageBody(byte SceneID, int objectID, int ParameterID, ZMQMessageHandler::ParameterType paramType,
-                                 float payload);
-    QByteArray createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
-                                 std::string payload);
-    QByteArray createMessageBody(byte SceneID, int objectID, int ParameterID, ZMQMessageHandler::ParameterType paramType,
-                                 std::vector<float> payload);
 
     protected:
     static QList<QHostAddress> ipList;
