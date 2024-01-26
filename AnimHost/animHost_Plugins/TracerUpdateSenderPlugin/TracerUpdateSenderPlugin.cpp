@@ -22,7 +22,7 @@ TracerUpdateSenderPlugin::TracerUpdateSenderPlugin()
     timer->start(0);
     _updateSenderContext = new zmq::context_t(1);
 
-    localTime = timer->interval() % 120; // Do I need to change this?
+    localTime = timer->interval() % 120;
 
     if (!msgSender) // trying to avoid multiple instances
         msgSender = new AnimHostMessageSender(false, _updateSenderContext);
@@ -119,14 +119,22 @@ void TracerUpdateSenderPlugin::processInData(std::shared_ptr<NodeData> data, QtN
 
 void TracerUpdateSenderPlugin::run() {
     qDebug() << "TracerUpdateSenderPlugin running...";
+
+    // every time the buffer is **predicted to be** half-read, fill the next half buffer
+    // TO BE UNCOMMENTED AS SOON AS I RECEIVE bufferSize and renderingFrameRate from receiver
+    /*if (localTime % (bufferReadTime / 2) == 0) {
+        msgSender->resume();
+    }*/
 }
 
 // When TICK is received message sender is enabled
 // This Tick-Slot is connected to the Tick-Signal in the TickRecieverThread
 void TracerUpdateSenderPlugin::ticked(int externalTime) {
-    localTime = externalTime;
-    timer->stop();
-    timer->start(localTime);
+    if (std::abs(externalTime - localTime) > 50) {
+        localTime = externalTime;
+        timer->stop();
+        timer->start(localTime);
+    }
     if(zeroMQSenderThread->isRunning())
         msgSender->resume();
 }
@@ -227,7 +235,6 @@ void TracerUpdateSenderPlugin::onButtonClicked() {
     QByteArray msgQuat2 = msgSender->createMessageBody(254, 3, 47, ZMQMessageHandler::ParameterType::QUATERNION, quatExample2);
     msgBodyQuat.append(msgQuat2);*/
 
-    // This does not seem to be correct...the Thread is already started...
     if (!zeroMQSenderThread->isRunning()) {
         msgSender->requestStart();
         zeroMQSenderThread->start();

@@ -184,9 +184,12 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
 
     static const unsigned int m_pingTimeout = 4;
 
-    // Storing parameter dimensions (NONE, ACTION, BOOL, INT, FLOAT, VECTOR2, VECTOR3, VECTOR4, QUATERNION, COLOR-RGBA, STRING, LIST, UNKNOWN respectively)
+    // Storing parameter dimensions (NONE,          ACTION,     BOOL,
+    //                               INT,           FLOAT,
+    //                               VECTOR2,       VECTOR3,    VECTOR4,    QUATERNION,
+    //                               COLOR-RGBA,    STRING,     LIST,       UNKNOWN respectively)
     static constexpr byte parameterDimension[13] = {
-        0, 1, sizeof(bool),
+        0, 1, sizeof(std::int32_t),
         sizeof(std::int32_t), sizeof(float),
         sizeof(float)*2, sizeof(float)*3, sizeof(float)*4, sizeof(float)*4,
         sizeof(float)*4, 100, 100, 100};

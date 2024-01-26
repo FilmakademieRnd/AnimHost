@@ -49,7 +49,7 @@ void AnimHostMessageSender::run() {
     //zmq::message_t* tempMsg = new zmq::message_t();
     int type;
     size_t type_size = sizeof(type);
-    int count = 0;
+    byte timestamp = 0;
     while (_working) {
 
         // checks if process should be aborted
@@ -82,8 +82,6 @@ void AnimHostMessageSender::run() {
 
         // Send Poses Sequentially
         for (int frame = 0; frame < animDataSize; frame++) {
-            // At the moment, sleeping is not required nor wanted because we want to fill the ring buffer of the receiver faster then it is consumed
-            QThread::msleep(1);
 
             SerializePose(animData, charObj, sceneNodeList, msgBodyAnim, frame);
 
@@ -119,6 +117,7 @@ void AnimHostMessageSender::run() {
             qDebug() << "Stopping AnimHost Message Sender";// in Thread "<<thread()->currentThreadId();
             break;
         }
+        qDebug() << "AnimHostMessageSender Running";
         QThread::yieldCurrentThread();
     }
 
@@ -252,7 +251,7 @@ QByteArray AnimHostMessageSender::createMessageBody(byte sceneID, int objectID, 
     const char* payloadBytes = (char*) malloc(getParameterDimension(parameterType));
     assert(payloadBytes != NULL);
     std::int32_t val = payload;
-    std::memcpy((byte*) payloadBytes, &val, sizeof(std::int32_t));
+    std::memcpy((byte*) payloadBytes, &val, getParameterDimension(parameterType));
     newMessage.append(payloadBytes, (qsizetype) getParameterDimension(parameterType));
 
     std::string debugOut;
@@ -286,7 +285,7 @@ QByteArray AnimHostMessageSender::createMessageBody(byte sceneID, int objectID, 
     const char* payloadBytes = (char*) malloc(getParameterDimension(parameterType));
     assert(payloadBytes != NULL);
     float val = payload;
-    std::memcpy((byte*) payloadBytes, &val, sizeof(float));
+    std::memcpy((byte*) payloadBytes, &val, getParameterDimension(parameterType));
     newMessage.append(payloadBytes, (qsizetype) getParameterDimension(parameterType));
 
     std::string debugOut;
