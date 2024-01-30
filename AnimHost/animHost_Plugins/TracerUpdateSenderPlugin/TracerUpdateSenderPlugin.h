@@ -1,16 +1,15 @@
 
 //!
-//! \file "TracerUpdateSenderPlugin.h"
-//! \implements PluginNodeInterface
-//! \brief Plugin allowing the user to send pose updates to TRACER
-//! \param[in]  _animIn             The animation data (consisting of one or more poses)
-//! \param[in]  _characterIn        The selected character to which the animation is going to be applied
-//! \param[in]  _sceneNodeListIn    A description of the scene of the TRACER client. Necessary to match animation data to character rig
-//! \author Francesco Andreussi
-//! \version 0.5
-//! \date 26.01.2024
+//! @file "TracerUpdateSenderPlugin.h"
+//! @implements PluginNodeInterface
+//! @brief Plugin allowing the user to send pose updates to TRACER
+//! @param[in]  _animIn             The animation data (consisting of one or more poses)
+//! @param[in]  _characterIn        The selected character to which the animation is going to be applied
+//! @param[in]  _sceneNodeListIn    A description of the scene of the TRACER client. Necessary to match animation data to character rig
+//! @author Francesco Andreussi
+//! @version 0.5
+//! @date 26.01.2024
 //!
-
 /*!
  * ###Plugin class with UI elements for sending poses to the listening TRACER clients.
  * Using the UI elements, it's possible to select an IP address (and consequetly a client ID),
@@ -60,9 +59,9 @@ private:
     QThread* zeroMQSenderThread = nullptr;          //!< Sub-thread to handle message sending without making the UI thread unresponsive
     QThread* zeroMQTickReceiverThread = nullptr;    //!< Sub-thread to handle receiving synchronisation messages
 
-    std::weak_ptr<AnimNodeData<Animation>> _animIn;                         //!< @param The animation data (consisting of one or more poses)
-    std::weak_ptr<AnimNodeData<CharacterObject>> _characterIn;              //!< @param The selected character to which the animation is going to be applied
-    std::weak_ptr<AnimNodeData<SceneNodeObjectSequence>> _sceneNodeListIn;  //!< @param A description of the scene of the TRACER client. Necessary to match animation data to character rig
+    std::weak_ptr<AnimNodeData<Animation>> _animIn;                         //!< The animation data (consisting of one or more poses) - **Data set by UI PortIn**
+    std::weak_ptr<AnimNodeData<CharacterObject>> _characterIn;              //!< The selected character to which the animation is going to be applied - **Data set by UI PortIn**
+    std::weak_ptr<AnimNodeData<SceneNodeObjectSequence>> _sceneNodeListIn;  //!< A description of the scene of the TRACER client. Necessary to match animation data to character rig - **Data set by UI PortIn**
     
     QTimer* timer;                                  //!< Timer needed to keep sender and receiver in sync
     int localTime = 0;                              //! @todo move timer and local time(stamp) directly to subthread?

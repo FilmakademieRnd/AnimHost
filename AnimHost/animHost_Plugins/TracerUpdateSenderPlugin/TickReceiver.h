@@ -5,7 +5,6 @@
 #include "ZMQMessageHandler.h"
 #include "TracerUpdateSenderPlugin.h"
 
-//#include <QObject>
 #include <QMutex>
 #include <QThread>
 #include <nzmqt/nzmqt.hpp>

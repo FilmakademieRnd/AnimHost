@@ -1,3 +1,17 @@
+
+//!
+//! \file "ZMQMessageHandler.h"
+//! \brief Class used to build and send udpate messages to TRACER clients     
+//! \author Francesco Andreussi
+//! \version 0.5
+//! \date 26.01.2024
+//!
+/*!
+ * ###This is a abstract class acting as a base class for any ZMQ Message Handler. It has to be implemented by a derived classes.
+ * The class provides base methods and fields that can be useful to multiple classes that will have to interact with TRACER (DataHub and other clients alike),
+ * for instance by sending and receiving 0MQ messages in a format specified by TRACER.
+ */
+
 #ifndef ZMQMESSAGEHANDLER_H
 #define ZMQMESSAGEHANDLER_H
 
@@ -21,47 +35,71 @@
 #include <nzmqt/nzmqt.hpp>
 #include <zmq.hpp>
 
-typedef unsigned char byte;
+typedef unsigned char byte; //!< \typedef unsigned char byte
 
-
-/**
-* ABSTRACT CLASS acting as a base class for any ZMQ Message Handler
-* - Senders, Receivers, Broadcasters, etc. -
-* The concrete implementation is constraint by where and how the derived classes will be deployed
-*/
 class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     
    //Q_OBJECT
 
     public:
+    //! Default constructor
     ZMQMessageHandler();
     
-    // Regex for any integer between 0 and 255 (0/1 followed by two figures 0-9, OR 2 followed by a figure 0-4 and another 0-9, OR 25 and a figure 0-5)
+    //! Regex for any integer between 0 and 255 (0/1 followed by two figures 0-9, OR 2 followed by a figure 0-4 and another 0-9, OR 25 and a figure 0-5)
     inline static const QString ipRangeRegex = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])";
-    // Regex for an ip address (4 ints between 0-255 interleaved by a ".")
+    //! Regex for an ip address (4 ints between 0-255 interleaved by a ".")
     inline static const QRegularExpression ipRegex = QRegularExpression("^" + ipRangeRegex
                                                                    + "(\\." + ipRangeRegex + ")"
                                                                    + "(\\." + ipRangeRegex + ")"
                                                                    + "(\\." + ipRangeRegex + ")$");
 
-    //request this process to start working
-    virtual void requestStart() = 0; // TO BE IMPLEMENTED in concrete class
+    //! Request this process to start working
+    /* \todo To be implemented in concrete class */
+    virtual void requestStart() = 0; 
 
-    //request this process to stop working
-    virtual void requestStop() = 0; // TO BE IMPLEMENTED in concrete class
+    //! Request this process to stop working
+    /* \todo To be implemented in concrete class */
+    virtual void requestStop() = 0;
 
+    //! Sets the debug state
+    /*!
+     * @param _debugState The bool to be set as the new debug state
+     */
     void setDebugState(bool _debugState) {
         _debug = _debugState;
     }
 
+    //! Resumes main loop execution
+    /*!
+     * Sets \c _paused to false and wakes all threads
+     */
     void resume();
 
+    //! Resumes main loop execution
+    /*!
+     * Sets \c _paused to true
+     */
     void pause() {
         mutex.lock();
         _paused = true;
         mutex.unlock();
     }
 
+    //! Enumeration of Message Types allowed by TRACER
+    /*!
+     * Enumeration common to every TRACER element (DataHub and other clients alike).
+     * Enum Value      | Int Value | Description                                                               |
+     * --------------: | :-------: | :------------------------------------------------------------------------ |
+     * PARAMETERUPDATE | 0         | The message contains values for a parameter of an object in the scene     |
+     * LOCK            | 1         | The message locks all attributes of an object in the scene                |
+     * SYNC            | 2         | The message contains data for syncronising two TRACER applications        |
+     * PING            | 3         | The message contains/requests? a ping                                     |
+     * RESENDUPDATE    | 4         | The message asks for a parameter update to be sent again                  |
+     * UNDOREDO        | 5         | The message asks for a modification in a scene has to be undone/redone    |
+     * RESETOBJECT     | 6         | The message asks for all modifications to an object to be reverted        |
+     * DATAHUB         | 7         | ?                                                                         |
+     * EMPTY           | 255       | Empty message (default)                                                   |
+     */
     enum MessageType {
         PARAMETERUPDATE, LOCK, // node
         SYNC, PING, RESENDUPDATE, // sync
@@ -70,6 +108,10 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
         EMPTY = 255
     };
 
+    //! Resumes main loop execution
+    /*!
+     * Sets \c _paused to false and wakes all threads
+     */
     enum ParameterType : byte {
         NONE, ACTION, BOOL,                     // Generic
         INT, FLOAT,                             // Scalar
@@ -78,6 +120,10 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
         UNKNOWN = 100
     };
 
+    //! Resumes main loop execution
+    /*!
+     * Sets \c _paused to false and wakes all threads
+     */
     static constexpr byte getParameterDimension(ParameterType parameterType) {
         return parameterDimension[parameterType];
     }
@@ -90,14 +136,26 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     //    UNKNOWN = 100
     //};
 
+    //! Resumes main loop execution
+    /*!
+     * Sets \c _paused to false and wakes all threads
+     */
     static QList<QHostAddress> getIPList() {
         return ZMQMessageHandler::ipList;
     }
 
+    //! Resumes main loop execution
+    /*!
+     * Sets \c _paused to false and wakes all threads
+     */
     static QString getOwnIP() {
         return ZMQMessageHandler::ownIP;
     }
 
+    //! Resumes main loop execution
+    /*!
+     * Sets \c _paused to false and wakes all threads
+     */
     static byte getOwnID() {
         qsizetype lastDotPos = 0; // qsizetype = int64
 
@@ -109,14 +167,26 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
         }
     }
 
+    //! Resumes main loop execution
+    /*!
+     * Sets \c _paused to false and wakes all threads
+     */
     static void setTargetSceneID(byte _targetSceneID) {
         ZMQMessageHandler::targetSceneID = _targetSceneID;
     }
 
+    //! Resumes main loop execution
+    /*!
+     * Sets \c _paused to false and wakes all threads
+     */
     static byte getTargetSceneID() {
         return ZMQMessageHandler::targetSceneID;
     }
 
+    //! Resumes main loop execution
+    /*!
+     * Sets \c _paused to false and wakes all threads
+     */
     static void setIPAddress(QString newIPAddress) {
         if (ipRegex.match(newIPAddress).isValid()) {
             ZMQMessageHandler::ownIP = newIPAddress;
@@ -131,6 +201,10 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     void Serialize(byte* dest, int _value);
     void Serialize(byte* dest, float _value);*/
 
+    //! Resumes main loop execution
+    /*!
+     * Sets \c _paused to false and wakes all threads
+     */
     void createNewMessage(byte time, ZMQMessageHandler::MessageType messageType, QByteArray* body);
 
     protected:
