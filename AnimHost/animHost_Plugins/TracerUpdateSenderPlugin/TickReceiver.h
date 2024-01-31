@@ -1,4 +1,18 @@
 
+//!
+//! \file "TickReceiver.h"
+//! \implements ZMQMessageHandler
+//! \brief Class used to listen SYNC messages from TRACER clients     
+//! \author Francesco Andreussi
+//! \version 0.5
+//! \date 26.01.2024
+//!
+/*!
+ * ###This class is instanced by the [TracerUpdateSenderPlugin](@ref TracerUpdateSenderPlugin) and is run in a subthread.
+ * The class listens to SYNC messages from DataHub and the other TRACER clients, keeps the timestamps in check,
+ * and notifies \c TracerUpdateSenderPlugin of the arrival of the message
+ */
+
 #ifndef TICKRECEIVER_H
 #define TICKRECEIVER_H
 
@@ -14,7 +28,16 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
 	Q_OBJECT
 
 	public:
+
+    //! Default constructor
 	TickReceiver() {}
+
+    //! Constructor
+    /*!
+    * \param[in]    m_TUSPlugin     The TracerUpdateSenderPlugin instance that calls the constructor
+    * \param[in]    m_debugState    Whether the class should print out debug messages
+    * \param[in]    m_context       A pointer to the 0MQ COntext instanciated by \c m_TUSPlugin
+    */
     TickReceiver(TracerUpdateSenderPlugin* m_TUSPlugin, bool m_debugState, zmq::context_t* m_context) {
         TUSPlugin = m_TUSPlugin;
         _debug = m_debugState;
@@ -24,6 +47,11 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
         _paused = false;
     }
 
+    //! Constructor
+    /*!
+    * \param[in]    m_debugState    Whether the class should print out debug messages
+    * \param[in]    m_context       A pointer to the 0MQ COntext instanciated by \c m_TUSPlugin
+    */
     TickReceiver(bool m_debugState, zmq::context_t* m_context) {
         _debug = m_debugState;
         context = m_context;
@@ -32,10 +60,15 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
         _paused = false;
     }
 
+    //! Default destructor, closes connection and cleans up
 	~TickReceiver() {
         receiveSocket->close();
     }
 
+    //! Request this process to start working
+    /*!
+    * Sets \c _working to true, \c _stopped and \c _paused to false and creates a new publishing \c sendSocket for message broadcasting
+    */
     void requestStart() override {
         mutex.lock();
         _working = true;
@@ -45,6 +78,10 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
         mutex.unlock();
     }
 
+    //! Request this process to stop working
+    /*!
+    * Sets \c _stopped to true and \c _paused to false. -Should- close \c sendSocket and cleanup
+    */
     void requestStop() override {
         mutex.lock();
         if (_working) {
@@ -57,11 +94,15 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
     }
 
     private:
-    zmq::socket_t* receiveSocket = nullptr;
-    TracerUpdateSenderPlugin* TUSPlugin = nullptr;
+    zmq::socket_t* receiveSocket = nullptr;         //!< Pointer to the instance of the socket that will listen to the messages
+    TracerUpdateSenderPlugin* TUSPlugin = nullptr;  //!< Pointer to the instance of TracerUpdateSenderPlugin that owns this TickReceiver
 
 	public Q_SLOTS:
-
+    //! Main loop, executes all operations
+    /*!
+     * Gets triggered by the Qt Application UI thread, when the TracerUpdateSender Plugin is initialised.
+     * It opens a socket and listens to all the messages coming its way. If a SYNC message is received, it reads it and notifies the UI thread.
+     */
     void run() {
         // open socket
         receiveSocket = new zmq::socket_t(*context, zmq::socket_type::sub);
@@ -100,7 +141,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
     }
 
     Q_SIGNALS:
-    void tick(int syncTime);
-    void stopped();
+    void tick(int syncTime);    //!< Signal emitted when a SYNC message is received. Passes along the received timestamp
+    void stopped();             //!< Signal emitted when process is finished
 };
 #endif // TICKRECEIVER_H

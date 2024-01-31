@@ -8,7 +8,7 @@
 //! \date 26.01.2024
 //!
 /*!
- * ###This class is started by the [TracerUpdateSenderPlugin](@ref TracerUpdateSenderPlugin) and is run in a subthread.
+ * ###This class is instanced by the [TracerUpdateSenderPlugin](@ref TracerUpdateSenderPlugin) and is run in a subthread.
  * The class handles the connection to DataHub and the other TRACER clients, it builds a TRACER Update Message given a certain payload,
  * like bool, int, float, vector of floats (vec2, vec3, vec4, quat, colour), or string
  */

@@ -77,6 +77,12 @@ private:
 
 public:
     //! Default constructor
+    /*!
+    * Instantiates message sender and tick receiver classes, moves both to their separate threads and connects the various signals to the associated functions:
+    * - \c QThread::started() signal is connected to \c AnimHostMessageSender::run()
+    * - \c QThread::started() signal is connected to \c TickReceiver::run()
+    * - \c TickReceiver::tick() signal is connected to TracerUpdateSenderPlugin::ticked()
+    */
     TracerUpdateSenderPlugin();
     //! Default destructor
     ~TracerUpdateSenderPlugin();
@@ -86,8 +92,10 @@ public:
     
     //! Returning Plugin name, called by Qt Application
     QString caption() const override { return this->name(); }
+    
     //! Whether name is visible on UI, called by Qt Application
     bool captionVisible() const override { return true; }
+
     //! Whether Plugin passes on the run signal, called by Qt Application
     /*!
     * TracerUpdateSenderPlugin is a sink node, i.e. it doesn't have any output in the Qt Application's Plugin Graph.
@@ -114,24 +122,35 @@ public:
 
     void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override; //!< Given a port index, processes the data of the corresponding IN port
 
-    QWidget* embeddedWidget() override; //!< returns pointer to UI elements
+    //! Initializes the plugin's UI elements
+    /*!
+    * Connects the various signals emitted by the UI elements to slots and functions of this class:
+    * - \c QComboBox::currentIndexChanged signal is connected to \c TracerUpdateSenderPlugin::onChangedSelection
+    * - \c QCheckBox::stateChanged signal is connected to \c TracerUpdateSenderPlugin::onLoopCheck
+    * - \c QPushButton::released signal is connected to \c TracerUpdateSenderPlugin::onButtonClicked
+    * \returns A pointer to the UI elements' container
+    */
+    QWidget* embeddedWidget() override; 
 
     //QTNodes
     QString category() override { return "Output"; };  //!< Returns a category for the node
 
 private Q_SLOTS:
+    
     //! Slot called when the drop-down menu selection chenged
     /*!
     * Replaces the IP Address with the newly selected option
     * \param index index of the selected element in the list
     */
     void onChangedSelection(int index);
+    
     //! Slot called when the "Send Animation" button is clicked
     /*!
     * Gets the pointers to the input ports' data, passes them to the [AnimHostMessageSender](@ref AnimHostMessageSender),
     * starts the subthread and runs the main loop of this class
     */
     void onButtonClicked();
+    
     //! Slot called when the "Loop" check gets clicked
     /*!
     * Enables/disables sending the animation as a loop (i.e. sending frames out continuously restarting the animation when at the end)
@@ -143,14 +162,17 @@ private Q_SLOTS:
     * | 2         | Box is checked                                                                        |
     */
     void onLoopCheck(int state);
+    
     //! Slot called when plugin execution is triggered (by the Qt Application)
     /*!
     * At the moment, does nothing. Empty main loop.
     */
     void run();
+
     //! Slot called when the subthread responsible for receiving SYNC messages gets a message
     /*!
-    * Checks whether the internal timer of the application and the other client's timer are in sync
+    * Checks whether the internal timer of the application and the other client's timer are in sync.
+    * Resumes the message sending subthread if paused.
     * \param    externalTime    the time of the client, with which the application is communicating
     */
     void ticked(int externalTime);
