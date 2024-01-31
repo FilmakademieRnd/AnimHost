@@ -75,7 +75,7 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
      */
     void resume();
 
-    //! Resumes main loop execution
+    //! Pauses main loop execution
     /*!
      * Sets \c _paused to true
      */
@@ -108,9 +108,24 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
         EMPTY = 255
     };
 
-    //! Resumes main loop execution
+    //! Enumeration of Message Types allowed by TRACER
     /*!
-     * Sets \c _paused to false and wakes all threads
+     * Enumeration common to every TRACER element (DataHub and other clients alike).
+     * Enum Value | Int Value | Description                                                                           |
+     * ---------: | :-------: | :------------------------------------------------------------------------------------ |
+     * NONE       | 0         | Empty message                                                                         |
+     * ACTION     | 1         | Action/command message                                                                |
+     * BOOL       | 2         | The message contains a boolean value                                                  |
+     * INT        | 3         | The message contains an integer scalar value                                          |
+     * FLOAT      | 4         | The message contains a floating point scalar value                                    |
+     * VECTOR2    | 5         | The message contains a vector with two floats                                         |
+     * VECTOR3    | 6         | The message contains a vector with three floats                                       |
+     * VECTOR4    | 7         | The message contains a vector with four floats                                        |
+     * QUATERNION | 8         | The message contains a vector with four floats, interpreted and used as a quaternion  |
+     * COLOR      | 9         | The message contains a vector with four floats, interpreted and used as a RGBA colour |
+     * STRING     | 10        | The message contains a string of variable size                                        |
+     * LIST       | 11        | The message contains a list of ??? of variable size                                   |
+     * UNKNOWN    | 100       | Uninitialised message                                                                 |
      */
     enum ParameterType : byte {
         NONE, ACTION, BOOL,                     // Generic
@@ -120,41 +135,34 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
         UNKNOWN = 100
     };
 
-    //! Resumes main loop execution
+    //! Returns the size size of each paramter in bytes
     /*!
-     * Sets \c _paused to false and wakes all threads
+     * @param[in]   parameterType   The type of parameter
+     * @returns     The size of the Update Message payload in bytes
      */
     static constexpr byte getParameterDimension(ParameterType parameterType) {
         return parameterDimension[parameterType];
     }
 
-    //enum ParameterDim : byte {
-    //    NONE = 0, ACTION = 1, BOOL = 2,                             // Generic
-    //    INT = 2, FLOAT = 4,                                         // Scalar
-    //    VECTOR2 = 8, VECTOR3 = 12, VECTOR4 = 16, QUATERNION = 16,   // Vectors
-    //    COLOR = 3, STRING = 100, LIST = 100,                        // Other Data Structures
-    //    UNKNOWN = 100
-    //};
-
-    //! Resumes main loop execution
-    /*!
-     * Sets \c _paused to false and wakes all threads
-     */
+    //! Gets the list of available IP Addresses
     static QList<QHostAddress> getIPList() {
         return ZMQMessageHandler::ipList;
     }
 
-    //! Resumes main loop execution
+    //! Returns the currently selected IP Address
     /*!
-     * Sets \c _paused to false and wakes all threads
+     * Static member function because it is supposed to return the same value for all instances of \c ZMQMessageHandler subclasses,
+     * which can be created from different plugins in the Qt Application
      */
     static QString getOwnIP() {
         return ZMQMessageHandler::ownIP;
     }
 
-    //! Resumes main loop execution
+    //! Returns the current Client ID of the AnimHost Qt Application
     /*!
-     * Sets \c _paused to false and wakes all threads
+     * Static member function because it is supposed to return the same value for all instances of \c ZMQMessageHandler subclasses,
+     * which can be created from different plugins in the Qt Application.
+     * @returns the last byte/octet of the IPv4 address in decimal format
      */
     static byte getOwnID() {
         qsizetype lastDotPos = 0; // qsizetype = int64
@@ -167,25 +175,29 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
         }
     }
 
-    //! Resumes main loop execution
+    //! Sets the ID of the client that is supposed to receive the update
     /*!
-     * Sets \c _paused to false and wakes all threads
+     * Static member function because it is supposed to update the target Client ID for all instances of \c ZMQMessageHandler subclasses,
+     * which can be created from different plugins in the Qt Application
      */
     static void setTargetSceneID(byte _targetSceneID) {
         ZMQMessageHandler::targetSceneID = _targetSceneID;
     }
 
-    //! Resumes main loop execution
+    //! Returns the ID of the client that is supposed to receive the update
     /*!
-     * Sets \c _paused to false and wakes all threads
+     * Static member function because it is supposed to return the same value for all instances of \c ZMQMessageHandler subclasses,
+     * which can be created from different plugins in the Qt Application.
      */
     static byte getTargetSceneID() {
         return ZMQMessageHandler::targetSceneID;
     }
 
-    //! Resumes main loop execution
+    //! Updates the currently selected IP address
     /*!
-     * Sets \c _paused to false and wakes all threads
+     * Updates the currently selected IP address, called when the selection in the drop-down menu in the UI of the TracerUpdateSender plugin changes
+     * Static member function because it is supposed to update the Ip address for all instances of \c ZMQMessageHandler subclasses,
+     * which can be created from different plugins in the Qt Application
      */
     static void setIPAddress(QString newIPAddress) {
         if (ipRegex.match(newIPAddress).isValid()) {
@@ -196,78 +208,116 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
         }
     }
 
-    // Converting elements in data into bytes
-    /*void Serialize(byte* dest, bool _value);
-    void Serialize(byte* dest, int _value);
-    void Serialize(byte* dest, float _value);*/
-
-    //! Resumes main loop execution
+    //! Creates a new 0MQ formatted message
     /*!
-     * Sets \c _paused to false and wakes all threads
+     * Creates a 0MQ message, with a new header and overwrites the member variable \c message with the new one
+     * \sa message
+     * \param[in]   time        Timestamp of the message; indicates where the message has to be placed in the input buffer of the receiver
+     * \param[in]   messageType The type of the mesage
+     * \param[in]   body        The body of the message, with one or more concatenated payloads (depending on \c messageType)
      */
     void createNewMessage(byte time, ZMQMessageHandler::MessageType messageType, QByteArray* body);
 
     protected:
+    
+    //! List of available IP addresses
     static QList<QHostAddress> ipList;
 
-    //client's own IP address
+    //! Client's own IP address
     static QString ownIP;
 
-    //id displayed as clientID for messages redistributed through syncServer
+    //! ID of the TRACER client that is supposed to receive the messages
     static byte targetSceneID;
     
-    //if true process is stopped
+    //! If true, the process gets stopped
+    /*!
+    * Boolean used to keep track of the state of the main loop. If true, it gets interrupted and cleanup operations are triggered
+    */
     bool _stop = true;
 
-    //shall debug messages be printed
+    //! Shall debug messages be printed
     bool _debug = false;
 
-    //if true process is running
+    //! If true, the process is running
+    /*!
+    * Boolean used to keep track of the state of the main loop. If true, the process is running
+    */
     bool _working = false;
 
-    //if true process is running but paused
+    //! If true, the process is running but paused
+    /*!
+    * Boolean used to keep track of the state of the main loop. If true, the process is interrupted but ready to be resumed
+    */
     bool _paused = false;
 
-    //protect access to _stop
+    //! Protect access to variables that affect the execution state
+    /*!
+    * It avoids simultaneous changes to the executionstate variables from multiple processes
+    */
     QMutex mutex;
 
-    //handles pause/resume signals
+    //! Handles pause/resume signals
     QWaitCondition waitCondition;
 
-    //zeroMQ context
+    //! 0MQ context pointer
     zmq::context_t* context = nullptr;
 
-    //Byte Array exposed to be populated before being passed along the data pipeline
+    //! The message of this instance of \c ZMQMessageHandler
+    /*!
+    * The message will be built, filled and overwritten according to the external calls from the Qt Application
+    */
     QByteArray* message = new QByteArray();
 
-    //syncMessage: includes targetHostID???, timestamp? and size of the message (as defined by MessageType enum)
-    // TO BE CHECKED!!!!
+    //! Message used for synchronising different clients
+    /*!
+    * It consists of exclusively of an TRACER message header (it doesn't have a body)
+    */
     byte syncMessage[3] = { 0, 0, MessageType::EMPTY };
 
-    //map of last states
+    //! Map of last states
     QMap<QByteArray, QByteArray> objectStateMap;
 
-    //map of ping timings
+    //! Map of ping timings
     QMap<byte, unsigned int> pingMap;
 
-    //map of last states
+    //! Map of last states
     QMultiMap<byte, QByteArray> lockMap;
 
-    //the local elapsed time in seconds since object has been created.
+    //! The local elapsed time in seconds since object has been created.
     unsigned int m_time = 0;
 
+    //! Maximum time spent waiting for a ping response
     static const unsigned int m_pingTimeout = 4;
 
-    // Storing parameter dimensions (NONE,          ACTION,     BOOL,
-    //                               INT,           FLOAT,
-    //                               VECTOR2,       VECTOR3,    VECTOR4,    QUATERNION,
-    //                               COLOR-RGBA,    STRING,     LIST,       UNKNOWN respectively)
+    //! Array storing the size of the various parameter types (in bytes) for ease of access
+    /*!
+    * Value      | Size in bytes
+    * ---------: | :------------
+    * NONE       | 0
+    * ACTION     | 1
+    * BOOL       | 4
+    * INT        | 4
+    * FLOAT      | 4
+    * VECTOR2    | 8
+    * VECTOR3    | 12
+    * VECTOR4    | 16
+    * QUATERNION | 16
+    * COLOR-RGBA | 16
+    * STRING     | 100
+    * LIST       | 100
+    * UNKNOWN    | 100
+    */
     static constexpr byte parameterDimension[13] = {
         0, 1, sizeof(std::int32_t),
         sizeof(std::int32_t), sizeof(float),
         sizeof(float)*2, sizeof(float)*3, sizeof(float)*4, sizeof(float)*4,
-        sizeof(float)*4, 100, 100, 100};
+        sizeof(float)*4, 100, 100, 100 };
     
+    //! Utility function to convert a char value to a short scalar
+    /*!
+    * This function is used when receiving a message as a sequence of bytes (which are read as unsigned char),
+    * converting them to short scalars makes debugging the messages more convenient
+    */
     const short CharToShort(const char* buf) const {
         short val;
         std::memcpy(&val, buf, 2);
@@ -275,19 +325,24 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     }
 
     signals :
-    //signal emitted when process is finished
+    //! Signal emitted when process is finished
     void stopped();
 
     public slots:
-    //execute operations
+    //! Main function for executing operations. Called from Qt Application
     virtual void run() {};
 
     protected slots:
-    //create a new sync message
+    
+    //! Populates/overwrites the sync message
+    /*!
+    * The sync message will always have the following structure:
+    * 0. current ClientID of the AnimHost application
+    * 1. current timestamp
+    * 2. message type \c MessageType::SYNC
+    */
     void createSyncMessage(int time) {
-        int myID = 1; // Which is myID actually?
-
-        syncMessage[0] = myID;
+        syncMessage[0] = getOwnID();
         syncMessage[1] = time;
         syncMessage[2] = MessageType::SYNC;
         
@@ -295,8 +350,5 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
         m_time++;
     }
 };
-
-//class ZMQMessageHandler :
-//  public QObject {};
 
 #endif // ZMQMESSAGEHANDLER_H
