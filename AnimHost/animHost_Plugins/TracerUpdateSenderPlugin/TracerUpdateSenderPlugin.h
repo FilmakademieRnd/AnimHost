@@ -78,11 +78,11 @@ private:
 public:
     //! Default constructor
     /*!
-    * Instantiates message sender and tick receiver classes, moves both to their separate threads and connects the various signals to the associated functions:
-    * - \c QThread::started() signal is connected to \c AnimHostMessageSender::run()
-    * - \c QThread::started() signal is connected to \c TickReceiver::run()
-    * - \c TickReceiver::tick() signal is connected to TracerUpdateSenderPlugin::ticked()
-    */
+     * Instantiates message sender and tick receiver classes, moves both to their separate threads and connects the various signals to the associated functions:
+     * - \c QThread::started() signal is connected to \c AnimHostMessageSender::run()
+     * - \c QThread::started() signal is connected to \c TickReceiver::run()
+     * - \c TickReceiver::tick() signal is connected to TracerUpdateSenderPlugin::ticked()
+     */
     TracerUpdateSenderPlugin();
     //! Default destructor
     ~TracerUpdateSenderPlugin();
@@ -109,6 +109,7 @@ public:
     * \return number of IN and OUT ports
     */
     unsigned int nDataPorts(QtNodes::PortType portType) const override;
+    
     //! Public function called by Qt Application returning type of in and out ports
     /*!
     * \param  portType (enum - 0: IN, 1: OUT, 2: NONE)
@@ -118,7 +119,7 @@ public:
     NodeDataType dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
 
     std::shared_ptr<NodeData> outData(QtNodes::PortIndex port) override;            //!< Given a port index, returns the type of data of the corresponding OUT port
-    std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;     //!< Given a port index, processes and returns a pointer to the  data of the corresponding OUT port
+    std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;     //!< Given a port index, processes and returns a pointer to the data of the corresponding OUT port
 
     void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override; //!< Given a port index, processes the data of the corresponding IN port
 
@@ -132,8 +133,8 @@ public:
     */
     QWidget* embeddedWidget() override; 
 
-    //QTNodes
-    QString category() override { return "Output"; };  //!< Returns a category for the node
+    //! Defines the category of this plugin as **Output** for the plugin selection menu of the AnimHost Application, called by Qt Application
+    QString category() override { return "Output"; };
 
 private Q_SLOTS:
     

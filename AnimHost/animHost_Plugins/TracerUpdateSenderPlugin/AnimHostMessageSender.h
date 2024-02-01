@@ -186,7 +186,12 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMe
     void stopped();
 
     public Q_SLOTS:
-    //! Main loop, executes all operations. Gets triggered by the Qt Application UI thread, when the "Send animation" button of the TracerUpdateSender Plugin is clicked
+    //! Main loop, executes all operations
+    /*!
+     * Gets triggered by the Qt Application UI thread, when the "Send animation" button of the TracerUpdateSender Plugin is clicked.
+     * The first time it is called, it opens a socket. Then, for every frame present in the animation, it creates a message given the
+     * data coming from the other plugins (animation, character and scene data), and sends the message over the 0MQ connection.
+     */
     void run();
 };
 

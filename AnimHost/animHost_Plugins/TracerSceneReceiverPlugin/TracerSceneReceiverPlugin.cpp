@@ -67,7 +67,7 @@ std::shared_ptr<NodeData> TracerSceneReceiverPlugin::processOutData(QtNodes::Por
 
 QWidget* TracerSceneReceiverPlugin::embeddedWidget() {
 	if (!_pushButton) {
-		_pushButton = new QPushButton("Refresh");
+		_pushButton = new QPushButton("Request Data");
 		_connectIPAddress = new QLineEdit();
 
 		_connectIPAddress->setText(_ipAddress);
@@ -122,46 +122,46 @@ void TracerSceneReceiverPlugin::run() {
 	emitRunNextNode();
 }
 
-//!
-//! Gets a QByteArray representing the list of characters in the scene from the SceneReceiver thread.
-//! Parses the bytes populating a CharacterObjectSequence
-//! 
+/* 
+ * Gets a QByteArray representing the list of characters in the scene from the SceneReceiver thread.
+ * Parses the bytes populating a CharacterObjectSequence
+ */
 void TracerSceneReceiverPlugin::processCharacterByteData(QByteArray* characterByteArray) {
 	int charByteCounter = 0; //! "Bookmark" for reading the character byte array and skipping uninteresting sequences of bytes
 	
-	//! Clear current list of CharacterPackages
+	// Clear current list of CharacterPackages
 	characterListOut.get()->getData()->mCharacterObjectSequence.clear();
-	//! Execute until all the QByteArray has been read
+	// Execute until all the QByteArray has been read
 	while (characterByteArray->size() > charByteCounter) {
-		//! Parsing and populating data for a single CharacterPackage
+		// Parsing and populating data for a single CharacterPackage
 		CharacterObject character;
 		
-		//! Get number of bones (not to be saved in CharacterPackage) - int32
+		// Get number of bones (not to be saved in CharacterPackage) - int32
 		int32_t nBones; memcpy(&nBones, characterByteArray->sliced(charByteCounter, 4).data(), sizeof(nBones)); // Copies byte values directly into the new variable, which interprets it as the correct type
 		charByteCounter += sizeof(nBones);
-		//! Get number of skeleton objects (not to be saved in CharacterPackage) - int32
+		// Get number of skeleton objects (not to be saved in CharacterPackage) - int32
 		int32_t nSkeletonObjs; memcpy(&nSkeletonObjs, characterByteArray->sliced(charByteCounter, 4), sizeof(nSkeletonObjs));
 		charByteCounter += sizeof(nSkeletonObjs);
 		
-		//! Get ID of the root bone - int32
+		// Get ID of the root bone - int32
 		memcpy(&character.characterRootID, characterByteArray->sliced(charByteCounter, 4), sizeof(character.characterRootID));
 		charByteCounter += sizeof(character.characterRootID);
 
-		//! Populating bone mapping (which Unity HumanBone object corresponds to which element of the skeleton obj vector) - int32[]
+		// Populating bone mapping (which Unity HumanBone object corresponds to which element of the skeleton obj vector) - int32[]
 		for (int i = 0; i < nBones; i++) {
 			int32_t id; memcpy(&id, characterByteArray->sliced(charByteCounter, 4), sizeof(id));
 			charByteCounter += sizeof(id);
 			character.boneMapping.push_back(id);
 		}
 
-		//! Populating skeleton object IDs (ParameterIDs of the actual bones as seen by Unity) - int32[]
+		// Populating skeleton object IDs (ParameterIDs of the actual bones as seen by Unity) - int32[]
 		for (int i = 0; i < nSkeletonObjs; i++) {
 			int32_t id; memcpy(&id, characterByteArray->sliced(charByteCounter, 4), sizeof(id));
 			charByteCounter += sizeof(id);
 			character.skeletonObjIDs.push_back(id);
 		}
 
-		//! Populating T-Pose bone Positions - float[] - size in bytes 4*3*N_bones
+		// Populating T-Pose bone Positions - float[] - size in bytes 4*3*N_bones
 		for (int i = 0; i < nSkeletonObjs; i++) {
 			float x; memcpy(&x, characterByteArray->sliced(charByteCounter, 4), sizeof(x));
 			charByteCounter += sizeof(x);
@@ -172,7 +172,7 @@ void TracerSceneReceiverPlugin::processCharacterByteData(QByteArray* characterBy
 			character.tposeBonePos.push_back(glm::vec3(x, y, z));
 		}
 
-		//! Populating T-Pose bone Rotation - float[] - size in bytes 4*4*N_bones
+		// Populating T-Pose bone Rotation - float[] - size in bytes 4*4*N_bones
 		for (int i = 0; i < nSkeletonObjs; i++) {
 			float x; memcpy(&x, characterByteArray->sliced(charByteCounter, 4), sizeof(x));
 			charByteCounter += sizeof(x);
@@ -185,7 +185,7 @@ void TracerSceneReceiverPlugin::processCharacterByteData(QByteArray* characterBy
 			character.tposeBoneRot.push_back(glm::quat(w, x, y, z));
 		}
 
-		//! Populating T-Pose bone Scale - float[] - size in bytes 4*3*N_bones
+		// Populating T-Pose bone Scale - float[] - size in bytes 4*3*N_bones
 		for (int i = 0; i < nSkeletonObjs; i++) {
 			float x; memcpy(&x, characterByteArray->sliced(charByteCounter, 4), sizeof(x));
 			charByteCounter += sizeof(x);
@@ -196,7 +196,7 @@ void TracerSceneReceiverPlugin::processCharacterByteData(QByteArray* characterBy
 			character.tposeBoneScale.push_back(glm::vec3(x, y, z));
 		}
 		
-		//! Adding character to the characterList
+		// Adding character to the characterList
 		characterListOut->getData()->mCharacterObjectSequence.push_back(character);
 	}
 	qDebug() << "Number of character received from VPET:" << characterListOut.get()->getData()->mCharacterObjectSequence.size();
@@ -204,18 +204,18 @@ void TracerSceneReceiverPlugin::processCharacterByteData(QByteArray* characterBy
 	// Do not emit Update because not ALL of the data has been processed
 	//emitDataUpdate(0);
 	
-	//! Requesting the complete Scenegraph in order to "fill in the blanks" of the CharacterObject
+	// Requesting the complete Scenegraph in order to "fill in the blanks" of the CharacterObject
 	requestSceneNodeData();
 }
 
-//!
-//! Gets a QByteArray from the SceneReceiver thread.
-//! Parses the bytes populating a SceneNodeSequence
-//! 
+/*
+* Gets a QByteArray from the SceneReceiver thread.
+* Parses the bytes populating a SceneNodeSequence
+*/
 void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeByteArray) {
-	int nodeByteCounter = 0;  //! "Bookmark" for reading the scene node byte array and skipping uninteresting sequences of bytes
-	int sceneNodeCounter = 0; //! Counting the sceneNodes in order to calculate the objectID
-	int editableSceneNodeCounter = 0; //! Counting the sceneNodes that are editable in order to retrieve the sceneObjectID used for the ParameterUpdateMessage
+	int nodeByteCounter = 0;  // "Bookmark" for reading the scene node byte array and skipping uninteresting sequences of bytes
+	int sceneNodeCounter = 0; // Counting the sceneNodes in order to calculate the objectID
+	int editableSceneNodeCounter = 0; // Counting the sceneNodes that are editable in order to retrieve the sceneObjectID used for the ParameterUpdateMessage
 
 	int characterCounter = 0;
 	CharacterObject* currentChar = new CharacterObject();
@@ -224,14 +224,14 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 		int32_t sceneNodeType; memcpy(&sceneNodeType, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(sceneNodeType)).data(), sizeof(sceneNodeType)); // Copies byte values directly into the new variable, which interprets it as the correct type
 		nodeByteCounter += sizeof(sceneNodeType);
 
-		//! Parsing base fields (shared between all nodes)
+		// Parsing base fields (shared between all nodes)
 		// Components: 1*bool + 1*int + 3*float + 3*float + 4*float + 64*byte
 		// Size:            4 +     4 +      12 +      12 +      16 +      64 = 112
 		// Fields
 		// - bool editable
 		bool editableFlag; memcpy(&editableFlag, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(editableFlag)).data(), sizeof(editableFlag)); // Copies byte values directly into the new variable, which interprets it as the correct type
 		nodeByteCounter += 4;
-		editableSceneNodeCounter += editableFlag; //! Incrementing activeSceneNodeCounter if editableFlag = TRUE
+		editableSceneNodeCounter += editableFlag; // Incrementing activeSceneNodeCounter if editableFlag = TRUE
 		// - int  childCount
 		//int32_t childCount; memcpy(&childCount, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(childCount)).data(), sizeof(childCount)); // Copies byte values directly into the new variable, which interprets it as the correct type
 		nodeByteCounter += 4;
@@ -277,11 +277,11 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 
 				break;
 			case SKINNEDMESH:
-				//! Read the data encapsulated in the SceneNodeSkinnedGeo and save it in a SkinnedMeshRenderer object
+				// Read the data encapsulated in the SceneNodeSkinnedGeo and save it in a SkinnedMeshRenderer object
 				
 				skinnedMesh.id = sceneNodeCounter;
 				
-				//! extract information from Skinned Mesh Scene Node
+				// extract information from Skinned Mesh Scene Node
 				// Components: GEO.size + int + int + 3*float + 3*float + 99*16*float + 99*int
 				// Size:             24 +   4 +   4 +      12 +      12 +        6336 +    396 = 6900
 				
@@ -342,7 +342,7 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 
 				break;
 			case GEO:
-				//! skip Scene Node
+				// skip Geometry Node fields
 				// Components: GROUP.size + 1*int + 1*int + 4*float
 				// Size:              112 +     4 +     4 +      16 = 136
 				// Fields
@@ -352,7 +352,7 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 				nodeByteCounter += 136;
 				break;
 			case LIGHT:
-				//! skip Scene Node
+				// skip Light Node fields
 				// Components: GROUP.size + 1*enum + 3*float + 3*float
 				// Size:              112 +      4 +      12 +      12 = 140
 				// Fields
@@ -364,7 +364,7 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 				nodeByteCounter += 140;
 				break;
 			case CAMERA:
-				//! skip Scene Node
+				// skip Camera Node fields
 				// Components: GROUP.size + 6*float
 				// Size:              112 +      24 = 136
 				// Fields
