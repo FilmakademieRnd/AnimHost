@@ -99,13 +99,13 @@ QWidget* TracerSceneReceiverPlugin::embeddedWidget() {
 
 void TracerSceneReceiverPlugin::onButtonClicked()
 {
-	//! Set IP Address
+	// Set IP Address
 	_ipAddress = _connectIPAddress->text();
 
 	// TODO: Reconnecting the socket requires a correct shut-down process before creating a new connection. To be refactored.
 	sceneReceiver->connectSocket(_ipAddress); // DO NOT COMMENT THIS LINE
 
-	//! Send signal to SceneReceiver to request characters
+	// Send signal to SceneReceiver to request characters
 	requestHeaderData();
 	requestCharacterData();
 	//! requestSceneNodeData() is then called after processCharacterData() is done (i.e. at thew end of its body)

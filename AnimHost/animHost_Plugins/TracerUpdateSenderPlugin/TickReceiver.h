@@ -2,7 +2,7 @@
 //!
 //! \file "TickReceiver.h"
 //! \implements ZMQMessageHandler
-//! \brief Class used to listen SYNC messages from TRACER clients     
+//! \brief Class used to listen SYNC messages from TRACER clients
 //! \author Francesco Andreussi
 //! \version 0.5
 //! \date 26.01.2024
@@ -36,7 +36,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
     /*!
     * \param[in]    m_TUSPlugin     The TracerUpdateSenderPlugin instance that calls the constructor
     * \param[in]    m_debugState    Whether the class should print out debug messages
-    * \param[in]    m_context       A pointer to the 0MQ COntext instanciated by \c m_TUSPlugin
+    * \param[in]    m_context       A pointer to the 0MQ Context instanciated by \c m_TUSPlugin
     */
     TickReceiver(TracerUpdateSenderPlugin* m_TUSPlugin, bool m_debugState, zmq::context_t* m_context) {
         TUSPlugin = m_TUSPlugin;
