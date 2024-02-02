@@ -110,11 +110,11 @@ public:
     */
     unsigned int nDataPorts(QtNodes::PortType portType) const override;
     
-    //! Public function called by Qt Application returning type of in and out ports
+    //! Public function called by Qt Application returning which datatype is associated to a specific port
     /*!
     * \param  portType (enum - 0: IN, 1: OUT, 2: NONE)
     * \param  portIndex (unsinged int with additional checks) 
-    * \return type of the portIndex-th IN or OUT port
+    * \return datatype associated to the portIndex-th IN or OUT port
     */
     NodeDataType dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
 
@@ -138,7 +138,7 @@ public:
 
 private Q_SLOTS:
     
-    //! Slot called when the drop-down menu selection chenged
+    //! Slot called when the drop-down menu selection changes
     /*!
     * Replaces the IP Address with the newly selected option
     * \param index index of the selected element in the list
@@ -164,7 +164,7 @@ private Q_SLOTS:
     */
     void onLoopCheck(int state);
     
-    //! Slot called when plugin execution is triggered (by the Qt Application)
+    //! Called when plugin execution is triggered (by the Qt Application)
     /*!
     * At the moment, does nothing. Empty main loop.
     */

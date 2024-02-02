@@ -102,11 +102,11 @@ public:
     */
     unsigned int nDataPorts(QtNodes::PortType portType) const override;
 
-    //! Public function called by Qt Application returning type of in and out ports
+    //! Public function called by Qt Application returning which datatype is associated to a specific port
     /*!
     * \param  portType (enum - 0: IN, 1: OUT, 2: NONE)
     * \param  portIndex (unsinged int with additional checks)
-    * \return type of the portIndex-th IN or OUT port
+    * \return datatype associated to the portIndex-th IN or OUT port
     */
     NodeDataType dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
 

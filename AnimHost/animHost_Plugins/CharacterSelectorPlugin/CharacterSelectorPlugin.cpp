@@ -92,7 +92,7 @@ void CharacterSelectorPlugin::onChangedSelection(int index)
 	qDebug() << "Character Selection Changed";
     if (index >= 0) {
         if (auto spCharacterList = _characterListIn.lock()) {
-            //! Overwrite _characterOut with new selected element
+            // Overwrite _characterOut with new selected element
             CharacterObject selectedCharacter = spCharacterList->getData()->mCharacterObjectSequence.at(index);
             _characterOut->getData()->fill(selectedCharacter);
             emitDataUpdate(0);
