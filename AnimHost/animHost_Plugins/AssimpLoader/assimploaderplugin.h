@@ -28,14 +28,14 @@ private:
     QString SourceDirectory = "";
     QString SourceFilePath = "";
 
+    int sequenceCounter = 1;
+
     bool bDataValid;
 
     QWidget* widget;
     QPushButton* _pushButton;
     QLabel* _label;
     QHBoxLayout* _filePathLayout;
-
-    int globalSequenceCounter = 0;
 
 public:
     AssimpLoaderPlugin();

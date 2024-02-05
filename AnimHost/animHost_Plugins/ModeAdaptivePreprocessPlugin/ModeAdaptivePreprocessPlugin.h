@@ -29,29 +29,40 @@ private:
     std::weak_ptr<AnimNodeData<JointVelocitySequence>> _jointVelocitySequenceIn;
     std::weak_ptr<AnimNodeData<Animation>> _animationIn;
 
+
+    //UI
     QWidget* _widget = nullptr;
+    FolderSelectionWidget* _folderSelect = nullptr;
     BoneSelectionWidget* _boneSelect = nullptr;
+    QCheckBox* _cbOverwrite = nullptr;
+    QVBoxLayout* _vLayout = nullptr;
+
+
+    //Write Data
+    int totalNumberFrames = 0;
+    bool bOverwriteDataExport = false;
+    QString metadataFileName = "metadata.txt";
+    QString sequencesFileName = "sequences_mann.txt";
+    QString dataXFileName = "data_X.bin";
+    QString dataYFileName = "data_Y.bin";
+
 
 private: 
+
+    QString exportDirectory;
+
     /* Input Data */
 
     std::vector<glm::vec2> posTrajectory; /*!< 2D Trajectory positions ground plane.*/
     std::vector<glm::vec2> forwardTrajectory /*!< 2D Trajectory of forward Vector. Hip orientation projected onto ground plane.*/;
     std::vector<glm::vec2> velTrajectory; /*!< 2D Trajectory of characters root velocities.*/
     std::vector<float> desSpeedTrajectory; /*!< 2D Trajectory of characters target root velocities.*/
-    std::vector<char> oneHotActionType; /*!< One-hot encoded action types along trajectory.*/
+    //std::vector<char> oneHotActionType; /*!< One-hot encoded action types along trajectory.*/
     std::vector<glm::vec3> relativeJointPosition; /*!< Current joint positions relative to root position.*/
     std::vector<glm::quat> relativeJointRotations;
     std::vector<glm::vec3> relativeJointVelocities; 
 
     /* Output Data */
-
-    std::vector<glm::vec2> predPosTrajectory;
-    std::vector<glm::vec2> predForwardTrajectory;
-    std::vector<glm::vec2> predVelTrajectory;
-    std::vector<glm::vec3> predRelativeJointPosition;
-    std::vector<glm::quat> predRelativJointRotations;
-    std::vector<glm::vec3> predRelativeJointVelocities;
 
     std::vector<std::vector<float>> rootSequenceData;
     std::vector<std::vector<float>> Y_RootSequenceData;
@@ -68,8 +79,6 @@ private:
     glm::vec2 predRootTranslation;
     glm::vec2 predRootVelocity;
     float predRootAngularVelocity;
-
-    
 
 public:
     ModeAdaptivePreprocessPlugin();
@@ -88,16 +97,20 @@ public:
     void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
     void run() override;
 
-    void processRelativeRotations();
-
     QWidget* embeddedWidget() override;
 
 
 private:
     void writeDataToCSV();
 
+    void writeInputData();
+    void writeOutputData();
+    void writeMetaData();
+
 private Q_SLOTS:
     void onRootBoneSelectionChanged(const int text);
+    void onFolderSelectionChanged();
+    void onOverrideCheckbox(int state);
 
 };
 

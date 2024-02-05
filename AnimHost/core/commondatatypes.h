@@ -7,6 +7,7 @@
 #include <QString>
 #include <QQuaternion>
 #include <QMetaType>
+#include <QUuid>
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/ext/quaternion_float.hpp>
@@ -29,7 +30,10 @@ public:
     QString sourceName = "";
 
     // Used as identifier to map data to Source Name
-    int dataSetID = -1;
+    QString dataSetID = "";
+
+    int sequenceID = -1;
+
 };
 
 
@@ -144,11 +148,11 @@ public:
         qDebug() << "Animation()";
     };
 
-    Animation(const Animation& o) : mBones(o.mBones) { qDebug() << "Animation Copy"; };
+    /*Animation(const Animation& o) : mBones(o.mBones) { qDebug() << "Animation Copy"; };
 
     Animation(Animation&& o) noexcept : mBones(std::move(o.mBones)) { qDebug() << "Animation Move"; };
 
-    ~Animation() {};
+    ~Animation() {};*/
 
     COMMONDATA(animation, Animation)
 

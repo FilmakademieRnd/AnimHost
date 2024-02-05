@@ -262,9 +262,11 @@ void AssimpLoaderPlugin::importAssimpData()
 		
 		QFileInfo fi(SourceFilePath);
 		_animation->getData()->sourceName = fi.fileName();
+		_animation->getData()->dataSetID = QUuid::createUuid().toString();
+		_animation->getData()->sequenceID = sequenceCounter;
 
-		globalSequenceCounter++;
-		_animation->getData()->dataSetID = globalSequenceCounter;
+		sequenceCounter++;
+		//_animation->getData()->uuId = QUuid::createUuid();
 
 		AssimpHelper::buildSkeletonFormAssimpNode(_skeleton->getData().get(), scene->mRootNode);
 		loadAnimationData(scene->mAnimations[0], _skeleton->getData().get(), _animation->getData().get(), scene->mRootNode);

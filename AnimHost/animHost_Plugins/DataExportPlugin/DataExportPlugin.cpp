@@ -5,6 +5,8 @@
 #include <QFileDialog>
 #include <QFileInfo>
 
+#include <FileHandler.h>
+
 #include <iostream>
 #include <fstream>
 
@@ -419,9 +421,12 @@ void DataExportPlugin::writeBinaryJointVelocitySequence() {
 
     QFile file(exportDirectory + "joint_velocity.bin");
 
+    QString fileNameIdent = exportDirectory + "sequences_velocity.txt";
+
     if (bOverwriteJointVelSeq) {
         file.open(QIODevice::WriteOnly);
         bOverwriteJointVelSeq = false;
+        FileHandler<QTextStream>::deleteFile(fileNameIdent);
         _cbOverwrite->setCheckState(Qt::Unchecked);
     }
     else {
@@ -434,6 +439,25 @@ void DataExportPlugin::writeBinaryJointVelocitySequence() {
 
     for (int frame = 0; frame < jointVelSeqIn->mJointVelocitySequence.size(); frame++) {
         out.writeRawData((char*)&jointVelSeqIn->mJointVelocitySequence[frame].mJointVelocity[0], sizeframe);
+    }
+
+    
+
+    FileHandler<QTextStream> fileIdent = FileHandler<QTextStream>(fileNameIdent);
+    QTextStream& outID = fileIdent.getStream();
+    QString idString = "";
+
+    for (int frame = 0; frame < jointVelSeqIn->mJointVelocitySequence.size(); frame++) {
+        idString += QString::number(jointVelSeqIn->sequenceID) + " ";
+        idString += QString::number(frame) + " ";
+        idString += "Standard ";
+        idString += jointVelSeqIn->sourceName + " ";
+        idString += jointVelSeqIn->dataSetID;
+
+
+        idString += "\n";
+        outID << idString;
+        idString = "";
     }
 
 }

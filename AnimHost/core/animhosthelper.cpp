@@ -71,7 +71,7 @@ void AnimHostHelper::ForwardKinematics(const Skeleton& skeleton, const Animation
         }
     };
 
-    int initcurrentBone = 0; //todo set specific root bone idx
+    int initcurrentBone = 0; //todo set specific root bone idx  s
     glm::mat4 initcurrentPos(1.0f);
     buildTranforms(initcurrentPos, initcurrentBone);
 

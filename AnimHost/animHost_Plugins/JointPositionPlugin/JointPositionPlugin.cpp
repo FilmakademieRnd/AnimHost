@@ -97,6 +97,8 @@ void JointPositionPlugin::run(QVariantList in, QVariantList& out)
 
     poseSequence->dataSetID = animation->dataSetID;
     poseSequence->sourceName = animation->sourceName;
+    poseSequence->sequenceID = animation->sequenceID;
+    //poseSequence->uuId = animation->uuId;
 
     out.append(QVariant::fromValue(poseSequence));
 }
