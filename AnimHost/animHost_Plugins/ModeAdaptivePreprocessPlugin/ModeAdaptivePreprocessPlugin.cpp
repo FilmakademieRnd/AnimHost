@@ -194,13 +194,20 @@ void ModeAdaptivePreprocessPlugin::run()
 
 
 							//Velocity
-							glm::vec3 sampleVel = velSeq->GetVelocityAtFrame(pastFrameStartIdx + i, rootbone_idx);
-							auto relativeSampleVelocity = inverseReferenceRotation * sampleVel;
-							//auto relativeSampleVelocity = sampleVel;
-							velTrajectory[i] = glm::vec2(relativeSampleVelocity.x, relativeSampleVelocity.z);// Ground Plane?
+
+							//New Root Velocity
+							
+							glm::vec2 cPos = poseSequenceIn->GetPositionAtFrame(pastFrameStartIdx + i, rootbone_idx);
+							glm::vec2 pPos = poseSequenceIn->GetPositionAtFrame(glm::max(0, (pastFrameStartIdx + i) -1), rootbone_idx);
+
+							glm::vec2 v = (cPos - pPos) / (1.f / 60.f); // Velociy Unit: cm/s
+
+							auto relativeSampleVelocity = inverseReferenceRotation * glm::vec3(v.x, 0.0, v.y);
+
+							velTrajectory[i] = glm::vec2(relativeSampleVelocity.x, relativeSampleVelocity.z) / 100.f;// Ground Plane?
 
 							//Speed
-							desSpeedTrajectory[i] = glm::length(sampleVel);
+							desSpeedTrajectory[i] = glm::length(velTrajectory[i]);
 						}
 
 						//Flatten Root Trajectory data into single vector.
@@ -294,10 +301,19 @@ void ModeAdaptivePreprocessPlugin::run()
 							ouputRootTrajectory.push_back({ temp.x, temp.z });
 
 							//Velocity
-							glm::vec3 sampleVel = velSeq->GetVelocityAtFrame(pastFrameStartIdx + 1 + i, rootbone_idx);
-							auto relativeSampleVelocity = inverseReferenceRotation * sampleVel;
+
+
+							//New Root Velocity
+
+							glm::vec2 cPos = poseSequenceIn->GetPositionAtFrame(pastFrameStartIdx + i + 1, rootbone_idx);
+							glm::vec2 pPos = poseSequenceIn->GetPositionAtFrame(glm::max(0, (pastFrameStartIdx + i + 1) - 1), rootbone_idx);
+
+							glm::vec2 v = (cPos - pPos) / (1.f / 60.f ); // Velociy Unit: m/s
+
+							auto relativeSampleVelocity = invOutputRefRot * glm::vec3(v.x, 0.0, v.y);
+
 							//auto relativeSampleVelocity = sampleVel;
-							outputVelTrajectory.push_back({ relativeSampleVelocity.x, relativeSampleVelocity.z });// Ground Plane?
+							outputVelTrajectory.push_back(glm::vec2(relativeSampleVelocity.x, relativeSampleVelocity.z ) / 100.f);// Ground Plane?
 
 							//Direction
 							//Get matrix from each sample and transform forward
@@ -365,7 +381,7 @@ void ModeAdaptivePreprocessPlugin::run()
 						std::vector<glm::vec3> OutputJointVelocities = std::vector<glm::vec3>(velSeq->mJointVelocitySequence[referenceFrame].mJointVelocity.size());
 
 						for (int i = 0; i < relativeJointVelocities.size(); i++) {
-							relativeJointVelocities[i] = invOutputRefJointRotation * velSeq->mJointVelocitySequence[referenceFrame].mJointVelocity[i];
+							OutputJointVelocities[i] = invOutputRefJointRotation * velSeq->mJointVelocitySequence[referenceFrame].mJointVelocity[i];
 						}
 
 						Y_SequenceRelativeJointVelocities.push_back(OutputJointVelocities);
@@ -399,10 +415,13 @@ void ModeAdaptivePreprocessPlugin::run()
 						_cbOverwrite->setCheckState(Qt::Unchecked);
 
 					}
+					//proccessVelocityData(velSeq, animation);
 
 					writeMetaData();
 					writeInputData();
 					writeOutputData();
+
+					
 
 				}
 			}
@@ -476,6 +495,7 @@ QWidget* ModeAdaptivePreprocessPlugin::embeddedWidget()
 
 	return _widget;
 }
+
 
 /// <summary>
 /// Write generated data to CSV.

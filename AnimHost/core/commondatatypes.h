@@ -95,6 +95,8 @@ public:
 
     glm::vec3 GetScale(int frame) const;
 
+    glm::mat4 GetTransform(int frame) const;
+
     COMMONDATA(bone, Bone)
 
 };
@@ -184,6 +186,10 @@ class ANIMHOSTCORESHARED_EXPORT JointVelocitySequence : public Sequence
 {
 public:
     std::vector<JointVelocity> mJointVelocitySequence;
+
+private:
+    //Joint Velocities Transformed into rootspace of character
+    std::vector<JointVelocity> mRelativeJointVelocitySequence;
 
 public:
     JointVelocitySequence() {};

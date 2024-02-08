@@ -82,17 +82,22 @@ QWidget* BasicOnnxPlugin::embeddedWidget()
 
 QString BasicOnnxPlugin::portCaption(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
 {
+
+    int pIdx = portIndex - 1;
+    if (pIdx == -1)
+        return QString("Run");
+
     if (_onnxModel) {
         std::string s;
         if (portType == QtNodes::PortType::In) {
 
-            s = _onnxModel->GetTensorNames()[portIndex]+ " ";
-            s += _onnxModel->GetTensorShapes()[portIndex];
+            s = _onnxModel->GetTensorNames()[pIdx]+ " ";
+            s += _onnxModel->GetTensorShapes()[pIdx];
             return s.c_str();
         }
         else {
-            s = _onnxModel->GetTensorNames(false)[portIndex] + " ";
-            s += _onnxModel->GetTensorShapes(false)[portIndex];
+            s = _onnxModel->GetTensorNames(false)[pIdx] + " ";
+            s += _onnxModel->GetTensorShapes(false)[pIdx];
             return s.c_str();
         }
     }
