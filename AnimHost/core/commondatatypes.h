@@ -187,9 +187,6 @@ class ANIMHOSTCORESHARED_EXPORT JointVelocitySequence : public Sequence
 public:
     std::vector<JointVelocity> mJointVelocitySequence;
 
-private:
-    //Joint Velocities Transformed into rootspace of character
-    std::vector<JointVelocity> mRelativeJointVelocitySequence;
 
 public:
     JointVelocitySequence() {};
