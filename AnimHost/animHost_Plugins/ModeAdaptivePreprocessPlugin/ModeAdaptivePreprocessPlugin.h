@@ -16,12 +16,6 @@ class MODEADAPTIVEPREPROCESSPLUGINSHARED_EXPORT ModeAdaptivePreprocessPlugin : p
     Q_PLUGIN_METADATA(IID "de.animhost.ModeAdaptivePreprocess" FILE "ModeAdaptivePreprocessPlugin.json")
     Q_INTERFACES(PluginNodeInterface)
 
-private:
-    int numSamples = 12;
-    int pastSamples = 6;
-    int futureSamples = 5; // past samples + reference frame + future samples = numSamples
-
-    int rootbone_idx = 0;
 
 private:
     std::weak_ptr<AnimNodeData<Skeleton>> _skeletonIn;
@@ -38,47 +32,36 @@ private:
     QVBoxLayout* _vLayout = nullptr;
 
 
+private: 
     //Write Data
+    QString exportDirectory;
+
     int totalNumberFrames = 0;
     bool bOverwriteDataExport = false;
+
     QString metadataFileName = "metadata.txt";
     QString sequencesFileName = "sequences_mann.txt";
     QString dataXFileName = "data_X.bin";
     QString dataYFileName = "data_Y.bin";
 
 
-private: 
+    int numSamples = 12;
+    int pastSamples = 6;
+    int futureSamples = 5; // past samples + reference frame + future samples = numSamples
 
-    QString exportDirectory;
-
-    /* Input Data */
-
-    std::vector<glm::vec2> posTrajectory; /*!< 2D Trajectory positions ground plane.*/
-    std::vector<glm::vec2> forwardTrajectory /*!< 2D Trajectory of forward Vector. Hip orientation projected onto ground plane.*/;
-    std::vector<glm::vec2> velTrajectory; /*!< 2D Trajectory of characters root velocities.*/
-    std::vector<float> desSpeedTrajectory; /*!< 2D Trajectory of characters target root velocities.*/
-    //std::vector<char> oneHotActionType; /*!< One-hot encoded action types along trajectory.*/
-    std::vector<glm::vec3> relativeJointPosition; /*!< Current joint positions relative to root position.*/
-    std::vector<glm::quat> relativeJointRotations;
-    std::vector<glm::vec3> relativeJointVelocities; 
-
-    /* Output Data */
+    int rootbone_idx = 0;
 
     std::vector<std::vector<float>> rootSequenceData;
-    std::vector<std::vector<float>> Y_RootSequenceData;
-    
-    
     std::vector<std::vector<glm::vec3>> sequenceRelativeJointPosition;
-    std::vector<std::vector<glm::vec3>> Y_SequenceRelativeJointPosition;
     std::vector<std::vector<glm::quat>> sequenceRelativJointRotations;
-    std::vector<std::vector<glm::quat>> Y_SequenceRelativJointRotations;
     std::vector<std::vector<glm::vec3>> sequenceRelativeJointVelocities;
+
+    std::vector<std::vector<float>> Y_RootSequenceData;
+    std::vector<std::vector<glm::vec3>> Y_SequenceRelativeJointPosition;
+    std::vector<std::vector<glm::quat>> Y_SequenceRelativJointRotations;
     std::vector<std::vector<glm::vec3>> Y_SequenceRelativeJointVelocities;
     std::vector<glm::vec3> Y_SequenceDeltaUpdate;
 
-    glm::vec2 predRootTranslation;
-    glm::vec2 predRootVelocity;
-    float predRootAngularVelocity;
 
 public:
     ModeAdaptivePreprocessPlugin();
@@ -101,8 +84,6 @@ public:
 
 
 private:
-    void writeDataToCSV();
-
     void writeInputData();
     void writeOutputData();
     void writeMetaData();
