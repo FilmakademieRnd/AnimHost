@@ -1,0 +1,290 @@
+\doxysection{Ort Namespace Reference}
+\hypertarget{namespace_ort}{}\label{namespace_ort}\index{Ort@{Ort}}
+
+
+All C++ Onnxruntime APIs are defined inside this namespace.  
+
+
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_ort_1_1_allocator}{Allocator}}
+\begin{DoxyCompactList}\small\item\em Wrapper around \doxylink{struct_ort_allocator}{Ort\+Allocator}. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_allocator_with_default_options}{Allocator\+With\+Default\+Options}}
+\begin{DoxyCompactList}\small\item\em Wrapper around \doxylink{struct_ort_allocator}{Ort\+Allocator} default instance that is owned by Onnxruntime. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_arena_cfg}{Arena\+Cfg}}
+\begin{DoxyCompactList}\small\item\em it is a structure that represents the configuration of an arena based allocator \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_b_float16__t}{BFloat16\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em bfloat16 (Brain Floating Point) data type \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{class_ort_1_1_checkpoint_state}{Checkpoint\+State}}
+\begin{DoxyCompactList}\small\item\em Holds the state of the training session. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_custom_op_api}{Custom\+Op\+Api}}
+\begin{DoxyCompactList}\small\item\em This entire structure is deprecated, but we not marking it as a whole yet since we want to preserve for the next release. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_custom_op_base}{Custom\+Op\+Base}}
+\item 
+struct \mbox{\hyperlink{struct_ort_1_1_custom_op_configs}{Custom\+Op\+Configs}}
+\begin{DoxyCompactList}\small\item\em Class that represents session configuration entries for one or more custom operators. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_custom_op_domain}{Custom\+Op\+Domain}}
+\begin{DoxyCompactList}\small\item\em Custom \doxylink{struct_ort_1_1_op}{Op} Domain. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_env}{Env}}
+\begin{DoxyCompactList}\small\item\em The \doxylink{struct_ort_1_1_env}{Env} (Environment) \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_exception}{Exception}}
+\begin{DoxyCompactList}\small\item\em All C++ methods that can fail will throw an exception of this type. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_float16__t}{Float16\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em IEEE 754 half-\/precision floating point data type. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_global}{Global}}
+\item 
+struct \mbox{\hyperlink{struct_ort_1_1_io_binding}{Io\+Binding}}
+\begin{DoxyCompactList}\small\item\em Wrapper around \+::\+Ort\+Io\+Binding. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_kernel_context}{Kernel\+Context}}
+\begin{DoxyCompactList}\small\item\em This class wraps a raw pointer Ort\+Kernel\+Context\texorpdfstring{$\ast$}{*} that is being passed to the custom kernel Compute() method. Use it to safely access context attributes, input and output parameters with exception safety guarantees. See usage example in onnxruntime/test/testdata/custom\+\_\+op\+\_\+library/custom\+\_\+op\+\_\+library.\+cc. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_kernel_info}{Kernel\+Info}}
+\begin{DoxyCompactList}\small\item\em This struct owns the Ort\+Kern\+Info\texorpdfstring{$\ast$}{*} pointer when a copy is made. For convenient wrapping of Ort\+Kernel\+Info\texorpdfstring{$\ast$}{*} passed to kernel constructor and query attributes, warp the pointer with Ort\+::\+Unowned$<$\+Kernel\+Info$>$ instance so it does not destroy the pointer the kernel does not own. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_logger}{Logger}}
+\begin{DoxyCompactList}\small\item\em This class represents an ONNX Runtime logger that can be used to log information with an associated severity level and source code location (file path, line number, function name). \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_map_type_info}{Map\+Type\+Info}}
+\begin{DoxyCompactList}\small\item\em Wrapper around \+::\+Ort\+Map\+Type\+Info. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_memory_allocation}{Memory\+Allocation}}
+\begin{DoxyCompactList}\small\item\em Represents native memory allocation coming from one of the Ort\+Allocators registered with Onnx\+Runtime. Use it to wrap an allocation made by an allocator so it can be automatically released when no longer needed. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_memory_info}{Memory\+Info}}
+\begin{DoxyCompactList}\small\item\em Wrapper around \+::\+Ort\+Memory\+Info. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_model_metadata}{Model\+Metadata}}
+\begin{DoxyCompactList}\small\item\em Wrapper around \+::\+Ort\+Model\+Metadata. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_op}{Op}}
+\begin{DoxyCompactList}\small\item\em Create and own custom defined operation. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_op_attr}{Op\+Attr}}
+\begin{DoxyCompactList}\small\item\em This struct provides life time management for custom op attribute. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_run_options}{Run\+Options}}
+\begin{DoxyCompactList}\small\item\em \doxylink{struct_ort_1_1_run_options}{Run\+Options}. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_sequence_type_info}{Sequence\+Type\+Info}}
+\begin{DoxyCompactList}\small\item\em Wrapper around \+::\+Ort\+Sequence\+Type\+Info. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_session}{Session}}
+\begin{DoxyCompactList}\small\item\em Wrapper around \+::\+Ort\+Session. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_session_options}{Session\+Options}}
+\begin{DoxyCompactList}\small\item\em Wrapper around \+::\+Ort\+Session\+Options. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_status}{Status}}
+\begin{DoxyCompactList}\small\item\em The \doxylink{struct_ort_1_1_status}{Status} that holds ownership of Ort\+Status received from C API Use it to safely destroy Ort\+Status\texorpdfstring{$\ast$}{*} returned from the C API. Use appropriate constructors to construct an instance of a \doxylink{struct_ort_1_1_status}{Status} object from exceptions. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_tensor_type_and_shape_info}{Tensor\+Type\+And\+Shape\+Info}}
+\begin{DoxyCompactList}\small\item\em Wrapper around \+::\+Ort\+Tensor\+Type\+And\+Shape\+Info. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_threading_options}{Threading\+Options}}
+\begin{DoxyCompactList}\small\item\em The \doxylink{struct_ort_1_1_threading_options}{Threading\+Options}. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{class_ort_1_1_training_session}{Training\+Session}}
+\begin{DoxyCompactList}\small\item\em Trainer class that provides training, evaluation and optimizer methods for training an ONNX models. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_type_info}{Type\+Info}}
+\begin{DoxyCompactList}\small\item\em Type information that may contain either \doxylink{struct_ort_1_1_tensor_type_and_shape_info}{Tensor\+Type\+And\+Shape\+Info} or the information about contained sequence or map depending on the ONNXType. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_1_1_type_to_tensor_type}{Type\+To\+Tensor\+Type}}
+\item 
+struct \mbox{\hyperlink{struct_ort_1_1_type_to_tensor_type_3_01_b_float16__t_01_4}{Type\+To\+Tensor\+Type$<$ BFloat16\+\_\+t $>$}}
+\item 
+struct \mbox{\hyperlink{struct_ort_1_1_type_to_tensor_type_3_01bool_01_4}{Type\+To\+Tensor\+Type$<$ bool $>$}}
+\item 
+struct \mbox{\hyperlink{struct_ort_1_1_type_to_tensor_type_3_01double_01_4}{Type\+To\+Tensor\+Type$<$ double $>$}}
+\item 
+struct \mbox{\hyperlink{struct_ort_1_1_type_to_tensor_type_3_01float_01_4}{Type\+To\+Tensor\+Type$<$ float $>$}}
+\item 
+struct \mbox{\hyperlink{struct_ort_1_1_type_to_tensor_type_3_01_float16__t_01_4}{Type\+To\+Tensor\+Type$<$ Float16\+\_\+t $>$}}
+\item 
+struct \mbox{\hyperlink{struct_ort_1_1_type_to_tensor_type_3_01int16__t_01_4}{Type\+To\+Tensor\+Type$<$ int16\+\_\+t $>$}}
+\item 
+struct \mbox{\hyperlink{struct_ort_1_1_type_to_tensor_type_3_01int32__t_01_4}{Type\+To\+Tensor\+Type$<$ int32\+\_\+t $>$}}
+\item 
+struct \mbox{\hyperlink{struct_ort_1_1_type_to_tensor_type_3_01int64__t_01_4}{Type\+To\+Tensor\+Type$<$ int64\+\_\+t $>$}}
+\item 
+struct \mbox{\hyperlink{struct_ort_1_1_type_to_tensor_type_3_01int8__t_01_4}{Type\+To\+Tensor\+Type$<$ int8\+\_\+t $>$}}
+\item 
+struct \mbox{\hyperlink{struct_ort_1_1_type_to_tensor_type_3_01uint16__t_01_4}{Type\+To\+Tensor\+Type$<$ uint16\+\_\+t $>$}}
+\item 
+struct \mbox{\hyperlink{struct_ort_1_1_type_to_tensor_type_3_01uint32__t_01_4}{Type\+To\+Tensor\+Type$<$ uint32\+\_\+t $>$}}
+\item 
+struct \mbox{\hyperlink{struct_ort_1_1_type_to_tensor_type_3_01uint64__t_01_4}{Type\+To\+Tensor\+Type$<$ uint64\+\_\+t $>$}}
+\item 
+struct \mbox{\hyperlink{struct_ort_1_1_type_to_tensor_type_3_01uint8__t_01_4}{Type\+To\+Tensor\+Type$<$ uint8\+\_\+t $>$}}
+\item 
+struct \mbox{\hyperlink{struct_ort_1_1_value}{Value}}
+\begin{DoxyCompactList}\small\item\em Wrapper around \doxylink{struct_ort_1_1_value_a23c32a59c2149a0faf54187af3cc5bb8}{Ort\+Value}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{namespace_ort_aad745588fd5aa01b386eebbacd5e7d18}\label{namespace_ort_aad745588fd5aa01b386eebbacd5e7d18} 
+using {\bfseries Allocated\+String\+Ptr} = std\+::unique\+\_\+ptr$<$char, \mbox{\hyperlink{struct_ort_1_1detail_1_1_allocated_free}{detail\+::\+Allocated\+Free}}$>$
+\begin{DoxyCompactList}\small\item\em unique\+\_\+ptr typedef used to own strings allocated by Ort\+Allocators and release them at the end of the scope. The lifespan of the given allocator must eclipse the lifespan of Allocated\+String\+Ptr instance \end{DoxyCompactList}\item 
+\Hypertarget{namespace_ort_a805bd5fb541828c91d280a6c61583b31}\label{namespace_ort_a805bd5fb541828c91d280a6c61583b31} 
+using {\bfseries Unowned\+Session\+Options} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{detail\+::\+Session\+Options\+Impl}}$<$\mbox{\hyperlink{struct_ort_1_1detail_1_1_unowned}{detail\+::\+Unowned}}$<$Ort\+Session\+Options$>$$>$
+\item 
+\Hypertarget{namespace_ort_ad7666cde26a9d4a5683a423951a887b3}\label{namespace_ort_ad7666cde26a9d4a5683a423951a887b3} 
+using {\bfseries Const\+Session\+Options} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_options_impl}{detail\+::\+Const\+Session\+Options\+Impl}}$<$\mbox{\hyperlink{struct_ort_1_1detail_1_1_unowned}{detail\+::\+Unowned}}$<$const Ort\+Session\+Options$>$$>$
+\item 
+\Hypertarget{namespace_ort_a3e919d7ee7e5e4a65125a11e6a17d1e6}\label{namespace_ort_a3e919d7ee7e5e4a65125a11e6a17d1e6} 
+using {\bfseries Const\+Session} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_impl}{detail\+::\+Const\+Session\+Impl}}$<$\mbox{\hyperlink{struct_ort_1_1detail_1_1_unowned}{detail\+::\+Unowned}}$<$const Ort\+Session$>$$>$
+\item 
+\Hypertarget{namespace_ort_a001ed681a8ec01996b64a3bfe0b07b68}\label{namespace_ort_a001ed681a8ec01996b64a3bfe0b07b68} 
+using {\bfseries Unowned\+Session} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_impl}{detail\+::\+Session\+Impl}}$<$\mbox{\hyperlink{struct_ort_1_1detail_1_1_unowned}{detail\+::\+Unowned}}$<$Ort\+Session$>$$>$
+\item 
+\Hypertarget{namespace_ort_a2bf7ebaba51fccaba55ab0c688bb15e7}\label{namespace_ort_a2bf7ebaba51fccaba55ab0c688bb15e7} 
+using {\bfseries Const\+Memory\+Info} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_memory_info_impl}{detail\+::\+Memory\+Info\+Impl}}$<$\mbox{\hyperlink{struct_ort_1_1detail_1_1_unowned}{detail\+::\+Unowned}}$<$const Ort\+Memory\+Info$>$$>$
+\item 
+\Hypertarget{namespace_ort_af16cd53cee5d83f3cddac811356cdc54}\label{namespace_ort_af16cd53cee5d83f3cddac811356cdc54} 
+using {\bfseries Const\+Tensor\+Type\+And\+Shape\+Info} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl}{detail\+::\+Tensor\+Type\+And\+Shape\+Info\+Impl}}$<$\mbox{\hyperlink{struct_ort_1_1detail_1_1_unowned}{detail\+::\+Unowned}}$<$const Ort\+Tensor\+Type\+And\+Shape\+Info$>$$>$
+\item 
+\Hypertarget{namespace_ort_aaa77d0ee96128a467808117d86726ec3}\label{namespace_ort_aaa77d0ee96128a467808117d86726ec3} 
+using {\bfseries Const\+Sequence\+Type\+Info} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_sequence_type_info_impl}{detail\+::\+Sequence\+Type\+Info\+Impl}}$<$\mbox{\hyperlink{struct_ort_1_1detail_1_1_unowned}{detail\+::\+Unowned}}$<$const Ort\+Sequence\+Type\+Info$>$$>$
+\item 
+\Hypertarget{namespace_ort_aedc86952f13bf6fecb1110d0fbdefcc4}\label{namespace_ort_aedc86952f13bf6fecb1110d0fbdefcc4} 
+using {\bfseries Const\+Optional\+Type\+Info} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_optional_type_info_impl}{detail\+::\+Optional\+Type\+Info\+Impl}}$<$\mbox{\hyperlink{struct_ort_1_1detail_1_1_unowned}{detail\+::\+Unowned}}$<$const Ort\+Optional\+Type\+Info$>$$>$
+\item 
+\Hypertarget{namespace_ort_a3c411bdf704222180b4a46fb14b3620d}\label{namespace_ort_a3c411bdf704222180b4a46fb14b3620d} 
+using {\bfseries Const\+Map\+Type\+Info} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_map_type_info_impl}{detail\+::\+Map\+Type\+Info\+Impl}}$<$\mbox{\hyperlink{struct_ort_1_1detail_1_1_unowned}{detail\+::\+Unowned}}$<$const Ort\+Map\+Type\+Info$>$$>$
+\item 
+\Hypertarget{namespace_ort_a3b81fe9a97c2beecae63f40bbd3bf31d}\label{namespace_ort_a3b81fe9a97c2beecae63f40bbd3bf31d} 
+using {\bfseries Const\+Type\+Info} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_type_info_impl}{detail\+::\+Type\+Info\+Impl}}$<$\mbox{\hyperlink{struct_ort_1_1detail_1_1_unowned}{detail\+::\+Unowned}}$<$const Ort\+Type\+Info$>$$>$
+\begin{DoxyCompactList}\small\item\em Contains a constant, unowned Ort\+Type\+Info that can be copied and passed around by value. Provides access to const Ort\+Type\+Info APIs. \end{DoxyCompactList}\item 
+\Hypertarget{namespace_ort_ac8ebea1463e33ec3b3bb305dc2f92df5}\label{namespace_ort_ac8ebea1463e33ec3b3bb305dc2f92df5} 
+using {\bfseries Const\+Value} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{detail\+::\+Const\+Value\+Impl}}$<$\mbox{\hyperlink{struct_ort_1_1detail_1_1_unowned}{detail\+::\+Unowned}}$<$const Ort\+Value$>$$>$
+\item 
+\Hypertarget{namespace_ort_ae7ae12c79511a40e59bb4d5cea85c475}\label{namespace_ort_ae7ae12c79511a40e59bb4d5cea85c475} 
+using {\bfseries Unowned\+Value} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_value_impl}{detail\+::\+Value\+Impl}}$<$\mbox{\hyperlink{struct_ort_1_1detail_1_1_unowned}{detail\+::\+Unowned}}$<$Ort\+Value$>$$>$
+\item 
+\Hypertarget{namespace_ort_aa74ba21ad21087eb338908829c401232}\label{namespace_ort_aa74ba21ad21087eb338908829c401232} 
+using {\bfseries Unowned\+Allocator} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_allocator_impl}{detail\+::\+Allocator\+Impl}}$<$\mbox{\hyperlink{struct_ort_1_1detail_1_1_unowned}{detail\+::\+Unowned}}$<$\mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}}$>$$>$
+\item 
+\Hypertarget{namespace_ort_a7330fa7850437f97c3d54ae4f3030490}\label{namespace_ort_a7330fa7850437f97c3d54ae4f3030490} 
+using {\bfseries Const\+Io\+Binding} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_io_binding_impl}{detail\+::\+Const\+Io\+Binding\+Impl}}$<$\mbox{\hyperlink{struct_ort_1_1detail_1_1_unowned}{detail\+::\+Unowned}}$<$const Ort\+Io\+Binding$>$$>$
+\item 
+\Hypertarget{namespace_ort_ad252171fa9124aabbc62e63668d5e7ea}\label{namespace_ort_ad252171fa9124aabbc62e63668d5e7ea} 
+using {\bfseries Unowned\+Io\+Binding} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_io_binding_impl}{detail\+::\+Io\+Binding\+Impl}}$<$\mbox{\hyperlink{struct_ort_1_1detail_1_1_unowned}{detail\+::\+Unowned}}$<$Ort\+Io\+Binding$>$$>$
+\item 
+\Hypertarget{namespace_ort_acd93e6bd16d45e6ca58acc9f21f46348}\label{namespace_ort_acd93e6bd16d45e6ca58acc9f21f46348} 
+using {\bfseries Const\+Kernel\+Info} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_kernel_info_impl}{detail\+::\+Kernel\+Info\+Impl}}$<$\mbox{\hyperlink{struct_ort_1_1detail_1_1_unowned}{detail\+::\+Unowned}}$<$const Ort\+Kernel\+Info$>$$>$
+\item 
+\Hypertarget{namespace_ort_a3d78fb43c5183821dbe1b6cb3ae521d5}\label{namespace_ort_a3d78fb43c5183821dbe1b6cb3ae521d5} 
+using {\bfseries Property} = std\+::variant$<$int64\+\_\+t, float, std\+::string$>$
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{namespace_ort_a296b5958479d9889218b17bdb08c1894}\label{namespace_ort_a296b5958479d9889218b17bdb08c1894} 
+const \mbox{\hyperlink{struct_ort_api}{Ort\+Api}} \& {\bfseries Get\+Api} () noexcept
+\begin{DoxyCompactList}\small\item\em This returns a reference to the \doxylink{struct_ort_api}{Ort\+Api} interface in use. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{namespace_ort_aab1b2d08af45de1d59ce7d86196cd72d}{Get\+Version\+String}} ()
+\begin{DoxyCompactList}\small\item\em This function returns the onnxruntime version string. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{namespace_ort_a6b82de94ec0b5681e559a9697e485306}{Get\+Build\+Info\+String}} ()
+\begin{DoxyCompactList}\small\item\em This function returns the onnxruntime build information\+: including git branch, git commit id, build type(Debug/\+Release/\+Rel\+With\+Deb\+Info) and cmake cpp flags. \end{DoxyCompactList}\item 
+std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{namespace_ort_ac2f785275bced9e6853a2f4ea6b71c04}{Get\+Available\+Providers}} ()
+\begin{DoxyCompactList}\small\item\em This is a C++ wrapper for Ort\+Api\+::\+Get\+Available\+Providers() and returns a vector of strings representing the available execution providers. \end{DoxyCompactList}\item 
+\Hypertarget{namespace_ort_a46abac49f0814465d931e0fea00095b8}\label{namespace_ort_a46abac49f0814465d931e0fea00095b8} 
+void {\bfseries Throw\+On\+Error} (Ort\+Status \texorpdfstring{$\ast$}{*}ort\+\_\+status)
+\item 
+\Hypertarget{namespace_ort_abe9a6ba83410ac4956661bb677ddc510}\label{namespace_ort_abe9a6ba83410ac4956661bb677ddc510} 
+void {\bfseries Throw\+On\+Error} (const \mbox{\hyperlink{struct_ort_1_1_status}{Status}} \&st)
+\item 
+\Hypertarget{namespace_ort_a67b954385311802b38787df8fad58f8c}\label{namespace_ort_a67b954385311802b38787df8fad58f8c} 
+template$<$$>$ std\+::string {\bfseries Custom\+Op\+Api\+::\+Kernel\+Info\+Get\+Attribute$<$ std\+::string $>$} (\+\_\+\+In\+\_\+ const Ort\+Kernel\+Info \texorpdfstring{$\ast$}{*}info, \+\_\+\+In\+\_\+ const char \texorpdfstring{$\ast$}{*}name)
+\item 
+const \mbox{\hyperlink{struct_ort_training_api}{Ort\+Training\+Api}} \& \mbox{\hyperlink{namespace_ort_af2b7b25419c1fbfa0f18a35f7cadf5e3}{Get\+Training\+Api}} ()
+\begin{DoxyCompactList}\small\item\em This function returns the C training api struct with the pointers to the ort training C functions. If using C++, please use the class instances instead of invoking the C functions directly. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{Indent}\textbf{ Training Utilities}\par
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{group___training_cpp_ga931a23f07cb2eec0f21a8e9e89658dc0}{Set\+Seed}} (const int64\+\_\+t seed)
+\begin{DoxyCompactList}\small\item\em This function sets the seed for generating random numbers. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\end{Indent}
+
+
+\doxysubsection{Detailed Description}
+All C++ Onnxruntime APIs are defined inside this namespace. 
+
+\doxysubsection{Function Documentation}
+\Hypertarget{namespace_ort_ac2f785275bced9e6853a2f4ea6b71c04}\label{namespace_ort_ac2f785275bced9e6853a2f4ea6b71c04} 
+\index{Ort@{Ort}!GetAvailableProviders@{GetAvailableProviders}}
+\index{GetAvailableProviders@{GetAvailableProviders}!Ort@{Ort}}
+\doxysubsubsection{\texorpdfstring{GetAvailableProviders()}{GetAvailableProviders()}}
+{\footnotesize\ttfamily std\+::vector$<$ std\+::string $>$ Ort\+::\+Get\+Available\+Providers (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This is a C++ wrapper for Ort\+Api\+::\+Get\+Available\+Providers() and returns a vector of strings representing the available execution providers. 
+
+\begin{DoxyReturn}{Returns}
+vector of strings
+\end{DoxyReturn}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=311pt]{namespace_ort_ac2f785275bced9e6853a2f4ea6b71c04_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=209pt]{namespace_ort_ac2f785275bced9e6853a2f4ea6b71c04_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{namespace_ort_a6b82de94ec0b5681e559a9697e485306}\label{namespace_ort_a6b82de94ec0b5681e559a9697e485306} 
+\index{Ort@{Ort}!GetBuildInfoString@{GetBuildInfoString}}
+\index{GetBuildInfoString@{GetBuildInfoString}!Ort@{Ort}}
+\doxysubsubsection{\texorpdfstring{GetBuildInfoString()}{GetBuildInfoString()}}
+{\footnotesize\ttfamily std\+::string Ort\+::\+Get\+Build\+Info\+String (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function returns the onnxruntime build information\+: including git branch, git commit id, build type(Debug/\+Release/\+Rel\+With\+Deb\+Info) and cmake cpp flags. 
+
+\begin{DoxyReturn}{Returns}
+string
+\end{DoxyReturn}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespace_ort_a6b82de94ec0b5681e559a9697e485306_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{namespace_ort_af2b7b25419c1fbfa0f18a35f7cadf5e3}\label{namespace_ort_af2b7b25419c1fbfa0f18a35f7cadf5e3} 
+\index{Ort@{Ort}!GetTrainingApi@{GetTrainingApi}}
+\index{GetTrainingApi@{GetTrainingApi}!Ort@{Ort}}
+\doxysubsubsection{\texorpdfstring{GetTrainingApi()}{GetTrainingApi()}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{struct_ort_training_api}{Ort\+Training\+Api}} \& Ort\+::\+Get\+Training\+Api (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function returns the C training api struct with the pointers to the ort training C functions. If using C++, please use the class instances instead of invoking the C functions directly. 
+
+\begin{DoxyReturn}{Returns}
+\doxylink{struct_ort_training_api}{Ort\+Training\+Api} struct with ort training C function pointers.
+\end{DoxyReturn}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=329pt]{namespace_ort_af2b7b25419c1fbfa0f18a35f7cadf5e3_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{namespace_ort_af2b7b25419c1fbfa0f18a35f7cadf5e3_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{namespace_ort_aab1b2d08af45de1d59ce7d86196cd72d}\label{namespace_ort_aab1b2d08af45de1d59ce7d86196cd72d} 
+\index{Ort@{Ort}!GetVersionString@{GetVersionString}}
+\index{GetVersionString@{GetVersionString}!Ort@{Ort}}
+\doxysubsubsection{\texorpdfstring{GetVersionString()}{GetVersionString()}}
+{\footnotesize\ttfamily std\+::string Ort\+::\+Get\+Version\+String (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This function returns the onnxruntime version string. 
+
+\begin{DoxyReturn}{Returns}
+version string major.\+minor.\+rev
+\end{DoxyReturn}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespace_ort_aab1b2d08af45de1d59ce7d86196cd72d_cgraph}
+\end{center}
+\end{figure}

@@ -1,0 +1,19 @@
+<map id="ZMQMessageHandler::getParameterDimension" name="ZMQMessageHandler::getParameterDimension">
+<area shape="rect" id="Node000001" title="Returns the size size of each paramter in bytes." alt="" coords="924,139,1084,181"/>
+<area shape="rect" id="Node000002" href="$class_anim_host_message_sender.html#a73c677b3b8ab4f23ee52c874381f8f9f" title="Creating a TRACER Update Message Body, given a specific bool to send." alt="" coords="703,5,876,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="966,130,924,96,874,62,852,51,854,46,877,58,927,91,970,126"/>
+<area shape="rect" id="Node000006" href="$class_anim_host_message_sender.html#a6c7f4b09a23e9974669a3af233ec3a29" title="Creating a TRACER Update Message Body, given a specific float to send." alt="" coords="703,72,876,115"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="918,136,860,118,861,113,920,131"/>
+<area shape="rect" id="Node000007" href="$class_anim_host_message_sender.html#a7e8044aa3cdc3fe08fe24a1f6620c71c" title="Creating a TRACER Update Message Body, given a specific integer to send." alt="" coords="703,139,876,181"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="908,163,876,163,876,157,908,157"/>
+<area shape="rect" id="Node000008" href="$class_anim_host_message_sender.html#a339e5ba009ecbd38b5dfa3411ee574d9" title="Creating a TRACER Update Message Body, given a specific string to send." alt="" coords="703,205,876,248"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="920,189,861,207,860,202,918,184"/>
+<area shape="rect" id="Node000009" href="$class_anim_host_message_sender.html#a34e4352d9f27a778bc8babb2f1320d2a" title="Creating a TRACER Update Message Body, given a specific vector of floats to send." alt="" coords="703,272,876,315"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="970,194,927,229,877,262,854,274,852,269,874,258,924,224,966,190"/>
+<area shape="rect" id="Node000003" href="$class_anim_host_message_sender.html#a3f21ada977b3885844e69c26eaeeff40" title="Converting an animation frame to a series of bytes." alt="" coords="483,5,655,48"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="688,29,656,29,656,24,688,24"/>
+<area shape="rect" id="Node000004" href="$class_anim_host_message_sender.html#a9b6353a89353c616330203b41df179fe" title="Main loop, executes all operations." alt="" coords="237,13,435,40"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="468,29,435,29,435,24,468,24"/>
+<area shape="rect" id="Node000005" href="$class_tracer_update_sender_plugin.html#a60da45d2340d52fd6e0f55a8e7b14cc2" title="Default constructor." alt="" coords="5,5,189,48"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="221,29,189,29,189,24,221,24"/>
+</map>

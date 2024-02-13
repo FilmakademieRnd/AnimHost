@@ -1,0 +1,1267 @@
+\doxysection{onnxruntime\+\_\+cxx\+\_\+api.\+h}
+\hypertarget{onnxruntime__cxx__api_8h_source}{}\label{onnxruntime__cxx__api_8h_source}\index{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost\_Plugins/BasicOnnxPlugin/onnxruntime/include/onnxruntime\_cxx\_api.h@{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost\_Plugins/BasicOnnxPlugin/onnxruntime/include/onnxruntime\_cxx\_api.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ Microsoft\ Corporation.\ All\ rights\ reserved.}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Licensed\ under\ the\ MIT\ License.}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ Summary:\ The\ Ort\ C++\ API\ is\ a\ header\ only\ wrapper\ around\ the\ Ort\ C\ API.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ The\ C++\ API\ simplifies\ usage\ by\ returning\ values\ directly\ instead\ of\ error\ codes,\ throwing\ exceptions\ on\ errors}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ and\ automatically\ releasing\ resources\ in\ the\ destructors.\ The\ primary\ purpose\ of\ C++\ API\ is\ exception\ safety\ so}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ all\ the\ resources\ follow\ RAII\ and\ do\ not\ leak\ memory.}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ Each\ of\ the\ C++\ wrapper\ classes\ holds\ only\ a\ pointer\ to\ the\ C\ internal\ object.\ Treat\ them\ like\ smart\ pointers.}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ To\ create\ an\ empty\ object,\ pass\ 'nullptr'\ to\ the\ constructor\ (for\ example,\ Env\ e\{nullptr\};).\ However,\ you\ can't\ use\ them}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ until\ you\ assign\ an\ instance\ that\ actually\ holds\ an\ underlying\ object.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//}}
+\DoxyCodeLine{00014\ \textcolor{comment}{//\ For\ Ort\ objects\ only\ move\ assignment\ between\ objects\ is\ allowed,\ there\ are\ no\ copy\ constructors.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ Some\ objects\ have\ explicit\ 'Clone'\ methods\ for\ this\ purpose.}}
+\DoxyCodeLine{00016\ \textcolor{comment}{//}}
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ ConstXXXX\ types\ are\ copyable\ since\ they\ do\ not\ own\ the\ underlying\ C\ object,\ so\ you\ can\ pass\ them\ to\ functions\ as\ arguments}}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ by\ value\ or\ by\ reference.\ ConstXXXX\ types\ are\ restricted\ to\ const\ only\ interfaces.}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ UnownedXXXX\ are\ similar\ to\ ConstXXXX\ but\ also\ allow\ non-\/const\ interfaces.}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//}}
+\DoxyCodeLine{00022\ \textcolor{comment}{//\ The\ lifetime\ of\ the\ corresponding\ owning\ object\ must\ eclipse\ the\ lifetimes\ of\ the\ ConstXXXX/UnownedXXXX\ types.\ They\ exists\ so\ you\ do\ not}}
+\DoxyCodeLine{00023\ \textcolor{comment}{//\ have\ to\ fallback\ to\ C\ types\ and\ the\ API\ with\ the\ usual\ pitfalls.\ In\ general,\ do\ not\ use\ C\ API\ from\ your\ C++\ code.}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}onnxruntime\_c\_api.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <cstddef>}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ <cstdio>}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <array>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ <stdexcept>}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#include\ <unordered\_map>}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#include\ <utility>}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#include\ <type\_traits>}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#ifdef\ ORT\_NO\_EXCEPTIONS}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00045\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_ort}{Ort}}\ \{}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00051\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_exception}{Exception}}\ :\ std::exception\ \{}
+\DoxyCodeLine{00052\ \ \ \mbox{\hyperlink{struct_ort_1_1_exception}{Exception}}(std::string\&\&\ \textcolor{keywordtype}{string},\ OrtErrorCode\ code)\ :\ message\_\{std::move(\textcolor{keywordtype}{string})\},\ code\_\{code\}\ \{\}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ OrtErrorCode\ GetOrtErrorCode()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ code\_;\ \}}
+\DoxyCodeLine{00055\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ what()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \textcolor{keyword}{override}\ \{\ \textcolor{keywordflow}{return}\ message\_.c\_str();\ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00058\ \ \ std::string\ message\_;}
+\DoxyCodeLine{00059\ \ \ OrtErrorCode\ code\_;}
+\DoxyCodeLine{00060\ \};}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#ifdef\ ORT\_NO\_EXCEPTIONS}}
+\DoxyCodeLine{00063\ \textcolor{comment}{//\ The\ \#ifndef\ is\ for\ the\ very\ special\ case\ where\ the\ user\ of\ this\ library\ wants\ to\ define\ their\ own\ way\ of\ handling\ errors.}}
+\DoxyCodeLine{00064\ \textcolor{comment}{//\ NOTE:\ This\ header\ expects\ control\ flow\ to\ not\ continue\ after\ calling\ ORT\_CXX\_API\_THROW}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#ifndef\ ORT\_CXX\_API\_THROW}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#define\ ORT\_CXX\_API\_THROW(string,\ code)\ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\ \ do\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\ \ \ \ std::cerr\ <<\ Ort::Exception(string,\ code)\ \(\backslash\)}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ .what()\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ <<\ std::endl;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\ \ \ \ abort();\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\ \ \}\ while\ (false)}}
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#define\ ORT\_CXX\_API\_THROW(string,\ code)\ \(\backslash\)}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\ \ throw\ Ort::Exception(string,\ code)}}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{comment}{//\ This\ is\ used\ internally\ by\ the\ C++\ API.\ This\ class\ holds\ the\ global\ variable\ that\ points\ to\ the\ OrtApi,}}
+\DoxyCodeLine{00080\ \textcolor{comment}{//\ \ it's\ in\ a\ template\ so\ that\ we\ can\ define\ a\ global\ variable\ in\ a\ header\ and\ make}}
+\DoxyCodeLine{00081\ \textcolor{comment}{//\ it\ transparent\ to\ the\ users\ of\ the\ API.}}
+\DoxyCodeLine{00082\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00083\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_global}{Global}}\ \{}
+\DoxyCodeLine{00084\ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_api}{OrtApi}}*\ api\_;}
+\DoxyCodeLine{00085\ \};}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \textcolor{comment}{//\ If\ macro\ ORT\_API\_MANUAL\_INIT\ is\ defined,\ no\ static\ initialization\ will\ be\ performed.\ Instead,\ user\ must\ call\ InitApi()\ before\ using\ it.}}
+\DoxyCodeLine{00088\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#ifdef\ ORT\_API\_MANUAL\_INIT}}
+\DoxyCodeLine{00090\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_api}{OrtApi}}*\ \mbox{\hyperlink{struct_ort_1_1_global}{Global<T>::api\_}}\{\};}
+\DoxyCodeLine{00091\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ InitApi()\ noexcept\ \{\ Global<void>::api\_\ =\ \mbox{\hyperlink{group___global_gaf542347444820afe571db318ffcc8101}{OrtGetApiBase}}()-\/>\mbox{\hyperlink{struct_ort_api_base_a528209c52d82a5b4c61fe609a6fc6204}{GetApi}}(\mbox{\hyperlink{group___global_gac583aeb4640621ceb588f6300537945d}{ORT\_API\_VERSION}});\ \}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{comment}{//\ Used\ by\ custom\ operator\ libraries\ that\ are\ not\ linked\ to\ onnxruntime.\ Sets\ the\ global\ API\ object,\ which\ is}}
+\DoxyCodeLine{00094\ \textcolor{comment}{//\ required\ by\ C++\ APIs.}}
+\DoxyCodeLine{00095\ \textcolor{comment}{//}}
+\DoxyCodeLine{00096\ \textcolor{comment}{//\ Example\ mycustomop.cc:}}
+\DoxyCodeLine{00097\ \textcolor{comment}{//}}
+\DoxyCodeLine{00098\ \textcolor{comment}{//\ \#define\ ORT\_API\_MANUAL\_INIT}}
+\DoxyCodeLine{00099\ \textcolor{comment}{//\ \#include\ <onnxruntime\_cxx\_api.h>}}
+\DoxyCodeLine{00100\ \textcolor{comment}{//\ \#undef\ ORT\_API\_MANUAL\_INIT}}
+\DoxyCodeLine{00101\ \textcolor{comment}{//}}
+\DoxyCodeLine{00102\ \textcolor{comment}{//\ OrtStatus*\ ORT\_API\_CALL\ RegisterCustomOps(OrtSessionOptions*\ options,\ const\ OrtApiBase*\ api\_base)\ \{}}
+\DoxyCodeLine{00103\ \textcolor{comment}{//\ \ \ Ort::InitApi(api\_base-\/>GetApi(ORT\_API\_VERSION));}}
+\DoxyCodeLine{00104\ \textcolor{comment}{//\ \ \ //\ ...}}
+\DoxyCodeLine{00105\ \textcolor{comment}{//\ \}}}
+\DoxyCodeLine{00106\ \textcolor{comment}{//}}
+\DoxyCodeLine{00107\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ InitApi(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_api}{OrtApi}}*\ api)\ \textcolor{keyword}{noexcept}\ \{\ Global<void>::api\_\ =\ api;\ \}}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#if\ defined(\_MSC\_VER)\ \&\&\ !defined(\_\_clang\_\_)}}
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\#pragma\ warning(push)}}
+\DoxyCodeLine{00111\ \textcolor{comment}{//\ "{}Global\ initializer\ calls\ a\ non-\/constexpr\ function."{}\ Therefore\ you\ can't\ use\ ORT\ APIs\ in\ the\ other\ global\ initializers.}}
+\DoxyCodeLine{00112\ \textcolor{comment}{//\ Please\ define\ ORT\_API\_MANUAL\_INIT\ if\ it\ conerns\ you.}}
+\DoxyCodeLine{00113\ \textcolor{preprocessor}{\#pragma\ warning(disable\ :\ 26426)}}
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00115\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_api}{OrtApi}}*\ Global<T>::api\_\ =\ \mbox{\hyperlink{group___global_gaf542347444820afe571db318ffcc8101}{OrtGetApiBase}}()-\/>\mbox{\hyperlink{struct_ort_api_base_a528209c52d82a5b4c61fe609a6fc6204}{GetApi}}(\mbox{\hyperlink{group___global_gac583aeb4640621ceb588f6300537945d}{ORT\_API\_VERSION}});}
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\#if\ defined(\_MSC\_VER)\ \&\&\ !defined(\_\_clang\_\_)}}
+\DoxyCodeLine{00117\ \textcolor{preprocessor}{\#pragma\ warning(pop)}}
+\DoxyCodeLine{00118\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00119\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00122\ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_api}{OrtApi}}\&\ \mbox{\hyperlink{namespace_ort_a296b5958479d9889218b17bdb08c1894}{GetApi}}()\ noexcept\ \{\ \textcolor{keywordflow}{return}\ *\mbox{\hyperlink{struct_ort_1_1_global}{Global<void>::api\_}};\ \}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00128\ std::string\ \mbox{\hyperlink{namespace_ort_aab1b2d08af45de1d59ce7d86196cd72d}{GetVersionString}}();}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00135\ std::string\ \mbox{\hyperlink{namespace_ort_a6b82de94ec0b5681e559a9697e485306}{GetBuildInfoString}}();}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00142\ std::vector<std::string>\ \mbox{\hyperlink{namespace_ort_ac2f785275bced9e6853a2f4ea6b71c04}{GetAvailableProviders}}();}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00183\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_float16__t}{Float16\_t}}\ \{}
+\DoxyCodeLine{00184\ \ \ uint16\_t\ value;}
+\DoxyCodeLine{00185\ \ \ \textcolor{keyword}{constexpr}\ \mbox{\hyperlink{struct_ort_1_1_float16__t}{Float16\_t}}()\ noexcept\ :\ value(0)\ \{\}}
+\DoxyCodeLine{00186\ \ \ \textcolor{keyword}{constexpr}\ \mbox{\hyperlink{struct_ort_1_1_float16__t}{Float16\_t}}(uint16\_t\ v)\ noexcept\ :\ value(v)\ \{\}}
+\DoxyCodeLine{00187\ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keyword}{operator}\ uint16\_t()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ value;\ \}}
+\DoxyCodeLine{00188\ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ operator==(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_float16__t}{Float16\_t}}\&\ rhs)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ value\ ==\ rhs.value;\ \};}
+\DoxyCodeLine{00189\ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ operator!=(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_float16__t}{Float16\_t}}\&\ rhs)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ value\ !=\ rhs.value;\ \};}
+\DoxyCodeLine{00190\ \};}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00192\ \textcolor{keyword}{static\_assert}(\textcolor{keyword}{sizeof}(\mbox{\hyperlink{struct_ort_1_1_float16__t}{Float16\_t}})\ ==\ \textcolor{keyword}{sizeof}(uint16\_t),\ \textcolor{stringliteral}{"{}Sizes\ must\ match"{}});}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00202\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_b_float16__t}{BFloat16\_t}}\ \{}
+\DoxyCodeLine{00203\ \ \ uint16\_t\ value;}
+\DoxyCodeLine{00204\ \ \ \textcolor{keyword}{constexpr}\ \mbox{\hyperlink{struct_ort_1_1_b_float16__t}{BFloat16\_t}}()\ noexcept\ :\ value(0)\ \{\}}
+\DoxyCodeLine{00205\ \ \ \textcolor{keyword}{constexpr}\ \mbox{\hyperlink{struct_ort_1_1_b_float16__t}{BFloat16\_t}}(uint16\_t\ v)\ noexcept\ :\ value(v)\ \{\}}
+\DoxyCodeLine{00206\ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keyword}{operator}\ uint16\_t()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ value;\ \}}
+\DoxyCodeLine{00207\ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ operator==(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_b_float16__t}{BFloat16\_t}}\&\ rhs)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ value\ ==\ rhs.value;\ \};}
+\DoxyCodeLine{00208\ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ operator!=(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_b_float16__t}{BFloat16\_t}}\&\ rhs)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ value\ !=\ rhs.value;\ \};}
+\DoxyCodeLine{00209\ \};}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00211\ \textcolor{keyword}{static\_assert}(\textcolor{keyword}{sizeof}(\mbox{\hyperlink{struct_ort_1_1_b_float16__t}{BFloat16\_t}})\ ==\ \textcolor{keyword}{sizeof}(uint16\_t),\ \textcolor{stringliteral}{"{}Sizes\ must\ match"{}});}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \textcolor{keyword}{namespace\ }detail\ \{}
+\DoxyCodeLine{00214\ \textcolor{comment}{//\ This\ is\ used\ internally\ by\ the\ C++\ API.\ This\ macro\ is\ to\ make\ it\ easy\ to\ generate\ overloaded\ methods\ for\ all\ of\ the\ various\ OrtRelease*\ functions\ for\ every\ Ort*\ type}}
+\DoxyCodeLine{00215\ \textcolor{comment}{//\ This\ can't\ be\ done\ in\ the\ C\ API\ since\ C\ doesn't\ have\ function\ overloading.}}
+\DoxyCodeLine{00216\ \textcolor{preprocessor}{\#define\ ORT\_DEFINE\_RELEASE(NAME)\ \(\backslash\)}}
+\DoxyCodeLine{00217\ \textcolor{preprocessor}{\ \ inline\ void\ OrtRelease(Ort\#\#NAME*\ ptr)\ \{\ GetApi().Release\#\#NAME(ptr);\ \}}}
+\DoxyCodeLine{00218\ }
+\DoxyCodeLine{00219\ ORT\_DEFINE\_RELEASE(\mbox{\hyperlink{struct_ort_1_1_allocator}{Allocator}});}
+\DoxyCodeLine{00220\ ORT\_DEFINE\_RELEASE(\mbox{\hyperlink{struct_ort_1_1_memory_info}{MemoryInfo}});}
+\DoxyCodeLine{00221\ ORT\_DEFINE\_RELEASE(\mbox{\hyperlink{struct_ort_1_1_custom_op_domain}{CustomOpDomain}});}
+\DoxyCodeLine{00222\ ORT\_DEFINE\_RELEASE(\mbox{\hyperlink{struct_ort_1_1_threading_options}{ThreadingOptions}});}
+\DoxyCodeLine{00223\ ORT\_DEFINE\_RELEASE(\mbox{\hyperlink{struct_ort_1_1_env}{Env}});}
+\DoxyCodeLine{00224\ ORT\_DEFINE\_RELEASE(\mbox{\hyperlink{struct_ort_1_1_run_options}{RunOptions}});}
+\DoxyCodeLine{00225\ ORT\_DEFINE\_RELEASE(\mbox{\hyperlink{struct_ort_1_1_session}{Session}});}
+\DoxyCodeLine{00226\ ORT\_DEFINE\_RELEASE(\mbox{\hyperlink{struct_ort_1_1_session_options}{SessionOptions}});}
+\DoxyCodeLine{00227\ ORT\_DEFINE\_RELEASE(\mbox{\hyperlink{struct_ort_1_1_tensor_type_and_shape_info}{TensorTypeAndShapeInfo}});}
+\DoxyCodeLine{00228\ ORT\_DEFINE\_RELEASE(\mbox{\hyperlink{struct_ort_1_1_sequence_type_info}{SequenceTypeInfo}});}
+\DoxyCodeLine{00229\ ORT\_DEFINE\_RELEASE(\mbox{\hyperlink{struct_ort_1_1_map_type_info}{MapTypeInfo}});}
+\DoxyCodeLine{00230\ ORT\_DEFINE\_RELEASE(\mbox{\hyperlink{struct_ort_1_1_type_info}{TypeInfo}});}
+\DoxyCodeLine{00231\ ORT\_DEFINE\_RELEASE(\mbox{\hyperlink{struct_ort_1_1_value}{Value}});}
+\DoxyCodeLine{00232\ ORT\_DEFINE\_RELEASE(\mbox{\hyperlink{struct_ort_1_1_model_metadata}{ModelMetadata}});}
+\DoxyCodeLine{00233\ ORT\_DEFINE\_RELEASE(\mbox{\hyperlink{struct_ort_1_1_io_binding}{IoBinding}});}
+\DoxyCodeLine{00234\ ORT\_DEFINE\_RELEASE(\mbox{\hyperlink{struct_ort_1_1_arena_cfg}{ArenaCfg}});}
+\DoxyCodeLine{00235\ ORT\_DEFINE\_RELEASE(\mbox{\hyperlink{struct_ort_1_1_status}{Status}});}
+\DoxyCodeLine{00236\ ORT\_DEFINE\_RELEASE(\mbox{\hyperlink{struct_ort_1_1_op_attr}{OpAttr}});}
+\DoxyCodeLine{00237\ ORT\_DEFINE\_RELEASE(\mbox{\hyperlink{struct_ort_1_1_op}{Op}});}
+\DoxyCodeLine{00238\ ORT\_DEFINE\_RELEASE(\mbox{\hyperlink{struct_ort_1_1_kernel_info}{KernelInfo}});}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \textcolor{preprocessor}{\#undef\ ORT\_DEFINE\_RELEASE}}
+\DoxyCodeLine{00241\ }
+\DoxyCodeLine{00245\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00246\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_unowned}{Unowned}}\ \{}
+\DoxyCodeLine{00247\ \ \ \textcolor{keyword}{using\ }Type\ =\ T;}
+\DoxyCodeLine{00248\ \};}
+\DoxyCodeLine{00249\ }
+\DoxyCodeLine{00269\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00270\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}\ \{}
+\DoxyCodeLine{00271\ \ \ \textcolor{keyword}{using\ }contained\_type\ =\ T;}
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00273\ \ \ \textcolor{keyword}{constexpr}\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00274\ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}(contained\_type*\ p)\ noexcept\ :\ p\_\{p\}\ \{\}}
+\DoxyCodeLine{00275\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{\string~Base}}()\ \{\ OrtRelease(p\_);\ \}}
+\DoxyCodeLine{00276\ }
+\DoxyCodeLine{00277\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00278\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}\&\ operator=(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00280\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}(\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}\&\&\ v)\ noexcept\ :\ p\_\{v.p\_\}\ \{\ v.p\_\ =\ \textcolor{keyword}{nullptr};\ \}}
+\DoxyCodeLine{00281\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}\&\ operator=(\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}\&\&\ v)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00282\ \ \ \ \ OrtRelease(p\_);}
+\DoxyCodeLine{00283\ \ \ \ \ p\_\ =\ v.release();}
+\DoxyCodeLine{00284\ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00285\ \ \ \}}
+\DoxyCodeLine{00286\ }
+\DoxyCodeLine{00287\ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keyword}{operator}\ contained\_type*()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ p\_;\ \}}
+\DoxyCodeLine{00288\ }
+\DoxyCodeLine{00291\ \ \ contained\_type*\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base_a77e438d539c77870789686c70b031802}{release}}()\ \{}
+\DoxyCodeLine{00292\ \ \ \ \ T*\ p\ =\ p\_;}
+\DoxyCodeLine{00293\ \ \ \ \ p\_\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00294\ \ \ \ \ \textcolor{keywordflow}{return}\ p;}
+\DoxyCodeLine{00295\ \ \ \}}
+\DoxyCodeLine{00296\ }
+\DoxyCodeLine{00297\ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00298\ \ \ contained\_type*\ p\_\{\};}
+\DoxyCodeLine{00299\ \};}
+\DoxyCodeLine{00300\ }
+\DoxyCodeLine{00301\ \textcolor{comment}{//\ Undefined.\ For\ const\ types\ use\ Base<Unowned<const\ T>>}}
+\DoxyCodeLine{00302\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00303\ \textcolor{keyword}{struct\ }Base<const\ T>;}
+\DoxyCodeLine{00304\ }
+\DoxyCodeLine{00312\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00313\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}<\mbox{\hyperlink{struct_ort_1_1detail_1_1_unowned}{Unowned}}<T>>\ \{}
+\DoxyCodeLine{00314\ \ \ \textcolor{keyword}{using\ }contained\_type\ =\ \textcolor{keyword}{typename}\ Unowned<T>::Type;}
+\DoxyCodeLine{00315\ }
+\DoxyCodeLine{00316\ \ \ \textcolor{keyword}{constexpr}\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00317\ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}(contained\_type*\ p)\ noexcept\ :\ p\_\{p\}\ \{\}}
+\DoxyCodeLine{00318\ }
+\DoxyCodeLine{00319\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{\string~Base}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00320\ }
+\DoxyCodeLine{00321\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}\&)\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00322\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}\&\ operator=(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}\&)\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00323\ }
+\DoxyCodeLine{00324\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}(\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}\&\&\ v)\ noexcept\ :\ p\_\{v.p\_\}\ \{\ v.p\_\ =\ \textcolor{keyword}{nullptr};\ \}}
+\DoxyCodeLine{00325\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}\&\ operator=(\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}\&\&\ v)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00326\ \ \ \ \ p\_\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00327\ \ \ \ \ std::swap(p\_,\ v.p\_);}
+\DoxyCodeLine{00328\ \ \ \ \ \textcolor{keywordflow}{return}\ *\textcolor{keyword}{this};}
+\DoxyCodeLine{00329\ \ \ \}}
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00331\ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keyword}{operator}\ contained\_type*()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ p\_;\ \}}
+\DoxyCodeLine{00332\ }
+\DoxyCodeLine{00333\ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00334\ \ \ contained\_type*\ p\_\{\};}
+\DoxyCodeLine{00335\ \};}
+\DoxyCodeLine{00336\ }
+\DoxyCodeLine{00337\ \textcolor{comment}{//\ Light\ functor\ to\ release\ memory\ with\ OrtAllocator}}
+\DoxyCodeLine{00338\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_allocated_free}{AllocatedFree}}\ \{}
+\DoxyCodeLine{00339\ \ \ \mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ allocator\_;}
+\DoxyCodeLine{00340\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_allocated_free}{AllocatedFree}}(\mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ allocator)}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ :\ allocator\_(allocator)\ \{\}}
+\DoxyCodeLine{00342\ \ \ \textcolor{keywordtype}{void}\ operator()(\textcolor{keywordtype}{void}*\ ptr)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00343\ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr)\ allocator\_-\/>Free(allocator\_,\ ptr);}
+\DoxyCodeLine{00344\ \ \ \}}
+\DoxyCodeLine{00345\ \};}
+\DoxyCodeLine{00346\ }
+\DoxyCodeLine{00347\ \}\ \ \textcolor{comment}{//\ namespace\ detail}}
+\DoxyCodeLine{00348\ }
+\DoxyCodeLine{00349\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_allocator_with_default_options}{AllocatorWithDefaultOptions}};}
+\DoxyCodeLine{00350\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_env}{Env}};}
+\DoxyCodeLine{00351\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_type_info}{TypeInfo}};}
+\DoxyCodeLine{00352\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_value}{Value}};}
+\DoxyCodeLine{00353\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_model_metadata}{ModelMetadata}};}
+\DoxyCodeLine{00354\ }
+\DoxyCodeLine{00359\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespace_ort_aad745588fd5aa01b386eebbacd5e7d18}{AllocatedStringPtr}}\ =\ std::unique\_ptr<char,\ detail::AllocatedFree>;}
+\DoxyCodeLine{00360\ }
+\DoxyCodeLine{00365\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_status}{Status}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{detail::Base}}<OrtStatus>\ \{}
+\DoxyCodeLine{00366\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_status_af1b74eb88600899a54b4d1e937d0029f}{Status}}(std::nullptr\_t)\ \textcolor{keyword}{noexcept}\ \{\}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00367\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_status_af1b74eb88600899a54b4d1e937d0029f}{Status}}(OrtStatus*\ status)\ \textcolor{keyword}{noexcept};\ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00368\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_status_af1b74eb88600899a54b4d1e937d0029f}{Status}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_exception}{Exception}}\&)\ \textcolor{keyword}{noexcept};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00369\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_status_af1b74eb88600899a54b4d1e937d0029f}{Status}}(\textcolor{keyword}{const}\ std::exception\&)\ \textcolor{keyword}{noexcept};\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00370\ \ \ \mbox{\hyperlink{struct_ort_1_1_status_af1b74eb88600899a54b4d1e937d0029f}{Status}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ message,\ OrtErrorCode\ code)\ \textcolor{keyword}{noexcept};\ \ }
+\DoxyCodeLine{00371\ \ \ std::string\ GetErrorMessage()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00372\ \ \ OrtErrorCode\ GetErrorCode()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00373\ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_ort_1_1_status_a69459325c491143f034d7b19df08cbdf}{IsOK}}()\ const\ noexcept;\ \ }
+\DoxyCodeLine{00374\ \};}
+\DoxyCodeLine{00375\ }
+\DoxyCodeLine{00380\ struct\ \mbox{\hyperlink{struct_ort_1_1_threading_options}{ThreadingOptions}}\ :\ detail::Base<OrtThreadingOptions>\ \{}
+\DoxyCodeLine{00382\ \ \ \mbox{\hyperlink{struct_ort_1_1_threading_options}{ThreadingOptions}}();}
+\DoxyCodeLine{00383\ }
+\DoxyCodeLine{00385\ \ \ \mbox{\hyperlink{struct_ort_1_1_threading_options}{ThreadingOptions}}\&\ SetGlobalIntraOpNumThreads(\textcolor{keywordtype}{int}\ intra\_op\_num\_threads);}
+\DoxyCodeLine{00386\ }
+\DoxyCodeLine{00388\ \ \ \mbox{\hyperlink{struct_ort_1_1_threading_options}{ThreadingOptions}}\&\ SetGlobalInterOpNumThreads(\textcolor{keywordtype}{int}\ inter\_op\_num\_threads);}
+\DoxyCodeLine{00389\ }
+\DoxyCodeLine{00391\ \ \ \mbox{\hyperlink{struct_ort_1_1_threading_options}{ThreadingOptions}}\&\ SetGlobalSpinControl(\textcolor{keywordtype}{int}\ allow\_spinning);}
+\DoxyCodeLine{00392\ }
+\DoxyCodeLine{00394\ \ \ \mbox{\hyperlink{struct_ort_1_1_threading_options}{ThreadingOptions}}\&\ SetGlobalDenormalAsZero();}
+\DoxyCodeLine{00395\ }
+\DoxyCodeLine{00397\ \ \ \mbox{\hyperlink{struct_ort_1_1_threading_options}{ThreadingOptions}}\&\ SetGlobalCustomCreateThreadFn(\mbox{\hyperlink{group___global_gae0957b6ccebab677893b6155dcb744e5}{OrtCustomCreateThreadFn}}\ ort\_custom\_create\_thread\_fn);}
+\DoxyCodeLine{00398\ }
+\DoxyCodeLine{00400\ \ \ \mbox{\hyperlink{struct_ort_1_1_threading_options}{ThreadingOptions}}\&\ SetGlobalCustomThreadCreationOptions(\textcolor{keywordtype}{void}*\ ort\_custom\_thread\_creation\_options);}
+\DoxyCodeLine{00401\ }
+\DoxyCodeLine{00403\ \ \ \mbox{\hyperlink{struct_ort_1_1_threading_options}{ThreadingOptions}}\&\ SetGlobalCustomJoinThreadFn(\mbox{\hyperlink{group___global_ga2d123bc5dd929c1cb520e7b872fbfd0e}{OrtCustomJoinThreadFn}}\ ort\_custom\_join\_thread\_fn);}
+\DoxyCodeLine{00404\ \};}
+\DoxyCodeLine{00405\ }
+\DoxyCodeLine{00411\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_env}{Env}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{detail::Base}}<OrtEnv>\ \{}
+\DoxyCodeLine{00412\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_env_a48bab6a5fcbe8f6d6c0ceb27afae810a}{Env}}(std::nullptr\_t)\ \{\}\ \ }
+\DoxyCodeLine{00413\ }
+\DoxyCodeLine{00415\ \ \ \mbox{\hyperlink{struct_ort_1_1_env}{Env}}(\mbox{\hyperlink{group___global_ga1c0fbcf614dbd0e2c272ae1cc04c629c}{OrtLoggingLevel}}\ logging\_level\ =\ \mbox{\hyperlink{group___global_gga1c0fbcf614dbd0e2c272ae1cc04c629cab150db726e3f481f0e67ae654307b1c6}{ORT\_LOGGING\_LEVEL\_WARNING}},\ \_In\_\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ logid\ =\ \textcolor{stringliteral}{"{}"{}});}
+\DoxyCodeLine{00416\ }
+\DoxyCodeLine{00418\ \ \ \mbox{\hyperlink{struct_ort_1_1_env}{Env}}(\mbox{\hyperlink{group___global_ga1c0fbcf614dbd0e2c272ae1cc04c629c}{OrtLoggingLevel}}\ logging\_level,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ logid,\ OrtLoggingFunction\ logging\_function,\ \textcolor{keywordtype}{void}*\ logger\_param);}
+\DoxyCodeLine{00419\ }
+\DoxyCodeLine{00421\ \ \ \mbox{\hyperlink{struct_ort_1_1_env}{Env}}(\textcolor{keyword}{const}\ OrtThreadingOptions*\ tp\_options,\ \mbox{\hyperlink{group___global_ga1c0fbcf614dbd0e2c272ae1cc04c629c}{OrtLoggingLevel}}\ logging\_level\ =\ \mbox{\hyperlink{group___global_gga1c0fbcf614dbd0e2c272ae1cc04c629cab150db726e3f481f0e67ae654307b1c6}{ORT\_LOGGING\_LEVEL\_WARNING}},\ \_In\_\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ logid\ =\ \textcolor{stringliteral}{"{}"{}});}
+\DoxyCodeLine{00422\ }
+\DoxyCodeLine{00424\ \ \ \mbox{\hyperlink{struct_ort_1_1_env}{Env}}(\textcolor{keyword}{const}\ OrtThreadingOptions*\ tp\_options,\ OrtLoggingFunction\ logging\_function,\ \textcolor{keywordtype}{void}*\ logger\_param,}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \mbox{\hyperlink{group___global_ga1c0fbcf614dbd0e2c272ae1cc04c629c}{OrtLoggingLevel}}\ logging\_level\ =\ \mbox{\hyperlink{group___global_gga1c0fbcf614dbd0e2c272ae1cc04c629cab150db726e3f481f0e67ae654307b1c6}{ORT\_LOGGING\_LEVEL\_WARNING}},\ \_In\_\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ logid\ =\ \textcolor{stringliteral}{"{}"{}});}
+\DoxyCodeLine{00426\ }
+\DoxyCodeLine{00428\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_env_a25b49a5a089206ead63150b4e246bdbe}{Env}}(OrtEnv*\ p)\ :\ Base<OrtEnv>\{p\}\ \{\}}
+\DoxyCodeLine{00429\ }
+\DoxyCodeLine{00430\ \ \ Env\&\ EnableTelemetryEvents();\ \ \ }
+\DoxyCodeLine{00431\ \ \ Env\&\ DisableTelemetryEvents();\ \ }
+\DoxyCodeLine{00432\ }
+\DoxyCodeLine{00433\ \ \ Env\&\ UpdateEnvWithCustomLogLevel(\mbox{\hyperlink{group___global_ga1c0fbcf614dbd0e2c272ae1cc04c629c}{OrtLoggingLevel}}\ log\_severity\_level);\ \ }
+\DoxyCodeLine{00434\ }
+\DoxyCodeLine{00435\ \ \ Env\&\ CreateAndRegisterAllocator(\textcolor{keyword}{const}\ OrtMemoryInfo*\ mem\_info,\ \textcolor{keyword}{const}\ OrtArenaCfg*\ arena\_cfg);\ \ }
+\DoxyCodeLine{00436\ \};}
+\DoxyCodeLine{00437\ }
+\DoxyCodeLine{00441\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_custom_op_domain}{CustomOpDomain}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{detail::Base}}<OrtCustomOpDomain>\ \{}
+\DoxyCodeLine{00442\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_custom_op_domain_a4718bfa2cc736c54c4da4cc828ba8899}{CustomOpDomain}}(std::nullptr\_t)\ \{\}\ \ }
+\DoxyCodeLine{00443\ }
+\DoxyCodeLine{00445\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_custom_op_domain}{CustomOpDomain}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ domain);}
+\DoxyCodeLine{00446\ }
+\DoxyCodeLine{00447\ \ \ \textcolor{comment}{//\ This\ does\ not\ take\ ownership\ of\ the\ op,\ simply\ registers\ it.}}
+\DoxyCodeLine{00448\ \ \ \textcolor{keywordtype}{void}\ Add(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_custom_op}{OrtCustomOp}}*\ op);\ \ }
+\DoxyCodeLine{00449\ \};}
+\DoxyCodeLine{00450\ }
+\DoxyCodeLine{00454\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_run_options}{RunOptions}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{detail::Base}}<OrtRunOptions>\ \{}
+\DoxyCodeLine{00455\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_run_options_a89e09783a59b61dfb61bcfa052f7f4bc}{RunOptions}}(std::nullptr\_t)\ \{\}\ \ }
+\DoxyCodeLine{00456\ \ \ \mbox{\hyperlink{struct_ort_1_1_run_options}{RunOptions}}();\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00457\ }
+\DoxyCodeLine{00458\ \ \ \mbox{\hyperlink{struct_ort_1_1_run_options}{RunOptions}}\&\ SetRunLogVerbosityLevel(\textcolor{keywordtype}{int});\ \ }
+\DoxyCodeLine{00459\ \ \ \textcolor{keywordtype}{int}\ GetRunLogVerbosityLevel()\ \textcolor{keyword}{const};\ \ \ \ \ \ \ }
+\DoxyCodeLine{00460\ }
+\DoxyCodeLine{00461\ \ \ \mbox{\hyperlink{struct_ort_1_1_run_options}{RunOptions}}\&\ SetRunLogSeverityLevel(\textcolor{keywordtype}{int});\ \ }
+\DoxyCodeLine{00462\ \ \ \textcolor{keywordtype}{int}\ GetRunLogSeverityLevel()\ \textcolor{keyword}{const};\ \ \ \ \ \ \ }
+\DoxyCodeLine{00463\ }
+\DoxyCodeLine{00464\ \ \ \mbox{\hyperlink{struct_ort_1_1_run_options}{RunOptions}}\&\ SetRunTag(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ run\_tag);\ \ }
+\DoxyCodeLine{00465\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ GetRunTag()\ \textcolor{keyword}{const};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00466\ }
+\DoxyCodeLine{00467\ \ \ \mbox{\hyperlink{struct_ort_1_1_run_options}{RunOptions}}\&\ AddConfigEntry(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ config\_key,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ config\_value);\ \ }
+\DoxyCodeLine{00468\ }
+\DoxyCodeLine{00474\ \ \ \mbox{\hyperlink{struct_ort_1_1_run_options}{RunOptions}}\&\ SetTerminate();}
+\DoxyCodeLine{00475\ }
+\DoxyCodeLine{00480\ \ \ \mbox{\hyperlink{struct_ort_1_1_run_options}{RunOptions}}\&\ UnsetTerminate();}
+\DoxyCodeLine{00481\ \};}
+\DoxyCodeLine{00482\ }
+\DoxyCodeLine{00483\ \textcolor{keyword}{namespace\ }detail\ \{}
+\DoxyCodeLine{00484\ \textcolor{comment}{//\ Utility\ function\ that\ returns\ a\ SessionOption\ config\ entry\ key\ for\ a\ specific\ custom\ operator.}}
+\DoxyCodeLine{00485\ \textcolor{comment}{//\ Ex:\ custom\_op.[custom\_op\_name].[config]}}
+\DoxyCodeLine{00486\ std::string\ MakeCustomOpConfigEntryKey(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ custom\_op\_name,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ config);}
+\DoxyCodeLine{00487\ \}\ \ \textcolor{comment}{//\ namespace\ detail}}
+\DoxyCodeLine{00488\ }
+\DoxyCodeLine{00498\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_custom_op_configs}{CustomOpConfigs}}\ \{}
+\DoxyCodeLine{00499\ \ \ \mbox{\hyperlink{struct_ort_1_1_custom_op_configs}{CustomOpConfigs}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00500\ \ \ \mbox{\hyperlink{struct_ort_1_1_custom_op_configs}{\string~CustomOpConfigs}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00501\ \ \ \mbox{\hyperlink{struct_ort_1_1_custom_op_configs}{CustomOpConfigs}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_custom_op_configs}{CustomOpConfigs}}\&)\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00502\ \ \ \mbox{\hyperlink{struct_ort_1_1_custom_op_configs}{CustomOpConfigs}}\&\ operator=(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_custom_op_configs}{CustomOpConfigs}}\&)\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00503\ \ \ \mbox{\hyperlink{struct_ort_1_1_custom_op_configs}{CustomOpConfigs}}(\mbox{\hyperlink{struct_ort_1_1_custom_op_configs}{CustomOpConfigs}}\&\&\ o)\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00504\ \ \ \mbox{\hyperlink{struct_ort_1_1_custom_op_configs}{CustomOpConfigs}}\&\ operator=(\mbox{\hyperlink{struct_ort_1_1_custom_op_configs}{CustomOpConfigs}}\&\&\ o)\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00505\ }
+\DoxyCodeLine{00514\ \ \ \mbox{\hyperlink{struct_ort_1_1_custom_op_configs}{CustomOpConfigs}}\&\ AddConfig(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ custom\_op\_name,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ config\_key,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ config\_value);}
+\DoxyCodeLine{00515\ }
+\DoxyCodeLine{00524\ \ \ \textcolor{keyword}{const}\ std::unordered\_map<std::string,\ std::string>\&\ GetFlattenedConfigs()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00525\ }
+\DoxyCodeLine{00526\ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00527\ \ \ std::unordered\_map<std::string,\ std::string>\ flat\_configs\_;}
+\DoxyCodeLine{00528\ \};}
+\DoxyCodeLine{00529\ }
+\DoxyCodeLine{00535\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_session_options}{SessionOptions}};}
+\DoxyCodeLine{00536\ }
+\DoxyCodeLine{00537\ \textcolor{keyword}{namespace\ }detail\ \{}
+\DoxyCodeLine{00538\ \textcolor{comment}{//\ we\ separate\ const-\/only\ methods\ because\ passing\ const\ ptr\ to\ non-\/const\ methods}}
+\DoxyCodeLine{00539\ \textcolor{comment}{//\ is\ only\ discovered\ when\ inline\ methods\ are\ compiled\ which\ is\ counter-\/intuitive}}
+\DoxyCodeLine{00540\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00541\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_options_impl}{ConstSessionOptionsImpl}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}<T>\ \{}
+\DoxyCodeLine{00542\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{B}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base<T>}};}
+\DoxyCodeLine{00543\ \ \ \textcolor{keyword}{using\ }B::B;}
+\DoxyCodeLine{00544\ }
+\DoxyCodeLine{00545\ \ \ \mbox{\hyperlink{struct_ort_1_1_session_options}{SessionOptions}}\ Clone()\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00546\ }
+\DoxyCodeLine{00547\ \ \ std::string\ GetConfigEntry(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ config\_key)\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00548\ \ \ \textcolor{keywordtype}{bool}\ HasConfigEntry(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ config\_key)\ \textcolor{keyword}{const};\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00549\ \ \ std::string\ GetConfigEntryOrDefault(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ config\_key,\ \textcolor{keyword}{const}\ std::string\&\ def);}
+\DoxyCodeLine{00550\ \};}
+\DoxyCodeLine{00551\ }
+\DoxyCodeLine{00552\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00553\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_options_impl}{ConstSessionOptionsImpl}}<T>\ \{}
+\DoxyCodeLine{00554\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_options_impl}{B}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_options_impl}{ConstSessionOptionsImpl<T>}};}
+\DoxyCodeLine{00555\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{B::B}};}
+\DoxyCodeLine{00556\ }
+\DoxyCodeLine{00557\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ SetIntraOpNumThreads(\textcolor{keywordtype}{int}\ intra\_op\_num\_threads);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00558\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ SetInterOpNumThreads(\textcolor{keywordtype}{int}\ inter\_op\_num\_threads);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00559\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ SetGraphOptimizationLevel(\mbox{\hyperlink{group___global_gab086a52ca2f3a883cd1f7561eadd8ec9}{GraphOptimizationLevel}}\ graph\_optimization\_level);\ \ }
+\DoxyCodeLine{00560\ }
+\DoxyCodeLine{00561\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ EnableCpuMemArena();\ \ \ }
+\DoxyCodeLine{00562\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ DisableCpuMemArena();\ \ }
+\DoxyCodeLine{00563\ }
+\DoxyCodeLine{00564\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ SetOptimizedModelFilePath(\textcolor{keyword}{const}\ ORTCHAR\_T*\ optimized\_model\_file);\ \ }
+\DoxyCodeLine{00565\ }
+\DoxyCodeLine{00566\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ EnableProfiling(\textcolor{keyword}{const}\ ORTCHAR\_T*\ profile\_file\_prefix);\ \ }
+\DoxyCodeLine{00567\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ DisableProfiling();\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00568\ }
+\DoxyCodeLine{00569\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ EnableOrtCustomOps();\ \ }
+\DoxyCodeLine{00570\ }
+\DoxyCodeLine{00571\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ EnableMemPattern();\ \ \ }
+\DoxyCodeLine{00572\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ DisableMemPattern();\ \ }
+\DoxyCodeLine{00573\ }
+\DoxyCodeLine{00574\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ SetExecutionMode(ExecutionMode\ execution\_mode);\ \ }
+\DoxyCodeLine{00575\ }
+\DoxyCodeLine{00576\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ SetLogId(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ logid);\ \ \ \ \ }
+\DoxyCodeLine{00577\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ SetLogSeverityLevel(\textcolor{keywordtype}{int}\ level);\ \ }
+\DoxyCodeLine{00578\ }
+\DoxyCodeLine{00579\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ Add(OrtCustomOpDomain*\ custom\_op\_domain);\ \ }
+\DoxyCodeLine{00580\ }
+\DoxyCodeLine{00581\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ DisablePerSessionThreads();\ \ }
+\DoxyCodeLine{00582\ }
+\DoxyCodeLine{00583\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ AddConfigEntry(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ config\_key,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ config\_value);\ \ }
+\DoxyCodeLine{00584\ }
+\DoxyCodeLine{00585\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ AddInitializer(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name,\ \textcolor{keyword}{const}\ OrtValue*\ ort\_val);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00586\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ AddExternalInitializers(\textcolor{keyword}{const}\ std::vector<std::string>\&\ names,\ \textcolor{keyword}{const}\ std::vector<Value>\&\ ort\_values);\ \ }
+\DoxyCodeLine{00587\ }
+\DoxyCodeLine{00588\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ AppendExecutionProvider\_CUDA(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_c_u_d_a_provider_options}{OrtCUDAProviderOptions}}\&\ provider\_options);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00589\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ AppendExecutionProvider\_CUDA\_V2(\textcolor{keyword}{const}\ OrtCUDAProviderOptionsV2\&\ provider\_options);\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00590\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ AppendExecutionProvider\_ROCM(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_r_o_c_m_provider_options}{OrtROCMProviderOptions}}\&\ provider\_options);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00591\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ AppendExecutionProvider\_OpenVINO(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_open_v_i_n_o_provider_options}{OrtOpenVINOProviderOptions}}\&\ provider\_options);\ \ \ \ \ \ \ }
+\DoxyCodeLine{00592\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ AppendExecutionProvider\_TensorRT(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_tensor_r_t_provider_options}{OrtTensorRTProviderOptions}}\&\ provider\_options);\ \ \ \ \ \ \ }
+\DoxyCodeLine{00593\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ AppendExecutionProvider\_TensorRT\_V2(\textcolor{keyword}{const}\ OrtTensorRTProviderOptionsV2\&\ provider\_options);\ \ }
+\DoxyCodeLine{00594\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ AppendExecutionProvider\_MIGraphX(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_m_i_graph_x_provider_options}{OrtMIGraphXProviderOptions}}\&\ provider\_options);\ \ \ \ \ \ \ }
+\DoxyCodeLine{00596\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ AppendExecutionProvider\_CANN(\textcolor{keyword}{const}\ OrtCANNProviderOptions\&\ provider\_options);}
+\DoxyCodeLine{00598\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ AppendExecutionProvider\_Dnnl(\textcolor{keyword}{const}\ OrtDnnlProviderOptions\&\ provider\_options);}
+\DoxyCodeLine{00600\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ AppendExecutionProvider(\textcolor{keyword}{const}\ std::string\&\ provider\_name,}
+\DoxyCodeLine{00601\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::unordered\_map<std::string,\ std::string>\&\ provider\_options\ =\ \{\});}
+\DoxyCodeLine{00602\ }
+\DoxyCodeLine{00603\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ SetCustomCreateThreadFn(\mbox{\hyperlink{group___global_gae0957b6ccebab677893b6155dcb744e5}{OrtCustomCreateThreadFn}}\ ort\_custom\_create\_thread\_fn);\ \ }
+\DoxyCodeLine{00604\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ SetCustomThreadCreationOptions(\textcolor{keywordtype}{void}*\ ort\_custom\_thread\_creation\_options);\ \ \ \ \ \ }
+\DoxyCodeLine{00605\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ SetCustomJoinThreadFn(\mbox{\hyperlink{group___global_ga2d123bc5dd929c1cb520e7b872fbfd0e}{OrtCustomJoinThreadFn}}\ ort\_custom\_join\_thread\_fn);\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00606\ }
+\DoxyCodeLine{00610\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ RegisterCustomOpsLibrary(\textcolor{keyword}{const}\ ORTCHAR\_T*\ library\_name,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_custom_op_configs}{CustomOpConfigs}}\&\ custom\_op\_configs\ =\ \{\});}
+\DoxyCodeLine{00611\ }
+\DoxyCodeLine{00612\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{SessionOptionsImpl}}\&\ RegisterCustomOpsUsingFunction(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ function\_name);\ \ }
+\DoxyCodeLine{00613\ \};}
+\DoxyCodeLine{00614\ \}\ \ \textcolor{comment}{//\ namespace\ detail}}
+\DoxyCodeLine{00615\ }
+\DoxyCodeLine{00616\ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{UnownedSessionOptions}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{detail::SessionOptionsImpl<detail::Unowned<OrtSessionOptions>}}>;}
+\DoxyCodeLine{00617\ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_options_impl}{ConstSessionOptions}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_options_impl}{detail::ConstSessionOptionsImpl<detail::Unowned<const\ OrtSessionOptions>}}>;}
+\DoxyCodeLine{00618\ }
+\DoxyCodeLine{00622\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_session_options}{SessionOptions}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{detail::SessionOptionsImpl}}<OrtSessionOptions>\ \{}
+\DoxyCodeLine{00623\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_session_options_a49e3a72e68b9ab75cdc7a6227a0c9a81}{SessionOptions}}(std::nullptr\_t)\ \{\}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00624\ \ \ \mbox{\hyperlink{struct_ort_1_1_session_options}{SessionOptions}}();\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00625\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_session_options_ae15251c52983461ccd5e2f204fe1259c}{SessionOptions}}(OrtSessionOptions*\ p)\ :\ SessionOptionsImpl<OrtSessionOptions>\{p\}\ \{\}\ \ }
+\DoxyCodeLine{00626\ \ \ UnownedSessionOptions\ GetUnowned()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ UnownedSessionOptions\{this-\/>p\_\};\ \}}
+\DoxyCodeLine{00627\ \ \ ConstSessionOptions\ GetConst()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ ConstSessionOptions\{this-\/>p\_\};\ \}}
+\DoxyCodeLine{00628\ \};}
+\DoxyCodeLine{00629\ }
+\DoxyCodeLine{00633\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_model_metadata}{ModelMetadata}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{detail::Base}}<OrtModelMetadata>\ \{}
+\DoxyCodeLine{00634\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_model_metadata_a396ffe03318e70e231632c84627ffd37}{ModelMetadata}}(std::nullptr\_t)\ \{\}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00635\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_model_metadata_ae3e92380b90266d5a18e3ca9b3d632a3}{ModelMetadata}}(OrtModelMetadata*\ p)\ :\ Base<OrtModelMetadata>\{p\}\ \{\}\ \ }
+\DoxyCodeLine{00636\ }
+\DoxyCodeLine{00643\ \ \ AllocatedStringPtr\ GetProducerNameAllocated(\mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ allocator)\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00644\ }
+\DoxyCodeLine{00651\ \ \ AllocatedStringPtr\ GetGraphNameAllocated(\mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ allocator)\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00652\ }
+\DoxyCodeLine{00659\ \ \ AllocatedStringPtr\ GetDomainAllocated(\mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ allocator)\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00660\ }
+\DoxyCodeLine{00667\ \ \ AllocatedStringPtr\ GetDescriptionAllocated(\mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ allocator)\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00668\ }
+\DoxyCodeLine{00675\ \ \ AllocatedStringPtr\ GetGraphDescriptionAllocated(\mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ allocator)\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00676\ }
+\DoxyCodeLine{00683\ \ \ std::vector<AllocatedStringPtr>\ GetCustomMetadataMapKeysAllocated(\mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ allocator)\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00684\ }
+\DoxyCodeLine{00694\ \ \ AllocatedStringPtr\ LookupCustomMetadataMapAllocated(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ key,\ \mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ allocator)\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00695\ }
+\DoxyCodeLine{00696\ \ \ int64\_t\ GetVersion()\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00697\ \};}
+\DoxyCodeLine{00698\ }
+\DoxyCodeLine{00699\ \textcolor{keyword}{struct\ }IoBinding;}
+\DoxyCodeLine{00700\ }
+\DoxyCodeLine{00701\ \textcolor{keyword}{namespace\ }detail\ \{}
+\DoxyCodeLine{00702\ }
+\DoxyCodeLine{00703\ \textcolor{comment}{//\ we\ separate\ const-\/only\ methods\ because\ passing\ const\ ptr\ to\ non-\/const\ methods}}
+\DoxyCodeLine{00704\ \textcolor{comment}{//\ is\ only\ discovered\ when\ inline\ methods\ are\ compiled\ which\ is\ counter-\/intuitive}}
+\DoxyCodeLine{00705\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00706\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_impl}{ConstSessionImpl}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}<T>\ \{}
+\DoxyCodeLine{00707\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{B}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base<T>}};}
+\DoxyCodeLine{00708\ \ \ \textcolor{keyword}{using\ }B::B;}
+\DoxyCodeLine{00709\ }
+\DoxyCodeLine{00710\ \ \ \textcolor{keywordtype}{size\_t}\ GetInputCount()\ \textcolor{keyword}{const};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00711\ \ \ \textcolor{keywordtype}{size\_t}\ GetOutputCount()\ \textcolor{keyword}{const};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00712\ \ \ \textcolor{keywordtype}{size\_t}\ GetOverridableInitializerCount()\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00713\ }
+\DoxyCodeLine{00721\ \ \ \mbox{\hyperlink{namespace_ort_aad745588fd5aa01b386eebbacd5e7d18}{AllocatedStringPtr}}\ GetInputNameAllocated(\textcolor{keywordtype}{size\_t}\ index,\ \mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ allocator)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00722\ }
+\DoxyCodeLine{00730\ \ \ \mbox{\hyperlink{namespace_ort_aad745588fd5aa01b386eebbacd5e7d18}{AllocatedStringPtr}}\ GetOutputNameAllocated(\textcolor{keywordtype}{size\_t}\ index,\ \mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ allocator)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00731\ }
+\DoxyCodeLine{00739\ \ \ \mbox{\hyperlink{namespace_ort_aad745588fd5aa01b386eebbacd5e7d18}{AllocatedStringPtr}}\ GetOverridableInitializerNameAllocated(\textcolor{keywordtype}{size\_t}\ index,\ \mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ allocator)\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00740\ }
+\DoxyCodeLine{00741\ \ \ uint64\_t\ GetProfilingStartTimeNs()\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00742\ \ \ \mbox{\hyperlink{struct_ort_1_1_model_metadata}{ModelMetadata}}\ GetModelMetadata()\ \textcolor{keyword}{const};\ \ \ \ }
+\DoxyCodeLine{00743\ }
+\DoxyCodeLine{00744\ \ \ \mbox{\hyperlink{struct_ort_1_1_type_info}{TypeInfo}}\ GetInputTypeInfo(\textcolor{keywordtype}{size\_t}\ index)\ \textcolor{keyword}{const};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00745\ \ \ \mbox{\hyperlink{struct_ort_1_1_type_info}{TypeInfo}}\ GetOutputTypeInfo(\textcolor{keywordtype}{size\_t}\ index)\ \textcolor{keyword}{const};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00746\ \ \ \mbox{\hyperlink{struct_ort_1_1_type_info}{TypeInfo}}\ GetOverridableInitializerTypeInfo(\textcolor{keywordtype}{size\_t}\ index)\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00747\ \};}
+\DoxyCodeLine{00748\ }
+\DoxyCodeLine{00749\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00750\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_impl}{SessionImpl}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_impl}{ConstSessionImpl}}<T>\ \{}
+\DoxyCodeLine{00751\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_impl}{B}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_impl}{ConstSessionImpl<T>}};}
+\DoxyCodeLine{00752\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{B::B}};}
+\DoxyCodeLine{00753\ }
+\DoxyCodeLine{00771\ \ \ std::vector<Value>\ Run(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_run_options}{RunOptions}}\&\ run\_options,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}*\ input\_names,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_value}{Value}}*\ input\_values,\ \textcolor{keywordtype}{size\_t}\ input\_count,}
+\DoxyCodeLine{00772\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}*\ output\_names,\ \textcolor{keywordtype}{size\_t}\ output\_count);}
+\DoxyCodeLine{00773\ }
+\DoxyCodeLine{00777\ \ \ \textcolor{keywordtype}{void}\ Run(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_run_options}{RunOptions}}\&\ run\_options,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}*\ input\_names,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_value}{Value}}*\ input\_values,\ \textcolor{keywordtype}{size\_t}\ input\_count,}
+\DoxyCodeLine{00778\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}*\ output\_names,\ \mbox{\hyperlink{struct_ort_1_1_value}{Value}}*\ output\_values,\ \textcolor{keywordtype}{size\_t}\ output\_count);}
+\DoxyCodeLine{00779\ }
+\DoxyCodeLine{00780\ \ \ \textcolor{keywordtype}{void}\ Run(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_run_options}{RunOptions}}\&\ run\_options,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_io_binding}{IoBinding}}\&);\ \ }
+\DoxyCodeLine{00781\ }
+\DoxyCodeLine{00788\ \ \ \mbox{\hyperlink{namespace_ort_aad745588fd5aa01b386eebbacd5e7d18}{AllocatedStringPtr}}\ EndProfilingAllocated(\mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ allocator);\ \ }
+\DoxyCodeLine{00789\ \};}
+\DoxyCodeLine{00790\ }
+\DoxyCodeLine{00791\ \}\ \ \textcolor{comment}{//\ namespace\ detail}}
+\DoxyCodeLine{00792\ }
+\DoxyCodeLine{00793\ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_impl}{ConstSession}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_impl}{detail::ConstSessionImpl<detail::Unowned<const\ OrtSession>}}>;}
+\DoxyCodeLine{00794\ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_impl}{UnownedSession}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_impl}{detail::SessionImpl<detail::Unowned<OrtSession>}}>;}
+\DoxyCodeLine{00795\ }
+\DoxyCodeLine{00799\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_session}{Session}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_impl}{detail::SessionImpl}}<OrtSession>\ \{}
+\DoxyCodeLine{00800\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_session_a333dc25d8897861ed3f0221c21b9b4dc}{Session}}(std::nullptr\_t)\ \{\}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00801\ \ \ \mbox{\hyperlink{struct_ort_1_1_session}{Session}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_env}{Env}}\&\ env,\ \textcolor{keyword}{const}\ ORTCHAR\_T*\ model\_path,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_session_options}{SessionOptions}}\&\ options);\ \ }
+\DoxyCodeLine{00802\ \ \ \mbox{\hyperlink{struct_ort_1_1_session}{Session}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_env}{Env}}\&\ env,\ \textcolor{keyword}{const}\ ORTCHAR\_T*\ model\_path,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_session_options}{SessionOptions}}\&\ options,}
+\DoxyCodeLine{00803\ \ \ \ \ \ \ \ \ \ \ OrtPrepackedWeightsContainer*\ prepacked\_weights\_container);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00804\ \ \ \mbox{\hyperlink{struct_ort_1_1_session}{Session}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_env}{Env}}\&\ env,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ model\_data,\ \textcolor{keywordtype}{size\_t}\ model\_data\_length,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_session_options}{SessionOptions}}\&\ options);\ \ }
+\DoxyCodeLine{00805\ \ \ \mbox{\hyperlink{struct_ort_1_1_session}{Session}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_env}{Env}}\&\ env,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ model\_data,\ \textcolor{keywordtype}{size\_t}\ model\_data\_length,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_session_options}{SessionOptions}}\&\ options,}
+\DoxyCodeLine{00806\ \ \ \ \ \ \ \ \ \ \ OrtPrepackedWeightsContainer*\ prepacked\_weights\_container);\ \ }
+\DoxyCodeLine{00807\ }
+\DoxyCodeLine{00808\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_impl}{ConstSession}}\ GetConst()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_impl}{ConstSession}}\{this-\/>p\_\};\ \}}
+\DoxyCodeLine{00809\ \ \ UnownedSession\ GetUnowned()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ UnownedSession\{this-\/>p\_\};\ \}}
+\DoxyCodeLine{00810\ \};}
+\DoxyCodeLine{00811\ }
+\DoxyCodeLine{00812\ \textcolor{keyword}{namespace\ }detail\ \{}
+\DoxyCodeLine{00813\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00814\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_memory_info_impl}{MemoryInfoImpl}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}<T>\ \{}
+\DoxyCodeLine{00815\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{B}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base<T>}};}
+\DoxyCodeLine{00816\ \ \ \textcolor{keyword}{using\ }B::B;}
+\DoxyCodeLine{00817\ }
+\DoxyCodeLine{00818\ \ \ std::string\ GetAllocatorName()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00819\ \ \ OrtAllocatorType\ GetAllocatorType()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00820\ \ \ \textcolor{keywordtype}{int}\ GetDeviceId()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00821\ \ \ \mbox{\hyperlink{group___global_ga1e39271d4a47f765694d86e5a7d27565}{OrtMemoryInfoDeviceType}}\ GetDeviceType()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00822\ \ \ \mbox{\hyperlink{group___global_gab7805016f4b26871e899a3cf4114ee0d}{OrtMemType}}\ GetMemoryType()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00823\ }
+\DoxyCodeLine{00824\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ U>}
+\DoxyCodeLine{00825\ \ \ \textcolor{keywordtype}{bool}\ operator==(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_memory_info_impl}{MemoryInfoImpl<U>}}\&\ o)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00826\ \};}
+\DoxyCodeLine{00827\ \}\ \ \textcolor{comment}{//\ namespace\ detail}}
+\DoxyCodeLine{00828\ }
+\DoxyCodeLine{00829\ \textcolor{comment}{//\ Const\ object\ holder\ that\ does\ not\ own\ the\ underlying\ object}}
+\DoxyCodeLine{00830\ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_memory_info_impl}{ConstMemoryInfo}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_memory_info_impl}{detail::MemoryInfoImpl<detail::Unowned<const\ OrtMemoryInfo>}}>;}
+\DoxyCodeLine{00831\ }
+\DoxyCodeLine{00835\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_memory_info}{MemoryInfo}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_memory_info_impl}{detail::MemoryInfoImpl}}<OrtMemoryInfo>\ \{}
+\DoxyCodeLine{00836\ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{struct_ort_1_1_memory_info}{MemoryInfo}}\ CreateCpu(OrtAllocatorType\ type,\ \mbox{\hyperlink{group___global_gab7805016f4b26871e899a3cf4114ee0d}{OrtMemType}}\ mem\_type1);}
+\DoxyCodeLine{00837\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_memory_info_a4f517caf94801d72a8a0dc306e78747b}{MemoryInfo}}(std::nullptr\_t)\ \{\}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00838\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_memory_info_a64f805cacefdefa63148156e816f1c0d}{MemoryInfo}}(OrtMemoryInfo*\ p)\ :\ MemoryInfoImpl<OrtMemoryInfo>\{p\}\ \{\}\ \ }
+\DoxyCodeLine{00839\ \ \ MemoryInfo(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name,\ OrtAllocatorType\ type,\ \textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{group___global_gab7805016f4b26871e899a3cf4114ee0d}{OrtMemType}}\ mem\_type);}
+\DoxyCodeLine{00840\ \ \ ConstMemoryInfo\ GetConst()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ ConstMemoryInfo\{this-\/>p\_\};\ \}}
+\DoxyCodeLine{00841\ \};}
+\DoxyCodeLine{00842\ }
+\DoxyCodeLine{00843\ \textcolor{keyword}{namespace\ }detail\ \{}
+\DoxyCodeLine{00844\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00845\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl}{TensorTypeAndShapeInfoImpl}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}<T>\ \{}
+\DoxyCodeLine{00846\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{B}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base<T>}};}
+\DoxyCodeLine{00847\ \ \ \textcolor{keyword}{using\ }B::B;}
+\DoxyCodeLine{00848\ }
+\DoxyCodeLine{00849\ \ \ \mbox{\hyperlink{group___global_gaec63cdda46c29b8183997f38930ce38e}{ONNXTensorElementDataType}}\ GetElementType()\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00850\ \ \ \textcolor{keywordtype}{size\_t}\ GetElementCount()\ \textcolor{keyword}{const};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00851\ }
+\DoxyCodeLine{00852\ \ \ \textcolor{keywordtype}{size\_t}\ GetDimensionsCount()\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00853\ }
+\DoxyCodeLine{00858\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ GetShape()"{}})]]\ \textcolor{keywordtype}{void}\ GetDimensions(int64\_t*\ values,\ \textcolor{keywordtype}{size\_t}\ values\_count)\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00859\ }
+\DoxyCodeLine{00860\ \ \ \textcolor{keywordtype}{void}\ GetSymbolicDimensions(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}**\ values,\ \textcolor{keywordtype}{size\_t}\ values\_count)\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00861\ }
+\DoxyCodeLine{00862\ \ \ std::vector<int64\_t>\ GetShape()\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00863\ \};}
+\DoxyCodeLine{00864\ }
+\DoxyCodeLine{00865\ \}\ \ \textcolor{comment}{//\ namespace\ detail}}
+\DoxyCodeLine{00866\ }
+\DoxyCodeLine{00867\ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl}{ConstTensorTypeAndShapeInfo}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl}{detail::TensorTypeAndShapeInfoImpl<detail::Unowned<const\ OrtTensorTypeAndShapeInfo>}}>;}
+\DoxyCodeLine{00868\ }
+\DoxyCodeLine{00872\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_tensor_type_and_shape_info}{TensorTypeAndShapeInfo}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl}{detail::TensorTypeAndShapeInfoImpl}}<OrtTensorTypeAndShapeInfo>\ \{}
+\DoxyCodeLine{00873\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_tensor_type_and_shape_info_a2b3a98e53f2e2164b939ed222f4ad8fb}{TensorTypeAndShapeInfo}}(std::nullptr\_t)\ \{\}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00874\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_tensor_type_and_shape_info_a3d8e30e6f410d181be73a7f9d9f24297}{TensorTypeAndShapeInfo}}(OrtTensorTypeAndShapeInfo*\ p)\ :\ TensorTypeAndShapeInfoImpl\{p\}\ \{\}\ \ }
+\DoxyCodeLine{00875\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl}{ConstTensorTypeAndShapeInfo}}\ GetConst()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl}{ConstTensorTypeAndShapeInfo}}\{this-\/>p\_\};\ \}}
+\DoxyCodeLine{00876\ \};}
+\DoxyCodeLine{00877\ }
+\DoxyCodeLine{00878\ \textcolor{keyword}{namespace\ }detail\ \{}
+\DoxyCodeLine{00879\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00880\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_sequence_type_info_impl}{SequenceTypeInfoImpl}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}<T>\ \{}
+\DoxyCodeLine{00881\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{B}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base<T>}};}
+\DoxyCodeLine{00882\ \ \ \textcolor{keyword}{using\ }B::B;}
+\DoxyCodeLine{00883\ \ \ \mbox{\hyperlink{struct_ort_1_1_type_info}{TypeInfo}}\ GetSequenceElementType()\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00884\ \};}
+\DoxyCodeLine{00885\ }
+\DoxyCodeLine{00886\ \}\ \ \textcolor{comment}{//\ namespace\ detail}}
+\DoxyCodeLine{00887\ }
+\DoxyCodeLine{00888\ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_sequence_type_info_impl}{ConstSequenceTypeInfo}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_sequence_type_info_impl}{detail::SequenceTypeInfoImpl<detail::Unowned<const\ OrtSequenceTypeInfo>}}>;}
+\DoxyCodeLine{00889\ }
+\DoxyCodeLine{00893\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_sequence_type_info}{SequenceTypeInfo}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_sequence_type_info_impl}{detail::SequenceTypeInfoImpl}}<OrtSequenceTypeInfo>\ \{}
+\DoxyCodeLine{00894\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_sequence_type_info_a803fe74cd83e82bb1d5529c9e320dd14}{SequenceTypeInfo}}(std::nullptr\_t)\ \{\}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00895\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_sequence_type_info_aa255aec0a6272cafec6dcc7c2f2ed411}{SequenceTypeInfo}}(OrtSequenceTypeInfo*\ p)\ :\ SequenceTypeInfoImpl<OrtSequenceTypeInfo>\{p\}\ \{\}\ \ }
+\DoxyCodeLine{00896\ \ \ ConstSequenceTypeInfo\ GetConst()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ ConstSequenceTypeInfo\{this-\/>p\_\};\ \}}
+\DoxyCodeLine{00897\ \};}
+\DoxyCodeLine{00898\ }
+\DoxyCodeLine{00899\ \textcolor{keyword}{namespace\ }detail\ \{}
+\DoxyCodeLine{00900\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00901\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_optional_type_info_impl}{OptionalTypeInfoImpl}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}<T>\ \{}
+\DoxyCodeLine{00902\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{B}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base<T>}};}
+\DoxyCodeLine{00903\ \ \ \textcolor{keyword}{using\ }B::B;}
+\DoxyCodeLine{00904\ \ \ \mbox{\hyperlink{struct_ort_1_1_type_info}{TypeInfo}}\ GetOptionalElementType()\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00905\ \};}
+\DoxyCodeLine{00906\ }
+\DoxyCodeLine{00907\ \}\ \ \textcolor{comment}{//\ namespace\ detail}}
+\DoxyCodeLine{00908\ }
+\DoxyCodeLine{00909\ \textcolor{comment}{//\ This\ is\ always\ owned\ by\ the\ TypeInfo\ and\ can\ only\ be\ obtained\ from\ it.}}
+\DoxyCodeLine{00910\ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_optional_type_info_impl}{ConstOptionalTypeInfo}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_optional_type_info_impl}{detail::OptionalTypeInfoImpl<detail::Unowned<const\ OrtOptionalTypeInfo>}}>;}
+\DoxyCodeLine{00911\ }
+\DoxyCodeLine{00912\ \textcolor{keyword}{namespace\ }detail\ \{}
+\DoxyCodeLine{00913\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00914\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_map_type_info_impl}{MapTypeInfoImpl}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{detail::Base}}<T>\ \{}
+\DoxyCodeLine{00915\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{B}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base<T>}};}
+\DoxyCodeLine{00916\ \ \ \textcolor{keyword}{using\ }B::B;}
+\DoxyCodeLine{00917\ \ \ \mbox{\hyperlink{group___global_gaec63cdda46c29b8183997f38930ce38e}{ONNXTensorElementDataType}}\ GetMapKeyType()\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00918\ \ \ \mbox{\hyperlink{struct_ort_1_1_type_info}{TypeInfo}}\ GetMapValueType()\ \textcolor{keyword}{const};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00919\ \};}
+\DoxyCodeLine{00920\ }
+\DoxyCodeLine{00921\ \}\ \ \textcolor{comment}{//\ namespace\ detail}}
+\DoxyCodeLine{00922\ }
+\DoxyCodeLine{00923\ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_map_type_info_impl}{ConstMapTypeInfo}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_map_type_info_impl}{detail::MapTypeInfoImpl<detail::Unowned<const\ OrtMapTypeInfo>}}>;}
+\DoxyCodeLine{00924\ }
+\DoxyCodeLine{00928\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_map_type_info}{MapTypeInfo}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_map_type_info_impl}{detail::MapTypeInfoImpl}}<OrtMapTypeInfo>\ \{}
+\DoxyCodeLine{00929\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_map_type_info_ac8b21422b2cfb8bc127aed99082f1602}{MapTypeInfo}}(std::nullptr\_t)\ \{\}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00930\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_map_type_info_ac3fbee650e27172698ed4ee135b495ca}{MapTypeInfo}}(OrtMapTypeInfo*\ p)\ :\ MapTypeInfoImpl<OrtMapTypeInfo>\{p\}\ \{\}\ \ }
+\DoxyCodeLine{00931\ \ \ ConstMapTypeInfo\ GetConst()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ ConstMapTypeInfo\{this-\/>p\_\};\ \}}
+\DoxyCodeLine{00932\ \};}
+\DoxyCodeLine{00933\ }
+\DoxyCodeLine{00934\ \textcolor{keyword}{namespace\ }detail\ \{}
+\DoxyCodeLine{00935\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00936\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_type_info_impl}{TypeInfoImpl}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{detail::Base}}<T>\ \{}
+\DoxyCodeLine{00937\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{B}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base<T>}};}
+\DoxyCodeLine{00938\ \ \ \textcolor{keyword}{using\ }B::B;}
+\DoxyCodeLine{00939\ }
+\DoxyCodeLine{00940\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl}{ConstTensorTypeAndShapeInfo}}\ GetTensorTypeAndShapeInfo()\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{00941\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_sequence_type_info_impl}{ConstSequenceTypeInfo}}\ GetSequenceTypeInfo()\ \textcolor{keyword}{const};\ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00942\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_map_type_info_impl}{ConstMapTypeInfo}}\ GetMapTypeInfo()\ \textcolor{keyword}{const};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00943\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_optional_type_info_impl}{ConstOptionalTypeInfo}}\ GetOptionalTypeInfo()\ \textcolor{keyword}{const};\ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00944\ }
+\DoxyCodeLine{00945\ \ \ ONNXType\ GetONNXType()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00946\ \};}
+\DoxyCodeLine{00947\ \}\ \ \textcolor{comment}{//\ namespace\ detail}}
+\DoxyCodeLine{00948\ }
+\DoxyCodeLine{00953\ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_type_info_impl}{ConstTypeInfo}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_type_info_impl}{detail::TypeInfoImpl<detail::Unowned<const\ OrtTypeInfo>}}>;}
+\DoxyCodeLine{00954\ }
+\DoxyCodeLine{00959\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_type_info}{TypeInfo}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_type_info_impl}{detail::TypeInfoImpl}}<OrtTypeInfo>\ \{}
+\DoxyCodeLine{00960\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_type_info_aa6787301bc9889578cf63fea55a8841a}{TypeInfo}}(std::nullptr\_t)\ \{\}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00961\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_type_info_aecea6a3091f45864acb1e0ad13d0a8d6}{TypeInfo}}(OrtTypeInfo*\ p)\ :\ TypeInfoImpl<OrtTypeInfo>\{p\}\ \{\}\ \ }
+\DoxyCodeLine{00962\ }
+\DoxyCodeLine{00963\ \ \ ConstTypeInfo\ GetConst()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ ConstTypeInfo\{this-\/>p\_\};\ \}}
+\DoxyCodeLine{00964\ \};}
+\DoxyCodeLine{00965\ }
+\DoxyCodeLine{00966\ \textcolor{keyword}{namespace\ }detail\ \{}
+\DoxyCodeLine{00967\ \textcolor{comment}{//\ This\ structure\ is\ used\ to\ feed\ \ sparse\ tensor\ values}}
+\DoxyCodeLine{00968\ \textcolor{comment}{//\ information\ for\ use\ with\ FillSparseTensor<Format>()\ API}}
+\DoxyCodeLine{00969\ \textcolor{comment}{//\ if\ the\ data\ type\ for\ the\ sparse\ tensor\ values\ is\ numeric}}
+\DoxyCodeLine{00970\ \textcolor{comment}{//\ use\ data.p\_data,\ otherwise,\ use\ data.str\ pointer\ to\ feed}}
+\DoxyCodeLine{00971\ \textcolor{comment}{//\ values.\ data.str\ is\ an\ array\ of\ const\ char*\ that\ are\ zero\ terminated.}}
+\DoxyCodeLine{00972\ \textcolor{comment}{//\ number\ of\ strings\ in\ the\ array\ must\ match\ shape\ size.}}
+\DoxyCodeLine{00973\ \textcolor{comment}{//\ For\ fully\ sparse\ tensors\ use\ shape\ \{0\}\ and\ set\ p\_data/str}}
+\DoxyCodeLine{00974\ \textcolor{comment}{//\ to\ nullptr.}}
+\DoxyCodeLine{00975\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_ort_sparse_values_param}{OrtSparseValuesParam}}\ \{}
+\DoxyCodeLine{00976\ \ \ \textcolor{keyword}{const}\ int64\_t*\ values\_shape;}
+\DoxyCodeLine{00977\ \ \ \textcolor{keywordtype}{size\_t}\ values\_shape\_len;}
+\DoxyCodeLine{00978\ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00979\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ p\_data;}
+\DoxyCodeLine{00980\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}**\ str;}
+\DoxyCodeLine{00981\ \ \ \}\ data;}
+\DoxyCodeLine{00982\ \};}
+\DoxyCodeLine{00983\ }
+\DoxyCodeLine{00984\ \textcolor{comment}{//\ Provides\ a\ way\ to\ pass\ shape\ in\ a\ single}}
+\DoxyCodeLine{00985\ \textcolor{comment}{//\ argument}}
+\DoxyCodeLine{00986\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_shape}{Shape}}\ \{}
+\DoxyCodeLine{00987\ \ \ \textcolor{keyword}{const}\ int64\_t*\ shape;}
+\DoxyCodeLine{00988\ \ \ \textcolor{keywordtype}{size\_t}\ shape\_len;}
+\DoxyCodeLine{00989\ \};}
+\DoxyCodeLine{00990\ }
+\DoxyCodeLine{00991\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00992\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{ConstValueImpl}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}<T>\ \{}
+\DoxyCodeLine{00993\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{B}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base<T>}};}
+\DoxyCodeLine{00994\ \ \ \textcolor{keyword}{using\ }B::B;}
+\DoxyCodeLine{00995\ }
+\DoxyCodeLine{00999\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ R>}
+\DoxyCodeLine{01000\ \ \ \textcolor{keywordtype}{void}\ GetOpaqueData(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ domain,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ type\_name,\ R\&)\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{01001\ }
+\DoxyCodeLine{01002\ \ \ \textcolor{keywordtype}{bool}\ IsTensor()\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{01003\ \ \ \textcolor{keywordtype}{bool}\ HasValue()\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{01004\ }
+\DoxyCodeLine{01005\ \ \ \textcolor{keywordtype}{size\_t}\ GetCount()\ \textcolor{keyword}{const};\ \ \textcolor{comment}{//\ If\ a\ non\ tensor,\ returns\ 2\ for\ map\ and\ N\ for\ sequence,\ where\ N\ is\ the\ number\ of\ elements}}
+\DoxyCodeLine{01006\ \ \ \mbox{\hyperlink{struct_ort_1_1_value}{Value}}\ GetValue(\textcolor{keywordtype}{int}\ index,\ \mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ allocator)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01007\ }
+\DoxyCodeLine{01014\ \ \ \textcolor{keywordtype}{size\_t}\ GetStringTensorDataLength()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01015\ }
+\DoxyCodeLine{01030\ \ \ \textcolor{keywordtype}{void}\ GetStringTensorContent(\textcolor{keywordtype}{void}*\ buffer,\ \textcolor{keywordtype}{size\_t}\ buffer\_length,\ \textcolor{keywordtype}{size\_t}*\ offsets,\ \textcolor{keywordtype}{size\_t}\ offsets\_count)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01031\ }
+\DoxyCodeLine{01038\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ R>}
+\DoxyCodeLine{01039\ \ \ \textcolor{keyword}{const}\ R*\ GetTensorData()\ \textcolor{keyword}{const};\ \ }
+\DoxyCodeLine{01040\ }
+\DoxyCodeLine{01045\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ GetTensorRawData()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01046\ }
+\DoxyCodeLine{01053\ \ \ \mbox{\hyperlink{struct_ort_1_1_type_info}{TypeInfo}}\ GetTypeInfo()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01054\ }
+\DoxyCodeLine{01061\ \ \ \mbox{\hyperlink{struct_ort_1_1_tensor_type_and_shape_info}{TensorTypeAndShapeInfo}}\ GetTensorTypeAndShapeInfo()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01062\ }
+\DoxyCodeLine{01067\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_memory_info_impl}{ConstMemoryInfo}}\ GetTensorMemoryInfo()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01068\ }
+\DoxyCodeLine{01077\ \ \ \textcolor{keywordtype}{void}\ GetStringTensorElement(\textcolor{keywordtype}{size\_t}\ buffer\_length,\ \textcolor{keywordtype}{size\_t}\ element\_index,\ \textcolor{keywordtype}{void}*\ buffer)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01078\ }
+\DoxyCodeLine{01085\ \ \ std::string\ GetStringTensorElement(\textcolor{keywordtype}{size\_t}\ element\_index)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01086\ }
+\DoxyCodeLine{01093\ \ \ \textcolor{keywordtype}{size\_t}\ GetStringTensorElementLength(\textcolor{keywordtype}{size\_t}\ element\_index)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01094\ }
+\DoxyCodeLine{01095\ \textcolor{preprocessor}{\#if\ !defined(DISABLE\_SPARSE\_TENSORS)}}
+\DoxyCodeLine{01102\ \ \ OrtSparseFormat\ GetSparseFormat()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01103\ }
+\DoxyCodeLine{01109\ \ \ \mbox{\hyperlink{struct_ort_1_1_tensor_type_and_shape_info}{TensorTypeAndShapeInfo}}\ GetSparseTensorValuesTypeAndShapeInfo()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01110\ }
+\DoxyCodeLine{01118\ \ \ \mbox{\hyperlink{struct_ort_1_1_tensor_type_and_shape_info}{TensorTypeAndShapeInfo}}\ GetSparseTensorIndicesTypeShapeInfo(OrtSparseIndicesFormat\ format)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01119\ }
+\DoxyCodeLine{01129\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ R>}
+\DoxyCodeLine{01130\ \ \ \textcolor{keyword}{const}\ R*\ GetSparseTensorIndicesData(OrtSparseIndicesFormat\ indices\_format,\ \textcolor{keywordtype}{size\_t}\&\ num\_indices)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01131\ }
+\DoxyCodeLine{01136\ \ \ \textcolor{keywordtype}{bool}\ IsSparseTensor()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01137\ }
+\DoxyCodeLine{01146\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ R>}
+\DoxyCodeLine{01147\ \ \ \textcolor{keyword}{const}\ R*\ GetSparseTensorValues()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01148\ }
+\DoxyCodeLine{01149\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{01150\ \};}
+\DoxyCodeLine{01151\ }
+\DoxyCodeLine{01152\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{01153\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_value_impl}{ValueImpl}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{ConstValueImpl}}<T>\ \{}
+\DoxyCodeLine{01154\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{B}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{ConstValueImpl<T>}};}
+\DoxyCodeLine{01155\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{B::B}};}
+\DoxyCodeLine{01156\ }
+\DoxyCodeLine{01162\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ R>}
+\DoxyCodeLine{01163\ \ \ R*\ GetTensorMutableData();}
+\DoxyCodeLine{01164\ }
+\DoxyCodeLine{01169\ \ \ \textcolor{keywordtype}{void}*\ GetTensorMutableRawData();}
+\DoxyCodeLine{01170\ }
+\DoxyCodeLine{01172\ \ \ \textcolor{comment}{//\ \ Obtain\ a\ reference\ to\ an\ element\ of\ data\ at\ the\ location\ specified}}
+\DoxyCodeLine{01178\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ R>}
+\DoxyCodeLine{01179\ \ \ R\&\ At(\textcolor{keyword}{const}\ std::vector<int64\_t>\&\ location);}
+\DoxyCodeLine{01180\ }
+\DoxyCodeLine{01186\ \ \ \textcolor{keywordtype}{void}\ FillStringTensor(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}*\ s,\ \textcolor{keywordtype}{size\_t}\ s\_len);}
+\DoxyCodeLine{01187\ }
+\DoxyCodeLine{01193\ \ \ \textcolor{keywordtype}{void}\ FillStringTensorElement(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ s,\ \textcolor{keywordtype}{size\_t}\ index);}
+\DoxyCodeLine{01194\ }
+\DoxyCodeLine{01207\ \ \ \textcolor{keywordtype}{char}*\ GetResizedStringTensorElementBuffer(\textcolor{keywordtype}{size\_t}\ index,\ \textcolor{keywordtype}{size\_t}\ buffer\_length);}
+\DoxyCodeLine{01208\ }
+\DoxyCodeLine{01209\ \textcolor{preprocessor}{\#if\ !defined(DISABLE\_SPARSE\_TENSORS)}}
+\DoxyCodeLine{01218\ \ \ \textcolor{keywordtype}{void}\ UseCooIndices(int64\_t*\ indices\_data,\ \textcolor{keywordtype}{size\_t}\ indices\_num);}
+\DoxyCodeLine{01219\ }
+\DoxyCodeLine{01230\ \ \ \textcolor{keywordtype}{void}\ UseCsrIndices(int64\_t*\ inner\_data,\ \textcolor{keywordtype}{size\_t}\ inner\_num,\ int64\_t*\ outer\_data,\ \textcolor{keywordtype}{size\_t}\ outer\_num);}
+\DoxyCodeLine{01231\ }
+\DoxyCodeLine{01240\ \ \ \textcolor{keywordtype}{void}\ UseBlockSparseIndices(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_shape}{Shape}}\&\ indices\_shape,\ int32\_t*\ indices\_data);}
+\DoxyCodeLine{01241\ }
+\DoxyCodeLine{01251\ \ \ \textcolor{keywordtype}{void}\ FillSparseTensorCoo(\textcolor{keyword}{const}\ OrtMemoryInfo*\ data\_mem\_info,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_ort_sparse_values_param}{OrtSparseValuesParam}}\&\ values\_param,}
+\DoxyCodeLine{01252\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ int64\_t*\ indices\_data,\ \textcolor{keywordtype}{size\_t}\ indices\_num);}
+\DoxyCodeLine{01253\ }
+\DoxyCodeLine{01265\ \ \ \textcolor{keywordtype}{void}\ FillSparseTensorCsr(\textcolor{keyword}{const}\ OrtMemoryInfo*\ data\_mem\_info,}
+\DoxyCodeLine{01266\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_ort_sparse_values_param}{OrtSparseValuesParam}}\&\ values,}
+\DoxyCodeLine{01267\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ int64\_t*\ inner\_indices\_data,\ \textcolor{keywordtype}{size\_t}\ inner\_indices\_num,}
+\DoxyCodeLine{01268\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ int64\_t*\ outer\_indices\_data,\ \textcolor{keywordtype}{size\_t}\ outer\_indices\_num);}
+\DoxyCodeLine{01269\ }
+\DoxyCodeLine{01279\ \ \ \textcolor{keywordtype}{void}\ FillSparseTensorBlockSparse(\textcolor{keyword}{const}\ OrtMemoryInfo*\ data\_mem\_info,}
+\DoxyCodeLine{01280\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_ort_sparse_values_param}{OrtSparseValuesParam}}\&\ values,}
+\DoxyCodeLine{01281\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_shape}{Shape}}\&\ indices\_shape,}
+\DoxyCodeLine{01282\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ int32\_t*\ indices\_data);}
+\DoxyCodeLine{01283\ }
+\DoxyCodeLine{01284\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{01285\ \};}
+\DoxyCodeLine{01286\ }
+\DoxyCodeLine{01287\ \}\ \ \textcolor{comment}{//\ namespace\ detail}}
+\DoxyCodeLine{01288\ }
+\DoxyCodeLine{01289\ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{ConstValue}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{detail::ConstValueImpl<detail::Unowned<const\ OrtValue>}}>;}
+\DoxyCodeLine{01290\ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_value_impl}{UnownedValue}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_value_impl}{detail::ValueImpl<detail::Unowned<OrtValue>}}>;}
+\DoxyCodeLine{01291\ }
+\DoxyCodeLine{01295\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_value}{Value}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_value_impl}{detail::ValueImpl}}<OrtValue>\ \{}
+\DoxyCodeLine{01296\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_value_impl}{Base}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_value_impl}{detail::ValueImpl<OrtValue>}};}
+\DoxyCodeLine{01297\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_ort_sparse_values_param}{OrtSparseValuesParam}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_ort_sparse_values_param}{detail::OrtSparseValuesParam}};}
+\DoxyCodeLine{01298\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_shape}{Shape}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_shape}{detail::Shape}};}
+\DoxyCodeLine{01299\ }
+\DoxyCodeLine{01300\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_value_a233d9a9878a69295ad504ea2b22b4d1f}{Value}}(std::nullptr\_t)\ \{\}\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{01301\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_value_a4e744a54c1fe6c477cccbe33b580fe3b}{Value}}(OrtValue*\ p)\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_value_impl}{Base}}\{p\}\ \{\}\ \ }
+\DoxyCodeLine{01302\ \ \ \mbox{\hyperlink{struct_ort_1_1_value}{Value}}(\mbox{\hyperlink{struct_ort_1_1_value}{Value}}\&\&)\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{01303\ \ \ \mbox{\hyperlink{struct_ort_1_1_value}{Value}}\&\ operator=(\mbox{\hyperlink{struct_ort_1_1_value}{Value}}\&\&)\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{01304\ }
+\DoxyCodeLine{01305\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{ConstValue}}\ GetConst()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{ConstValue}}\{this-\/>p\_\};\ \}}
+\DoxyCodeLine{01306\ \ \ UnownedValue\ GetUnowned()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ UnownedValue\{this-\/>p\_\};\ \}}
+\DoxyCodeLine{01307\ }
+\DoxyCodeLine{01316\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{01317\ \ \ \textcolor{keyword}{static}\ Value\ CreateTensor(\textcolor{keyword}{const}\ OrtMemoryInfo*\ info,\ T*\ p\_data,\ \textcolor{keywordtype}{size\_t}\ p\_data\_element\_count,\ \textcolor{keyword}{const}\ int64\_t*\ shape,\ \textcolor{keywordtype}{size\_t}\ shape\_len);}
+\DoxyCodeLine{01318\ }
+\DoxyCodeLine{01327\ \ \ \textcolor{keyword}{static}\ Value\ CreateTensor(\textcolor{keyword}{const}\ OrtMemoryInfo*\ info,\ \textcolor{keywordtype}{void}*\ p\_data,\ \textcolor{keywordtype}{size\_t}\ p\_data\_byte\_count,\ \textcolor{keyword}{const}\ int64\_t*\ shape,\ \textcolor{keywordtype}{size\_t}\ shape\_len,}
+\DoxyCodeLine{01328\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{group___global_gaec63cdda46c29b8183997f38930ce38e}{ONNXTensorElementDataType}}\ type);}
+\DoxyCodeLine{01329\ }
+\DoxyCodeLine{01336\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{01337\ \ \ \textcolor{keyword}{static}\ Value\ CreateTensor(\mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ allocator,\ \textcolor{keyword}{const}\ int64\_t*\ shape,\ \textcolor{keywordtype}{size\_t}\ shape\_len);}
+\DoxyCodeLine{01338\ }
+\DoxyCodeLine{01345\ \ \ \textcolor{keyword}{static}\ Value\ CreateTensor(\mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ allocator,\ \textcolor{keyword}{const}\ int64\_t*\ shape,\ \textcolor{keywordtype}{size\_t}\ shape\_len,\ \mbox{\hyperlink{group___global_gaec63cdda46c29b8183997f38930ce38e}{ONNXTensorElementDataType}}\ type);}
+\DoxyCodeLine{01346\ }
+\DoxyCodeLine{01347\ \ \ \textcolor{keyword}{static}\ Value\ CreateMap(Value\&\ keys,\ Value\&\ values);\ \ \ \ \ \ \ }
+\DoxyCodeLine{01348\ \ \ \textcolor{keyword}{static}\ Value\ CreateSequence(std::vector<Value>\&\ values);\ \ }
+\DoxyCodeLine{01349\ }
+\DoxyCodeLine{01350\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{01351\ \ \ \textcolor{keyword}{static}\ Value\ CreateOpaque(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ domain,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ type\_name,\ \textcolor{keyword}{const}\ T\&);\ \ }
+\DoxyCodeLine{01352\ }
+\DoxyCodeLine{01353\ \textcolor{preprocessor}{\#if\ !defined(DISABLE\_SPARSE\_TENSORS)}}
+\DoxyCodeLine{01364\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{01365\ \ \ \textcolor{keyword}{static}\ Value\ CreateSparseTensor(\textcolor{keyword}{const}\ OrtMemoryInfo*\ info,\ T*\ p\_data,\ \textcolor{keyword}{const}\ Shape\&\ dense\_shape,}
+\DoxyCodeLine{01366\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ Shape\&\ values\_shape);}
+\DoxyCodeLine{01367\ }
+\DoxyCodeLine{01384\ \ \ \textcolor{keyword}{static}\ Value\ CreateSparseTensor(\textcolor{keyword}{const}\ OrtMemoryInfo*\ info,\ \textcolor{keywordtype}{void}*\ p\_data,\ \textcolor{keyword}{const}\ Shape\&\ dense\_shape,}
+\DoxyCodeLine{01385\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ Shape\&\ values\_shape,\ \mbox{\hyperlink{group___global_gaec63cdda46c29b8183997f38930ce38e}{ONNXTensorElementDataType}}\ type);}
+\DoxyCodeLine{01386\ }
+\DoxyCodeLine{01396\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{01397\ \ \ \textcolor{keyword}{static}\ Value\ CreateSparseTensor(\mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ allocator,\ \textcolor{keyword}{const}\ Shape\&\ dense\_shape);}
+\DoxyCodeLine{01398\ }
+\DoxyCodeLine{01410\ \ \ \textcolor{keyword}{static}\ Value\ CreateSparseTensor(\mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ allocator,\ \textcolor{keyword}{const}\ Shape\&\ dense\_shape,\ \mbox{\hyperlink{group___global_gaec63cdda46c29b8183997f38930ce38e}{ONNXTensorElementDataType}}\ type);}
+\DoxyCodeLine{01411\ }
+\DoxyCodeLine{01412\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ !defined(DISABLE\_SPARSE\_TENSORS)}}
+\DoxyCodeLine{01413\ \};}
+\DoxyCodeLine{01414\ }
+\DoxyCodeLine{01421\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_memory_allocation}{MemoryAllocation}}\ \{}
+\DoxyCodeLine{01422\ \ \ \mbox{\hyperlink{struct_ort_1_1_memory_allocation}{MemoryAllocation}}(\mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ allocator,\ \textcolor{keywordtype}{void}*\ p,\ \textcolor{keywordtype}{size\_t}\ size);}
+\DoxyCodeLine{01423\ \ \ \mbox{\hyperlink{struct_ort_1_1_memory_allocation}{\string~MemoryAllocation}}();}
+\DoxyCodeLine{01424\ \ \ \mbox{\hyperlink{struct_ort_1_1_memory_allocation}{MemoryAllocation}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_memory_allocation}{MemoryAllocation}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{01425\ \ \ \mbox{\hyperlink{struct_ort_1_1_memory_allocation}{MemoryAllocation}}\&\ operator=(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_memory_allocation}{MemoryAllocation}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{01426\ \ \ \mbox{\hyperlink{struct_ort_1_1_memory_allocation}{MemoryAllocation}}(\mbox{\hyperlink{struct_ort_1_1_memory_allocation}{MemoryAllocation}}\&\&)\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{01427\ \ \ \mbox{\hyperlink{struct_ort_1_1_memory_allocation}{MemoryAllocation}}\&\ operator=(\mbox{\hyperlink{struct_ort_1_1_memory_allocation}{MemoryAllocation}}\&\&)\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{01428\ }
+\DoxyCodeLine{01429\ \ \ \textcolor{keywordtype}{void}*\ get()\ \{\ \textcolor{keywordflow}{return}\ p\_;\ \}}
+\DoxyCodeLine{01430\ \ \ \textcolor{keywordtype}{size\_t}\ size()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ size\_;\ \}}
+\DoxyCodeLine{01431\ }
+\DoxyCodeLine{01432\ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{01433\ \ \ \mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ allocator\_;}
+\DoxyCodeLine{01434\ \ \ \textcolor{keywordtype}{void}*\ p\_;}
+\DoxyCodeLine{01435\ \ \ \textcolor{keywordtype}{size\_t}\ size\_;}
+\DoxyCodeLine{01436\ \};}
+\DoxyCodeLine{01437\ }
+\DoxyCodeLine{01438\ \textcolor{keyword}{namespace\ }detail\ \{}
+\DoxyCodeLine{01439\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{01440\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_allocator_impl}{AllocatorImpl}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}<T>\ \{}
+\DoxyCodeLine{01441\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{B}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base<T>}};}
+\DoxyCodeLine{01442\ \ \ \textcolor{keyword}{using\ }B::B;}
+\DoxyCodeLine{01443\ }
+\DoxyCodeLine{01444\ \ \ \textcolor{keywordtype}{void}*\ Alloc(\textcolor{keywordtype}{size\_t}\ size);}
+\DoxyCodeLine{01445\ \ \ \mbox{\hyperlink{struct_ort_1_1_memory_allocation}{MemoryAllocation}}\ GetAllocation(\textcolor{keywordtype}{size\_t}\ size);}
+\DoxyCodeLine{01446\ \ \ \textcolor{keywordtype}{void}\ Free(\textcolor{keywordtype}{void}*\ p);}
+\DoxyCodeLine{01447\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_memory_info_impl}{ConstMemoryInfo}}\ GetInfo()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01448\ \};}
+\DoxyCodeLine{01449\ }
+\DoxyCodeLine{01450\ \}\ \ \textcolor{comment}{//\ namespace\ detail}}
+\DoxyCodeLine{01451\ }
+\DoxyCodeLine{01455\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_allocator_with_default_options}{AllocatorWithDefaultOptions}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_allocator_impl}{detail::AllocatorImpl}}<detail::Unowned<OrtAllocator>>\ \{}
+\DoxyCodeLine{01456\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_allocator_with_default_options_ab1f5ef8a6907aae2fec5331afa708529}{AllocatorWithDefaultOptions}}(std::nullptr\_t)\ \{\}\ \ }
+\DoxyCodeLine{01457\ \ \ \mbox{\hyperlink{struct_ort_1_1_allocator_with_default_options}{AllocatorWithDefaultOptions}}();}
+\DoxyCodeLine{01458\ \};}
+\DoxyCodeLine{01459\ }
+\DoxyCodeLine{01463\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_allocator}{Allocator}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_allocator_impl}{detail::AllocatorImpl}}<OrtAllocator>\ \{}
+\DoxyCodeLine{01464\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_allocator_aeaf5b8cd9b23bcd4205759121bc97b34}{Allocator}}(std::nullptr\_t)\ \{\}\ \ }
+\DoxyCodeLine{01465\ \ \ \mbox{\hyperlink{struct_ort_1_1_allocator}{Allocator}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_session}{Session}}\&\ session,\ \textcolor{keyword}{const}\ OrtMemoryInfo*);}
+\DoxyCodeLine{01466\ \};}
+\DoxyCodeLine{01467\ }
+\DoxyCodeLine{01468\ \textcolor{keyword}{using\ }UnownedAllocator\ =\ detail::AllocatorImpl<detail::Unowned<OrtAllocator>>;}
+\DoxyCodeLine{01469\ }
+\DoxyCodeLine{01470\ \textcolor{keyword}{namespace\ }detail\ \{}
+\DoxyCodeLine{01471\ \textcolor{keyword}{namespace\ }binding\_utils\ \{}
+\DoxyCodeLine{01472\ \textcolor{comment}{//\ Bring\ these\ out\ of\ template}}
+\DoxyCodeLine{01473\ std::vector<std::string>\ GetOutputNamesHelper(\textcolor{keyword}{const}\ OrtIoBinding*\ binding,\ \mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*);}
+\DoxyCodeLine{01474\ std::vector<Value>\ GetOutputValuesHelper(\textcolor{keyword}{const}\ OrtIoBinding*\ binding,\ \mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*);}
+\DoxyCodeLine{01475\ \}\ \ \textcolor{comment}{//\ namespace\ binding\_utils}}
+\DoxyCodeLine{01476\ }
+\DoxyCodeLine{01477\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{01478\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_const_io_binding_impl}{ConstIoBindingImpl}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}<T>\ \{}
+\DoxyCodeLine{01479\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{B}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base<T>}};}
+\DoxyCodeLine{01480\ \ \ \textcolor{keyword}{using\ }B::B;}
+\DoxyCodeLine{01481\ }
+\DoxyCodeLine{01482\ \ \ std::vector<std::string>\ GetOutputNames()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01483\ \ \ std::vector<std::string>\ GetOutputNames(\mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01484\ \ \ std::vector<Value>\ GetOutputValues()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01485\ \ \ std::vector<Value>\ GetOutputValues(\mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01486\ \};}
+\DoxyCodeLine{01487\ }
+\DoxyCodeLine{01488\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{01489\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_io_binding_impl}{IoBindingImpl}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_io_binding_impl}{ConstIoBindingImpl}}<T>\ \{}
+\DoxyCodeLine{01490\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_const_io_binding_impl}{B}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_io_binding_impl}{ConstIoBindingImpl<T>}};}
+\DoxyCodeLine{01491\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{B::B}};}
+\DoxyCodeLine{01492\ }
+\DoxyCodeLine{01493\ \ \ \textcolor{keywordtype}{void}\ BindInput(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_value}{Value}}\&);}
+\DoxyCodeLine{01494\ \ \ \textcolor{keywordtype}{void}\ BindOutput(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_value}{Value}}\&);}
+\DoxyCodeLine{01495\ \ \ \textcolor{keywordtype}{void}\ BindOutput(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name,\ \textcolor{keyword}{const}\ OrtMemoryInfo*);}
+\DoxyCodeLine{01496\ \ \ \textcolor{keywordtype}{void}\ ClearBoundInputs();}
+\DoxyCodeLine{01497\ \ \ \textcolor{keywordtype}{void}\ ClearBoundOutputs();}
+\DoxyCodeLine{01498\ \ \ \textcolor{keywordtype}{void}\ SynchronizeInputs();}
+\DoxyCodeLine{01499\ \ \ \textcolor{keywordtype}{void}\ SynchronizeOutputs();}
+\DoxyCodeLine{01500\ \};}
+\DoxyCodeLine{01501\ }
+\DoxyCodeLine{01502\ \}\ \ \textcolor{comment}{//\ namespace\ detail}}
+\DoxyCodeLine{01503\ }
+\DoxyCodeLine{01504\ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_const_io_binding_impl}{ConstIoBinding}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_io_binding_impl}{detail::ConstIoBindingImpl<detail::Unowned<const\ OrtIoBinding>}}>;}
+\DoxyCodeLine{01505\ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_io_binding_impl}{UnownedIoBinding}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_io_binding_impl}{detail::IoBindingImpl<detail::Unowned<OrtIoBinding>}}>;}
+\DoxyCodeLine{01506\ }
+\DoxyCodeLine{01510\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_io_binding}{IoBinding}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_io_binding_impl}{detail::IoBindingImpl}}<OrtIoBinding>\ \{}
+\DoxyCodeLine{01511\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_io_binding_af002b4befdc734d992039108ae7013a7}{IoBinding}}(std::nullptr\_t)\ \{\}\ \ }
+\DoxyCodeLine{01512\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_io_binding}{IoBinding}}(\mbox{\hyperlink{struct_ort_1_1_session}{Session}}\&\ session);}
+\DoxyCodeLine{01513\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_io_binding_impl}{ConstIoBinding}}\ GetConst()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_io_binding_impl}{ConstIoBinding}}\{this-\/>p\_\};\ \}}
+\DoxyCodeLine{01514\ \ \ UnownedIoBinding\ GetUnowned()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ UnownedIoBinding\{this-\/>p\_\};\ \}}
+\DoxyCodeLine{01515\ \};}
+\DoxyCodeLine{01516\ }
+\DoxyCodeLine{01521\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_arena_cfg}{ArenaCfg}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{detail::Base}}<OrtArenaCfg>\ \{}
+\DoxyCodeLine{01522\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_arena_cfg_a1c6f844ba4da1cbdaf64978c18883390}{ArenaCfg}}(std::nullptr\_t)\ \{\}\ \ }
+\DoxyCodeLine{01531\ \ \ \mbox{\hyperlink{struct_ort_1_1_arena_cfg}{ArenaCfg}}(\textcolor{keywordtype}{size\_t}\ max\_mem,\ \textcolor{keywordtype}{int}\ arena\_extend\_strategy,\ \textcolor{keywordtype}{int}\ initial\_chunk\_size\_bytes,\ \textcolor{keywordtype}{int}\ max\_dead\_bytes\_per\_chunk);}
+\DoxyCodeLine{01532\ \};}
+\DoxyCodeLine{01533\ }
+\DoxyCodeLine{01534\ \textcolor{comment}{//}}
+\DoxyCodeLine{01535\ \textcolor{comment}{//\ Custom\ OPs\ (only\ needed\ to\ implement\ custom\ OPs)}}
+\DoxyCodeLine{01536\ \textcolor{comment}{//}}
+\DoxyCodeLine{01537\ }
+\DoxyCodeLine{01541\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_op_attr}{OpAttr}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{detail::Base}}<OrtOpAttr>\ \{}
+\DoxyCodeLine{01542\ \ \ \mbox{\hyperlink{struct_ort_1_1_op_attr}{OpAttr}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ data,\ \textcolor{keywordtype}{int}\ len,\ OrtOpAttrType\ type);}
+\DoxyCodeLine{01543\ \};}
+\DoxyCodeLine{01544\ }
+\DoxyCodeLine{01553\ \textcolor{preprocessor}{\#define\ ORT\_CXX\_LOG(logger,\ message\_severity,\ message)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{01554\ \textcolor{preprocessor}{\ \ do\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{01555\ \textcolor{preprocessor}{\ \ \ \ if\ (message\_severity\ >=\ logger.GetLoggingSeverityLevel())\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{01556\ \textcolor{preprocessor}{\ \ \ \ \ \ Ort::ThrowOnError(logger.LogMessage(message\_severity,\ ORT\_FILE,\ \_\_LINE\_\_,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{01557\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ static\_cast<const\ char*>(\_\_FUNCTION\_\_),\ message));\ \(\backslash\)}}
+\DoxyCodeLine{01558\ \textcolor{preprocessor}{\ \ \ \ \}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{01559\ \textcolor{preprocessor}{\ \ \}\ while\ (false)}}
+\DoxyCodeLine{01560\ }
+\DoxyCodeLine{01569\ \textcolor{preprocessor}{\#define\ ORT\_CXX\_LOG\_NOEXCEPT(logger,\ message\_severity,\ message)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{01570\ \textcolor{preprocessor}{\ \ do\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{01571\ \textcolor{preprocessor}{\ \ \ \ if\ (message\_severity\ >=\ logger.GetLoggingSeverityLevel())\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{01572\ \textcolor{preprocessor}{\ \ \ \ \ \ static\_cast<void>(logger.LogMessage(message\_severity,\ ORT\_FILE,\ \_\_LINE\_\_,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{01573\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ static\_cast<const\ char*>(\_\_FUNCTION\_\_),\ message));\ \(\backslash\)}}
+\DoxyCodeLine{01574\ \textcolor{preprocessor}{\ \ \ \ \}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{01575\ \textcolor{preprocessor}{\ \ \}\ while\ (false)}}
+\DoxyCodeLine{01576\ }
+\DoxyCodeLine{01588\ \textcolor{preprocessor}{\#define\ ORT\_CXX\_LOGF(logger,\ message\_severity,\ }\textcolor{comment}{/*format,*/}\textcolor{preprocessor}{...)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{01589\ \textcolor{preprocessor}{\ \ do\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{01590\ \textcolor{preprocessor}{\ \ \ \ if\ (message\_severity\ >=\ logger.GetLoggingSeverityLevel())\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{01591\ \textcolor{preprocessor}{\ \ \ \ \ \ Ort::ThrowOnError(logger.LogFormattedMessage(message\_severity,\ ORT\_FILE,\ \_\_LINE\_\_,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{01592\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ static\_cast<const\ char*>(\_\_FUNCTION\_\_),\ \_\_VA\_ARGS\_\_));\ \(\backslash\)}}
+\DoxyCodeLine{01593\ \textcolor{preprocessor}{\ \ \ \ \}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{01594\ \textcolor{preprocessor}{\ \ \}\ while\ (false)}}
+\DoxyCodeLine{01595\ }
+\DoxyCodeLine{01607\ \textcolor{preprocessor}{\#define\ ORT\_CXX\_LOGF\_NOEXCEPT(logger,\ message\_severity,\ }\textcolor{comment}{/*format,*/}\textcolor{preprocessor}{...)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{01608\ \textcolor{preprocessor}{\ \ do\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{01609\ \textcolor{preprocessor}{\ \ \ \ if\ (message\_severity\ >=\ logger.GetLoggingSeverityLevel())\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{01610\ \textcolor{preprocessor}{\ \ \ \ \ \ static\_cast<void>(logger.LogFormattedMessage(message\_severity,\ ORT\_FILE,\ \_\_LINE\_\_,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{01611\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ static\_cast<const\ char*>(\_\_FUNCTION\_\_),\ \_\_VA\_ARGS\_\_));\ \(\backslash\)}}
+\DoxyCodeLine{01612\ \textcolor{preprocessor}{\ \ \ \ \}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{01613\ \textcolor{preprocessor}{\ \ \}\ while\ (false)}}
+\DoxyCodeLine{01614\ }
+\DoxyCodeLine{01625\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_logger}{Logger}}\ \{}
+\DoxyCodeLine{01629\ \ \ \mbox{\hyperlink{struct_ort_1_1_logger_ac470cdcbe3c5fedf0f43b1c31df722e2}{Logger}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{01630\ }
+\DoxyCodeLine{01634\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_logger_ad8e8d52949ae0f8d738e27d0bde434cb}{Logger}}(std::nullptr\_t)\ \{\}}
+\DoxyCodeLine{01635\ }
+\DoxyCodeLine{01642\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_logger}{Logger}}(\textcolor{keyword}{const}\ OrtLogger*\ logger);}
+\DoxyCodeLine{01643\ }
+\DoxyCodeLine{01644\ \ \ \mbox{\hyperlink{struct_ort_1_1_logger}{\string~Logger}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{01645\ }
+\DoxyCodeLine{01646\ \ \ \mbox{\hyperlink{struct_ort_1_1_logger}{Logger}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_logger}{Logger}}\&)\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{01647\ \ \ \mbox{\hyperlink{struct_ort_1_1_logger}{Logger}}\&\ operator=(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_logger}{Logger}}\&)\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{01648\ }
+\DoxyCodeLine{01649\ \ \ \mbox{\hyperlink{struct_ort_1_1_logger}{Logger}}(\mbox{\hyperlink{struct_ort_1_1_logger}{Logger}}\&\&\ v)\ \textcolor{keyword}{noexcept}\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{01650\ \ \ \mbox{\hyperlink{struct_ort_1_1_logger}{Logger}}\&\ operator=(\mbox{\hyperlink{struct_ort_1_1_logger}{Logger}}\&\&\ v)\ \textcolor{keyword}{noexcept}\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{01651\ }
+\DoxyCodeLine{01657\ \ \ \mbox{\hyperlink{group___global_ga1c0fbcf614dbd0e2c272ae1cc04c629c}{OrtLoggingLevel}}\ GetLoggingSeverityLevel()\ const\ noexcept;}
+\DoxyCodeLine{01658\ }
+\DoxyCodeLine{01671\ \ \ \mbox{\hyperlink{struct_ort_1_1_status}{Status}}\ LogMessage(\mbox{\hyperlink{group___global_ga1c0fbcf614dbd0e2c272ae1cc04c629c}{OrtLoggingLevel}}\ log\_severity\_level,\ const\ ORTCHAR\_T*\ file\_path,\ \textcolor{keywordtype}{int}\ line\_number,}
+\DoxyCodeLine{01672\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ const\ \textcolor{keywordtype}{char}*\ func\_name,\ const\ \textcolor{keywordtype}{char}*\ message)\ const\ noexcept;}
+\DoxyCodeLine{01673\ }
+\DoxyCodeLine{01688\ \ \ template\ <typename...\ Args>}
+\DoxyCodeLine{01689\ \ \ \mbox{\hyperlink{struct_ort_1_1_status}{Status}}\ LogFormattedMessage(\mbox{\hyperlink{group___global_ga1c0fbcf614dbd0e2c272ae1cc04c629c}{OrtLoggingLevel}}\ log\_severity\_level,\ const\ ORTCHAR\_T*\ file\_path,\ \textcolor{keywordtype}{int}\ line\_number,}
+\DoxyCodeLine{01690\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ const\ \textcolor{keywordtype}{char}*\ func\_name,\ const\ \textcolor{keywordtype}{char}*\ format,\ Args\&\&...\ args)\ const\ noexcept;}
+\DoxyCodeLine{01691\ }
+\DoxyCodeLine{01692\ \ private:}
+\DoxyCodeLine{01693\ \ \ const\ OrtLogger*\ logger\_\{\};}
+\DoxyCodeLine{01694\ \ \ \mbox{\hyperlink{group___global_ga1c0fbcf614dbd0e2c272ae1cc04c629c}{OrtLoggingLevel}}\ cached\_severity\_level\_\{\};}
+\DoxyCodeLine{01695\ \};}
+\DoxyCodeLine{01696\ }
+\DoxyCodeLine{01703\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_kernel_context}{KernelContext}}\ \{}
+\DoxyCodeLine{01704\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_kernel_context}{KernelContext}}(OrtKernelContext*\ context);}
+\DoxyCodeLine{01705\ \ \ \textcolor{keywordtype}{size\_t}\ GetInputCount()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01706\ \ \ \textcolor{keywordtype}{size\_t}\ GetOutputCount()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01707\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{ConstValue}}\ GetInput(\textcolor{keywordtype}{size\_t}\ index)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01708\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_value_impl}{UnownedValue}}\ GetOutput(\textcolor{keywordtype}{size\_t}\ index,\ \textcolor{keyword}{const}\ int64\_t*\ dim\_values,\ \textcolor{keywordtype}{size\_t}\ dim\_count)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01709\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_value_impl}{UnownedValue}}\ GetOutput(\textcolor{keywordtype}{size\_t}\ index,\ \textcolor{keyword}{const}\ std::vector<int64\_t>\&\ dims)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01710\ \ \ \textcolor{keywordtype}{void}*\ GetGPUComputeStream()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01711\ \ \ \mbox{\hyperlink{struct_ort_1_1_logger}{Logger}}\ GetLogger()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01712\ \ \ \mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ GetAllocator(\textcolor{keyword}{const}\ OrtMemoryInfo\&\ memory\_info)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01713\ }
+\DoxyCodeLine{01714\ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{01715\ \ \ OrtKernelContext*\ ctx\_;}
+\DoxyCodeLine{01716\ \};}
+\DoxyCodeLine{01717\ }
+\DoxyCodeLine{01718\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_kernel_info}{KernelInfo}};}
+\DoxyCodeLine{01719\ }
+\DoxyCodeLine{01720\ \textcolor{keyword}{namespace\ }detail\ \{}
+\DoxyCodeLine{01721\ \textcolor{keyword}{namespace\ }attr\_utils\ \{}
+\DoxyCodeLine{01722\ \textcolor{keywordtype}{void}\ GetAttr(\textcolor{keyword}{const}\ OrtKernelInfo*\ p,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name,\ \textcolor{keywordtype}{float}\&);}
+\DoxyCodeLine{01723\ \textcolor{keywordtype}{void}\ GetAttr(\textcolor{keyword}{const}\ OrtKernelInfo*\ p,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name,\ int64\_t\&);}
+\DoxyCodeLine{01724\ \textcolor{keywordtype}{void}\ GetAttr(\textcolor{keyword}{const}\ OrtKernelInfo*\ p,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name,\ std::string\&);}
+\DoxyCodeLine{01725\ \textcolor{keywordtype}{void}\ GetAttrs(\textcolor{keyword}{const}\ OrtKernelInfo*\ p,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name,\ std::vector<float>\&);}
+\DoxyCodeLine{01726\ \textcolor{keywordtype}{void}\ GetAttrs(\textcolor{keyword}{const}\ OrtKernelInfo*\ p,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name,\ std::vector<int64\_t>\&);}
+\DoxyCodeLine{01727\ \}\ \ \textcolor{comment}{//\ namespace\ attr\_utils}}
+\DoxyCodeLine{01728\ }
+\DoxyCodeLine{01729\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{01730\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_kernel_info_impl}{KernelInfoImpl}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}<T>\ \{}
+\DoxyCodeLine{01731\ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{B}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base<T>}};}
+\DoxyCodeLine{01732\ \ \ \textcolor{keyword}{using\ }B::B;}
+\DoxyCodeLine{01733\ }
+\DoxyCodeLine{01734\ \ \ \mbox{\hyperlink{struct_ort_1_1_kernel_info}{KernelInfo}}\ Copy()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01735\ }
+\DoxyCodeLine{01736\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ R>\ \ \textcolor{comment}{//\ R\ is\ only\ implemented\ for\ float,\ int64\_t,\ and\ string}}
+\DoxyCodeLine{01737\ \ \ R\ GetAttribute(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{01738\ \ \ \ \ R\ val;}
+\DoxyCodeLine{01739\ \ \ \ \ attr\_utils::GetAttr(this-\/>p\_,\ name,\ val);}
+\DoxyCodeLine{01740\ \ \ \ \ \textcolor{keywordflow}{return}\ val;}
+\DoxyCodeLine{01741\ \ \ \}}
+\DoxyCodeLine{01742\ }
+\DoxyCodeLine{01743\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ R>\ \ \textcolor{comment}{//\ R\ is\ only\ implemented\ for\ std::vector<float>,\ std::vector<int64\_t>}}
+\DoxyCodeLine{01744\ \ \ std::vector<R>\ GetAttributes(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{01745\ \ \ \ \ std::vector<R>\ result;}
+\DoxyCodeLine{01746\ \ \ \ \ attr\_utils::GetAttrs(this-\/>p\_,\ name,\ result);}
+\DoxyCodeLine{01747\ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{01748\ \ \ \}}
+\DoxyCodeLine{01749\ }
+\DoxyCodeLine{01750\ \ \ \mbox{\hyperlink{struct_ort_1_1_value}{Value}}\ GetTensorAttribute(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name,\ \mbox{\hyperlink{struct_ort_allocator}{OrtAllocator}}*\ allocator)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01751\ }
+\DoxyCodeLine{01752\ \ \ \textcolor{keywordtype}{size\_t}\ GetInputCount()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01753\ \ \ \textcolor{keywordtype}{size\_t}\ GetOutputCount()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01754\ }
+\DoxyCodeLine{01755\ \ \ std::string\ GetInputName(\textcolor{keywordtype}{size\_t}\ index)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01756\ \ \ std::string\ GetOutputName(\textcolor{keywordtype}{size\_t}\ index)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01757\ }
+\DoxyCodeLine{01758\ \ \ \mbox{\hyperlink{struct_ort_1_1_type_info}{TypeInfo}}\ GetInputTypeInfo(\textcolor{keywordtype}{size\_t}\ index)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01759\ \ \ \mbox{\hyperlink{struct_ort_1_1_type_info}{TypeInfo}}\ GetOutputTypeInfo(\textcolor{keywordtype}{size\_t}\ index)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01760\ }
+\DoxyCodeLine{01761\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{ConstValue}}\ GetTensorConstantInput(\textcolor{keywordtype}{size\_t}\ index,\ \textcolor{keywordtype}{int}*\ is\_constant)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01762\ }
+\DoxyCodeLine{01763\ \ \ std::string\ GetNodeName()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01764\ \ \ \mbox{\hyperlink{struct_ort_1_1_logger}{Logger}}\ GetLogger()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{01765\ \};}
+\DoxyCodeLine{01766\ }
+\DoxyCodeLine{01767\ \}\ \ \textcolor{comment}{//\ namespace\ detail}}
+\DoxyCodeLine{01768\ }
+\DoxyCodeLine{01769\ \textcolor{keyword}{using\ }\mbox{\hyperlink{struct_ort_1_1detail_1_1_kernel_info_impl}{ConstKernelInfo}}\ =\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_kernel_info_impl}{detail::KernelInfoImpl<detail::Unowned<const\ OrtKernelInfo>}}>;}
+\DoxyCodeLine{01770\ }
+\DoxyCodeLine{01777\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_kernel_info}{KernelInfo}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_kernel_info_impl}{detail::KernelInfoImpl}}<OrtKernelInfo>\ \{}
+\DoxyCodeLine{01778\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_kernel_info_aace8ba8f11047c2ec727e7f847c3474d}{KernelInfo}}(std::nullptr\_t)\ \{\}\ \ \ \ \ }
+\DoxyCodeLine{01779\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_kernel_info}{KernelInfo}}(OrtKernelInfo*\ info);\ \ }
+\DoxyCodeLine{01780\ \ \ \mbox{\hyperlink{struct_ort_1_1detail_1_1_kernel_info_impl}{ConstKernelInfo}}\ GetConst()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_kernel_info_impl}{ConstKernelInfo}}\{this-\/>p\_\};\ \}}
+\DoxyCodeLine{01781\ \};}
+\DoxyCodeLine{01782\ }
+\DoxyCodeLine{01786\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_op}{Op}}\ :\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{detail::Base}}<OrtOp>\ \{}
+\DoxyCodeLine{01787\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_op_a74c019228508f094c5d589427deab010}{Op}}(std::nullptr\_t)\ \{\}\ \ }
+\DoxyCodeLine{01788\ }
+\DoxyCodeLine{01789\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_ort_1_1_op}{Op}}(OrtOp*);\ \ }
+\DoxyCodeLine{01790\ }
+\DoxyCodeLine{01791\ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{struct_ort_1_1_op}{Op}}\ Create(\textcolor{keyword}{const}\ OrtKernelInfo*\ info,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ op\_name,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ domain,}
+\DoxyCodeLine{01792\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ version,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}**\ type\_constraint\_names,}
+\DoxyCodeLine{01793\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{group___global_gaec63cdda46c29b8183997f38930ce38e}{ONNXTensorElementDataType}}*\ type\_constraint\_values,}
+\DoxyCodeLine{01794\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ type\_constraint\_count,}
+\DoxyCodeLine{01795\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_op_attr}{OpAttr}}*\ attr\_values,}
+\DoxyCodeLine{01796\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ attr\_count,}
+\DoxyCodeLine{01797\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ input\_count,\ \textcolor{keywordtype}{size\_t}\ output\_count);}
+\DoxyCodeLine{01798\ }
+\DoxyCodeLine{01799\ \ \ \textcolor{keywordtype}{void}\ Invoke(\textcolor{keyword}{const}\ OrtKernelContext*\ context,}
+\DoxyCodeLine{01800\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_1_1_value}{Value}}*\ input\_values,}
+\DoxyCodeLine{01801\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ input\_count,}
+\DoxyCodeLine{01802\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_ort_1_1_value}{Value}}*\ output\_values,}
+\DoxyCodeLine{01803\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ output\_count);}
+\DoxyCodeLine{01804\ }
+\DoxyCodeLine{01805\ \ \ \textcolor{comment}{//\ For\ easier\ refactoring}}
+\DoxyCodeLine{01806\ \ \ \textcolor{keywordtype}{void}\ Invoke(\textcolor{keyword}{const}\ OrtKernelContext*\ context,}
+\DoxyCodeLine{01807\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ OrtValue*\ \textcolor{keyword}{const}*\ input\_values,}
+\DoxyCodeLine{01808\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ input\_count,}
+\DoxyCodeLine{01809\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ OrtValue*\ \textcolor{keyword}{const}*\ output\_values,}
+\DoxyCodeLine{01810\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ output\_count);}
+\DoxyCodeLine{01811\ \};}
+\DoxyCodeLine{01812\ }
+\DoxyCodeLine{01817\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_custom_op_api}{CustomOpApi}}\ \{}
+\DoxyCodeLine{01818\ \ \ \mbox{\hyperlink{struct_ort_1_1_custom_op_api}{CustomOpApi}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_api}{OrtApi}}\&\ api)\ :\ api\_(api)\ \{\}}
+\DoxyCodeLine{01819\ }
+\DoxyCodeLine{01824\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::Value::GetTensorTypeAndShape()"{}})]]\ OrtTensorTypeAndShapeInfo*\ GetTensorTypeAndShape(\_In\_\ \textcolor{keyword}{const}\ OrtValue*\ value);}
+\DoxyCodeLine{01825\ }
+\DoxyCodeLine{01830\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::TensorTypeAndShapeInfo::GetElementCount()"{}})]]\ \textcolor{keywordtype}{size\_t}\ GetTensorShapeElementCount(\_In\_\ \textcolor{keyword}{const}\ OrtTensorTypeAndShapeInfo*\ info);}
+\DoxyCodeLine{01831\ }
+\DoxyCodeLine{01836\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::TensorTypeAndShapeInfo::GetElementType()"{}})]]\ \mbox{\hyperlink{group___global_gaec63cdda46c29b8183997f38930ce38e}{ONNXTensorElementDataType}}\ GetTensorElementType(\textcolor{keyword}{const}\ OrtTensorTypeAndShapeInfo*\ info);}
+\DoxyCodeLine{01837\ }
+\DoxyCodeLine{01842\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::TensorTypeAndShapeInfo::GetDimensionsCount()"{}})]]\ \textcolor{keywordtype}{size\_t}\ GetDimensionsCount(\_In\_\ \textcolor{keyword}{const}\ OrtTensorTypeAndShapeInfo*\ info);}
+\DoxyCodeLine{01843\ }
+\DoxyCodeLine{01848\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::TensorTypeAndShapeInfo::GetShape()"{}})]]\ \textcolor{keywordtype}{void}\ GetDimensions(\_In\_\ \textcolor{keyword}{const}\ OrtTensorTypeAndShapeInfo*\ info,\ \_Out\_\ int64\_t*\ dim\_values,\ \textcolor{keywordtype}{size\_t}\ dim\_values\_length);}
+\DoxyCodeLine{01849\ }
+\DoxyCodeLine{01854\ \ \ [[deprecated(\textcolor{stringliteral}{"{}Do\ not\ use"{}})]]\ \textcolor{keywordtype}{void}\ SetDimensions(OrtTensorTypeAndShapeInfo*\ info,\ \_In\_\ \textcolor{keyword}{const}\ int64\_t*\ dim\_values,\ \textcolor{keywordtype}{size\_t}\ dim\_count);}
+\DoxyCodeLine{01855\ }
+\DoxyCodeLine{01860\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{01861\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::Value::GetTensorMutableData()"{}})]]\ T*\ GetTensorMutableData(\_Inout\_\ OrtValue*\ value);}
+\DoxyCodeLine{01862\ }
+\DoxyCodeLine{01867\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{01868\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::Value::GetTensorData()"{}})]]\ \textcolor{keyword}{const}\ T*\ GetTensorData(\_Inout\_\ \textcolor{keyword}{const}\ OrtValue*\ value);}
+\DoxyCodeLine{01869\ }
+\DoxyCodeLine{01874\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::Value::GetTensorMemoryInfo()"{}})]]\ \textcolor{keyword}{const}\ OrtMemoryInfo*\ GetTensorMemoryInfo(\_In\_\ \textcolor{keyword}{const}\ OrtValue*\ value);}
+\DoxyCodeLine{01875\ }
+\DoxyCodeLine{01880\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::TensorTypeAndShapeInfo::GetShape()"{}})]]\ std::vector<int64\_t>\ GetTensorShape(\textcolor{keyword}{const}\ OrtTensorTypeAndShapeInfo*\ info);}
+\DoxyCodeLine{01881\ }
+\DoxyCodeLine{01886\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ TensorTypeAndShapeInfo"{}})]]\ \textcolor{keywordtype}{void}\ ReleaseTensorTypeAndShapeInfo(OrtTensorTypeAndShapeInfo*\ input);}
+\DoxyCodeLine{01887\ }
+\DoxyCodeLine{01892\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::KernelContext::GetInputCount"{}})]]\ \textcolor{keywordtype}{size\_t}\ KernelContext\_GetInputCount(\textcolor{keyword}{const}\ OrtKernelContext*\ context);}
+\DoxyCodeLine{01893\ }
+\DoxyCodeLine{01898\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::KernelContext::GetInput"{}})]]\ \textcolor{keyword}{const}\ OrtValue*\ KernelContext\_GetInput(\textcolor{keyword}{const}\ OrtKernelContext*\ context,\ \_In\_\ \textcolor{keywordtype}{size\_t}\ index);}
+\DoxyCodeLine{01899\ }
+\DoxyCodeLine{01904\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::KernelContext::GetOutputCount"{}})]]\ \textcolor{keywordtype}{size\_t}\ KernelContext\_GetOutputCount(\textcolor{keyword}{const}\ OrtKernelContext*\ context);}
+\DoxyCodeLine{01905\ }
+\DoxyCodeLine{01910\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::KernelContext::GetOutput"{}})]]\ OrtValue*\ KernelContext\_GetOutput(OrtKernelContext*\ context,\ \_In\_\ \textcolor{keywordtype}{size\_t}\ index,\ \_In\_\ \textcolor{keyword}{const}\ int64\_t*\ dim\_values,\ \textcolor{keywordtype}{size\_t}\ dim\_count);}
+\DoxyCodeLine{01911\ }
+\DoxyCodeLine{01916\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::KernelContext::GetGPUComputeStream"{}})]]\ \textcolor{keywordtype}{void}*\ KernelContext\_GetGPUComputeStream(\textcolor{keyword}{const}\ OrtKernelContext*\ context);}
+\DoxyCodeLine{01917\ }
+\DoxyCodeLine{01922\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::ThrowOnError()"{}})]]\ \textcolor{keywordtype}{void}\ ThrowOnError(OrtStatus*\ result);}
+\DoxyCodeLine{01923\ }
+\DoxyCodeLine{01928\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::OpAttr"{}})]]\ OrtOpAttr*\ CreateOpAttr(\_In\_\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name,}
+\DoxyCodeLine{01929\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_In\_\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ data,}
+\DoxyCodeLine{01930\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_In\_\ \textcolor{keywordtype}{int}\ len,}
+\DoxyCodeLine{01931\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_In\_\ OrtOpAttrType\ type);}
+\DoxyCodeLine{01932\ }
+\DoxyCodeLine{01937\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::OpAttr"{}})]]\ \textcolor{keywordtype}{void}\ ReleaseOpAttr(\_Frees\_ptr\_opt\_\ OrtOpAttr*\ op\_attr);}
+\DoxyCodeLine{01938\ }
+\DoxyCodeLine{01943\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::Op"{}})]]\ OrtOp*\ CreateOp(\_In\_\ \textcolor{keyword}{const}\ OrtKernelInfo*\ info,}
+\DoxyCodeLine{01944\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_In\_z\_\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ op\_name,}
+\DoxyCodeLine{01945\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_In\_z\_\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ domain,}
+\DoxyCodeLine{01946\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ version,}
+\DoxyCodeLine{01947\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_In\_reads\_(type\_constraint\_count)\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}**\ type\_constraint\_names,}
+\DoxyCodeLine{01948\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_In\_reads\_(type\_constraint\_count)\ \textcolor{keyword}{const}\ \mbox{\hyperlink{group___global_gaec63cdda46c29b8183997f38930ce38e}{ONNXTensorElementDataType}}*\ type\_constraint\_values,}
+\DoxyCodeLine{01949\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ type\_constraint\_count,}
+\DoxyCodeLine{01950\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_In\_reads\_(attr\_count)\ \textcolor{keyword}{const}\ OrtOpAttr*\ \textcolor{keyword}{const}*\ attr\_values,}
+\DoxyCodeLine{01951\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ attr\_count,}
+\DoxyCodeLine{01952\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ input\_count,}
+\DoxyCodeLine{01953\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ output\_count);}
+\DoxyCodeLine{01954\ }
+\DoxyCodeLine{01959\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::Op::Invoke"{}})]]\ \textcolor{keywordtype}{void}\ InvokeOp(\_In\_\ \textcolor{keyword}{const}\ OrtKernelContext*\ context,}
+\DoxyCodeLine{01960\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_In\_\ \textcolor{keyword}{const}\ OrtOp*\ ort\_op,}
+\DoxyCodeLine{01961\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_In\_\ \textcolor{keyword}{const}\ OrtValue*\ \textcolor{keyword}{const}*\ input\_values,}
+\DoxyCodeLine{01962\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_In\_\ \textcolor{keywordtype}{int}\ input\_count,}
+\DoxyCodeLine{01963\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_Inout\_\ OrtValue*\ \textcolor{keyword}{const}*\ output\_values,}
+\DoxyCodeLine{01964\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_In\_\ \textcolor{keywordtype}{int}\ output\_count);}
+\DoxyCodeLine{01965\ }
+\DoxyCodeLine{01970\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::Op"{}})]]\ \textcolor{keywordtype}{void}\ ReleaseOp(\_Frees\_ptr\_opt\_\ OrtOp*\ ort\_op);}
+\DoxyCodeLine{01971\ }
+\DoxyCodeLine{01977\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \ \textcolor{comment}{//\ T\ is\ only\ implemented\ for\ std::vector<float>,\ std::vector<int64\_t>,\ float,\ int64\_t,\ and\ string}}
+\DoxyCodeLine{01978\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::KernelInfo::GetAttribute"{}})]]\ T\ \mbox{\hyperlink{struct_ort_1_1_custom_op_api_acc9b6c6b9375ffc86703fb1909d067a3}{KernelInfoGetAttribute}}(\_In\_\ \textcolor{keyword}{const}\ OrtKernelInfo*\ info,\ \_In\_\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name);}
+\DoxyCodeLine{01979\ }
+\DoxyCodeLine{01985\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::KernelInfo::Copy"{}})]]\ OrtKernelInfo*\ CopyKernelInfo(\_In\_\ \textcolor{keyword}{const}\ OrtKernelInfo*\ info);}
+\DoxyCodeLine{01986\ }
+\DoxyCodeLine{01992\ \ \ [[deprecated(\textcolor{stringliteral}{"{}use\ Ort::KernelInfo"{}})]]\ \textcolor{keywordtype}{void}\ ReleaseKernelInfo(\_Frees\_ptr\_opt\_\ OrtKernelInfo*\ info\_copy);}
+\DoxyCodeLine{01993\ }
+\DoxyCodeLine{01994\ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{01995\ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_api}{OrtApi}}\&\ api\_;}
+\DoxyCodeLine{01996\ \};}
+\DoxyCodeLine{01997\ }
+\DoxyCodeLine{01998\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ TOp,\ \textcolor{keyword}{typename}\ TKernel>}
+\DoxyCodeLine{01999\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_ort_1_1_custom_op_base}{CustomOpBase}}\ :\ \mbox{\hyperlink{struct_ort_custom_op}{OrtCustomOp}}\ \{}
+\DoxyCodeLine{02000\ \ \ \mbox{\hyperlink{struct_ort_1_1_custom_op_base}{CustomOpBase}}()\ \{}
+\DoxyCodeLine{02001\ \ \ \ \ OrtCustomOp::version\ =\ \mbox{\hyperlink{group___global_gac583aeb4640621ceb588f6300537945d}{ORT\_API\_VERSION}};}
+\DoxyCodeLine{02002\ \ \ \ \ OrtCustomOp::CreateKernel\ =\ [](\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_custom_op}{OrtCustomOp}}*\ this\_,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_api}{OrtApi}}*\ api,\ \textcolor{keyword}{const}\ OrtKernelInfo*\ info)\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }TOp*\textcolor{keyword}{>}(this\_)-\/>CreateKernel(*api,\ info);\ \};}
+\DoxyCodeLine{02003\ \ \ \ \ OrtCustomOp::GetName\ =\ [](\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_custom_op}{OrtCustomOp}}*\ this\_)\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }TOp*\textcolor{keyword}{>}(this\_)-\/>GetName();\ \};}
+\DoxyCodeLine{02004\ }
+\DoxyCodeLine{02005\ \ \ \ \ OrtCustomOp::GetExecutionProviderType\ =\ [](\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_custom_op}{OrtCustomOp}}*\ this\_)\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }TOp*\textcolor{keyword}{>}(this\_)-\/>GetExecutionProviderType();\ \};}
+\DoxyCodeLine{02006\ }
+\DoxyCodeLine{02007\ \ \ \ \ OrtCustomOp::GetInputTypeCount\ =\ [](\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_custom_op}{OrtCustomOp}}*\ this\_)\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }TOp*\textcolor{keyword}{>}(this\_)-\/>GetInputTypeCount();\ \};}
+\DoxyCodeLine{02008\ \ \ \ \ OrtCustomOp::GetInputType\ =\ [](\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_custom_op}{OrtCustomOp}}*\ this\_,\ \textcolor{keywordtype}{size\_t}\ index)\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }TOp*\textcolor{keyword}{>}(this\_)-\/>GetInputType(index);\ \};}
+\DoxyCodeLine{02009\ \ \ \ \ OrtCustomOp::GetInputMemoryType\ =\ [](\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_custom_op}{OrtCustomOp}}*\ this\_,\ \textcolor{keywordtype}{size\_t}\ index)\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }TOp*\textcolor{keyword}{>}(this\_)-\/>GetInputMemoryType(index);\ \};}
+\DoxyCodeLine{02010\ }
+\DoxyCodeLine{02011\ \ \ \ \ OrtCustomOp::GetOutputTypeCount\ =\ [](\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_custom_op}{OrtCustomOp}}*\ this\_)\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }TOp*\textcolor{keyword}{>}(this\_)-\/>GetOutputTypeCount();\ \};}
+\DoxyCodeLine{02012\ \ \ \ \ OrtCustomOp::GetOutputType\ =\ [](\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_custom_op}{OrtCustomOp}}*\ this\_,\ \textcolor{keywordtype}{size\_t}\ index)\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }TOp*\textcolor{keyword}{>}(this\_)-\/>GetOutputType(index);\ \};}
+\DoxyCodeLine{02013\ }
+\DoxyCodeLine{02014\ \ \ \ \ OrtCustomOp::KernelCompute\ =\ [](\textcolor{keywordtype}{void}*\ op\_kernel,\ OrtKernelContext*\ context)\ \{\ \textcolor{keyword}{static\_cast<}TKernel*\textcolor{keyword}{>}(op\_kernel)-\/>Compute(context);\ \};}
+\DoxyCodeLine{02015\ \textcolor{preprocessor}{\#if\ defined(\_MSC\_VER)\ \&\&\ !defined(\_\_clang\_\_)}}
+\DoxyCodeLine{02016\ \textcolor{preprocessor}{\#pragma\ warning(push)}}
+\DoxyCodeLine{02017\ \textcolor{preprocessor}{\#pragma\ warning(disable\ :\ 26409)}}
+\DoxyCodeLine{02018\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{02019\ \ \ \ \ OrtCustomOp::KernelDestroy\ =\ [](\textcolor{keywordtype}{void}*\ op\_kernel)\ \{\ \textcolor{keyword}{delete}\ \textcolor{keyword}{static\_cast<}TKernel*\textcolor{keyword}{>}(op\_kernel);\ \};}
+\DoxyCodeLine{02020\ \textcolor{preprocessor}{\#if\ defined(\_MSC\_VER)\ \&\&\ !defined(\_\_clang\_\_)}}
+\DoxyCodeLine{02021\ \textcolor{preprocessor}{\#pragma\ warning(pop)}}
+\DoxyCodeLine{02022\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{02023\ \ \ \ \ OrtCustomOp::GetInputCharacteristic\ =\ [](\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_custom_op}{OrtCustomOp}}*\ this\_,\ \textcolor{keywordtype}{size\_t}\ index)\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }TOp*\textcolor{keyword}{>}(this\_)-\/>GetInputCharacteristic(index);\ \};}
+\DoxyCodeLine{02024\ \ \ \ \ OrtCustomOp::GetOutputCharacteristic\ =\ [](\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_custom_op}{OrtCustomOp}}*\ this\_,\ \textcolor{keywordtype}{size\_t}\ index)\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }TOp*\textcolor{keyword}{>}(this\_)-\/>GetOutputCharacteristic(index);\ \};}
+\DoxyCodeLine{02025\ }
+\DoxyCodeLine{02026\ \ \ \ \ OrtCustomOp::GetVariadicInputMinArity\ =\ [](\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_custom_op}{OrtCustomOp}}*\ this\_)\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }TOp*\textcolor{keyword}{>}(this\_)-\/>GetVariadicInputMinArity();\ \};}
+\DoxyCodeLine{02027\ \ \ \ \ OrtCustomOp::GetVariadicInputHomogeneity\ =\ [](\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_custom_op}{OrtCustomOp}}*\ this\_)\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(\textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }TOp*\textcolor{keyword}{>}(this\_)-\/>GetVariadicInputHomogeneity());\ \};}
+\DoxyCodeLine{02028\ \ \ \ \ OrtCustomOp::GetVariadicOutputMinArity\ =\ [](\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_custom_op}{OrtCustomOp}}*\ this\_)\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }TOp*\textcolor{keyword}{>}(this\_)-\/>GetVariadicOutputMinArity();\ \};}
+\DoxyCodeLine{02029\ \ \ \ \ OrtCustomOp::GetVariadicOutputHomogeneity\ =\ [](\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_ort_custom_op}{OrtCustomOp}}*\ this\_)\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(\textcolor{keyword}{static\_cast<}\textcolor{keyword}{const\ }TOp*\textcolor{keyword}{>}(this\_)-\/>GetVariadicOutputHomogeneity());\ \};}
+\DoxyCodeLine{02030\ \ \ \}}
+\DoxyCodeLine{02031\ }
+\DoxyCodeLine{02032\ \ \ \textcolor{comment}{//\ Default\ implementation\ of\ GetExecutionProviderType\ that\ returns\ nullptr\ to\ default\ to\ the\ CPU\ provider}}
+\DoxyCodeLine{02033\ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ GetExecutionProviderType()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};\ \}}
+\DoxyCodeLine{02034\ }
+\DoxyCodeLine{02035\ \ \ \textcolor{comment}{//\ Default\ implementations\ of\ GetInputCharacteristic()\ and\ GetOutputCharacteristic()\ below}}
+\DoxyCodeLine{02036\ \ \ \textcolor{comment}{//\ (inputs\ and\ outputs\ are\ required\ by\ default)}}
+\DoxyCodeLine{02037\ \ \ OrtCustomOpInputOutputCharacteristic\ GetInputCharacteristic(\textcolor{keywordtype}{size\_t}\ \textcolor{comment}{/*index*/})\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{02038\ \ \ \ \ \textcolor{keywordflow}{return}\ OrtCustomOpInputOutputCharacteristic::INPUT\_OUTPUT\_REQUIRED;}
+\DoxyCodeLine{02039\ \ \ \}}
+\DoxyCodeLine{02040\ }
+\DoxyCodeLine{02041\ \ \ OrtCustomOpInputOutputCharacteristic\ GetOutputCharacteristic(\textcolor{keywordtype}{size\_t}\ \textcolor{comment}{/*index*/})\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{02042\ \ \ \ \ \textcolor{keywordflow}{return}\ OrtCustomOpInputOutputCharacteristic::INPUT\_OUTPUT\_REQUIRED;}
+\DoxyCodeLine{02043\ \ \ \}}
+\DoxyCodeLine{02044\ }
+\DoxyCodeLine{02045\ \ \ \textcolor{comment}{//\ Default\ implemention\ of\ GetInputMemoryType()\ that\ returns\ OrtMemTypeDefault}}
+\DoxyCodeLine{02046\ \ \ \mbox{\hyperlink{group___global_gab7805016f4b26871e899a3cf4114ee0d}{OrtMemType}}\ GetInputMemoryType(\textcolor{keywordtype}{size\_t}\ \textcolor{comment}{/*index*/})\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{02047\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{group___global_ggab7805016f4b26871e899a3cf4114ee0da4ecb169ee6f3e0a8d505c8a240070378}{OrtMemTypeDefault}};}
+\DoxyCodeLine{02048\ \ \ \}}
+\DoxyCodeLine{02049\ }
+\DoxyCodeLine{02050\ \ \ \textcolor{comment}{//\ Default\ implementation\ of\ GetVariadicInputMinArity()\ returns\ 1\ to\ specify\ that\ a\ variadic\ input}}
+\DoxyCodeLine{02051\ \ \ \textcolor{comment}{//\ should\ expect\ at\ least\ 1\ argument.}}
+\DoxyCodeLine{02052\ \ \ \textcolor{keywordtype}{int}\ GetVariadicInputMinArity()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{02053\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{02054\ \ \ \}}
+\DoxyCodeLine{02055\ }
+\DoxyCodeLine{02056\ \ \ \textcolor{comment}{//\ Default\ implementation\ of\ GetVariadicInputHomegeneity()\ returns\ true\ to\ specify\ that\ all\ arguments}}
+\DoxyCodeLine{02057\ \ \ \textcolor{comment}{//\ to\ a\ variadic\ input\ should\ be\ of\ the\ same\ type.}}
+\DoxyCodeLine{02058\ \ \ \textcolor{keywordtype}{bool}\ GetVariadicInputHomogeneity()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{02059\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{02060\ \ \ \}}
+\DoxyCodeLine{02061\ }
+\DoxyCodeLine{02062\ \ \ \textcolor{comment}{//\ Default\ implementation\ of\ GetVariadicOutputMinArity()\ returns\ 1\ to\ specify\ that\ a\ variadic\ output}}
+\DoxyCodeLine{02063\ \ \ \textcolor{comment}{//\ should\ produce\ at\ least\ 1\ output\ value.}}
+\DoxyCodeLine{02064\ \ \ \textcolor{keywordtype}{int}\ GetVariadicOutputMinArity()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{02065\ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{02066\ \ \ \}}
+\DoxyCodeLine{02067\ }
+\DoxyCodeLine{02068\ \ \ \textcolor{comment}{//\ Default\ implementation\ of\ GetVariadicOutputHomegeneity()\ returns\ true\ to\ specify\ that\ all\ output\ values}}
+\DoxyCodeLine{02069\ \ \ \textcolor{comment}{//\ produced\ by\ a\ variadic\ output\ should\ be\ of\ the\ same\ type.}}
+\DoxyCodeLine{02070\ \ \ \textcolor{keywordtype}{bool}\ GetVariadicOutputHomogeneity()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{02071\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{02072\ \ \ \}}
+\DoxyCodeLine{02073\ }
+\DoxyCodeLine{02074\ \ \ \textcolor{comment}{//\ Declare\ list\ of\ session\ config\ entries\ used\ by\ this\ Custom\ Op.}}
+\DoxyCodeLine{02075\ \ \ \textcolor{comment}{//\ Implement\ this\ function\ in\ order\ to\ get\ configs\ from\ CustomOpBase::GetSessionConfigs().}}
+\DoxyCodeLine{02076\ \ \ \textcolor{comment}{//\ This\ default\ implementation\ returns\ an\ empty\ vector\ of\ config\ entries.}}
+\DoxyCodeLine{02077\ \ \ std::vector<std::string>\ GetSessionConfigKeys()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{02078\ \ \ \ \ \textcolor{keywordflow}{return}\ std::vector<std::string>\{\};}
+\DoxyCodeLine{02079\ \ \ \}}
+\DoxyCodeLine{02080\ }
+\DoxyCodeLine{02081\ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{02082\ \ \ \textcolor{comment}{//\ Helper\ function\ that\ returns\ a\ map\ of\ session\ config\ entries\ specified\ by\ CustomOpBase::GetSessionConfigKeys.}}
+\DoxyCodeLine{02083\ \ \ \textcolor{keywordtype}{void}\ GetSessionConfigs(std::unordered\_map<std::string,\ std::string>\&\ out,\ \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_options_impl}{ConstSessionOptions}}\ options)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{02084\ \};}
+\DoxyCodeLine{02085\ }
+\DoxyCodeLine{02086\ \}\ \ \textcolor{comment}{//\ namespace\ Ort}}
+\DoxyCodeLine{02087\ }
+\DoxyCodeLine{02088\ \textcolor{preprocessor}{\#include\ "{}onnxruntime\_cxx\_inline.h"{}}}
+
+\end{DoxyCode}

@@ -1,0 +1,28 @@
+\doxysection{Onnx\+Helper.\+h}
+\hypertarget{_onnx_helper_8h_source}{}\label{_onnx_helper_8h_source}\index{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost\_Plugins/BasicOnnxPlugin/OnnxHelper.h@{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost\_Plugins/BasicOnnxPlugin/OnnxHelper.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#ifndef\ ONNXHELPER\_H}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#define\ ONNXHELPER\_H}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <onnxruntime\_cxx\_api.h>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_onnx_helper}{OnnxHelper}}\ \{}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keyword}{template}<\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{struct_ort_1_1_value}{Ort::Value}}\ vecToTensor(std::vector<T>\&\ data,\ \textcolor{keyword}{const}\ std::vector<std::int64\_t>\&\ shape)\ \{}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_ort_1_1_memory_info}{Ort::MemoryInfo}}\ mem\_info\ =}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \ \ \ \ Ort::MemoryInfo::CreateCpu(OrtAllocatorType::OrtArenaAllocator,\ OrtMemType::OrtMemTypeDefault);}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ tensor\ =\ \mbox{\hyperlink{struct_ort_1_1_value_a23c32a59c2149a0faf54187af3cc5bb8}{Ort::Value::CreateTensor<T>}}(mem\_info,\ data.data(),\ data.size(),\ shape.data(),\ shape.size());}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ tensor;}
+\DoxyCodeLine{00019\ \ \ \ \ \}}
+\DoxyCodeLine{00020\ \};}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ BASICONNXPLUGINPLUGIN\_H}}
+
+\end{DoxyCode}

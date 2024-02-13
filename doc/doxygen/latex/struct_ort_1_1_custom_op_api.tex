@@ -1,0 +1,310 @@
+\doxysection{Ort\+::Custom\+Op\+Api Struct Reference}
+\hypertarget{struct_ort_1_1_custom_op_api}{}\label{struct_ort_1_1_custom_op_api}\index{Ort::CustomOpApi@{Ort::CustomOpApi}}
+
+
+This entire structure is deprecated, but we not marking it as a whole yet since we want to preserve for the next release.  
+
+
+
+
+{\ttfamily \#include $<$onnxruntime\+\_\+cxx\+\_\+api.\+h$>$}
+
+
+
+Collaboration diagram for Ort\+::Custom\+Op\+Api\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=176pt]{struct_ort_1_1_custom_op_api__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_1_1_custom_op_api_abf028f27de7ac28bf78d89917dfe56b9}\label{struct_ort_1_1_custom_op_api_abf028f27de7ac28bf78d89917dfe56b9} 
+{\bfseries Custom\+Op\+Api} (const \mbox{\hyperlink{struct_ort_api}{Ort\+Api}} \&api)
+\item 
+Ort\+Tensor\+Type\+And\+Shape\+Info \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_ort_1_1_custom_op_api_a89c50af8339c0a7c01979a4f51b5f6c8}{Get\+Tensor\+Type\+And\+Shape}} (\+\_\+\+In\+\_\+ const Ort\+Value \texorpdfstring{$\ast$}{*}value)
+\item 
+size\+\_\+t \mbox{\hyperlink{struct_ort_1_1_custom_op_api_a667162001d2a667cb93d7c630ac25ff2}{Get\+Tensor\+Shape\+Element\+Count}} (\+\_\+\+In\+\_\+ const Ort\+Tensor\+Type\+And\+Shape\+Info \texorpdfstring{$\ast$}{*}info)
+\item 
+\mbox{\hyperlink{group___global_gaec63cdda46c29b8183997f38930ce38e}{ONNXTensor\+Element\+Data\+Type}} \mbox{\hyperlink{struct_ort_1_1_custom_op_api_a880d0346b32ddada9c42dad22898ee20}{Get\+Tensor\+Element\+Type}} (const Ort\+Tensor\+Type\+And\+Shape\+Info \texorpdfstring{$\ast$}{*}info)
+\item 
+size\+\_\+t \mbox{\hyperlink{struct_ort_1_1_custom_op_api_af221c40ce5cf0eaf9e63a038db938732}{Get\+Dimensions\+Count}} (\+\_\+\+In\+\_\+ const Ort\+Tensor\+Type\+And\+Shape\+Info \texorpdfstring{$\ast$}{*}info)
+\item 
+void \mbox{\hyperlink{struct_ort_1_1_custom_op_api_a149c3756b321f6f7bb7615200bbe08b8}{Get\+Dimensions}} (\+\_\+\+In\+\_\+ const Ort\+Tensor\+Type\+And\+Shape\+Info \texorpdfstring{$\ast$}{*}info, \+\_\+\+Out\+\_\+ int64\+\_\+t \texorpdfstring{$\ast$}{*}dim\+\_\+values, size\+\_\+t dim\+\_\+values\+\_\+length)
+\item 
+void \mbox{\hyperlink{struct_ort_1_1_custom_op_api_aee4f5addd047a93b71dc67adf2066766}{Set\+Dimensions}} (Ort\+Tensor\+Type\+And\+Shape\+Info \texorpdfstring{$\ast$}{*}info, \+\_\+\+In\+\_\+ const int64\+\_\+t \texorpdfstring{$\ast$}{*}dim\+\_\+values, size\+\_\+t dim\+\_\+count)
+\item 
+{\footnotesize template$<$typename T $>$ }\\T \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_ort_1_1_custom_op_api_a815ca638abe7c00397e8bf1c546b9e9e}{Get\+Tensor\+Mutable\+Data}} (\+\_\+\+Inout\+\_\+ Ort\+Value \texorpdfstring{$\ast$}{*}value)
+\item 
+{\footnotesize template$<$typename T $>$ }\\const T \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_ort_1_1_custom_op_api_ad99f3c2b72eac5b30b4897647b6ac065}{Get\+Tensor\+Data}} (\+\_\+\+Inout\+\_\+ const Ort\+Value \texorpdfstring{$\ast$}{*}value)
+\item 
+const Ort\+Memory\+Info \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_ort_1_1_custom_op_api_addcc02e67760a08e9019b0b0a4bc4dae}{Get\+Tensor\+Memory\+Info}} (\+\_\+\+In\+\_\+ const Ort\+Value \texorpdfstring{$\ast$}{*}value)
+\item 
+std\+::vector$<$ int64\+\_\+t $>$ \mbox{\hyperlink{struct_ort_1_1_custom_op_api_a4c60b4f47540791b366228dd6f790a7c}{Get\+Tensor\+Shape}} (const Ort\+Tensor\+Type\+And\+Shape\+Info \texorpdfstring{$\ast$}{*}info)
+\item 
+void \mbox{\hyperlink{struct_ort_1_1_custom_op_api_a42981ee288830f4b60683bbd4a21627d}{Release\+Tensor\+Type\+And\+Shape\+Info}} (Ort\+Tensor\+Type\+And\+Shape\+Info \texorpdfstring{$\ast$}{*}input)
+\item 
+size\+\_\+t \mbox{\hyperlink{struct_ort_1_1_custom_op_api_a17348789cfde3e1a93bf1e2af67c183e}{Kernel\+Context\+\_\+\+Get\+Input\+Count}} (const Ort\+Kernel\+Context \texorpdfstring{$\ast$}{*}context)
+\item 
+const Ort\+Value \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_ort_1_1_custom_op_api_a51acc8ebdc6a1b63e80c81b3d4a2998f}{Kernel\+Context\+\_\+\+Get\+Input}} (const Ort\+Kernel\+Context \texorpdfstring{$\ast$}{*}context, \+\_\+\+In\+\_\+ size\+\_\+t index)
+\item 
+size\+\_\+t \mbox{\hyperlink{struct_ort_1_1_custom_op_api_a015cb844d1127a400228c2756892d453}{Kernel\+Context\+\_\+\+Get\+Output\+Count}} (const Ort\+Kernel\+Context \texorpdfstring{$\ast$}{*}context)
+\item 
+Ort\+Value \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_ort_1_1_custom_op_api_a348b525767f73808fa81a40864e89311}{Kernel\+Context\+\_\+\+Get\+Output}} (Ort\+Kernel\+Context \texorpdfstring{$\ast$}{*}context, \+\_\+\+In\+\_\+ size\+\_\+t index, \+\_\+\+In\+\_\+ const int64\+\_\+t \texorpdfstring{$\ast$}{*}dim\+\_\+values, size\+\_\+t dim\+\_\+count)
+\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_ort_1_1_custom_op_api_a0bb133692d307824f5da57019963d4a2}{Kernel\+Context\+\_\+\+Get\+GPUCompute\+Stream}} (const Ort\+Kernel\+Context \texorpdfstring{$\ast$}{*}context)
+\item 
+void \mbox{\hyperlink{struct_ort_1_1_custom_op_api_a5e6b792b3e87a2c4fcf79d9e8bf3773c}{Throw\+On\+Error}} (Ort\+Status \texorpdfstring{$\ast$}{*}result)
+\item 
+Ort\+Op\+Attr \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_ort_1_1_custom_op_api_a994f558bb2ccf53803ff3ac4a2c827c2}{Create\+Op\+Attr}} (\+\_\+\+In\+\_\+ const char \texorpdfstring{$\ast$}{*}name, \+\_\+\+In\+\_\+ const void \texorpdfstring{$\ast$}{*}data, \+\_\+\+In\+\_\+ int len, \+\_\+\+In\+\_\+ Ort\+Op\+Attr\+Type type)
+\item 
+void \mbox{\hyperlink{struct_ort_1_1_custom_op_api_a95c4ae684dbbc0ce51aefc24633c63ae}{Release\+Op\+Attr}} (\+\_\+\+Frees\+\_\+ptr\+\_\+opt\+\_\+ Ort\+Op\+Attr \texorpdfstring{$\ast$}{*}op\+\_\+attr)
+\item 
+Ort\+Op \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_ort_1_1_custom_op_api_a97e949a2654a58af7079f843630cb371}{Create\+Op}} (\+\_\+\+In\+\_\+ const Ort\+Kernel\+Info \texorpdfstring{$\ast$}{*}info, \+\_\+\+In\+\_\+z\+\_\+ const char \texorpdfstring{$\ast$}{*}op\+\_\+name, \+\_\+\+In\+\_\+z\+\_\+ const char \texorpdfstring{$\ast$}{*}domain, int version, \+\_\+\+In\+\_\+reads\+\_\+(type\+\_\+constraint\+\_\+count) const char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}type\+\_\+constraint\+\_\+names, \+\_\+\+In\+\_\+reads\+\_\+(type\+\_\+constraint\+\_\+count) const \mbox{\hyperlink{group___global_gaec63cdda46c29b8183997f38930ce38e}{ONNXTensor\+Element\+Data\+Type}} \texorpdfstring{$\ast$}{*}type\+\_\+constraint\+\_\+values, int type\+\_\+constraint\+\_\+count, \+\_\+\+In\+\_\+reads\+\_\+(attr\+\_\+count) const Ort\+Op\+Attr \texorpdfstring{$\ast$}{*}const \texorpdfstring{$\ast$}{*}attr\+\_\+values, int attr\+\_\+count, int input\+\_\+count, int output\+\_\+count)
+\item 
+void \mbox{\hyperlink{struct_ort_1_1_custom_op_api_a8bbe2fde75b7f7034c9c38cf68d27275}{Invoke\+Op}} (\+\_\+\+In\+\_\+ const Ort\+Kernel\+Context \texorpdfstring{$\ast$}{*}context, \+\_\+\+In\+\_\+ const Ort\+Op \texorpdfstring{$\ast$}{*}ort\+\_\+op, \+\_\+\+In\+\_\+ const Ort\+Value \texorpdfstring{$\ast$}{*}const \texorpdfstring{$\ast$}{*}input\+\_\+values, \+\_\+\+In\+\_\+ int input\+\_\+count, \+\_\+\+Inout\+\_\+ Ort\+Value \texorpdfstring{$\ast$}{*}const \texorpdfstring{$\ast$}{*}output\+\_\+values, \+\_\+\+In\+\_\+ int output\+\_\+count)
+\item 
+void \mbox{\hyperlink{struct_ort_1_1_custom_op_api_a7be4089c35847e358f81307bceea8ca0}{Release\+Op}} (\+\_\+\+Frees\+\_\+ptr\+\_\+opt\+\_\+ Ort\+Op \texorpdfstring{$\ast$}{*}ort\+\_\+op)
+\item 
+{\footnotesize template$<$typename T $>$ }\\T \mbox{\hyperlink{struct_ort_1_1_custom_op_api_acc9b6c6b9375ffc86703fb1909d067a3}{Kernel\+Info\+Get\+Attribute}} (\+\_\+\+In\+\_\+ const Ort\+Kernel\+Info \texorpdfstring{$\ast$}{*}info, \+\_\+\+In\+\_\+ const char \texorpdfstring{$\ast$}{*}name)
+\item 
+Ort\+Kernel\+Info \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_ort_1_1_custom_op_api_ae3a44fcc638eac544a0bc258b3583b9d}{Copy\+Kernel\+Info}} (\+\_\+\+In\+\_\+ const Ort\+Kernel\+Info \texorpdfstring{$\ast$}{*}info)
+\item 
+void \mbox{\hyperlink{struct_ort_1_1_custom_op_api_a4459ff89e3d3513cfdb93a056e7c5a80}{Release\+Kernel\+Info}} (\+\_\+\+Frees\+\_\+ptr\+\_\+opt\+\_\+ Ort\+Kernel\+Info \texorpdfstring{$\ast$}{*}info\+\_\+copy)
+\item 
+\Hypertarget{struct_ort_1_1_custom_op_api_a6f4abe0f0ce3470a7946ab5c811fd9f9}\label{struct_ort_1_1_custom_op_api_a6f4abe0f0ce3470a7946ab5c811fd9f9} 
+template$<$$>$ float {\bfseries Kernel\+Info\+Get\+Attribute} (\+\_\+\+In\+\_\+ const Ort\+Kernel\+Info \texorpdfstring{$\ast$}{*}info, \+\_\+\+In\+\_\+ const char \texorpdfstring{$\ast$}{*}name)
+\item 
+\Hypertarget{struct_ort_1_1_custom_op_api_a13405892b4599facf2d260241c45d317}\label{struct_ort_1_1_custom_op_api_a13405892b4599facf2d260241c45d317} 
+template$<$$>$ int64\+\_\+t {\bfseries Kernel\+Info\+Get\+Attribute} (\+\_\+\+In\+\_\+ const Ort\+Kernel\+Info \texorpdfstring{$\ast$}{*}info, \+\_\+\+In\+\_\+ const char \texorpdfstring{$\ast$}{*}name)
+\item 
+\Hypertarget{struct_ort_1_1_custom_op_api_a08cfa308cb1a8642ee2e3b70c848544d}\label{struct_ort_1_1_custom_op_api_a08cfa308cb1a8642ee2e3b70c848544d} 
+template$<$$>$ std\+::vector$<$ float $>$ {\bfseries Kernel\+Info\+Get\+Attribute} (\+\_\+\+In\+\_\+ const Ort\+Kernel\+Info \texorpdfstring{$\ast$}{*}info, \+\_\+\+In\+\_\+ const char \texorpdfstring{$\ast$}{*}name)
+\item 
+\Hypertarget{struct_ort_1_1_custom_op_api_a4c768b732d9bd022783acb6f4a701787}\label{struct_ort_1_1_custom_op_api_a4c768b732d9bd022783acb6f4a701787} 
+template$<$$>$ std\+::vector$<$ int64\+\_\+t $>$ {\bfseries Kernel\+Info\+Get\+Attribute} (\+\_\+\+In\+\_\+ const Ort\+Kernel\+Info \texorpdfstring{$\ast$}{*}info, \+\_\+\+In\+\_\+ const char \texorpdfstring{$\ast$}{*}name)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_1_1_custom_op_api_a19710a96970523ecd13be67dc8d7fa5b}\label{struct_ort_1_1_custom_op_api_a19710a96970523ecd13be67dc8d7fa5b} 
+const \mbox{\hyperlink{struct_ort_api}{Ort\+Api}} \& {\bfseries api\+\_\+}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This entire structure is deprecated, but we not marking it as a whole yet since we want to preserve for the next release. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{struct_ort_1_1_custom_op_api_ae3a44fcc638eac544a0bc258b3583b9d}\label{struct_ort_1_1_custom_op_api_ae3a44fcc638eac544a0bc258b3583b9d} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!CopyKernelInfo@{CopyKernelInfo}}
+\index{CopyKernelInfo@{CopyKernelInfo}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{CopyKernelInfo()}{CopyKernelInfo()}}
+{\footnotesize\ttfamily Ort\+Kernel\+Info \texorpdfstring{$\ast$}{*} Ort\+::\+Custom\+Op\+Api\+::\+Copy\+Kernel\+Info (\begin{DoxyParamCaption}\item[{\+\_\+\+In\+\_\+ const Ort\+Kernel\+Info \texorpdfstring{$\ast$}{*}}]{info }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000027}{Deprecated}}]use Ort\+::\+Kernel\+Info\+::\+Copy querying attributes \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is not exception safe \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_a97e949a2654a58af7079f843630cb371}\label{struct_ort_1_1_custom_op_api_a97e949a2654a58af7079f843630cb371} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!CreateOp@{CreateOp}}
+\index{CreateOp@{CreateOp}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{CreateOp()}{CreateOp()}}
+{\footnotesize\ttfamily Ort\+Op \texorpdfstring{$\ast$}{*} Ort\+::\+Custom\+Op\+Api\+::\+Create\+Op (\begin{DoxyParamCaption}\item[{\+\_\+\+In\+\_\+ const Ort\+Kernel\+Info \texorpdfstring{$\ast$}{*}}]{info,  }\item[{\+\_\+\+In\+\_\+z\+\_\+ const char \texorpdfstring{$\ast$}{*}}]{op\+\_\+name,  }\item[{\+\_\+\+In\+\_\+z\+\_\+ const char \texorpdfstring{$\ast$}{*}}]{domain,  }\item[{int}]{version,  }\item[{\+\_\+\+In\+\_\+reads\+\_\+(type\+\_\+constraint\+\_\+count) const char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{type\+\_\+constraint\+\_\+names,  }\item[{\+\_\+\+In\+\_\+reads\+\_\+(type\+\_\+constraint\+\_\+count) const \mbox{\hyperlink{group___global_gaec63cdda46c29b8183997f38930ce38e}{ONNXTensor\+Element\+Data\+Type}} \texorpdfstring{$\ast$}{*}}]{type\+\_\+constraint\+\_\+values,  }\item[{int}]{type\+\_\+constraint\+\_\+count,  }\item[{\+\_\+\+In\+\_\+reads\+\_\+(attr\+\_\+count) const Ort\+Op\+Attr \texorpdfstring{$\ast$}{*}const \texorpdfstring{$\ast$}{*}}]{attr\+\_\+values,  }\item[{int}]{attr\+\_\+count,  }\item[{int}]{input\+\_\+count,  }\item[{int}]{output\+\_\+count }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000023}{Deprecated}}]use \doxylink{struct_ort_1_1_op}{Ort\+::\+Op} \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is not exception safe. \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_a994f558bb2ccf53803ff3ac4a2c827c2}\label{struct_ort_1_1_custom_op_api_a994f558bb2ccf53803ff3ac4a2c827c2} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!CreateOpAttr@{CreateOpAttr}}
+\index{CreateOpAttr@{CreateOpAttr}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{CreateOpAttr()}{CreateOpAttr()}}
+{\footnotesize\ttfamily Ort\+Op\+Attr \texorpdfstring{$\ast$}{*} Ort\+::\+Custom\+Op\+Api\+::\+Create\+Op\+Attr (\begin{DoxyParamCaption}\item[{\+\_\+\+In\+\_\+ const char \texorpdfstring{$\ast$}{*}}]{name,  }\item[{\+\_\+\+In\+\_\+ const void \texorpdfstring{$\ast$}{*}}]{data,  }\item[{\+\_\+\+In\+\_\+ int}]{len,  }\item[{\+\_\+\+In\+\_\+ Ort\+Op\+Attr\+Type}]{type }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000021}{Deprecated}}]use \doxylink{struct_ort_1_1_op_attr}{Ort\+::\+Op\+Attr} \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is not exception safe. \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_a149c3756b321f6f7bb7615200bbe08b8}\label{struct_ort_1_1_custom_op_api_a149c3756b321f6f7bb7615200bbe08b8} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!GetDimensions@{GetDimensions}}
+\index{GetDimensions@{GetDimensions}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{GetDimensions()}{GetDimensions()}}
+{\footnotesize\ttfamily void Ort\+::\+Custom\+Op\+Api\+::\+Get\+Dimensions (\begin{DoxyParamCaption}\item[{\+\_\+\+In\+\_\+ const Ort\+Tensor\+Type\+And\+Shape\+Info \texorpdfstring{$\ast$}{*}}]{info,  }\item[{\+\_\+\+Out\+\_\+ int64\+\_\+t \texorpdfstring{$\ast$}{*}}]{dim\+\_\+values,  }\item[{size\+\_\+t}]{dim\+\_\+values\+\_\+length }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000008}{Deprecated}}]use \doxylink{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_a553b1d07adab289060c143086b1be32d}{Ort\+::\+Tensor\+Type\+And\+Shape\+Info\+::\+Get\+Shape()} \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is redundant. \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_af221c40ce5cf0eaf9e63a038db938732}\label{struct_ort_1_1_custom_op_api_af221c40ce5cf0eaf9e63a038db938732} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!GetDimensionsCount@{GetDimensionsCount}}
+\index{GetDimensionsCount@{GetDimensionsCount}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{GetDimensionsCount()}{GetDimensionsCount()}}
+{\footnotesize\ttfamily size\+\_\+t Ort\+::\+Custom\+Op\+Api\+::\+Get\+Dimensions\+Count (\begin{DoxyParamCaption}\item[{\+\_\+\+In\+\_\+ const Ort\+Tensor\+Type\+And\+Shape\+Info \texorpdfstring{$\ast$}{*}}]{info }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000007}{Deprecated}}]use \doxylink{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_a93e0ba7d39a37a62613c945e6c6ace60}{Ort\+::\+Tensor\+Type\+And\+Shape\+Info\+::\+Get\+Dimensions\+Count()} \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is redundant. \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_ad99f3c2b72eac5b30b4897647b6ac065}\label{struct_ort_1_1_custom_op_api_ad99f3c2b72eac5b30b4897647b6ac065} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!GetTensorData@{GetTensorData}}
+\index{GetTensorData@{GetTensorData}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{GetTensorData()}{GetTensorData()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+const T \texorpdfstring{$\ast$}{*} Ort\+::\+Custom\+Op\+Api\+::\+Get\+Tensor\+Data (\begin{DoxyParamCaption}\item[{\+\_\+\+Inout\+\_\+ const Ort\+Value \texorpdfstring{$\ast$}{*}}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000011}{Deprecated}}]use \doxylink{struct_ort_1_1detail_1_1_const_value_impl_aed947feb6d46847d3d6cc0289b377fe6}{Ort\+::\+Value\+::\+Get\+Tensor\+Data()} \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is redundant. \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_a880d0346b32ddada9c42dad22898ee20}\label{struct_ort_1_1_custom_op_api_a880d0346b32ddada9c42dad22898ee20} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!GetTensorElementType@{GetTensorElementType}}
+\index{GetTensorElementType@{GetTensorElementType}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{GetTensorElementType()}{GetTensorElementType()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{group___global_gaec63cdda46c29b8183997f38930ce38e}{ONNXTensor\+Element\+Data\+Type}} Ort\+::\+Custom\+Op\+Api\+::\+Get\+Tensor\+Element\+Type (\begin{DoxyParamCaption}\item[{const Ort\+Tensor\+Type\+And\+Shape\+Info \texorpdfstring{$\ast$}{*}}]{info }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000006}{Deprecated}}]use \doxylink{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_ad38e0ee012301ec3fdfb680c3f26f4cf}{Ort\+::\+Tensor\+Type\+And\+Shape\+Info\+::\+Get\+Element\+Type()} \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is redundant. \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_addcc02e67760a08e9019b0b0a4bc4dae}\label{struct_ort_1_1_custom_op_api_addcc02e67760a08e9019b0b0a4bc4dae} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!GetTensorMemoryInfo@{GetTensorMemoryInfo}}
+\index{GetTensorMemoryInfo@{GetTensorMemoryInfo}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{GetTensorMemoryInfo()}{GetTensorMemoryInfo()}}
+{\footnotesize\ttfamily const Ort\+Memory\+Info \texorpdfstring{$\ast$}{*} Ort\+::\+Custom\+Op\+Api\+::\+Get\+Tensor\+Memory\+Info (\begin{DoxyParamCaption}\item[{\+\_\+\+In\+\_\+ const Ort\+Value \texorpdfstring{$\ast$}{*}}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000012}{Deprecated}}]use \doxylink{struct_ort_1_1detail_1_1_const_value_impl_a7342c33f055407202f6b0e4ed209ead0}{Ort\+::\+Value\+::\+Get\+Tensor\+Memory\+Info()} \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is redundant. \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_a815ca638abe7c00397e8bf1c546b9e9e}\label{struct_ort_1_1_custom_op_api_a815ca638abe7c00397e8bf1c546b9e9e} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!GetTensorMutableData@{GetTensorMutableData}}
+\index{GetTensorMutableData@{GetTensorMutableData}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{GetTensorMutableData()}{GetTensorMutableData()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+T \texorpdfstring{$\ast$}{*} Ort\+::\+Custom\+Op\+Api\+::\+Get\+Tensor\+Mutable\+Data (\begin{DoxyParamCaption}\item[{\+\_\+\+Inout\+\_\+ Ort\+Value \texorpdfstring{$\ast$}{*}}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000010}{Deprecated}}]use \doxylink{struct_ort_1_1detail_1_1_value_impl_a28317ae875d9c8b35f0cbed64f776c5a}{Ort\+::\+Value\+::\+Get\+Tensor\+Mutable\+Data()} \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is redundant. \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_a4c60b4f47540791b366228dd6f790a7c}\label{struct_ort_1_1_custom_op_api_a4c60b4f47540791b366228dd6f790a7c} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!GetTensorShape@{GetTensorShape}}
+\index{GetTensorShape@{GetTensorShape}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{GetTensorShape()}{GetTensorShape()}}
+{\footnotesize\ttfamily std\+::vector$<$ int64\+\_\+t $>$ Ort\+::\+Custom\+Op\+Api\+::\+Get\+Tensor\+Shape (\begin{DoxyParamCaption}\item[{const Ort\+Tensor\+Type\+And\+Shape\+Info \texorpdfstring{$\ast$}{*}}]{info }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000013}{Deprecated}}]use \doxylink{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_a553b1d07adab289060c143086b1be32d}{Ort\+::\+Tensor\+Type\+And\+Shape\+Info\+::\+Get\+Shape()} \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is redundant. \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_a667162001d2a667cb93d7c630ac25ff2}\label{struct_ort_1_1_custom_op_api_a667162001d2a667cb93d7c630ac25ff2} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!GetTensorShapeElementCount@{GetTensorShapeElementCount}}
+\index{GetTensorShapeElementCount@{GetTensorShapeElementCount}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{GetTensorShapeElementCount()}{GetTensorShapeElementCount()}}
+{\footnotesize\ttfamily size\+\_\+t Ort\+::\+Custom\+Op\+Api\+::\+Get\+Tensor\+Shape\+Element\+Count (\begin{DoxyParamCaption}\item[{\+\_\+\+In\+\_\+ const Ort\+Tensor\+Type\+And\+Shape\+Info \texorpdfstring{$\ast$}{*}}]{info }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000005}{Deprecated}}]use \doxylink{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_a147b9d073f3f28d5ad4ea4edc3d8d1ca}{Ort\+::\+Tensor\+Type\+And\+Shape\+Info\+::\+Get\+Element\+Count()} \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is redundant. \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_a89c50af8339c0a7c01979a4f51b5f6c8}\label{struct_ort_1_1_custom_op_api_a89c50af8339c0a7c01979a4f51b5f6c8} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!GetTensorTypeAndShape@{GetTensorTypeAndShape}}
+\index{GetTensorTypeAndShape@{GetTensorTypeAndShape}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{GetTensorTypeAndShape()}{GetTensorTypeAndShape()}}
+{\footnotesize\ttfamily Ort\+Tensor\+Type\+And\+Shape\+Info \texorpdfstring{$\ast$}{*} Ort\+::\+Custom\+Op\+Api\+::\+Get\+Tensor\+Type\+And\+Shape (\begin{DoxyParamCaption}\item[{\+\_\+\+In\+\_\+ const Ort\+Value \texorpdfstring{$\ast$}{*}}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000004}{Deprecated}}]use Ort\+::\+Value\+::\+Get\+Tensor\+Type\+And\+Shape() \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface produces a pointer that must be released. Not exception safe. \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_a8bbe2fde75b7f7034c9c38cf68d27275}\label{struct_ort_1_1_custom_op_api_a8bbe2fde75b7f7034c9c38cf68d27275} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!InvokeOp@{InvokeOp}}
+\index{InvokeOp@{InvokeOp}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{InvokeOp()}{InvokeOp()}}
+{\footnotesize\ttfamily void Ort\+::\+Custom\+Op\+Api\+::\+Invoke\+Op (\begin{DoxyParamCaption}\item[{\+\_\+\+In\+\_\+ const Ort\+Kernel\+Context \texorpdfstring{$\ast$}{*}}]{context,  }\item[{\+\_\+\+In\+\_\+ const Ort\+Op \texorpdfstring{$\ast$}{*}}]{ort\+\_\+op,  }\item[{\+\_\+\+In\+\_\+ const Ort\+Value \texorpdfstring{$\ast$}{*}const \texorpdfstring{$\ast$}{*}}]{input\+\_\+values,  }\item[{\+\_\+\+In\+\_\+ int}]{input\+\_\+count,  }\item[{\+\_\+\+Inout\+\_\+ Ort\+Value \texorpdfstring{$\ast$}{*}const \texorpdfstring{$\ast$}{*}}]{output\+\_\+values,  }\item[{\+\_\+\+In\+\_\+ int}]{output\+\_\+count }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000024}{Deprecated}}]use Ort\+::\+Op\+::\+Invoke \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is redundant \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_a0bb133692d307824f5da57019963d4a2}\label{struct_ort_1_1_custom_op_api_a0bb133692d307824f5da57019963d4a2} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!KernelContext\_GetGPUComputeStream@{KernelContext\_GetGPUComputeStream}}
+\index{KernelContext\_GetGPUComputeStream@{KernelContext\_GetGPUComputeStream}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{KernelContext\_GetGPUComputeStream()}{KernelContext\_GetGPUComputeStream()}}
+{\footnotesize\ttfamily void \texorpdfstring{$\ast$}{*} Ort\+::\+Custom\+Op\+Api\+::\+Kernel\+Context\+\_\+\+Get\+GPUCompute\+Stream (\begin{DoxyParamCaption}\item[{const Ort\+Kernel\+Context \texorpdfstring{$\ast$}{*}}]{context }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000019}{Deprecated}}]use Ort\+::\+Kernel\+Context\+::\+Get\+GPUCompute\+Stream \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is redundant. \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_a51acc8ebdc6a1b63e80c81b3d4a2998f}\label{struct_ort_1_1_custom_op_api_a51acc8ebdc6a1b63e80c81b3d4a2998f} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!KernelContext\_GetInput@{KernelContext\_GetInput}}
+\index{KernelContext\_GetInput@{KernelContext\_GetInput}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{KernelContext\_GetInput()}{KernelContext\_GetInput()}}
+{\footnotesize\ttfamily const Ort\+Value \texorpdfstring{$\ast$}{*} Ort\+::\+Custom\+Op\+Api\+::\+Kernel\+Context\+\_\+\+Get\+Input (\begin{DoxyParamCaption}\item[{const Ort\+Kernel\+Context \texorpdfstring{$\ast$}{*}}]{context,  }\item[{\+\_\+\+In\+\_\+ size\+\_\+t}]{index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000016}{Deprecated}}]use Ort\+::\+Kernel\+Context\+::\+Get\+Input \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is redundant. \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_a17348789cfde3e1a93bf1e2af67c183e}\label{struct_ort_1_1_custom_op_api_a17348789cfde3e1a93bf1e2af67c183e} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!KernelContext\_GetInputCount@{KernelContext\_GetInputCount}}
+\index{KernelContext\_GetInputCount@{KernelContext\_GetInputCount}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{KernelContext\_GetInputCount()}{KernelContext\_GetInputCount()}}
+{\footnotesize\ttfamily size\+\_\+t Ort\+::\+Custom\+Op\+Api\+::\+Kernel\+Context\+\_\+\+Get\+Input\+Count (\begin{DoxyParamCaption}\item[{const Ort\+Kernel\+Context \texorpdfstring{$\ast$}{*}}]{context }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000015}{Deprecated}}]use Ort\+::\+Kernel\+Context\+::\+Get\+Input\+Count \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is redundant. \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_a348b525767f73808fa81a40864e89311}\label{struct_ort_1_1_custom_op_api_a348b525767f73808fa81a40864e89311} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!KernelContext\_GetOutput@{KernelContext\_GetOutput}}
+\index{KernelContext\_GetOutput@{KernelContext\_GetOutput}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{KernelContext\_GetOutput()}{KernelContext\_GetOutput()}}
+{\footnotesize\ttfamily Ort\+Value \texorpdfstring{$\ast$}{*} Ort\+::\+Custom\+Op\+Api\+::\+Kernel\+Context\+\_\+\+Get\+Output (\begin{DoxyParamCaption}\item[{Ort\+Kernel\+Context \texorpdfstring{$\ast$}{*}}]{context,  }\item[{\+\_\+\+In\+\_\+ size\+\_\+t}]{index,  }\item[{\+\_\+\+In\+\_\+ const int64\+\_\+t \texorpdfstring{$\ast$}{*}}]{dim\+\_\+values,  }\item[{size\+\_\+t}]{dim\+\_\+count }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000018}{Deprecated}}]use Ort\+::\+Kernel\+Context\+::\+Get\+Output \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is redundant. \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_a015cb844d1127a400228c2756892d453}\label{struct_ort_1_1_custom_op_api_a015cb844d1127a400228c2756892d453} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!KernelContext\_GetOutputCount@{KernelContext\_GetOutputCount}}
+\index{KernelContext\_GetOutputCount@{KernelContext\_GetOutputCount}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{KernelContext\_GetOutputCount()}{KernelContext\_GetOutputCount()}}
+{\footnotesize\ttfamily size\+\_\+t Ort\+::\+Custom\+Op\+Api\+::\+Kernel\+Context\+\_\+\+Get\+Output\+Count (\begin{DoxyParamCaption}\item[{const Ort\+Kernel\+Context \texorpdfstring{$\ast$}{*}}]{context }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000017}{Deprecated}}]use Ort\+::\+Kernel\+Context\+::\+Get\+Output\+Count \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is redundant. \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_acc9b6c6b9375ffc86703fb1909d067a3}\label{struct_ort_1_1_custom_op_api_acc9b6c6b9375ffc86703fb1909d067a3} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!KernelInfoGetAttribute@{KernelInfoGetAttribute}}
+\index{KernelInfoGetAttribute@{KernelInfoGetAttribute}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{KernelInfoGetAttribute()}{KernelInfoGetAttribute()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+T Ort\+::\+Custom\+Op\+Api\+::\+Kernel\+Info\+Get\+Attribute (\begin{DoxyParamCaption}\item[{\+\_\+\+In\+\_\+ const Ort\+Kernel\+Info \texorpdfstring{$\ast$}{*}}]{info,  }\item[{\+\_\+\+In\+\_\+ const char \texorpdfstring{$\ast$}{*}}]{name }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000026}{Deprecated}}]use \doxylink{struct_ort_1_1_kernel_info}{Ort\+::\+Kernel\+Info} for automatic lifespan management or for querying attributes \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is redundant \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_a4459ff89e3d3513cfdb93a056e7c5a80}\label{struct_ort_1_1_custom_op_api_a4459ff89e3d3513cfdb93a056e7c5a80} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!ReleaseKernelInfo@{ReleaseKernelInfo}}
+\index{ReleaseKernelInfo@{ReleaseKernelInfo}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{ReleaseKernelInfo()}{ReleaseKernelInfo()}}
+{\footnotesize\ttfamily void Ort\+::\+Custom\+Op\+Api\+::\+Release\+Kernel\+Info (\begin{DoxyParamCaption}\item[{\+\_\+\+Frees\+\_\+ptr\+\_\+opt\+\_\+ Ort\+Kernel\+Info \texorpdfstring{$\ast$}{*}}]{info\+\_\+copy }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000028}{Deprecated}}]use \doxylink{struct_ort_1_1_kernel_info}{Ort\+::\+Kernel\+Info} for lifespan management querying attributes \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is not exception safe \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_a7be4089c35847e358f81307bceea8ca0}\label{struct_ort_1_1_custom_op_api_a7be4089c35847e358f81307bceea8ca0} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!ReleaseOp@{ReleaseOp}}
+\index{ReleaseOp@{ReleaseOp}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{ReleaseOp()}{ReleaseOp()}}
+{\footnotesize\ttfamily void Ort\+::\+Custom\+Op\+Api\+::\+Release\+Op (\begin{DoxyParamCaption}\item[{\+\_\+\+Frees\+\_\+ptr\+\_\+opt\+\_\+ Ort\+Op \texorpdfstring{$\ast$}{*}}]{ort\+\_\+op }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000025}{Deprecated}}]use \doxylink{struct_ort_1_1_op}{Ort\+::\+Op} for automatic lifespan management. \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is not exception safe. \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_a95c4ae684dbbc0ce51aefc24633c63ae}\label{struct_ort_1_1_custom_op_api_a95c4ae684dbbc0ce51aefc24633c63ae} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!ReleaseOpAttr@{ReleaseOpAttr}}
+\index{ReleaseOpAttr@{ReleaseOpAttr}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{ReleaseOpAttr()}{ReleaseOpAttr()}}
+{\footnotesize\ttfamily void Ort\+::\+Custom\+Op\+Api\+::\+Release\+Op\+Attr (\begin{DoxyParamCaption}\item[{\+\_\+\+Frees\+\_\+ptr\+\_\+opt\+\_\+ Ort\+Op\+Attr \texorpdfstring{$\ast$}{*}}]{op\+\_\+attr }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000022}{Deprecated}}]use \doxylink{struct_ort_1_1_op_attr}{Ort\+::\+Op\+Attr} \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is not exception safe. \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_a42981ee288830f4b60683bbd4a21627d}\label{struct_ort_1_1_custom_op_api_a42981ee288830f4b60683bbd4a21627d} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!ReleaseTensorTypeAndShapeInfo@{ReleaseTensorTypeAndShapeInfo}}
+\index{ReleaseTensorTypeAndShapeInfo@{ReleaseTensorTypeAndShapeInfo}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{ReleaseTensorTypeAndShapeInfo()}{ReleaseTensorTypeAndShapeInfo()}}
+{\footnotesize\ttfamily void Ort\+::\+Custom\+Op\+Api\+::\+Release\+Tensor\+Type\+And\+Shape\+Info (\begin{DoxyParamCaption}\item[{Ort\+Tensor\+Type\+And\+Shape\+Info \texorpdfstring{$\ast$}{*}}]{input }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000014}{Deprecated}}]use \doxylink{struct_ort_1_1_tensor_type_and_shape_info}{Tensor\+Type\+And\+Shape\+Info} instances for automatic ownership. \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is not exception safe. \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_aee4f5addd047a93b71dc67adf2066766}\label{struct_ort_1_1_custom_op_api_aee4f5addd047a93b71dc67adf2066766} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!SetDimensions@{SetDimensions}}
+\index{SetDimensions@{SetDimensions}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{SetDimensions()}{SetDimensions()}}
+{\footnotesize\ttfamily void Ort\+::\+Custom\+Op\+Api\+::\+Set\+Dimensions (\begin{DoxyParamCaption}\item[{Ort\+Tensor\+Type\+And\+Shape\+Info \texorpdfstring{$\ast$}{*}}]{info,  }\item[{\+\_\+\+In\+\_\+ const int64\+\_\+t \texorpdfstring{$\ast$}{*}}]{dim\+\_\+values,  }\item[{size\+\_\+t}]{dim\+\_\+count }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000009}{Deprecated}}]\mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface sets dimensions to \doxylink{struct_ort_1_1_tensor_type_and_shape_info}{Tensor\+Type\+And\+Shape\+Info}, but has no effect on the Ort\+Value. \end{DoxyRefDesc}
+\Hypertarget{struct_ort_1_1_custom_op_api_a5e6b792b3e87a2c4fcf79d9e8bf3773c}\label{struct_ort_1_1_custom_op_api_a5e6b792b3e87a2c4fcf79d9e8bf3773c} 
+\index{Ort::CustomOpApi@{Ort::CustomOpApi}!ThrowOnError@{ThrowOnError}}
+\index{ThrowOnError@{ThrowOnError}!Ort::CustomOpApi@{Ort::CustomOpApi}}
+\doxysubsubsection{\texorpdfstring{ThrowOnError()}{ThrowOnError()}}
+{\footnotesize\ttfamily void Ort\+::\+Custom\+Op\+Api\+::\+Throw\+On\+Error (\begin{DoxyParamCaption}\item[{Ort\+Status \texorpdfstring{$\ast$}{*}}]{result }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000020}{Deprecated}}]use Ort\+::\+Throw\+On\+Error() \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is redundant. \end{DoxyRefDesc}
+
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+api.\+h\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+inline.\+h\end{DoxyCompactItemize}

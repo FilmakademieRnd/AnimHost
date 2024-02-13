@@ -1,0 +1,7 @@
+<map id="AnimHost::createNodeFromPlugin" name="AnimHost::createNodeFromPlugin">
+<area shape="rect" id="Node000001" title="create a UI node from a plugin" alt="" coords="398,5,580,48"/>
+<area shape="rect" id="Node000002" href="$class_anim_host.html#a94a46dcd2e0b9d488e1ec80e1ed99483" title=" " alt="" coords="197,13,350,40"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="382,29,350,29,350,24,382,24"/>
+<area shape="rect" id="Node000003" href="$class_anim_host.html#ace873043029846ef71fbe9ab6e1f1fde" title="Constructor of AnimHost class." alt="" coords="5,13,149,40"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="181,29,149,29,149,24,181,24"/>
+</map>

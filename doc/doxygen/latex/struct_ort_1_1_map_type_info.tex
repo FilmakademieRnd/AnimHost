@@ -1,0 +1,89 @@
+\doxysection{Ort\+::Map\+Type\+Info Struct Reference}
+\hypertarget{struct_ort_1_1_map_type_info}{}\label{struct_ort_1_1_map_type_info}\index{Ort::MapTypeInfo@{Ort::MapTypeInfo}}
+
+
+Wrapper around \+::\+Ort\+Map\+Type\+Info.  
+
+
+
+
+{\ttfamily \#include $<$onnxruntime\+\_\+cxx\+\_\+api.\+h$>$}
+
+
+
+Inheritance diagram for Ort\+::Map\+Type\+Info\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=200pt]{struct_ort_1_1_map_type_info__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Ort\+::Map\+Type\+Info\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=200pt]{struct_ort_1_1_map_type_info__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_1_1_map_type_info_ac8b21422b2cfb8bc127aed99082f1602}\label{struct_ort_1_1_map_type_info_ac8b21422b2cfb8bc127aed99082f1602} 
+{\bfseries Map\+Type\+Info} (std\+::nullptr\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Create an empty \doxylink{struct_ort_1_1_map_type_info}{Map\+Type\+Info} object, must be assigned a valid one to be used. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1_map_type_info_ac3fbee650e27172698ed4ee135b495ca}\label{struct_ort_1_1_map_type_info_ac3fbee650e27172698ed4ee135b495ca} 
+{\bfseries Map\+Type\+Info} (Ort\+Map\+Type\+Info \texorpdfstring{$\ast$}{*}p)
+\begin{DoxyCompactList}\small\item\em Used for interop with the C API. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1_map_type_info_a026c4958c7ca7501d762a8b8ee53c519}\label{struct_ort_1_1_map_type_info_a026c4958c7ca7501d762a8b8ee53c519} 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_map_type_info_impl}{Const\+Map\+Type\+Info}} {\bfseries Get\+Const} () const
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_map_type_info_impl}{Ort\+::detail\+::\+Map\+Type\+Info\+Impl$<$ Ort\+Map\+Type\+Info $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{group___global_gaec63cdda46c29b8183997f38930ce38e}{ONNXTensor\+Element\+Data\+Type}} {\bfseries Get\+Map\+Key\+Type} () const
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Get\+Map\+Key\+Type. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1_type_info}{Type\+Info}} {\bfseries Get\+Map\+Value\+Type} () const
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Get\+Map\+Value\+Type. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+constexpr {\bfseries Base} (contained\+\_\+type \texorpdfstring{$\ast$}{*}p) noexcept
+\item 
+{\bfseries Base} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+{\bfseries Base} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+constexpr {\bfseries operator contained\+\_\+type \texorpdfstring{$\ast$}{*}} () const noexcept
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries release} ()
+\begin{DoxyCompactList}\small\item\em Relinquishes ownership of the contained C object pointer The underlying object is not destroyed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_map_type_info_impl}{Ort\+::detail\+::\+Map\+Type\+Info\+Impl$<$ Ort\+Map\+Type\+Info $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+using {\bfseries B}
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+using {\bfseries contained\+\_\+type} = T
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries p\+\_\+} \{\}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Wrapper around \+::\+Ort\+Map\+Type\+Info. 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+api.\+h\end{DoxyCompactItemize}

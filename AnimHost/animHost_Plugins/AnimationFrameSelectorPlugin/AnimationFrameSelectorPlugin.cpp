@@ -132,11 +132,9 @@ void AnimationFrameSelectorPlugin::onFrameChange(int value)
         }
 
         emitDataUpdate(0);
-
         emitRunNextNode();
     }
     else {
         emitDataInvalidated(0);
     }
-
 }

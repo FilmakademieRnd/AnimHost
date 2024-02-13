@@ -1,0 +1,362 @@
+\doxysection{Coordinate\+Converter\+Plugin Class Reference}
+\hypertarget{class_coordinate_converter_plugin}{}\label{class_coordinate_converter_plugin}\index{CoordinateConverterPlugin@{CoordinateConverterPlugin}}
+
+
+Inheritance diagram for Coordinate\+Converter\+Plugin\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=260pt]{class_coordinate_converter_plugin__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Coordinate\+Converter\+Plugin\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_coordinate_converter_plugin__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\+::unique\+\_\+ptr$<$ Node\+Delegate\+Model $>$ \mbox{\hyperlink{class_coordinate_converter_plugin_ab86f52e6961e946af1cc3cd6b48396ad}{Init}} () override
+\item 
+QString \mbox{\hyperlink{class_coordinate_converter_plugin_a18395874612a4e8990c2637449d2ee6c}{category}} () override
+\item 
+QString \mbox{\hyperlink{class_coordinate_converter_plugin_ac57c5dd120d97f69cbffcc624f7bfc01}{caption}} () const override
+\begin{DoxyCompactList}\small\item\em Caption is used in GUI. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_coordinate_converter_plugin_a375828a6867b996417cd106f567d60d3}{caption\+Visible}} () const override
+\begin{DoxyCompactList}\small\item\em It is possible to hide caption in GUI. \end{DoxyCompactList}\item 
+unsigned int \mbox{\hyperlink{class_coordinate_converter_plugin_ae7d3f333c30fcfa535736e275bef9d68}{n\+Data\+Ports}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Qt\+Nodes\+::\+Port\+Type}} port\+Type) const override
+\item 
+\mbox{\hyperlink{struct_qt_nodes_1_1_node_data_type}{Node\+Data\+Type}} \mbox{\hyperlink{class_coordinate_converter_plugin_a509d78208c402ac70ca4667a6dfe6c3d}{data\+Port\+Type}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Qt\+Nodes\+::\+Port\+Type}} port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port\+Index) const override
+\begin{DoxyCompactList}\small\item\em Return the data type of data in -\/ or output on given port. \end{DoxyCompactList}\item 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ \mbox{\hyperlink{class_coordinate_converter_plugin_a8cfbe1a339f15835bc925bf74f74a724}{process\+Out\+Data}} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port) override
+\item 
+void \mbox{\hyperlink{class_coordinate_converter_plugin_ad9f4039c83dce99ff892c0dc3fb7e49c}{process\+In\+Data}} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ data, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port\+Index) override
+\item 
+void \mbox{\hyperlink{class_coordinate_converter_plugin_a4b6dc600eff9bc01b8a44771af6c4e8c}{run}} () override
+\item 
+QWidget \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_coordinate_converter_plugin_af34588e0973e8334d04e57702316c24b}{embedded\+Widget}} () override
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_plugin_node_interface}{Plugin\+Node\+Interface}}}
+\begin{DoxyCompactItemize}
+\item 
+{\bfseries Plugin\+Node\+Interface} (const \mbox{\hyperlink{class_plugin_node_interface}{Plugin\+Node\+Interface}} \&p)
+\item 
+QString \mbox{\hyperlink{class_plugin_node_interface_a7017ba11069f47b4bc117d676c3d5d2e}{name}} () const override
+\begin{DoxyCompactList}\small\item\em Name makes this model unique. \end{DoxyCompactList}\item 
+QString \mbox{\hyperlink{class_plugin_node_interface_adfeba18e3531e2d354d7de99f12920f0}{caption}} () const override
+\begin{DoxyCompactList}\small\item\em Caption is used in GUI. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_plugin_node_interface_ad47e5fd35446dbf4cd00b300d48ebe97}{caption\+Visible}} () const override
+\begin{DoxyCompactList}\small\item\em It is possible to hide caption in GUI. \end{DoxyCompactList}\item 
+unsigned int \mbox{\hyperlink{class_plugin_node_interface_ace62a2c4c3783210b45667820acb2bc0}{n\+Ports}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Qt\+Nodes\+::\+Port\+Type}} port\+Type) const override
+\item 
+virtual bool {\bfseries has\+Input\+Run\+Signal} () const
+\item 
+virtual bool \mbox{\hyperlink{class_plugin_node_interface_afe9ce1e94b1fc3ff8d260c15bbf82a0c}{has\+Output\+Run\+Signal}} () const
+\item 
+\mbox{\hyperlink{struct_qt_nodes_1_1_node_data_type}{Node\+Data\+Type}} \mbox{\hyperlink{class_plugin_node_interface_a5cb2d673d82497985e0339b9a864f427}{data\+Type}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Qt\+Nodes\+::\+Port\+Type}} port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port\+Index) const override
+\item 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ \mbox{\hyperlink{class_plugin_node_interface_aa5a92703377f0ae78d34c61b0dac86fa}{out\+Data}} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port) override
+\item 
+void \mbox{\hyperlink{class_plugin_node_interface_aef4294013cebc2964b85f5fe9011739f}{set\+In\+Data}} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ data, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port\+Index)
+\item 
+void {\bfseries emit\+Data\+Update} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port\+Index)
+\item 
+void {\bfseries emit\+Run\+Next\+Node} ()
+\item 
+void {\bfseries emit\+Data\+Invalidated} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port\+Index)
+\item 
+QWidget \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_plugin_node_interface_a0a1b864019583682fd1c15d3e88af73a}{embedded\+Widget}} () override
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual bool \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a960a7fbfc2bf771363937174da2de663}{port\+Caption\+Visible}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\begin{DoxyCompactList}\small\item\em It is possible to hide port caption in GUI. \end{DoxyCompactList}\item 
+virtual QString \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_add0dedb3ab8acf9c4086f72ecbc97504}{port\+Caption}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\begin{DoxyCompactList}\small\item\em Port caption is used in GUI to label individual ports. \end{DoxyCompactList}\item 
+QJson\+Object \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a0b7a061a3f7aa2b4997ced4ffa0c7319}{save}} () const override
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_ae1275eb13f2ca395411e1fda1789257c}{load}} (QJson\+Object const \&) override
+\item 
+virtual \mbox{\hyperlink{_definitions_8hpp_a23527e8a5775fe989d2ef3f595e2d369}{Connection\+Policy}} {\bfseries port\+Connection\+Policy} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\item 
+\mbox{\hyperlink{class_qt_nodes_1_1_node_style}{Node\+Style}} const \& {\bfseries node\+Style} () const
+\item 
+void {\bfseries set\+Node\+Style} (\mbox{\hyperlink{class_qt_nodes_1_1_node_style}{Node\+Style}} const \&style)
+\item 
+virtual bool {\bfseries resizable} () const
+\item 
+virtual bool \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a960a7fbfc2bf771363937174da2de663}{port\+Caption\+Visible}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\begin{DoxyCompactList}\small\item\em It is possible to hide port caption in GUI. \end{DoxyCompactList}\item 
+virtual QString \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_add0dedb3ab8acf9c4086f72ecbc97504}{port\+Caption}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\begin{DoxyCompactList}\small\item\em Port caption is used in GUI to label individual ports. \end{DoxyCompactList}\item 
+QJson\+Object \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a0b7a061a3f7aa2b4997ced4ffa0c7319}{save}} () const override
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_ae1275eb13f2ca395411e1fda1789257c}{load}} (QJson\+Object const \&) override
+\item 
+virtual \mbox{\hyperlink{_definitions_8hpp_a23527e8a5775fe989d2ef3f595e2d369}{Connection\+Policy}} {\bfseries port\+Connection\+Policy} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\item 
+\mbox{\hyperlink{class_qt_nodes_1_1_node_style}{Node\+Style}} const \& {\bfseries node\+Style} () const
+\item 
+void {\bfseries set\+Node\+Style} (\mbox{\hyperlink{class_qt_nodes_1_1_node_style}{Node\+Style}} const \&style)
+\item 
+virtual bool {\bfseries resizable} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Slots}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_coordinate_converter_plugin_a2dbeb33fedc40a1f72f24c7a6744c4e5}\label{class_coordinate_converter_plugin_a2dbeb33fedc40a1f72f24c7a6744c4e5} 
+void {\bfseries on\+Changed\+Check} (int check)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_coordinate_converter_plugin_a983dd45b0f27b9ac92918aa98b2c64ec}\label{class_coordinate_converter_plugin_a983dd45b0f27b9ac92918aa98b2c64ec} 
+glm\+::quat {\bfseries Convert\+To\+Target\+System} (const glm\+::quat \&q\+IN, bool flip\+YZ=false, bool negX=false, bool negY=false, bool negZ=false, bool negW=false)
+\item 
+\Hypertarget{class_coordinate_converter_plugin_ab88e307b35c674673ccc485b24999748}\label{class_coordinate_converter_plugin_ab88e307b35c674673ccc485b24999748} 
+glm\+::mat4 {\bfseries Convert\+To\+Target\+System} (const glm\+::mat4 \&mat\+In, bool flip\+YZ=false, bool negX=false, bool negY=false, bool negZ=false, bool negW=false)
+\item 
+\Hypertarget{class_coordinate_converter_plugin_a5d27fe5b7160626dca1f565da5983d82}\label{class_coordinate_converter_plugin_a5d27fe5b7160626dca1f565da5983d82} 
+glm\+::vec3 {\bfseries Convert\+To\+Target\+System} (const glm\+::vec3 \&mat\+In, bool flip\+YZ=false, bool negX=false, bool negY=false, bool negZ=false, bool negW=false)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_coordinate_converter_plugin_a032c785164a96e6dff50f2bae625a7c6}\label{class_coordinate_converter_plugin_a032c785164a96e6dff50f2bae625a7c6} 
+std\+::weak\+\_\+ptr$<$ \mbox{\hyperlink{class_anim_node_data}{Anim\+Node\+Data}}$<$ \mbox{\hyperlink{class_animation}{Animation}} $>$ $>$ {\bfseries \+\_\+animation\+In}
+\item 
+\Hypertarget{class_coordinate_converter_plugin_a21da02c381abd970b34eee6b69712472}\label{class_coordinate_converter_plugin_a21da02c381abd970b34eee6b69712472} 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_anim_node_data}{Anim\+Node\+Data}}$<$ \mbox{\hyperlink{class_animation}{Animation}} $>$ $>$ {\bfseries \+\_\+animation\+Out} = nullptr
+\item 
+\Hypertarget{class_coordinate_converter_plugin_af612537332f3b0ce175313568ec3ce42}\label{class_coordinate_converter_plugin_af612537332f3b0ce175313568ec3ce42} 
+QWidget \texorpdfstring{$\ast$}{*} {\bfseries widget} = nullptr
+\item 
+\Hypertarget{class_coordinate_converter_plugin_a4152f21b3263cb4bfb03e25d3ae257a6}\label{class_coordinate_converter_plugin_a4152f21b3263cb4bfb03e25d3ae257a6} 
+QVBox\+Layout \texorpdfstring{$\ast$}{*} {\bfseries \+\_\+layout} = nullptr
+\item 
+\Hypertarget{class_coordinate_converter_plugin_a9d9e99c73f16d202bc62ef9e94dc95e6}\label{class_coordinate_converter_plugin_a9d9e99c73f16d202bc62ef9e94dc95e6} 
+QCheck\+Box \texorpdfstring{$\ast$}{*} {\bfseries x\+Button} = nullptr
+\item 
+\Hypertarget{class_coordinate_converter_plugin_a1baf86eefbd47fb0f25b69091364b83e}\label{class_coordinate_converter_plugin_a1baf86eefbd47fb0f25b69091364b83e} 
+QCheck\+Box \texorpdfstring{$\ast$}{*} {\bfseries y\+Button} = nullptr
+\item 
+\Hypertarget{class_coordinate_converter_plugin_a8a32cfcc1bfa2c6f5ed0aac9a45828d9}\label{class_coordinate_converter_plugin_a8a32cfcc1bfa2c6f5ed0aac9a45828d9} 
+QCheck\+Box \texorpdfstring{$\ast$}{*} {\bfseries z\+Button} = nullptr
+\item 
+\Hypertarget{class_coordinate_converter_plugin_ad0e4acf6f82211bb55c1c5af573b952b}\label{class_coordinate_converter_plugin_ad0e4acf6f82211bb55c1c5af573b952b} 
+QCheck\+Box \texorpdfstring{$\ast$}{*} {\bfseries w\+Button} = nullptr
+\item 
+\Hypertarget{class_coordinate_converter_plugin_af80c4907734c014ec6b0c5d1ae41f8dd}\label{class_coordinate_converter_plugin_af80c4907734c014ec6b0c5d1ae41f8dd} 
+QCheck\+Box \texorpdfstring{$\ast$}{*} {\bfseries swap\+Yz\+Button} = nullptr
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Public Slots inherited from \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual void {\bfseries input\+Connection\+Created} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries input\+Connection\+Deleted} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries output\+Connection\+Created} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries output\+Connection\+Deleted} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries input\+Connection\+Created} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries input\+Connection\+Deleted} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries output\+Connection\+Created} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries output\+Connection\+Deleted} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\end{DoxyCompactItemize}
+\doxysubsection*{Signals inherited from \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}}
+\begin{DoxyCompactItemize}
+\item 
+void {\bfseries data\+Updated} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const index)
+\begin{DoxyCompactList}\small\item\em Triggers the updates in the nodes downstream. \end{DoxyCompactList}\item 
+void {\bfseries data\+Invalidated} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const index)
+\begin{DoxyCompactList}\small\item\em Triggers the propagation of the empty data downstream. \end{DoxyCompactList}\item 
+void {\bfseries computing\+Started} ()
+\item 
+void {\bfseries computing\+Finished} ()
+\item 
+void {\bfseries embedded\+Widget\+Size\+Updated} ()
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a35fb8ad8de15273e604c6b9e6c4c68eb}{ports\+About\+To\+Be\+Deleted}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const first, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const last)
+\begin{DoxyCompactList}\small\item\em Call this function before deleting the data associated with ports. \end{DoxyCompactList}\item 
+void {\bfseries ports\+Deleted} ()
+\begin{DoxyCompactList}\small\item\em Call this function when data and port moditications are finished. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a578fb727bc29f18cc4f9bed6ad8af792}{ports\+About\+To\+Be\+Inserted}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const first, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const last)
+\begin{DoxyCompactList}\small\item\em Call this function before inserting the data associated with ports. \end{DoxyCompactList}\item 
+void {\bfseries ports\+Inserted} ()
+\begin{DoxyCompactList}\small\item\em Call this function when data and port moditications are finished. \end{DoxyCompactList}\item 
+void {\bfseries data\+Updated} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const index)
+\begin{DoxyCompactList}\small\item\em Triggers the updates in the nodes downstream. \end{DoxyCompactList}\item 
+void {\bfseries data\+Invalidated} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const index)
+\begin{DoxyCompactList}\small\item\em Triggers the propagation of the empty data downstream. \end{DoxyCompactList}\item 
+void {\bfseries computing\+Started} ()
+\item 
+void {\bfseries computing\+Finished} ()
+\item 
+void {\bfseries embedded\+Widget\+Size\+Updated} ()
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a35fb8ad8de15273e604c6b9e6c4c68eb}{ports\+About\+To\+Be\+Deleted}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const first, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const last)
+\begin{DoxyCompactList}\small\item\em Call this function before deleting the data associated with ports. \end{DoxyCompactList}\item 
+void {\bfseries ports\+Deleted} ()
+\begin{DoxyCompactList}\small\item\em Call this function when data and port moditications are finished. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a578fb727bc29f18cc4f9bed6ad8af792}{ports\+About\+To\+Be\+Inserted}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const first, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const last)
+\begin{DoxyCompactList}\small\item\em Call this function before inserting the data associated with ports. \end{DoxyCompactList}\item 
+void {\bfseries ports\+Inserted} ()
+\begin{DoxyCompactList}\small\item\em Call this function when data and port moditications are finished. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_coordinate_converter_plugin_ac57c5dd120d97f69cbffcc624f7bfc01}\label{class_coordinate_converter_plugin_ac57c5dd120d97f69cbffcc624f7bfc01} 
+\index{CoordinateConverterPlugin@{CoordinateConverterPlugin}!caption@{caption}}
+\index{caption@{caption}!CoordinateConverterPlugin@{CoordinateConverterPlugin}}
+\doxysubsubsection{\texorpdfstring{caption()}{caption()}}
+{\footnotesize\ttfamily QString Coordinate\+Converter\+Plugin\+::caption (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Caption is used in GUI. 
+
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a77e69adffd694fa448bec34b36bd0f37}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}.
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=348pt]{class_coordinate_converter_plugin_ac57c5dd120d97f69cbffcc624f7bfc01_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_coordinate_converter_plugin_a375828a6867b996417cd106f567d60d3}\label{class_coordinate_converter_plugin_a375828a6867b996417cd106f567d60d3} 
+\index{CoordinateConverterPlugin@{CoordinateConverterPlugin}!captionVisible@{captionVisible}}
+\index{captionVisible@{captionVisible}!CoordinateConverterPlugin@{CoordinateConverterPlugin}}
+\doxysubsubsection{\texorpdfstring{captionVisible()}{captionVisible()}}
+{\footnotesize\ttfamily bool Coordinate\+Converter\+Plugin\+::caption\+Visible (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+It is possible to hide caption in GUI. 
+
+
+
+Reimplemented from \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_af6b4510f3f9a945153e7c95a8dc2cdcc}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}.
+
+\Hypertarget{class_coordinate_converter_plugin_a18395874612a4e8990c2637449d2ee6c}\label{class_coordinate_converter_plugin_a18395874612a4e8990c2637449d2ee6c} 
+\index{CoordinateConverterPlugin@{CoordinateConverterPlugin}!category@{category}}
+\index{category@{category}!CoordinateConverterPlugin@{CoordinateConverterPlugin}}
+\doxysubsubsection{\texorpdfstring{category()}{category()}}
+{\footnotesize\ttfamily QString Coordinate\+Converter\+Plugin\+::category (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_plugin_node_interface}{Plugin\+Node\+Interface}}.
+
+\Hypertarget{class_coordinate_converter_plugin_a509d78208c402ac70ca4667a6dfe6c3d}\label{class_coordinate_converter_plugin_a509d78208c402ac70ca4667a6dfe6c3d} 
+\index{CoordinateConverterPlugin@{CoordinateConverterPlugin}!dataPortType@{dataPortType}}
+\index{dataPortType@{dataPortType}!CoordinateConverterPlugin@{CoordinateConverterPlugin}}
+\doxysubsubsection{\texorpdfstring{dataPortType()}{dataPortType()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_qt_nodes_1_1_node_data_type}{Node\+Data\+Type}} Coordinate\+Converter\+Plugin\+::data\+Port\+Type (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Qt\+Nodes\+::\+Port\+Type}}}]{port\+Type,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}}}]{port\+Index }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Return the data type of data in -\/ or output on given port. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em port\+Index} & = 0 is reserved for run signal and handeled before data\+Port\+Type is called. \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{class_plugin_node_interface_ab846cdb3b5aa6d61de83a4b484105cb7}{Plugin\+Node\+Interface}}.
+
+\Hypertarget{class_coordinate_converter_plugin_af34588e0973e8334d04e57702316c24b}\label{class_coordinate_converter_plugin_af34588e0973e8334d04e57702316c24b} 
+\index{CoordinateConverterPlugin@{CoordinateConverterPlugin}!embeddedWidget@{embeddedWidget}}
+\index{embeddedWidget@{embeddedWidget}!CoordinateConverterPlugin@{CoordinateConverterPlugin}}
+\doxysubsubsection{\texorpdfstring{embeddedWidget()}{embeddedWidget()}}
+{\footnotesize\ttfamily QWidget \texorpdfstring{$\ast$}{*} Coordinate\+Converter\+Plugin\+::embedded\+Widget (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+It is recommented to preform a lazy initialization for the embedded widget and create it inside this function, not in the constructor of the current model.
+
+Our Model Registry is able to shortly instantiate models in order to call the non-\/static {\ttfamily Model\+::name()}. If the embedded widget is allocated in the constructor but not actually embedded into some QGraphics\+Proxy\+Widget, we\textquotesingle{}ll gonna have a dangling pointer. 
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a964178140634d139431707a3959d85ce}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}.
+
+\Hypertarget{class_coordinate_converter_plugin_ab86f52e6961e946af1cc3cd6b48396ad}\label{class_coordinate_converter_plugin_ab86f52e6961e946af1cc3cd6b48396ad} 
+\index{CoordinateConverterPlugin@{CoordinateConverterPlugin}!Init@{Init}}
+\index{Init@{Init}!CoordinateConverterPlugin@{CoordinateConverterPlugin}}
+\doxysubsubsection{\texorpdfstring{Init()}{Init()}}
+{\footnotesize\ttfamily std\+::unique\+\_\+ptr$<$ Node\+Delegate\+Model $>$ Coordinate\+Converter\+Plugin\+::\+Init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_plugin_node_interface}{Plugin\+Node\+Interface}}.
+
+\Hypertarget{class_coordinate_converter_plugin_ae7d3f333c30fcfa535736e275bef9d68}\label{class_coordinate_converter_plugin_ae7d3f333c30fcfa535736e275bef9d68} 
+\index{CoordinateConverterPlugin@{CoordinateConverterPlugin}!nDataPorts@{nDataPorts}}
+\index{nDataPorts@{nDataPorts}!CoordinateConverterPlugin@{CoordinateConverterPlugin}}
+\doxysubsubsection{\texorpdfstring{nDataPorts()}{nDataPorts()}}
+{\footnotesize\ttfamily unsigned int Coordinate\+Converter\+Plugin\+::n\+Data\+Ports (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Qt\+Nodes\+::\+Port\+Type}}}]{port\+Type }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+Return the number of data ports in-\/ and output of the node. By default +1 added for run signal port.
+
+
+\begin{DoxyParams}{Parameters}
+{\em port\+Type} & Selector of in-\/ or output type \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{class_plugin_node_interface_a2614e702055e634adac2d220445a89af}{Plugin\+Node\+Interface}}.
+
+\Hypertarget{class_coordinate_converter_plugin_ad9f4039c83dce99ff892c0dc3fb7e49c}\label{class_coordinate_converter_plugin_ad9f4039c83dce99ff892c0dc3fb7e49c} 
+\index{CoordinateConverterPlugin@{CoordinateConverterPlugin}!processInData@{processInData}}
+\index{processInData@{processInData}!CoordinateConverterPlugin@{CoordinateConverterPlugin}}
+\doxysubsubsection{\texorpdfstring{processInData()}{processInData()}}
+{\footnotesize\ttfamily void Coordinate\+Converter\+Plugin\+::process\+In\+Data (\begin{DoxyParamCaption}\item[{std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$}]{data,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}}}]{port\+Index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_plugin_node_interface}{Plugin\+Node\+Interface}}.
+
+\Hypertarget{class_coordinate_converter_plugin_a8cfbe1a339f15835bc925bf74f74a724}\label{class_coordinate_converter_plugin_a8cfbe1a339f15835bc925bf74f74a724} 
+\index{CoordinateConverterPlugin@{CoordinateConverterPlugin}!processOutData@{processOutData}}
+\index{processOutData@{processOutData}!CoordinateConverterPlugin@{CoordinateConverterPlugin}}
+\doxysubsubsection{\texorpdfstring{processOutData()}{processOutData()}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ Coordinate\+Converter\+Plugin\+::process\+Out\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}}}]{port }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_plugin_node_interface}{Plugin\+Node\+Interface}}.
+
+\Hypertarget{class_coordinate_converter_plugin_a4b6dc600eff9bc01b8a44771af6c4e8c}\label{class_coordinate_converter_plugin_a4b6dc600eff9bc01b8a44771af6c4e8c} 
+\index{CoordinateConverterPlugin@{CoordinateConverterPlugin}!run@{run}}
+\index{run@{run}!CoordinateConverterPlugin@{CoordinateConverterPlugin}}
+\doxysubsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily void Coordinate\+Converter\+Plugin\+::run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_plugin_node_interface}{Plugin\+Node\+Interface}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Coordinate\+Converter\+Plugin/Coordinate\+Converter\+Plugin.\+h\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Coordinate\+Converter\+Plugin/Coordinate\+Converter\+Plugin.\+cpp\end{DoxyCompactItemize}

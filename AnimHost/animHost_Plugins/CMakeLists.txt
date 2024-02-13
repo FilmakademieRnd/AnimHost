@@ -12,3 +12,6 @@ add_subdirectory(RunTriggerPlugin)
 add_subdirectory(HistoryPlugin)
 add_subdirectory(TracerSceneReceiverPlugin)
 add_subdirectory(ModeAdaptivePreprocessPlugin)
+add_subdirectory(CoordinateConverterPlugin)
+add_subdirectory(CharacterSelectorPlugin)
+

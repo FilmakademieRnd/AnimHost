@@ -1,0 +1,61 @@
+\doxysection{Ort\+::detail\+::Base\texorpdfstring{$<$}{<} Unowned\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>} \texorpdfstring{$>$}{>} Struct Template Reference}
+\hypertarget{struct_ort_1_1detail_1_1_base_3_01_unowned_3_01_t_01_4_01_4}{}\label{struct_ort_1_1detail_1_1_base_3_01_unowned_3_01_t_01_4_01_4}\index{Ort::detail::Base$<$ Unowned$<$ T $>$ $>$@{Ort::detail::Base$<$ Unowned$<$ T $>$ $>$}}
+
+
+Covers unowned pointers owned by either the ORT or some other instance of CPP wrappers. Used for Const\+XXX and Unowned\+XXXX types that are copyable. Also convenient to wrap raw Ort\+XX pointers .  
+
+
+
+
+{\ttfamily \#include $<$onnxruntime\+\_\+cxx\+\_\+api.\+h$>$}
+
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_1_1detail_1_1_base_3_01_unowned_3_01_t_01_4_01_4_a4d1b4bc33f42d086a3b3a68e836f4762}\label{struct_ort_1_1detail_1_1_base_3_01_unowned_3_01_t_01_4_01_4_a4d1b4bc33f42d086a3b3a68e836f4762} 
+using {\bfseries contained\+\_\+type} = typename \mbox{\hyperlink{struct_ort_1_1detail_1_1_unowned}{Unowned}}$<$T$>$\+::\+Type
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_1_1detail_1_1_base_3_01_unowned_3_01_t_01_4_01_4_adfbf2eaf491db06e6add240c8402d85b}\label{struct_ort_1_1detail_1_1_base_3_01_unowned_3_01_t_01_4_01_4_adfbf2eaf491db06e6add240c8402d85b} 
+constexpr {\bfseries Base} (contained\+\_\+type \texorpdfstring{$\ast$}{*}p) noexcept
+\item 
+\Hypertarget{struct_ort_1_1detail_1_1_base_3_01_unowned_3_01_t_01_4_01_4_acd7f0c54195ca38727e9da53a93df414}\label{struct_ort_1_1detail_1_1_base_3_01_unowned_3_01_t_01_4_01_4_acd7f0c54195ca38727e9da53a93df414} 
+{\bfseries Base} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=default
+\item 
+\Hypertarget{struct_ort_1_1detail_1_1_base_3_01_unowned_3_01_t_01_4_01_4_aef876b7a264bf7d88125fdeaff1240ea}\label{struct_ort_1_1detail_1_1_base_3_01_unowned_3_01_t_01_4_01_4_aef876b7a264bf7d88125fdeaff1240ea} 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=default
+\item 
+\Hypertarget{struct_ort_1_1detail_1_1_base_3_01_unowned_3_01_t_01_4_01_4_a8f36cdeacfabc869763676f001c94624}\label{struct_ort_1_1detail_1_1_base_3_01_unowned_3_01_t_01_4_01_4_a8f36cdeacfabc869763676f001c94624} 
+{\bfseries Base} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+\Hypertarget{struct_ort_1_1detail_1_1_base_3_01_unowned_3_01_t_01_4_01_4_a11457087109a36487d2c19825d93c2ea}\label{struct_ort_1_1detail_1_1_base_3_01_unowned_3_01_t_01_4_01_4_a11457087109a36487d2c19825d93c2ea} 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+\Hypertarget{struct_ort_1_1detail_1_1_base_3_01_unowned_3_01_t_01_4_01_4_a20bd5163e7a79318716405c5ff14bce4}\label{struct_ort_1_1detail_1_1_base_3_01_unowned_3_01_t_01_4_01_4_a20bd5163e7a79318716405c5ff14bce4} 
+constexpr {\bfseries operator contained\+\_\+type \texorpdfstring{$\ast$}{*}} () const noexcept
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_1_1detail_1_1_base_3_01_unowned_3_01_t_01_4_01_4_a63d243f34090b6b730852081bffb7a16}\label{struct_ort_1_1detail_1_1_base_3_01_unowned_3_01_t_01_4_01_4_a63d243f34090b6b730852081bffb7a16} 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries p\+\_\+} \{\}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\newline
+struct Ort\+::detail\+::\+Base$<$ Unowned$<$ T $>$ $>$}
+Covers unowned pointers owned by either the ORT or some other instance of CPP wrappers. Used for Const\+XXX and Unowned\+XXXX types that are copyable. Also convenient to wrap raw Ort\+XX pointers . 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & \\
+\hline
+\end{DoxyTemplParams}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+api.\+h\end{DoxyCompactItemize}

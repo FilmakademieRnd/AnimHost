@@ -1,0 +1,178 @@
+\doxysection{Ort\+::Session\+Options Struct Reference}
+\hypertarget{struct_ort_1_1_session_options}{}\label{struct_ort_1_1_session_options}\index{Ort::SessionOptions@{Ort::SessionOptions}}
+
+
+Wrapper around \+::\+Ort\+Session\+Options.  
+
+
+
+
+{\ttfamily \#include $<$onnxruntime\+\_\+cxx\+\_\+api.\+h$>$}
+
+
+
+Inheritance diagram for Ort\+::Session\+Options\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=215pt]{struct_ort_1_1_session_options__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Ort\+::Session\+Options\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=215pt]{struct_ort_1_1_session_options__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_1_1_session_options_a49e3a72e68b9ab75cdc7a6227a0c9a81}\label{struct_ort_1_1_session_options_a49e3a72e68b9ab75cdc7a6227a0c9a81} 
+{\bfseries Session\+Options} (std\+::nullptr\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Create an empty \doxylink{struct_ort_1_1_session_options}{Session\+Options} object, must be assigned a valid one to be used. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1_session_options_a635fd17cce38833b2aff64d9409187f2}\label{struct_ort_1_1_session_options_a635fd17cce38833b2aff64d9409187f2} 
+{\bfseries Session\+Options} ()
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Create\+Session\+Options. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1_session_options_ae15251c52983461ccd5e2f204fe1259c}\label{struct_ort_1_1_session_options_ae15251c52983461ccd5e2f204fe1259c} 
+{\bfseries Session\+Options} (Ort\+Session\+Options \texorpdfstring{$\ast$}{*}p)
+\begin{DoxyCompactList}\small\item\em Used for interop with the C API. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1_session_options_a536441ea5bb3c2f63d57ff7a935f4e04}\label{struct_ort_1_1_session_options_a536441ea5bb3c2f63d57ff7a935f4e04} 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Unowned\+Session\+Options}} {\bfseries Get\+Unowned} () const
+\item 
+\Hypertarget{struct_ort_1_1_session_options_ade28bc84a75e3657bd8e1786558ea231}\label{struct_ort_1_1_session_options_ade28bc84a75e3657bd8e1786558ea231} 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_options_impl}{Const\+Session\+Options}} {\bfseries Get\+Const} () const
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Ort\+::detail\+::\+Session\+Options\+Impl$<$ Ort\+Session\+Options $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Set\+Intra\+Op\+Num\+Threads} (int intra\+\_\+op\+\_\+num\+\_\+threads)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Set\+Intra\+Op\+Num\+Threads. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Set\+Inter\+Op\+Num\+Threads} (int inter\+\_\+op\+\_\+num\+\_\+threads)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Set\+Inter\+Op\+Num\+Threads. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Set\+Graph\+Optimization\+Level} (\mbox{\hyperlink{group___global_gab086a52ca2f3a883cd1f7561eadd8ec9}{Graph\+Optimization\+Level}} graph\+\_\+optimization\+\_\+level)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Set\+Session\+Graph\+Optimization\+Level. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Enable\+Cpu\+Mem\+Arena} ()
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Enable\+Cpu\+Mem\+Arena. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Disable\+Cpu\+Mem\+Arena} ()
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Disable\+Cpu\+Mem\+Arena. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Set\+Optimized\+Model\+File\+Path} (const ORTCHAR\+\_\+T \texorpdfstring{$\ast$}{*}optimized\+\_\+model\+\_\+file)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Set\+Optimized\+Model\+File\+Path. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Enable\+Profiling} (const ORTCHAR\+\_\+T \texorpdfstring{$\ast$}{*}profile\+\_\+file\+\_\+prefix)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Enable\+Profiling. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Disable\+Profiling} ()
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Disable\+Profiling. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Enable\+Ort\+Custom\+Ops} ()
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Enable\+Ort\+Custom\+Ops. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Enable\+Mem\+Pattern} ()
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Enable\+Mem\+Pattern. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Disable\+Mem\+Pattern} ()
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Disable\+Mem\+Pattern. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Set\+Execution\+Mode} (Execution\+Mode execution\+\_\+mode)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Set\+Session\+Execution\+Mode. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Set\+Log\+Id} (const char \texorpdfstring{$\ast$}{*}logid)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Set\+Session\+Log\+Id. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Set\+Log\+Severity\+Level} (int level)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Set\+Session\+Log\+Severity\+Level. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Add} (Ort\+Custom\+Op\+Domain \texorpdfstring{$\ast$}{*}custom\+\_\+op\+\_\+domain)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Add\+Custom\+Op\+Domain. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Disable\+Per\+Session\+Threads} ()
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Disable\+Per\+Session\+Threads. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Add\+Config\+Entry} (const char \texorpdfstring{$\ast$}{*}config\+\_\+key, const char \texorpdfstring{$\ast$}{*}config\+\_\+value)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Add\+Session\+Config\+Entry. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Add\+Initializer} (const char \texorpdfstring{$\ast$}{*}name, const Ort\+Value \texorpdfstring{$\ast$}{*}ort\+\_\+val)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Add\+Initializer. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Add\+External\+Initializers} (const std\+::vector$<$ std\+::string $>$ \&names, const std\+::vector$<$ \mbox{\hyperlink{struct_ort_1_1_value}{Value}} $>$ \&ort\+\_\+values)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Add\+External\+Initializers. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Append\+Execution\+Provider\+\_\+\+CUDA} (const \mbox{\hyperlink{struct_ort_c_u_d_a_provider_options}{Ort\+CUDAProvider\+Options}} \&provider\+\_\+options)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Session\+Options\+Append\+Execution\+Provider\+\_\+\+CUDA. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Append\+Execution\+Provider\+\_\+\+CUDA\+\_\+\+V2} (const Ort\+CUDAProvider\+Options\+V2 \&provider\+\_\+options)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Session\+Options\+Append\+Execution\+Provider\+\_\+\+CUDA\+\_\+\+V2. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Append\+Execution\+Provider\+\_\+\+ROCM} (const \mbox{\hyperlink{struct_ort_r_o_c_m_provider_options}{Ort\+ROCMProvider\+Options}} \&provider\+\_\+options)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Session\+Options\+Append\+Execution\+Provider\+\_\+\+ROCM. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Append\+Execution\+Provider\+\_\+\+Open\+VINO} (const \mbox{\hyperlink{struct_ort_open_v_i_n_o_provider_options}{Ort\+Open\+VINOProvider\+Options}} \&provider\+\_\+options)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Session\+Options\+Append\+Execution\+Provider\+\_\+\+Open\+VINO. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Append\+Execution\+Provider\+\_\+\+Tensor\+RT} (const \mbox{\hyperlink{struct_ort_tensor_r_t_provider_options}{Ort\+Tensor\+RTProvider\+Options}} \&provider\+\_\+options)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Session\+Options\+Append\+Execution\+Provider\+\_\+\+Tensor\+RT. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Append\+Execution\+Provider\+\_\+\+Tensor\+RT\+\_\+\+V2} (const Ort\+Tensor\+RTProvider\+Options\+V2 \&provider\+\_\+options)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Session\+Options\+Append\+Execution\+Provider\+\_\+\+Tensor\+RT. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl_add86801f09af905833132603cfacef0d}{Append\+Execution\+Provider\+\_\+\+MIGraphX}} (const \mbox{\hyperlink{struct_ort_m_i_graph_x_provider_options}{Ort\+MIGraph\+XProvider\+Options}} \&provider\+\_\+options)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Session\+Options\+Append\+Execution\+Provider\+\_\+\+CANN. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Append\+Execution\+Provider\+\_\+\+CANN} (const Ort\+CANNProvider\+Options \&provider\+\_\+options)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Session\+Options\+Append\+Execution\+Provider\+\_\+\+Dnnl. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Append\+Execution\+Provider\+\_\+\+Dnnl} (const Ort\+Dnnl\+Provider\+Options \&provider\+\_\+options)
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Append\+Execution\+Provider} (const std\+::string \&provider\+\_\+name, const std\+::unordered\+\_\+map$<$ std\+::string, std\+::string $>$ \&provider\+\_\+options=\{\})
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Session\+Options\+Append\+Execution\+Provider. Currently supports QNN, SNPE and XNNPACK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Set\+Custom\+Create\+Thread\+Fn} (\mbox{\hyperlink{group___global_gae0957b6ccebab677893b6155dcb744e5}{Ort\+Custom\+Create\+Thread\+Fn}} ort\+\_\+custom\+\_\+create\+\_\+thread\+\_\+fn)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Session\+Options\+Set\+Custom\+Create\+Thread\+Fn. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Set\+Custom\+Thread\+Creation\+Options} (void \texorpdfstring{$\ast$}{*}ort\+\_\+custom\+\_\+thread\+\_\+creation\+\_\+options)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Session\+Options\+Set\+Custom\+Thread\+Creation\+Options. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl_a974ab76d8c766409c987bc831a296a15}{Set\+Custom\+Join\+Thread\+Fn}} (\mbox{\hyperlink{group___global_ga2d123bc5dd929c1cb520e7b872fbfd0e}{Ort\+Custom\+Join\+Thread\+Fn}} ort\+\_\+custom\+\_\+join\+\_\+thread\+\_\+fn)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Session\+Options\+Set\+Custom\+Join\+Thread\+Fn. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Register\+Custom\+Ops\+Library} (const ORTCHAR\+\_\+T \texorpdfstring{$\ast$}{*}library\+\_\+name, const \mbox{\hyperlink{struct_ort_1_1_custom_op_configs}{Custom\+Op\+Configs}} \&custom\+\_\+op\+\_\+configs=\{\})
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Session\+Options\+Impl}} \& {\bfseries Register\+Custom\+Ops\+Using\+Function} (const char \texorpdfstring{$\ast$}{*}function\+\_\+name)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Register\+Custom\+Ops\+Using\+Function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_options_impl}{Ort\+::detail\+::\+Const\+Session\+Options\+Impl$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_ort_1_1_session_options}{Session\+Options}} {\bfseries Clone} () const
+\begin{DoxyCompactList}\small\item\em Creates and returns a copy of this \doxylink{struct_ort_1_1_session_options}{Session\+Options} object. Wraps Ort\+Api\+::\+Clone\+Session\+Options. \end{DoxyCompactList}\item 
+std\+::string {\bfseries Get\+Config\+Entry} (const char \texorpdfstring{$\ast$}{*}config\+\_\+key) const
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Get\+Session\+Config\+Entry. \end{DoxyCompactList}\item 
+bool {\bfseries Has\+Config\+Entry} (const char \texorpdfstring{$\ast$}{*}config\+\_\+key) const
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Has\+Session\+Config\+Entry. \end{DoxyCompactList}\item 
+std\+::string {\bfseries Get\+Config\+Entry\+Or\+Default} (const char \texorpdfstring{$\ast$}{*}config\+\_\+key, const std\+::string \&def)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+constexpr {\bfseries Base} (contained\+\_\+type \texorpdfstring{$\ast$}{*}p) noexcept
+\item 
+{\bfseries Base} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+{\bfseries Base} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+constexpr {\bfseries operator contained\+\_\+type \texorpdfstring{$\ast$}{*}} () const noexcept
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries release} ()
+\begin{DoxyCompactList}\small\item\em Relinquishes ownership of the contained C object pointer The underlying object is not destroyed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_options_impl}{Ort\+::detail\+::\+Session\+Options\+Impl$<$ Ort\+Session\+Options $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+using {\bfseries B}
+\item 
+using {\bfseries B}
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_options_impl}{Ort\+::detail\+::\+Const\+Session\+Options\+Impl$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+using {\bfseries B} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}$<$T$>$
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+using {\bfseries contained\+\_\+type} = T
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries p\+\_\+} \{\}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Wrapper around \+::\+Ort\+Session\+Options. 
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+api.\+h\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+inline.\+h\end{DoxyCompactItemize}

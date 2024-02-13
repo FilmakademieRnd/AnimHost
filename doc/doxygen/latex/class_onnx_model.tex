@@ -1,0 +1,65 @@
+\doxysection{Onnx\+Model Class Reference}
+\hypertarget{class_onnx_model}{}\label{class_onnx_model}\index{OnnxModel@{OnnxModel}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_onnx_model_a749961854350596be0acca537e0054a4}\label{class_onnx_model_a749961854350596be0acca537e0054a4} 
+void {\bfseries Setup\+Environment} ()
+\item 
+\Hypertarget{class_onnx_model_a2d4487f242beec5a018fdf598fa9e0ac}\label{class_onnx_model_a2d4487f242beec5a018fdf598fa9e0ac} 
+void {\bfseries Load\+Onnx\+Model} (QString Path)
+\item 
+\Hypertarget{class_onnx_model_a64ccde174ec70544d6636ca1978a79ad}\label{class_onnx_model_a64ccde174ec70544d6636ca1978a79ad} 
+bool {\bfseries Is\+Model\+Valid} ()
+\item 
+\Hypertarget{class_onnx_model_a6966dd1f4bd75d3ec602eca5456ebdbc}\label{class_onnx_model_a6966dd1f4bd75d3ec602eca5456ebdbc} 
+std\+::vector$<$ std\+::string $>$ {\bfseries Get\+Tensor\+Names} (bool b\+Get\+Input=true)
+\item 
+\Hypertarget{class_onnx_model_a5d09b16a52390bab2e688205d8758f9b}\label{class_onnx_model_a5d09b16a52390bab2e688205d8758f9b} 
+std\+::vector$<$ std\+::string $>$ {\bfseries Get\+Tensor\+Shapes} (bool b\+Get\+Input=true)
+\item 
+\Hypertarget{class_onnx_model_aae149790eef008b642a78f9f01dbc1db}\label{class_onnx_model_aae149790eef008b642a78f9f01dbc1db} 
+unsigned int {\bfseries Get\+Num\+Tensors} (bool b\+Get\+Input=true)
+\item 
+\Hypertarget{class_onnx_model_a28759c8b9ac26bee5bf77b1c7b5fc975}\label{class_onnx_model_a28759c8b9ac26bee5bf77b1c7b5fc975} 
+void {\bfseries Run\+Inference} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_onnx_model_a742827017e7e04de75ad69c592426d67}\label{class_onnx_model_a742827017e7e04de75ad69c592426d67} 
+std\+::string {\bfseries shape\+\_\+printer} (const std\+::vector$<$ int64\+\_\+t $>$ \&vec)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_onnx_model_af2818b5672cc3609e6b506e93e9aa1f5}\label{class_onnx_model_af2818b5672cc3609e6b506e93e9aa1f5} 
+std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{struct_ort_1_1_session}{Ort\+::\+Session}} $>$ {\bfseries session}
+\item 
+\Hypertarget{class_onnx_model_ab24c0c7dcc454dd3111bf3e19e14bdd3}\label{class_onnx_model_ab24c0c7dcc454dd3111bf3e19e14bdd3} 
+std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{struct_ort_1_1_env}{Ort\+::\+Env}} $>$ {\bfseries environment}
+\item 
+\Hypertarget{class_onnx_model_a99db8a9e881f896ecc0ca62aea0496d0}\label{class_onnx_model_a99db8a9e881f896ecc0ca62aea0496d0} 
+std\+::vector$<$ std\+::string $>$ {\bfseries input\+\_\+names}
+\item 
+\Hypertarget{class_onnx_model_aec8ea652bc1cbd807661d0bb614f8206}\label{class_onnx_model_aec8ea652bc1cbd807661d0bb614f8206} 
+std\+::vector$<$ std\+::string $>$ {\bfseries output\+\_\+names}
+\item 
+\Hypertarget{class_onnx_model_aaa6db6bde812919f9dadd57f4bad0adb}\label{class_onnx_model_aaa6db6bde812919f9dadd57f4bad0adb} 
+std\+::vector$<$ std\+::vector$<$ std\+::int64\+\_\+t $>$ $>$ {\bfseries input\+\_\+shapes}
+\item 
+\Hypertarget{class_onnx_model_aab363cb25602ff569385da3737a1d937}\label{class_onnx_model_aab363cb25602ff569385da3737a1d937} 
+std\+::vector$<$ std\+::vector$<$ std\+::int64\+\_\+t $>$ $>$ {\bfseries output\+\_\+shapes}
+\item 
+\Hypertarget{class_onnx_model_a3428f554efa4da1f851591c782ec0ea2}\label{class_onnx_model_a3428f554efa4da1f851591c782ec0ea2} 
+QString {\bfseries Onnx\+Model\+File\+Path} = "{}"{}
+\item 
+\Hypertarget{class_onnx_model_af5de06d5a6f71b86c2f8122d9c514eba}\label{class_onnx_model_af5de06d5a6f71b86c2f8122d9c514eba} 
+bool {\bfseries b\+Model\+Valid} = false
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/Onnx\+Model.\+h\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/Onnx\+Model.\+cpp\end{DoxyCompactItemize}

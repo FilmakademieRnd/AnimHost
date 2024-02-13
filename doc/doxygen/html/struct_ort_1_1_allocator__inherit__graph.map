@@ -1,0 +1,7 @@
+<map id="Ort::Allocator" name="Ort::Allocator">
+<area shape="rect" id="Node000001" title="Wrapper around OrtAllocator." alt="" coords="37,171,135,197"/>
+<area shape="rect" id="Node000002" href="$struct_ort_1_1detail_1_1_allocator_impl.html" title=" " alt="" coords="5,80,167,123"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="89,139,89,170,83,170,83,139"/>
+<area shape="rect" id="Node000003" href="$struct_ort_1_1detail_1_1_base.html" title="Used internally by the C++ API. C++ wrapper types inherit from this. This is a zero cost abstraction ..." alt="" coords="12,5,160,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="89,48,89,80,83,80,83,48"/>
+</map>

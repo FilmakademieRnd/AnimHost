@@ -1,0 +1,135 @@
+\doxysection{Qt\+Nodes\+::Abstract\+Node\+Geometry Class Reference}
+\hypertarget{class_qt_nodes_1_1_abstract_node_geometry}{}\label{class_qt_nodes_1_1_abstract_node_geometry}\index{QtNodes::AbstractNodeGeometry@{QtNodes::AbstractNodeGeometry}}
+
+
+Collaboration diagram for Qt\+Nodes\+::Abstract\+Node\+Geometry\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=242pt]{class_qt_nodes_1_1_abstract_node_geometry__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_a83c459077aadc55144108f5afa8e1976}\label{class_qt_nodes_1_1_abstract_node_geometry_a83c459077aadc55144108f5afa8e1976} 
+{\bfseries Abstract\+Node\+Geometry} (\mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model}{Abstract\+Graph\+Model}} \&)
+\item 
+virtual QRectF \mbox{\hyperlink{class_qt_nodes_1_1_abstract_node_geometry_ad37e9eacbec0928b8b5fbb6a1e871930}{bounding\+Rect}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id) const
+\item 
+\Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_a13f7877d4c4c058b77b67f415d7aa702}\label{class_qt_nodes_1_1_abstract_node_geometry_a13f7877d4c4c058b77b67f415d7aa702} 
+virtual QSize {\bfseries size} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id) const =0
+\begin{DoxyCompactList}\small\item\em A direct rectangle defining the borders of the node\textquotesingle{}s rectangle. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_qt_nodes_1_1_abstract_node_geometry_adbe4373cf6fa4da2607c50d664c48b7f}{recompute\+Size}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id) const =0
+\item 
+\Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_aab0315c4acbd891e22cc68960120b491}\label{class_qt_nodes_1_1_abstract_node_geometry_aab0315c4acbd891e22cc68960120b491} 
+virtual QPointF {\bfseries port\+Position} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const index) const =0
+\begin{DoxyCompactList}\small\item\em Port position in node\textquotesingle{}s coordinate system. \end{DoxyCompactList}\item 
+\Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_aa8fe0a1a77f49fb66569eda043398fd5}\label{class_qt_nodes_1_1_abstract_node_geometry_aa8fe0a1a77f49fb66569eda043398fd5} 
+virtual QPointF {\bfseries port\+Scene\+Position} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const index, QTransform const \&t) const
+\begin{DoxyCompactList}\small\item\em A convenience function using the {\ttfamily port\+Position} and a given transformation. \end{DoxyCompactList}\item 
+\Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_a776f81d9bb873ba73513545767e5f34e}\label{class_qt_nodes_1_1_abstract_node_geometry_a776f81d9bb873ba73513545767e5f34e} 
+virtual QPointF {\bfseries port\+Text\+Position} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const port\+Index) const =0
+\begin{DoxyCompactList}\small\item\em Defines where to draw port label. The point corresponds to a font baseline. \end{DoxyCompactList}\item 
+virtual QPointF \mbox{\hyperlink{class_qt_nodes_1_1_abstract_node_geometry_a1fd8f4eafd72364bedd45f422b364f5d}{caption\+Position}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id) const =0
+\item 
+\Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_a518be87787037a3f9830b116123fc683}\label{class_qt_nodes_1_1_abstract_node_geometry_a518be87787037a3f9830b116123fc683} 
+virtual QRectF {\bfseries caption\+Rect} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id) const =0
+\begin{DoxyCompactList}\small\item\em Caption rect is needed for estimating the total node size. \end{DoxyCompactList}\item 
+\Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_a6d0719ea985371c388fe6be19272a159}\label{class_qt_nodes_1_1_abstract_node_geometry_a6d0719ea985371c388fe6be19272a159} 
+virtual QPointF {\bfseries widget\+Position} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id) const =0
+\begin{DoxyCompactList}\small\item\em Position for an embedded widget. Return any value if you don\textquotesingle{}t embed. \end{DoxyCompactList}\item 
+\Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_a880735e0a8835dba4af66742da5c634f}\label{class_qt_nodes_1_1_abstract_node_geometry_a880735e0a8835dba4af66742da5c634f} 
+virtual \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} {\bfseries check\+Port\+Hit} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, QPointF const node\+Point) const
+\item 
+\Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_a9d8d7fc3492f17ce44155cc6ef38159e}\label{class_qt_nodes_1_1_abstract_node_geometry_a9d8d7fc3492f17ce44155cc6ef38159e} 
+virtual QRect {\bfseries resize\+Handle\+Rect} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id) const =0
+\item 
+\Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_a83c459077aadc55144108f5afa8e1976}\label{class_qt_nodes_1_1_abstract_node_geometry_a83c459077aadc55144108f5afa8e1976} 
+{\bfseries Abstract\+Node\+Geometry} (\mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model}{Abstract\+Graph\+Model}} \&)
+\item 
+virtual QRectF \mbox{\hyperlink{class_qt_nodes_1_1_abstract_node_geometry_ad37e9eacbec0928b8b5fbb6a1e871930}{bounding\+Rect}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id) const
+\item 
+\Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_a13f7877d4c4c058b77b67f415d7aa702}\label{class_qt_nodes_1_1_abstract_node_geometry_a13f7877d4c4c058b77b67f415d7aa702} 
+virtual QSize {\bfseries size} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id) const =0
+\begin{DoxyCompactList}\small\item\em A direct rectangle defining the borders of the node\textquotesingle{}s rectangle. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_qt_nodes_1_1_abstract_node_geometry_adbe4373cf6fa4da2607c50d664c48b7f}{recompute\+Size}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id) const =0
+\item 
+\Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_aab0315c4acbd891e22cc68960120b491}\label{class_qt_nodes_1_1_abstract_node_geometry_aab0315c4acbd891e22cc68960120b491} 
+virtual QPointF {\bfseries port\+Position} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const index) const =0
+\begin{DoxyCompactList}\small\item\em Port position in node\textquotesingle{}s coordinate system. \end{DoxyCompactList}\item 
+\Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_aa8fe0a1a77f49fb66569eda043398fd5}\label{class_qt_nodes_1_1_abstract_node_geometry_aa8fe0a1a77f49fb66569eda043398fd5} 
+virtual QPointF {\bfseries port\+Scene\+Position} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const index, QTransform const \&t) const
+\begin{DoxyCompactList}\small\item\em A convenience function using the {\ttfamily port\+Position} and a given transformation. \end{DoxyCompactList}\item 
+\Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_a776f81d9bb873ba73513545767e5f34e}\label{class_qt_nodes_1_1_abstract_node_geometry_a776f81d9bb873ba73513545767e5f34e} 
+virtual QPointF {\bfseries port\+Text\+Position} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const port\+Index) const =0
+\begin{DoxyCompactList}\small\item\em Defines where to draw port label. The point corresponds to a font baseline. \end{DoxyCompactList}\item 
+virtual QPointF \mbox{\hyperlink{class_qt_nodes_1_1_abstract_node_geometry_a1fd8f4eafd72364bedd45f422b364f5d}{caption\+Position}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id) const =0
+\item 
+\Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_a518be87787037a3f9830b116123fc683}\label{class_qt_nodes_1_1_abstract_node_geometry_a518be87787037a3f9830b116123fc683} 
+virtual QRectF {\bfseries caption\+Rect} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id) const =0
+\begin{DoxyCompactList}\small\item\em Caption rect is needed for estimating the total node size. \end{DoxyCompactList}\item 
+\Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_a6d0719ea985371c388fe6be19272a159}\label{class_qt_nodes_1_1_abstract_node_geometry_a6d0719ea985371c388fe6be19272a159} 
+virtual QPointF {\bfseries widget\+Position} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id) const =0
+\begin{DoxyCompactList}\small\item\em Position for an embedded widget. Return any value if you don\textquotesingle{}t embed. \end{DoxyCompactList}\item 
+\Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_a880735e0a8835dba4af66742da5c634f}\label{class_qt_nodes_1_1_abstract_node_geometry_a880735e0a8835dba4af66742da5c634f} 
+virtual \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} {\bfseries check\+Port\+Hit} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, QPointF const node\+Point) const
+\item 
+\Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_a9d8d7fc3492f17ce44155cc6ef38159e}\label{class_qt_nodes_1_1_abstract_node_geometry_a9d8d7fc3492f17ce44155cc6ef38159e} 
+virtual QRect {\bfseries resize\+Handle\+Rect} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id) const =0
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_a635922f7210c0c21e4bb087b8682df3b}\label{class_qt_nodes_1_1_abstract_node_geometry_a635922f7210c0c21e4bb087b8682df3b} 
+\mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model}{Abstract\+Graph\+Model}} \& {\bfseries \+\_\+graph\+Model}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_ad37e9eacbec0928b8b5fbb6a1e871930}\label{class_qt_nodes_1_1_abstract_node_geometry_ad37e9eacbec0928b8b5fbb6a1e871930} 
+\index{QtNodes::AbstractNodeGeometry@{QtNodes::AbstractNodeGeometry}!boundingRect@{boundingRect}}
+\index{boundingRect@{boundingRect}!QtNodes::AbstractNodeGeometry@{QtNodes::AbstractNodeGeometry}}
+\doxysubsubsection{\texorpdfstring{boundingRect()}{boundingRect()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily virtual QRectF Qt\+Nodes\+::\+Abstract\+Node\+Geometry\+::bounding\+Rect (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const}]{node\+Id }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
+
+The node\textquotesingle{}s size plus some additional margin around it to account for drawing effects (for example shadows) or node\textquotesingle{}s parts outside the size rectangle (for example port points).
+
+The default implementation returns QSize + 20 percent of width and heights at each side of the rectangle. \Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_ad37e9eacbec0928b8b5fbb6a1e871930}\label{class_qt_nodes_1_1_abstract_node_geometry_ad37e9eacbec0928b8b5fbb6a1e871930} 
+\index{QtNodes::AbstractNodeGeometry@{QtNodes::AbstractNodeGeometry}!boundingRect@{boundingRect}}
+\index{boundingRect@{boundingRect}!QtNodes::AbstractNodeGeometry@{QtNodes::AbstractNodeGeometry}}
+\doxysubsubsection{\texorpdfstring{boundingRect()}{boundingRect()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily virtual QRectF Qt\+Nodes\+::\+Abstract\+Node\+Geometry\+::bounding\+Rect (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const}]{node\+Id }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
+
+The node\textquotesingle{}s size plus some additional margin around it to account for drawing effects (for example shadows) or node\textquotesingle{}s parts outside the size rectangle (for example port points).
+
+The default implementation returns QSize + 20 percent of width and heights at each side of the rectangle. \Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_a1fd8f4eafd72364bedd45f422b364f5d}\label{class_qt_nodes_1_1_abstract_node_geometry_a1fd8f4eafd72364bedd45f422b364f5d} 
+\index{QtNodes::AbstractNodeGeometry@{QtNodes::AbstractNodeGeometry}!captionPosition@{captionPosition}}
+\index{captionPosition@{captionPosition}!QtNodes::AbstractNodeGeometry@{QtNodes::AbstractNodeGeometry}}
+\doxysubsubsection{\texorpdfstring{captionPosition()}{captionPosition()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily virtual QPointF Qt\+Nodes\+::\+Abstract\+Node\+Geometry\+::caption\+Position (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const}]{node\+Id }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+Defines where to start drawing the caption. The point corresponds to a font baseline. \Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_a1fd8f4eafd72364bedd45f422b364f5d}\label{class_qt_nodes_1_1_abstract_node_geometry_a1fd8f4eafd72364bedd45f422b364f5d} 
+\index{QtNodes::AbstractNodeGeometry@{QtNodes::AbstractNodeGeometry}!captionPosition@{captionPosition}}
+\index{captionPosition@{captionPosition}!QtNodes::AbstractNodeGeometry@{QtNodes::AbstractNodeGeometry}}
+\doxysubsubsection{\texorpdfstring{captionPosition()}{captionPosition()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily virtual QPointF Qt\+Nodes\+::\+Abstract\+Node\+Geometry\+::caption\+Position (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const}]{node\+Id }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+Defines where to start drawing the caption. The point corresponds to a font baseline. \Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_adbe4373cf6fa4da2607c50d664c48b7f}\label{class_qt_nodes_1_1_abstract_node_geometry_adbe4373cf6fa4da2607c50d664c48b7f} 
+\index{QtNodes::AbstractNodeGeometry@{QtNodes::AbstractNodeGeometry}!recomputeSize@{recomputeSize}}
+\index{recomputeSize@{recomputeSize}!QtNodes::AbstractNodeGeometry@{QtNodes::AbstractNodeGeometry}}
+\doxysubsubsection{\texorpdfstring{recomputeSize()}{recomputeSize()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily virtual void Qt\+Nodes\+::\+Abstract\+Node\+Geometry\+::recompute\+Size (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const}]{node\+Id }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+The function is triggeren when a nuber of ports is changed or when an embedded widget needs an update. \Hypertarget{class_qt_nodes_1_1_abstract_node_geometry_adbe4373cf6fa4da2607c50d664c48b7f}\label{class_qt_nodes_1_1_abstract_node_geometry_adbe4373cf6fa4da2607c50d664c48b7f} 
+\index{QtNodes::AbstractNodeGeometry@{QtNodes::AbstractNodeGeometry}!recomputeSize@{recomputeSize}}
+\index{recomputeSize@{recomputeSize}!QtNodes::AbstractNodeGeometry@{QtNodes::AbstractNodeGeometry}}
+\doxysubsubsection{\texorpdfstring{recomputeSize()}{recomputeSize()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily virtual void Qt\+Nodes\+::\+Abstract\+Node\+Geometry\+::recompute\+Size (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const}]{node\+Id }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+The function is triggeren when a nuber of ports is changed or when an embedded widget needs an update. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/core/\+QTNodes/include/\+Qt\+Nodes/internal/Abstract\+Node\+Geometry.\+hpp\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/core/\+QTNodes/include/\+Qt\+Nodes/internal/internal/Abstract\+Node\+Geometry.\+hpp\end{DoxyCompactItemize}

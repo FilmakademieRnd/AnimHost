@@ -150,11 +150,13 @@ public:
         qDebug() << "Animation()";
     };
 
-    /*Animation(const Animation& o) : mBones(o.mBones) { qDebug() << "Animation Copy"; };
+
+    Animation(const Animation& o) : mBones(o.mBones), mDurationFrames(o.mDurationFrames), mDuration(o.mDuration) { qDebug() << "Animation Copy"; };
+
 
     Animation(Animation&& o) noexcept : mBones(std::move(o.mBones)) { qDebug() << "Animation Move"; };
 
-    ~Animation() {};*/
+    ~Animation() {};
 
     COMMONDATA(animation, Animation)
 
@@ -293,42 +295,119 @@ public:
 };
 Q_DECLARE_METATYPE(std::shared_ptr<RunSignal>)
 
-class ANIMHOSTCORESHARED_EXPORT SceneObject {
+class ANIMHOSTCORESHARED_EXPORT SceneNodeObject {
     public:
-    int sceneID;
-    int objectID;
+    int sceneObjectID; //! ID of the object 
+    int characterRootID;
     std::string objectName;
 
-    std::map<std::string, std::pair<int, unsigned char>> objectParams;
-    std::map<int, glm::quat> neutralPose;
+    glm::vec3 pos;
+    glm::vec4 rot;
+    glm::vec3 scl;
+
+    SceneNodeObject() : sceneObjectID { 0 }, characterRootID { 0 }, objectName { "" }, pos {glm::vec3(0)}, rot { glm::vec4(0) }, scl { glm::vec3(0) } {};
+
+    SceneNodeObject(int soID, int crID, std::string name) :
+        sceneObjectID { soID }, characterRootID { crID }, objectName { name }, pos { glm::vec3(0) }, rot { glm::vec4(0) }, scl { glm::vec3(0) } {};
+
+    SceneNodeObject(int soID, int crID, std::string name, glm::vec3 p, glm::vec4 r, glm::vec3 s) :
+        sceneObjectID { soID }, characterRootID { crID }, objectName { name }, pos { p }, rot { r }, scl { s } {};
+
+    COMMONDATA(sceneNodeObject, SceneNodeObject)
+};
+Q_DECLARE_METATYPE(SceneNodeObject)
+Q_DECLARE_METATYPE(std::shared_ptr<SceneNodeObject>)
+
+class ANIMHOSTCORESHARED_EXPORT SkinnedMeshComponent {
+    public:
+    int id;
+    glm::vec3 boundExtents;
+    glm::vec3 boundCenter;
+    std::vector <glm::mat4> bindPoses;
+    std::vector<int> boneMapIDs;
 
     public:
-    SceneObject(std::string name, int sID, int oID) :
-        sceneID { sID },
-        objectID { oID },
-        objectName { name },
-        objectParams {}, neutralPose {} {};
+    SkinnedMeshComponent() :
+        id {0}, boundExtents { glm::vec3(0) }, boundCenter { glm::vec3(0) }, bindPoses {}, boneMapIDs {} {};
 
-    SceneObject() : sceneID { 0 }, objectID { 0 }, objectName { "" }, objectParams {}, neutralPose {} {};
+    COMMONDATA(skinnedMeshComponent, SkinnedMeshComponent)
+};
+Q_DECLARE_METATYPE(SkinnedMeshComponent)
+Q_DECLARE_METATYPE(std::shared_ptr<SkinnedMeshComponent>)
 
-    COMMONDATA(sceneObject, SceneObject)
+class ANIMHOSTCORESHARED_EXPORT CharacterObject :public SceneNodeObject {
+    public:
+    std::vector<int> boneMapping;
+    std::vector<int> skeletonObjIDs;
+    std::vector<glm::vec3> tposeBonePos;
+    std::vector<glm::quat> tposeBoneRot;
+    std::vector<glm::vec3> tposeBoneScale;
+    
+    std::vector<SkinnedMeshComponent> skinnedMeshList;
+
+    public:
+    CharacterObject(int soID, int oID, std::string name) :
+        SceneNodeObject ( soID, oID, name ),
+        boneMapping {}, skeletonObjIDs {},
+        tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {},
+        skinnedMeshList {} {};
+    
+    CharacterObject() :
+        SceneNodeObject(),
+        boneMapping {}, skeletonObjIDs {},
+        tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {},
+        skinnedMeshList {} {};
+
+    void fill(const CharacterObject& _otherChObj) {
+        sceneObjectID = _otherChObj.sceneObjectID;
+        characterRootID = _otherChObj.characterRootID;
+        objectName = _otherChObj.objectName;
+
+        pos = _otherChObj.pos;
+        rot = _otherChObj.rot;
+        scl = _otherChObj.scl;
+        
+        boneMapping = _otherChObj.boneMapping;
+        skeletonObjIDs = _otherChObj.skeletonObjIDs;
+        tposeBonePos = _otherChObj.tposeBonePos;
+        tposeBoneRot = _otherChObj.tposeBoneRot;
+        tposeBoneScale = _otherChObj.tposeBoneScale;
+
+        skinnedMeshList = _otherChObj.skinnedMeshList;
+    }
+
+    COMMONDATA(characterObject, CharacterObject)
 
 };
-Q_DECLARE_METATYPE(std::shared_ptr<SceneObject>)
+Q_DECLARE_METATYPE(CharacterObject)
+Q_DECLARE_METATYPE(std::shared_ptr<CharacterObject>)
 
-class ANIMHOSTCORESHARED_EXPORT SceneObjectSequence : public Sequence {
+class ANIMHOSTCORESHARED_EXPORT SceneNodeObjectSequence : public Sequence {
     public:
 
-    std::vector<SceneObject> mSceneObjectSequence;
+    std::vector<SceneNodeObject> mSceneNodeObjectSequence;
+
     public:
+    SceneNodeObjectSequence() : mSceneNodeObjectSequence {} { qDebug() << "SceneNodeObjectSequence()"; };
 
-    SceneObjectSequence() { qDebug() << "SceneObjectSequence()"; };
-
-    COMMONDATA(SceneObjectSequence, SceneObjectSequence)
-
+    COMMONDATA(sceneNodeObjectSequence, SceneNodeObjectSequence)
 
 };
-Q_DECLARE_METATYPE(std::shared_ptr<SceneObjectSequence>)
+Q_DECLARE_METATYPE(SceneNodeObjectSequence)
+Q_DECLARE_METATYPE(std::shared_ptr<SceneNodeObjectSequence>)
 
+class ANIMHOSTCORESHARED_EXPORT CharacterObjectSequence : public Sequence {
+    public:
+
+    std::vector<CharacterObject> mCharacterObjectSequence;
+
+    public:
+    CharacterObjectSequence() : mCharacterObjectSequence {} { qDebug() << "CharacterObjectSequence()"; };
+
+    COMMONDATA(characterObjectSequence, CharacterObjectSequence)
+      
+};
+Q_DECLARE_METATYPE(CharacterObjectSequence)
+Q_DECLARE_METATYPE(std::shared_ptr<CharacterObjectSequence>)
 
 #endif // COMMONDATATYPES_H

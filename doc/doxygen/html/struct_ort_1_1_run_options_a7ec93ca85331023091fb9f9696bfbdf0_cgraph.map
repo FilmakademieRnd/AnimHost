@@ -1,0 +1,5 @@
+<map id="Ort::RunOptions::UnsetTerminate" name="Ort::RunOptions::UnsetTerminate">
+<area shape="rect" id="Node000001" title="Clears the terminate flag so this RunOptions instance can be used in a new Session::Run call without ..." alt="" coords="5,5,220,32"/>
+<area shape="rect" id="Node000002" href="$namespace_ort.html#a296b5958479d9889218b17bdb08c1894" title="This returns a reference to the OrtApi interface in use." alt="" coords="268,5,355,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="220,16,252,16,252,21,220,21"/>
+</map>

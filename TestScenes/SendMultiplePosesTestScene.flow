@@ -1,0 +1,127 @@
+{
+    "connections": [
+        {
+            "inPortIndex": 1,
+            "intNodeId": 7,
+            "outNodeId": 6,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 0,
+            "outNodeId": 3,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 7,
+            "outNodeId": 6,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 2,
+            "intNodeId": 1,
+            "outNodeId": 7,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 6,
+            "outNodeId": 3,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 3,
+            "intNodeId": 1,
+            "outNodeId": 6,
+            "outPortIndex": 2
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 1,
+            "outNodeId": 8,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 1,
+            "outNodeId": 8,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 8,
+            "outNodeId": 0,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 8,
+            "outNodeId": 0,
+            "outPortIndex": 2
+        }
+    ],
+    "nodes": [
+        {
+            "id": 0,
+            "internal-data": {
+                "dir": "C:\\Users\\m5963\\Documents\\AnimHost_TestData\\Animation",
+                "model-name": "Animation Import"
+            },
+            "position": {
+                "x": -390,
+                "y": -248
+            }
+        },
+        {
+            "id": 8,
+            "internal-data": {
+                "model-name": "CoordinateConverterPlugin"
+            },
+            "position": {
+                "x": 48.800600305480884,
+                "y": -230.74837705893674
+            }
+        },
+        {
+            "id": 1,
+            "internal-data": {
+                "model-name": "TracerUpdateSenderPlugin"
+            },
+            "position": {
+                "x": 409.0377498743076,
+                "y": -89.16265356918962
+            }
+        },
+        {
+            "id": 3,
+            "internal-data": {
+                "model-name": "RunTriggerPlugin"
+            },
+            "position": {
+                "x": -645.0837279596979,
+                "y": -157.44332493702774
+            }
+        },
+        {
+            "id": 6,
+            "internal-data": {
+                "model-name": "TracerSceneReceiverPlugin"
+            },
+            "position": {
+                "x": -482.2364159999997,
+                "y": -64.198656
+            }
+        },
+        {
+            "id": 7,
+            "internal-data": {
+                "model-name": "CharacterSelectorPlugin"
+            },
+            "position": {
+                "x": 3.258181507397296,
+                "y": 45.55474747128503
+            }
+        }
+    ]
+}

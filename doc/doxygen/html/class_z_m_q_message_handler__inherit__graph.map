@@ -1,0 +1,11 @@
+<map id="ZMQMessageHandler" name="ZMQMessageHandler">
+<area shape="rect" id="Node000001" title=" " alt="" coords="182,80,329,107"/>
+<area shape="rect" id="Node000003" href="$class_anim_host_message_sender.html" title=" " alt="" coords="5,155,178,181"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="214,116,121,156,119,152,212,111"/>
+<area shape="rect" id="Node000004" href="$class_scene_receiver.html" title=" " alt="" coords="202,155,309,181"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="258,122,258,154,253,154,253,122"/>
+<area shape="rect" id="Node000005" href="$class_tick_receiver.html" title=" " alt="" coords="334,155,428,181"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="291,112,360,152,358,156,289,117"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="221,5,290,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="258,48,258,80,253,80,253,48"/>
+</map>
