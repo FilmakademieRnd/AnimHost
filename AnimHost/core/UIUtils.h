@@ -24,7 +24,39 @@ public:
 	QString GetSelectedBone();
 
 Q_SIGNALS:
-	void currentBoneChanged(const QString& text);
+	void currentBoneChanged(const int text);
 
 };
+
+
+class ANIMHOSTCORESHARED_EXPORT FolderSelectionWidget : public QWidget {
+
+	Q_OBJECT
+
+private:
+	QString _selectedDirectory = "";
+
+	QHBoxLayout* _filePathLayout = nullptr;
+	QLabel* _label = nullptr;
+	QPushButton* _pushButton = nullptr;
+
+public:
+	FolderSelectionWidget(QWidget* parent = nullptr);
+	~FolderSelectionWidget() {};
+
+	void UpdateDirectory();
+
+	QString GetSelectedDirectory();
+
+Q_SIGNALS:
+	void directoryChanged();
+
+
+private:
+	void SetDirectory(QString dir);
+
+
+};
+
+
 #endif // ANIMHOST_UI_UTIL_H

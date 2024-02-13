@@ -81,7 +81,7 @@ std::vector<std::string> OnnxModel::GetTensorShapes(bool bGetInput)
     if (bModelValid) {
             std::vector<std::string> retShape;
             auto shapes = bGetInput ? input_shapes : output_shapes;
-            for (auto var : input_shapes) {
+            for (auto var : shapes) {
                 retShape.emplace_back(shape_printer(var));
             }
             return retShape;

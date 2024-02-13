@@ -1,6 +1,8 @@
 #include "commondatatypes.h"
 
-
+#include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/ext/quaternion_float.hpp>
 //#include "AssimpHelper.h"
 
 Bone::Bone(std::string name, int id, int numPos, int numRot, int numScl, glm::mat4 rest)
@@ -45,7 +47,7 @@ glm::quat Bone::GetOrientation(int frame) const
 {
 	if (mRotationKeys.size() == 0)
 	{
-		return glm::quat();
+		return glm::quat(1,0,0,0);
 	}
 	else
 	{
@@ -96,6 +98,27 @@ glm::vec3 Bone::GetScale(int frame) const
 	}
 
 }
+
+glm::mat4 Bone::GetTransform(int frame) const {
+
+
+	glm::quat outputRefJointRotation = GetOrientation(frame);
+	//glm::quat invOutputRefJointRotation = glm::inverse(outputRefJointRotation);
+
+	glm::quat orientation = GetOrientation(frame);
+	glm::mat4 rotation = glm::toMat4(orientation);
+
+	glm::vec3 scl = GetScale(frame);
+	glm::mat4 scale = glm::scale(glm::mat4(1.0f), scl);
+
+	glm::vec3 pos = GetPosition(frame);
+	glm::mat4 translation(1.0f);
+	translation = glm::translate(translation, pos);
+	glm::mat4x4 TRS = translation * rotation * scale;
+
+	return TRS;
+
+};
 
 
 

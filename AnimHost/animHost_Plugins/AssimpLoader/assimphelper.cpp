@@ -48,8 +48,6 @@ void AssimpHelper::setAnimationRestingPositionFromAssimpNode(const aiNode& pNode
 
 	int bone_idx = pSkeleton.bone_names.at(name);
 
-	
-	
 	aiVector3D scale;
 	aiQuaternion quat;
 	aiVector3D pos;
@@ -60,7 +58,6 @@ void AssimpHelper::setAnimationRestingPositionFromAssimpNode(const aiNode& pNode
 
 	pAnimation->mBones[bone_idx].restingRotation = AssimpHelper::ConvertQuaternionToGLM(quat);
 
-	qDebug() << name;
 
 	for (int child = 0; child < pNode.mNumChildren; child++) {
 

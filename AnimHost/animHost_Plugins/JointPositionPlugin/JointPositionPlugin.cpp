@@ -45,7 +45,7 @@ void JointPositionPlugin::run(QVariantList in, QVariantList& out)
 
 
         //currently not used (positional keys seem to include offsets)
-        glm::mat4 transform = animation->mBones[currentBone].GetRestingTransform();
+        //glm::mat4 transform = animation->mBones[currentBone].GetRestingTransform();
 
         glm::vec4 result = glm::vec4(0.0, 0.0, 0.0, 1.0);
 
@@ -57,12 +57,14 @@ void JointPositionPlugin::run(QVariantList in, QVariantList& out)
 
         glm::vec3 pos = animation->mBones[currentBone].GetPosition(frame);
         glm::mat4 translation (1.0f);
-        if (currentBone == 0) {
+        /*if (currentBone == 0) {
             translation = glm::translate(translation, glm::vec3(0.0, pos.y, 0.0));
         }
         else {
             translation = glm::translate(translation, pos);
-        }
+        }*/
+
+        translation = glm::translate(translation, pos);
         //glm::mat4 translation = glm::translate(glm::mat4(1.0f), pos);
 
         glm::mat4 local_transform = translation * rotation * scale;
@@ -71,9 +73,9 @@ void JointPositionPlugin::run(QVariantList in, QVariantList& out)
         result = globalT * result;
 
         poseSequence->mPoseSequence[frame].mPositionData[currentBone] = result;
-        if (currentBone == 0) {
+        /*if (currentBone == 0) {
             poseSequence->mPoseSequence[frame].mPositionData[currentBone] += glm::vec3(pos.x, 0, pos.z);
-        }
+        }*/
 
         for (int i : skeleton->bone_hierarchy[currentBone]) {
             lBuildPose(globalT, i);
@@ -95,6 +97,8 @@ void JointPositionPlugin::run(QVariantList in, QVariantList& out)
 
     poseSequence->dataSetID = animation->dataSetID;
     poseSequence->sourceName = animation->sourceName;
+    poseSequence->sequenceID = animation->sequenceID;
+    //poseSequence->uuId = animation->uuId;
 
     out.append(QVariant::fromValue(poseSequence));
 }
