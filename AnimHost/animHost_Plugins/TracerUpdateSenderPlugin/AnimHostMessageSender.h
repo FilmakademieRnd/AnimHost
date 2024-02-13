@@ -60,6 +60,12 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMe
     */
     void requestStop() override;
 
+    //! Resumes broadcasting poses
+    /*!
+     * Sets \c _paused to false and wakes the thread that is waiting on the reconnectWaitCondition
+     */
+    void resumeSendFrames();
+
     //! Setting data necessary to create new TRACER Update Message representing a character pose
     /*!
     * The character data is needed to get the parameter-to-bone mapping (which parameter modifies which bone). The bone is represented as the index of a node

@@ -3,6 +3,7 @@
 // Defining and initialising static members
 
 QWaitCondition* ZMQMessageHandler::sendFrameWaitCondition = new QWaitCondition();
+QWaitCondition* ZMQMessageHandler::reconnectWaitCondition = new QWaitCondition();
 
 byte ZMQMessageHandler::targetSceneID = 0;
 QString ZMQMessageHandler::ownIP = "";
@@ -23,19 +24,10 @@ ZMQMessageHandler::ZMQMessageHandler() {
     ZMQMessageHandler::localTick->setInterval(1000/ZMQMessageHandler::playbackFrameRate);
     QObject::connect(ZMQMessageHandler::localTick, &QTimer::timeout, this, &ZMQMessageHandler::increaseTimeStamp);
 
-    //m_pauseMutex = QMutex();
-
     //debug
     for (QHostAddress ipAddress : ZMQMessageHandler::ipList) {
         qDebug() << ipAddress.toString();
     }
-}
-
-void ZMQMessageHandler::resumeSendFrames() {
-    mutex.lock();
-    _paused = false;
-    sendFrameWaitCondition->wakeOne();
-    mutex.unlock();
 }
 
 //void ZMQMessageHandler::Serialize(byte* dest, bool _value) {

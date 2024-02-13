@@ -213,6 +213,14 @@ void TracerUpdateSenderPlugin::onButtonClicked() {
     // Set animation, character and scene data (necessary for creating a pose update message) in the message sender object
     msgSender->setAnimationAndSceneData(sp_animation->getData(), sp_character->getData(), sp_sceneNodeList->getData());
 
+    // If the sending thread is not already running, start it, otherwise just wake it
+    if (!zeroMQSenderThread->isRunning()) {
+        msgSender->requestStart();
+        zeroMQSenderThread->start();
+    } else {
+        msgSender->resumeSendFrames();
+    }
+
     ///! DEBUGGING SAMPLE DATA USED TO TEST SENDING
 
     /*bool boolExample = true;
@@ -231,14 +239,7 @@ void TracerUpdateSenderPlugin::onButtonClicked() {
     std::vector<float> quatExample2 = { 0.06, 0.5, 0.86, 0.11 };
     QByteArray msgBodyQuat = msgSender->createMessageBody(254, 3, 3, ZMQMessageHandler::ParameterType::QUATERNION, quatExample);
     QByteArray msgQuat2 = msgSender->createMessageBody(254, 3, 47, ZMQMessageHandler::ParameterType::QUATERNION, quatExample2);
-    msgBodyQuat.append(msgQuat2);*/
-
-    if (!zeroMQSenderThread->isRunning()) {
-        msgSender->requestStart();
-        zeroMQSenderThread->start();
-    } else {
-        //msgSender->resumeSendFrames();
-    }   
+    msgBodyQuat.append(msgQuat2);*/ 
 
     // Example of message creation
     //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyBool));

@@ -29,6 +29,13 @@ void AnimHostMessageSender::requestStop() {
     mutex.unlock();
 }
 
+void AnimHostMessageSender::resumeSendFrames() {
+    //mutex.lock();
+    _paused = false;
+    reconnectWaitCondition->wakeAll();
+    //mutex.unlock();
+}
+
 //void AnimHostMessageSender::setMessage(QByteArray* msg) {
 //    //qDebug() << "Setting message of size " << msg->size();
 //    message = msg;
@@ -104,7 +111,7 @@ void AnimHostMessageSender::run() {
         timestamp = ZMQMessageHandler::getLocalTimeStamp();
 
         if (animDataSize == 1) {    // IF   the animation data contains only one frame
-            stop = true;            // THEN stop the loop even if the loop check is marked
+            _paused = true;         // THEN stop the loop even if the loop check is marked
         }
 
         if (animFrame >= animDataSize && loop) {    // IF   at the end of the animation AND LOOP is checked
@@ -112,12 +119,21 @@ void AnimHostMessageSender::run() {
         } else if (animFrame < animDataSize) {      // IF   the animation has not been fully sent
             animFrame += deltaAnimFrame;            // THEN increase the frame count by the given delta (animFrameRate / playbackFrameRate)
         } else {                                    // ELSE (the animation has been fully sent AND LOOP unchecked)
-            stop = true;                            //      stop the working loop
+            _paused = true;                            //      stop the working loop
         }
         // TODO: improving cleanup and re-connection for streaming animation again...and again...and again :)
         
         QThread::msleep(1);
 
+        if (_paused) {
+            // if _paused condition has been triggered, then wait until wakeAll signal
+            // this will be triggered by clicking on the Send Animation button in the Qt pluginUI
+            reconnectWaitCondition->wait(&m_pauseMutex);
+            
+            // after resuming, reset animFrame
+            animFrame = 0;
+        }
+        
         m_pauseMutex.unlock();
 
         if (stop) {

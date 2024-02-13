@@ -55,12 +55,19 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
 
     static QTimer* localTick;   //!< Timer needed to keep sender and receiver in sync
 
-    //! Handles pause/resume specifically for the AnimationMessageSender subclass
+    //! Handles timing for broadcasting poses specifically for the AnimationMessageSender subclass
     /*!
     * It's necessary to have the wait condition in the superclass in order to have access to it and unlock it every time the localTimeStamp is incremented.
     * Every thread should have a dedicated wait condition in order to be able to wake them in the desired order.
     */
     static QWaitCondition* sendFrameWaitCondition;
+
+    //! Handles pause/resume broadcasting specifically for the AnimationMessageSender subclass
+    /*!
+    * It's necessary to have the wait condition in the superclass in order to have access to it and unlock it every time the localTimeStamp is incremented.
+    * Every thread should have a dedicated wait condition in order to be able to wake them in the desired order.
+    */
+    static QWaitCondition* reconnectWaitCondition;
 
     //! Request this process to start working
     /* \todo To be implemented in concrete class */
@@ -77,12 +84,6 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     void setDebugState(bool _debugState) {
         _debug = _debugState;
     }
-
-    //! Resumes the thread that is sending frames
-    /*!
-     * Sets \c _paused to false and wakes the specific thread that is waiting on the sendFrameWaitCondition
-     */
-    void resumeSendFrames();
 
     //! Pauses main loop execution
     /*!
