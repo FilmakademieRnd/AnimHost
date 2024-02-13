@@ -1,0 +1,39 @@
+\doxysection{plugininterface.\+h}
+\hypertarget{plugininterface_8h_source}{}\label{plugininterface_8h_source}\index{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost\_Plugins/PluginInterface/plugininterface.h@{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost\_Plugins/PluginInterface/plugininterface.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ PLUGININTERFACE\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ PLUGININTERFACE\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <QObject>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <QList>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <QString>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <QVariant>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <commondatatypes.h>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}plugininterface\_global.h"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{class\ }PLUGININTERFACESHARED\_EXPORT\ \mbox{\hyperlink{class_plugin_interface}{PluginInterface}}\ :\ \textcolor{keyword}{public}\ QObject}
+\DoxyCodeLine{00015\ \{}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{comment}{//\ main\ function\ of\ the\ plugin\ generating\ outputs\ based\ on\ given\ inputs}}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ run(QVariantList\ in,\ QVariantList\&\ out)\ =\ 0;}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{comment}{//\ provide\ the\ name\ of\ the\ plugin}}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{virtual}\ QString\ name();}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{comment}{//QTNodes}}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{virtual}\ QString\ category()\ =\ 0;\ \ \textcolor{comment}{//\ Returns\ a\ category\ for\ the\ node}}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{virtual}\ QList<QMetaType>\ inputTypes()\ =\ 0;\ \ \textcolor{comment}{//\ Returns\ input\ data\ types}}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{virtual}\ QList<QMetaType>\ outputTypes()\ =\ 0;\ \ \textcolor{comment}{//\ Returns\ output\ data\ types}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ QList<QMetaType>\ inputs;}
+\DoxyCodeLine{00029\ \ \ \ \ QList<QMetaType>\ outputs;}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \};}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#define\ PluginInterface\_iid\ "{}de.animhost.PluginInterface"{}}}
+\DoxyCodeLine{00034\ Q\_DECLARE\_INTERFACE(\mbox{\hyperlink{class_plugin_interface}{PluginInterface}},\ PluginInterface\_iid)}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ PLUGININTERFACE\_H}}
+
+\end{DoxyCode}

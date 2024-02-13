@@ -408,4 +408,6 @@ void TracerSceneReceiverPlugin::processHeaderByteData(QByteArray* headerByteArra
 	// - byte  senderID
 	unsigned char senderID; memcpy(&senderID, headerByteArray->sliced(4, sizeof(senderID)).data(), sizeof(senderID)); // Copies byte values directly into the new variable, which interprets it as the correct type
 	ZMQMessageHandler::setTargetSceneID(senderID);
+	//ZMQMessageHandler::setAnimFrameRate();
+	//ZMQMessageHandler::setRenderFrameRate();
 }

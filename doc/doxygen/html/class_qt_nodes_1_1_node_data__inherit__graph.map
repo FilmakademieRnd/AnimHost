@@ -1,0 +1,7 @@
+<map id="QtNodes::NodeData" name="QtNodes::NodeData">
+<area shape="rect" id="Node000001" title=" " alt="" coords="6,5,144,32"/>
+<area shape="rect" id="Node000002" href="$class_anim_node_data_base.html" title=" " alt="" coords="6,80,144,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="78,48,78,80,72,80,72,48"/>
+<area shape="rect" id="Node000003" href="$class_anim_node_data.html" title=" " alt="" coords="5,155,145,181"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="78,122,78,154,72,154,72,122"/>
+</map>

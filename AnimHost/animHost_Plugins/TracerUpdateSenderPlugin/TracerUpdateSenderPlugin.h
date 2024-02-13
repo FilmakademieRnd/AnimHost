@@ -62,9 +62,6 @@ private:
     std::weak_ptr<AnimNodeData<Animation>> _animIn;                         //!< The animation data (consisting of one or more poses) - **Data set by UI PortIn**
     std::weak_ptr<AnimNodeData<CharacterObject>> _characterIn;              //!< The selected character to which the animation is going to be applied - **Data set by UI PortIn**
     std::weak_ptr<AnimNodeData<SceneNodeObjectSequence>> _sceneNodeListIn;  //!< A description of the scene of the TRACER client. Necessary to match animation data to character rig - **Data set by UI PortIn**
-    
-    QTimer* timer;                                  //!< Timer needed to keep sender and receiver in sync
-    int localTime = 0;                              //! @todo move timer and local time(stamp) directly to subthread?
 
     AnimHostMessageSender* msgSender = nullptr;     //!< Pointer to instance of the class that builds and sends the pose updates
     TickReceiver* tickReceiver = nullptr;           //!< Pointer to instance of the class that receives sync signals
@@ -141,7 +138,7 @@ private Q_SLOTS:
     //! Slot called when the drop-down menu selection changes
     /*!
     * Replaces the IP Address with the newly selected option
-    * \param index index of the selected element in the list
+    * \param index Index of the selected element in the list
     */
     void onChangedSelection(int index);
     

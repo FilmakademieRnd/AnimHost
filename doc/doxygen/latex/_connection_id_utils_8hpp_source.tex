@@ -1,0 +1,150 @@
+\doxysection{Connection\+Id\+Utils.\+hpp}
+\hypertarget{_connection_id_utils_8hpp_source}{}\label{_connection_id_utils_8hpp_source}\index{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/core/QTNodes/include/QtNodes/internal/ConnectionIdUtils.hpp@{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/core/QTNodes/include/QtNodes/internal/ConnectionIdUtils.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_definitions_8hpp}{Definitions.hpp}}"{}}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <QJsonObject>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{namespace\ }QtNodes\ \{}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{inline}\ PortIndex\ getNodeId(PortType\ portType,\ ConnectionId\ connectionId)}
+\DoxyCodeLine{00013\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{NodeId}}\ \textcolor{keywordtype}{id}\ =\ InvalidNodeId;}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keywordflow}{if}\ (portType\ ==\ PortType::Out)\ \{}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{id}\ =\ connectionId.outNodeId;}
+\DoxyCodeLine{00018\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (portType\ ==\ PortType::In)\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{id}\ =\ connectionId.inNodeId;}
+\DoxyCodeLine{00020\ \ \ \ \ \}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordflow}{return}\ id;}
+\DoxyCodeLine{00023\ \}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{inline}\ PortIndex\ getPortIndex(PortType\ portType,\ ConnectionId\ connectionId)}
+\DoxyCodeLine{00026\ \{}
+\DoxyCodeLine{00027\ \ \ \ \ PortIndex\ index\ =\ InvalidPortIndex;}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordflow}{if}\ (portType\ ==\ PortType::Out)\ \{}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ index\ =\ connectionId.outPortIndex;}
+\DoxyCodeLine{00031\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (portType\ ==\ PortType::In)\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ index\ =\ connectionId.inPortIndex;}
+\DoxyCodeLine{00033\ \ \ \ \ \}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordflow}{return}\ index;}
+\DoxyCodeLine{00036\ \}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{keyword}{inline}\ PortType\ oppositePort(PortType\ port)}
+\DoxyCodeLine{00039\ \{}
+\DoxyCodeLine{00040\ \ \ \ \ PortType\ result\ =\ PortType::None;}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordflow}{switch}\ (port)\ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordflow}{case}\ PortType::In:}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ result\ =\ PortType::Out;}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordflow}{case}\ PortType::Out:}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ result\ =\ PortType::In;}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordflow}{case}\ PortType::None:}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ result\ =\ PortType::None;}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00057\ \ \ \ \ \}}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00059\ \}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ isPortIndexValid(PortIndex\ index)}
+\DoxyCodeLine{00062\ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordflow}{return}\ index\ !=\ InvalidPortIndex;}
+\DoxyCodeLine{00064\ \}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ isPortTypeValid(PortType\ portType)}
+\DoxyCodeLine{00067\ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordflow}{return}\ portType\ !=\ PortType::None;}
+\DoxyCodeLine{00069\ \}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00074\ \textcolor{keyword}{inline}\ ConnectionId\ makeIncompleteConnectionId(NodeId\ \textcolor{keyword}{const}\ connectedNodeId,}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ PortType\ \textcolor{keyword}{const}\ connectedPort,}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ PortIndex\ \textcolor{keyword}{const}\ connectedPortIndex)}
+\DoxyCodeLine{00077\ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordflow}{return}\ (connectedPort\ ==\ PortType::In)}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ?\ ConnectionId\{InvalidNodeId,\ InvalidPortIndex,\ connectedNodeId,\ connectedPortIndex\}}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ ConnectionId\{connectedNodeId,\ connectedPortIndex,\ InvalidNodeId,\ InvalidPortIndex\};}
+\DoxyCodeLine{00081\ \}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00087\ \textcolor{keyword}{inline}\ ConnectionId\ makeIncompleteConnectionId(ConnectionId\ connectionId,}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ PortType\ \textcolor{keyword}{const}\ portToDisconnect)}
+\DoxyCodeLine{00089\ \{}
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keywordflow}{if}\ (portToDisconnect\ ==\ PortType::Out)\ \{}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ connectionId.outNodeId\ =\ InvalidNodeId;}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ connectionId.outPortIndex\ =\ InvalidPortIndex;}
+\DoxyCodeLine{00093\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ connectionId.inNodeId\ =\ InvalidNodeId;}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ connectionId.inPortIndex\ =\ InvalidPortIndex;}
+\DoxyCodeLine{00096\ \ \ \ \ \}}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordflow}{return}\ connectionId;}
+\DoxyCodeLine{00099\ \}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{keyword}{inline}\ ConnectionId\ makeCompleteConnectionId(ConnectionId\ incompleteConnectionId,}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NodeId\ \textcolor{keyword}{const}\ nodeId,}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ PortIndex\ \textcolor{keyword}{const}\ portIndex)}
+\DoxyCodeLine{00104\ \{}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordflow}{if}\ (incompleteConnectionId.outNodeId\ ==\ InvalidNodeId)\ \{}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ incompleteConnectionId.outNodeId\ =\ nodeId;}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ incompleteConnectionId.outPortIndex\ =\ portIndex;}
+\DoxyCodeLine{00108\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ incompleteConnectionId.inNodeId\ =\ nodeId;}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ incompleteConnectionId.inPortIndex\ =\ portIndex;}
+\DoxyCodeLine{00111\ \ \ \ \ \}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordflow}{return}\ incompleteConnectionId;}
+\DoxyCodeLine{00114\ \}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \textcolor{keyword}{inline}\ std::ostream\ \&operator<<(std::ostream\ \&ostr,\ ConnectionId\ \textcolor{keyword}{const}\ connectionId)}
+\DoxyCodeLine{00117\ \{}
+\DoxyCodeLine{00118\ \ \ \ \ ostr\ <<\ \textcolor{stringliteral}{"{}("{}}\ <<\ connectionId.outNodeId\ <<\ \textcolor{stringliteral}{"{},\ "{}}}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ <<\ (isPortIndexValid(connectionId.outPortIndex)\ ?\ std::to\_string(connectionId.outPortIndex)}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ \textcolor{stringliteral}{"{}INVALID"{}})}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ <<\ \textcolor{stringliteral}{"{},\ "{}}\ <<\ connectionId.inNodeId\ <<\ \textcolor{stringliteral}{"{},\ "{}}}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ <<\ (isPortIndexValid(connectionId.inPortIndex)\ ?\ std::to\_string(connectionId.inPortIndex)}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ \textcolor{stringliteral}{"{}INVALID"{}})}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ <<\ \textcolor{stringliteral}{"{})"{}}\ <<\ std::endl;}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordflow}{return}\ ostr;}
+\DoxyCodeLine{00127\ \}}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \textcolor{keyword}{inline}\ QJsonObject\ toJson(ConnectionId\ \textcolor{keyword}{const}\ \&connId)}
+\DoxyCodeLine{00130\ \{}
+\DoxyCodeLine{00131\ \ \ \ \ QJsonObject\ connJson;}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \ \ \ \ connJson[\textcolor{stringliteral}{"{}outNodeId"{}}]\ =\ \textcolor{keyword}{static\_cast<}qint64\textcolor{keyword}{>}(connId.outNodeId);}
+\DoxyCodeLine{00134\ \ \ \ \ connJson[\textcolor{stringliteral}{"{}outPortIndex"{}}]\ =\ \textcolor{keyword}{static\_cast<}qint64\textcolor{keyword}{>}(connId.outPortIndex);}
+\DoxyCodeLine{00135\ \ \ \ \ connJson[\textcolor{stringliteral}{"{}intNodeId"{}}]\ =\ \textcolor{keyword}{static\_cast<}qint64\textcolor{keyword}{>}(connId.inNodeId);}
+\DoxyCodeLine{00136\ \ \ \ \ connJson[\textcolor{stringliteral}{"{}inPortIndex"{}}]\ =\ \textcolor{keyword}{static\_cast<}qint64\textcolor{keyword}{>}(connId.inPortIndex);}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \ \ \ \ \textcolor{keywordflow}{return}\ connJson;}
+\DoxyCodeLine{00139\ \}}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \textcolor{keyword}{inline}\ ConnectionId\ fromJson(QJsonObject\ \textcolor{keyword}{const}\ \&connJson)}
+\DoxyCodeLine{00142\ \{}
+\DoxyCodeLine{00143\ \ \ \ \ ConnectionId\ connId\{\textcolor{keyword}{static\_cast<}\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{NodeId}}\textcolor{keyword}{>}(connJson[\textcolor{stringliteral}{"{}outNodeId"{}}].toInt(InvalidNodeId)),}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static\_cast<}PortIndex\textcolor{keyword}{>}(connJson[\textcolor{stringliteral}{"{}outPortIndex"{}}].toInt(InvalidPortIndex)),}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{NodeId}}\textcolor{keyword}{>}(connJson[\textcolor{stringliteral}{"{}intNodeId"{}}].toInt(InvalidNodeId)),}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static\_cast<}PortIndex\textcolor{keyword}{>}(connJson[\textcolor{stringliteral}{"{}inPortIndex"{}}].toInt(InvalidPortIndex))\};}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keywordflow}{return}\ connId;}
+\DoxyCodeLine{00149\ \}}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \}\ \textcolor{comment}{//\ namespace\ QtNodes}}
+
+\end{DoxyCode}

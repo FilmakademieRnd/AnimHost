@@ -1,0 +1,10 @@
+<map id="Ort::TrainingSession::ExportModelForInferencing" name="Ort::TrainingSession::ExportModelForInferencing">
+<area shape="rect" id="Node000001" title="Export a model that can be used for inferencing." alt="" coords="5,29,189,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="58,29,56,19,63,10,76,5,97,3,119,5,132,11,130,16,118,10,97,8,78,10,66,15,61,21,63,28"/>
+<area shape="rect" id="Node000002" href="$namespace_ort.html#af2b7b25419c1fbfa0f18a35f7cadf5e3" title="This function returns the C training api struct with the pointers to the ort training C functions...." alt="" coords="237,37,369,64"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="189,48,221,48,221,53,189,53"/>
+<area shape="rect" id="Node000003" href="$namespace_ort.html#a296b5958479d9889218b17bdb08c1894" title="This returns a reference to the OrtApi interface in use." alt="" coords="449,12,536,39"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="369,39,433,31,434,36,370,44"/>
+<area shape="rect" id="Node000004" href="$struct_ort_api.html#ac714d93e08c879793e642e7427a86546" title="Gets the Training C Api struct." alt="" coords="417,63,568,89"/>
+<area shape="poly" id="edge4_Node000002_Node000004" title=" " alt="" coords="370,57,402,61,401,66,369,62"/>
+</map>

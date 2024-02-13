@@ -1,0 +1,78 @@
+\doxysection{Ort\+::detail\+::Type\+Info\+Impl\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>} Struct Template Reference}
+\hypertarget{struct_ort_1_1detail_1_1_type_info_impl}{}\label{struct_ort_1_1detail_1_1_type_info_impl}\index{Ort::detail::TypeInfoImpl$<$ T $>$@{Ort::detail::TypeInfoImpl$<$ T $>$}}
+
+
+Inheritance diagram for Ort\+::detail\+::Type\+Info\+Impl\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>}\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=222pt]{struct_ort_1_1detail_1_1_type_info_impl__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Ort\+::detail\+::Type\+Info\+Impl\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>}\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=222pt]{struct_ort_1_1detail_1_1_type_info_impl__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_1_1detail_1_1_type_info_impl_ad3e8160865a0181733b5fc7a03031c7c}\label{struct_ort_1_1detail_1_1_type_info_impl_ad3e8160865a0181733b5fc7a03031c7c} 
+using {\bfseries B} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}$<$T$>$
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+using {\bfseries contained\+\_\+type} = T
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_1_1detail_1_1_type_info_impl_ae8a04cbdf738ff1760f48c4d4936630b}\label{struct_ort_1_1detail_1_1_type_info_impl_ae8a04cbdf738ff1760f48c4d4936630b} 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl}{Const\+Tensor\+Type\+And\+Shape\+Info}} {\bfseries Get\+Tensor\+Type\+And\+Shape\+Info} () const
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Cast\+Type\+Info\+To\+Tensor\+Info. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1detail_1_1_type_info_impl_a7379ced5d9630d56c7bb16bac787a2df}\label{struct_ort_1_1detail_1_1_type_info_impl_a7379ced5d9630d56c7bb16bac787a2df} 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_sequence_type_info_impl}{Const\+Sequence\+Type\+Info}} {\bfseries Get\+Sequence\+Type\+Info} () const
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Cast\+Type\+Info\+To\+Sequence\+Type\+Info. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1detail_1_1_type_info_impl_adb868f98b531c397a0efc5eef7575767}\label{struct_ort_1_1detail_1_1_type_info_impl_adb868f98b531c397a0efc5eef7575767} 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_map_type_info_impl}{Const\+Map\+Type\+Info}} {\bfseries Get\+Map\+Type\+Info} () const
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Cast\+Type\+Info\+To\+Map\+Type\+Info. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1detail_1_1_type_info_impl_ae5cc0b0f4d0e4b9f84defe2a82c93eaa}\label{struct_ort_1_1detail_1_1_type_info_impl_ae5cc0b0f4d0e4b9f84defe2a82c93eaa} 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_optional_type_info_impl}{Const\+Optional\+Type\+Info}} {\bfseries Get\+Optional\+Type\+Info} () const
+\begin{DoxyCompactList}\small\item\em wraps Ort\+Api\+::\+Cast\+Type\+Info\+To\+Optional\+Type\+Info \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1detail_1_1_type_info_impl_a4567504274044ce5cb18744d15a315f5}\label{struct_ort_1_1detail_1_1_type_info_impl_a4567504274044ce5cb18744d15a315f5} 
+ONNXType {\bfseries Get\+ONNXType} () const
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+constexpr {\bfseries Base} (contained\+\_\+type \texorpdfstring{$\ast$}{*}p) noexcept
+\item 
+{\bfseries Base} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+{\bfseries Base} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+constexpr {\bfseries operator contained\+\_\+type \texorpdfstring{$\ast$}{*}} () const noexcept
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries release} ()
+\begin{DoxyCompactList}\small\item\em Relinquishes ownership of the contained C object pointer The underlying object is not destroyed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries p\+\_\+} \{\}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+api.\+h\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+inline.\+h\end{DoxyCompactItemize}

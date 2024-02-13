@@ -1,0 +1,19 @@
+var searchData=
+[
+  ['onnxtensorelementdatatype_0',['ONNXTensorElementDataType',['../group___global.html#ga0d04d16a7a0be0e6539120fad0853e73',1,'onnxruntime_c_api.h']]],
+  ['ortallocator_1',['OrtAllocator',['../group___global.html#gaaf2f329757284710ba67019b701e3fa4',1,'onnxruntime_c_api.h']]],
+  ['ortcudaprovideroptions_2',['OrtCUDAProviderOptions',['../group___global.html#ga92e7b1ca5ba918fe0846597242edc89a',1,'onnxruntime_c_api.h']]],
+  ['ortcudnnconvalgosearch_3',['OrtCudnnConvAlgoSearch',['../group___global.html#ga3bba786009db67b66fac8d266f4d964e',1,'onnxruntime_c_api.h']]],
+  ['ortcustomcreatethreadfn_4',['OrtCustomCreateThreadFn',['../group___global.html#gae0957b6ccebab677893b6155dcb744e5',1,'onnxruntime_c_api.h']]],
+  ['ortcustomjointhreadfn_5',['OrtCustomJoinThreadFn',['../group___global.html#ga2d123bc5dd929c1cb520e7b872fbfd0e',1,'onnxruntime_c_api.h']]],
+  ['ortlanguageprojection_6',['OrtLanguageProjection',['../group___global.html#gab5d644dee3e2ef757488dfd53c42965d',1,'onnxruntime_c_api.h']]],
+  ['ortlogginglevel_7',['OrtLoggingLevel',['../group___global.html#gadd0502cc290086b2873852ad8d28892e',1,'onnxruntime_c_api.h']]],
+  ['ortmemoryinfodevicetype_8',['OrtMemoryInfoDeviceType',['../group___global.html#gaca40ba79b31eb7b045393729b3e49b36',1,'onnxruntime_c_api.h']]],
+  ['ortmemtype_9',['OrtMemType',['../group___global.html#ga0582d2cc9e982e1200a09c95a0091b54',1,'onnxruntime_c_api.h']]],
+  ['ortmigraphxprovideroptions_10',['OrtMIGraphXProviderOptions',['../group___global.html#ga568e099b9b8773d19888f1056e36e4c3',1,'onnxruntime_c_api.h']]],
+  ['ortopenvinoprovideroptions_11',['OrtOpenVINOProviderOptions',['../group___global.html#ga27cf2de44686b8a8eef4898283036ba8',1,'onnxruntime_c_api.h']]],
+  ['ortpropertytype_12',['OrtPropertyType',['../group___training_c.html#ga17b3a9bcbd2b93417c7c009086b1bf5b',1,'onnxruntime_training_c_api.h']]],
+  ['ortrocmprovideroptions_13',['OrtROCMProviderOptions',['../group___global.html#gab56e891390d5cf19d0bf5b1a8374c09d',1,'onnxruntime_c_api.h']]],
+  ['orttensorrtprovideroptions_14',['OrtTensorRTProviderOptions',['../group___global.html#gabc0152b181a6aafc6486dec79a9c81b3',1,'onnxruntime_c_api.h']]],
+  ['ortthreadworkerfn_15',['OrtThreadWorkerFn',['../group___global.html#ga95488b4658864375588df3c3842ddd2b',1,'onnxruntime_c_api.h']]]
+];

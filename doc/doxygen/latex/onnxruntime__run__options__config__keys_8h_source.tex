@@ -1,0 +1,38 @@
+\doxysection{onnxruntime\+\_\+run\+\_\+options\+\_\+config\+\_\+keys.\+h}
+\hypertarget{onnxruntime__run__options__config__keys_8h_source}{}\label{onnxruntime__run__options__config__keys_8h_source}\index{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost\_Plugins/BasicOnnxPlugin/onnxruntime/include/onnxruntime\_run\_options\_config\_keys.h@{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost\_Plugins/BasicOnnxPlugin/onnxruntime/include/onnxruntime\_run\_options\_config\_keys.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ Microsoft\ Corporation.\ All\ rights\ reserved.}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Licensed\ under\ the\ MIT\ License.}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ This\ file\ defines\ RunOptions\ Config\ Keys\ and\ format\ of\ the\ Config\ Values.}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ The\ Naming\ Convention\ for\ a\ RunOptions\ Config\ Key,}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ "{}[Area][.[SubArea1].[SubArea2]...].[Keyname]"{}}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ Such\ as\ "{}ep.cuda.use\_arena"{}}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ The\ Config\ Key\ cannot\ be\ empty}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ The\ maximum\ length\ of\ the\ Config\ Key\ is\ 128}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ The\ string\ format\ of\ a\ RunOptions\ Config\ Value\ is\ defined\ individually\ for\ each\ Config.}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ The\ maximum\ length\ of\ the\ Config\ Value\ is\ 1024}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ Key\ for\ enabling\ shrinkages\ of\ user\ listed\ device\ memory\ arenas.}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ Expects\ a\ list\ of\ semi-\/colon\ separated\ key\ value\ pairs\ separated\ by\ colon\ in\ the\ following\ format:}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ "{}device\_0:device\_id\_0;device\_1:device\_id\_1"{}}}
+\DoxyCodeLine{00022\ \textcolor{comment}{//\ No\ white-\/spaces\ allowed\ in\ the\ provided\ list\ string.}}
+\DoxyCodeLine{00023\ \textcolor{comment}{//\ Currently,\ the\ only\ supported\ devices\ are\ :\ "{}cpu"{},\ "{}gpu"{}\ (case\ sensitive).}}
+\DoxyCodeLine{00024\ \textcolor{comment}{//\ If\ "{}cpu"{}\ is\ included\ in\ the\ list,\ DisableCpuMemArena()\ API\ must\ not\ be\ called\ (i.e.)\ arena\ for\ cpu\ should\ be\ enabled.}}
+\DoxyCodeLine{00025\ \textcolor{comment}{//\ Example\ usage:\ "{}cpu:0;gpu:0"{}\ (or)\ "{}gpu:0"{}}}
+\DoxyCodeLine{00026\ \textcolor{comment}{//\ By\ default,\ the\ value\ for\ this\ key\ is\ empty\ (i.e.)\ no\ memory\ arenas\ are\ shrunk}}
+\DoxyCodeLine{00027\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtRunOptionsConfigEnableMemoryArenaShrinkage\ =\ \textcolor{stringliteral}{"{}memory.enable\_memory\_arena\_shrinkage"{}};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{comment}{//\ Set\ to\ '1'\ to\ not\ synchronize\ execution\ providers\ with\ CPU\ at\ the\ end\ of\ session\ run.}}
+\DoxyCodeLine{00030\ \textcolor{comment}{//\ Per\ default\ it\ will\ be\ set\ to\ '0'}}
+\DoxyCodeLine{00031\ \textcolor{comment}{//\ Taking\ CUDA\ EP\ as\ an\ example,\ it\ omit\ triggering\ cudaStreamSynchronize\ on\ the\ compute\ stream.}}
+\DoxyCodeLine{00032\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtRunOptionsConfigDisableSynchronizeExecutionProviders\ =\ \textcolor{stringliteral}{"{}disable\_synchronize\_execution\_providers"{}};}
+
+\end{DoxyCode}

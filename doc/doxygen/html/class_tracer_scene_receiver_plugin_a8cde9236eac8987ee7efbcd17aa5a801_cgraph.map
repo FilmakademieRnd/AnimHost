@@ -1,0 +1,30 @@
+<map id="TracerSceneReceiverPlugin::TracerSceneReceiverPlugin" name="TracerSceneReceiverPlugin::TracerSceneReceiverPlugin">
+<area shape="rect" id="Node000001" title="Default constructor." alt="" coords="5,356,193,399"/>
+<area shape="rect" id="Node000002" href="$class_scene_receiver.html#aac3081441382c20e9e0a0153600816c8" title="Signal emitted to pass the character byte sequence onto the main thread." alt="" coords="262,5,461,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,355,113,296,138,216,156,173,179,131,206,92,239,58,247,52,250,56,242,62,210,95,183,134,161,175,143,218,118,297,106,356"/>
+<area shape="rect" id="Node000003" href="$class_scene_receiver.html#aa713ed100e236db310a580860bcdaf99" title="Signal emitted to pass the header byte sequence onto the main thread." alt="" coords="269,72,454,115"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="104,355,120,307,147,245,186,180,211,150,239,125,254,115,257,119,242,129,215,154,191,183,152,247,125,309,109,356"/>
+<area shape="rect" id="Node000004" href="$class_scene_receiver.html#a18608812fc2d995b59b2f9cf6aaf11d8" title="Signal emitted to pass the scene node byte sequence onto the main thread." alt="" coords="271,139,452,181"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="109,354,128,318,157,274,195,229,239,191,256,182,259,186,242,196,198,233,162,278,133,321,113,357"/>
+<area shape="rect" id="Node000005" href="$class_tracer_scene_receiver_plugin.html#ab1e405ddb3dd4e68b33b0171fd79d03f" title="Processing the character byte sequence received from the external TRACER client." alt="" coords="269,205,454,248"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="121,353,173,309,239,264,267,251,269,256,242,269,176,313,125,357"/>
+<area shape="rect" id="Node000006" href="$class_tracer_scene_receiver_plugin.html#acec6e17784ef561a21b8ac0a97e0922f" title="Triggers requesting scene description data." alt="" coords="530,231,709,273"/>
+<area shape="poly" id="edge14_Node000001_Node000006" title=" " alt="" coords="137,353,185,329,240,308,310,290,382,275,514,257,515,263,383,280,311,295,241,313,187,334,140,358"/>
+<area shape="rect" id="Node000007" href="$class_tracer_scene_receiver_plugin.html#a7318b9852769faec0e570313b978f792" title="Processing the header byte sequence received from the external TRACER client." alt="" coords="272,323,451,365"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="193,363,256,355,257,360,193,368"/>
+<area shape="rect" id="Node000009" href="$class_tracer_scene_receiver_plugin.html#a39dd3d121f61da13d46cdc2920e0b2f1" title="Processing the scene node byte sequence received from the external TRACER client." alt="" coords="263,389,460,432"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="193,387,248,394,247,399,193,392"/>
+<area shape="rect" id="Node000010" href="$class_scene_receiver.html#a2db842fc1829d7e51ddeb3d5313fe99d" title="Requesting the Character Package list in the TRACER client scene." alt="" coords="241,456,482,483"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="141,397,188,420,242,441,268,449,267,454,240,447,186,425,139,402"/>
+<area shape="rect" id="Node000011" href="$class_tracer_scene_receiver_plugin.html#a318e46eb148e14de50f54d7713f7dcdd" title="Triggers requesting scene character data." alt="" coords="272,507,451,549"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="122,397,174,445,207,471,242,492,258,500,256,505,239,497,204,475,170,449,119,401"/>
+<area shape="rect" id="Node000012" href="$class_scene_receiver.html#a45af17186a57bc5a1793ee469ca20965" title="Requesting the header data containing global information of the TRACER client." alt="" coords="248,573,475,600"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="113,398,132,434,161,478,198,522,242,559,251,564,249,569,239,564,194,526,156,481,127,436,108,400"/>
+<area shape="rect" id="Node000013" href="$class_tracer_scene_receiver_plugin.html#af6e5beec2eaa2365f17a65ff4e1bbb60" title="Triggers requesting scene header data." alt="" coords="272,624,451,667"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="110,398,127,443,154,500,193,560,216,587,242,610,259,621,256,625,239,614,212,590,188,563,149,503,122,445,105,400"/>
+<area shape="rect" id="Node000014" href="$class_scene_receiver.html#a7fe0337bb60eb6dcd7c41fe0c42d50dc" title="Requesting the SceneNode list in the TRACER client scene." alt="" coords="264,691,459,733"/>
+<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="107,399,120,455,145,530,163,570,185,609,211,645,242,677,252,683,248,688,239,681,207,649,181,612,158,573,140,532,115,456,101,400"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="455,233,515,239,514,244,454,238"/>
+<area shape="rect" id="Node000008" href="$class_z_m_q_message_handler.html#a66c59a2eb9f3975521948e5471ce3e37" title="Sets the ID of the client that is supposed to receive the update." alt="" coords="543,323,697,365"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="451,341,527,341,527,347,451,347"/>
+</map>

@@ -1,0 +1,55 @@
+\doxysection{Operating\+System.\+hpp}
+\hypertarget{_operating_system_8hpp_source}{}\label{_operating_system_8hpp_source}\index{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/core/QTNodes/include/QtNodes/internal/OperatingSystem.hpp@{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/core/QTNodes/include/QtNodes/internal/OperatingSystem.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#if\ defined(\_\_CYGWIN\_\_)\ ||\ defined(\_\_CYGWIN32\_\_)}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\ "{}Cygwin"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\_CYGWIN}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\_UNIX}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\_WINDOWS}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#elif\ defined(\_WIN16)\ ||\ defined(\_WIN32)\ ||\ defined(\_WIN64)\ ||\ defined(\_\_WIN32\_\_)\ \(\backslash\)}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\ \ \ \ ||\ defined(\_\_TOS\_WIN\_\_)\ ||\ defined(\_\_WINDOWS\_\_)}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\ "{}Windows"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\_WINDOWS}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#elif\ defined(macintosh)\ ||\ defined(Macintosh)\ ||\ defined(\_\_TOS\_MACOS\_\_)\ \(\backslash\)}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\ \ \ \ ||\ (defined(\_\_APPLE\_\_)\ \&\&\ defined(\_\_MACH\_\_))}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\ "{}Mac"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\_MAC}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\_UNIX}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#elif\ defined(linux)\ ||\ defined(\_\_linux)\ ||\ defined(\_\_linux\_\_)\ ||\ defined(\_\_TOS\_LINUX\_\_)}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\ "{}Linux"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\_LINUX}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\_UNIX}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#elif\ defined(\_\_FreeBSD\_\_)\ ||\ defined(\_\_OpenBSD\_\_)\ ||\ defined(\_\_NetBSD\_\_)\ ||\ defined(\_\_bsdi\_\_)\ \(\backslash\)}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\ \ \ \ ||\ defined(\_\_DragonFly\_\_)}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\ "{}BSD"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\_BSD}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\_UNIX}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#elif\ defined(sun)\ ||\ defined(\_\_sun)}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\ "{}Solaris"{}}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\_SOLARIS}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\_UNIX}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#elif\ defined(\_AIX)\ ||\ defined(\_\_TOS\_AIX\_\_)}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\ "{}AIX"{}}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\_AIX}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\_UNIX}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#elif\ defined(hpux)\ ||\ defined(\_hpux)\ ||\ defined(\_\_hpux)}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\ "{}HPUX"{}}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\_HPUX}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\_UNIX}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#elif\ defined(\_\_QNX\_\_)}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\ "{}QNX"{}}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\_QNX}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\_UNIX}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#elif\ defined(unix)\ ||\ defined(\_\_unix)\ ||\ defined(\_\_unix\_\_)}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\ "{}Unix"{}}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#define\ NODE\_EDITOR\_PLATFORM\_UNIX}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#ifndef\ NODE\_EDITOR\_PLATFORM}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#error\ "{}Current\ platform\ is\ not\ supported."{}}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

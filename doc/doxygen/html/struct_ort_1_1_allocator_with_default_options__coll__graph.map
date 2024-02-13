@@ -1,0 +1,7 @@
+<map id="Ort::AllocatorWithDefaultOptions" name="Ort::AllocatorWithDefaultOptions">
+<area shape="rect" id="Node000001" title="Wrapper around OrtAllocator default instance that is owned by Onnxruntime." alt="" coords="38,171,203,213"/>
+<area shape="rect" id="Node000002" href="$struct_ort_1_1detail_1_1_allocator_impl.html" title=" " alt="" coords="5,80,236,123"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="123,138,123,170,118,170,118,138"/>
+<area shape="rect" id="Node000003" href="$struct_ort_1_1detail_1_1_base.html" title="Used internally by the C++ API. C++ wrapper types inherit from this. This is a zero cost abstraction ..." alt="" coords="47,5,194,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="123,48,123,80,118,80,118,48"/>
+</map>

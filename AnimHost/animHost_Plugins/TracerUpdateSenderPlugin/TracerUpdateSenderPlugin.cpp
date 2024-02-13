@@ -17,12 +17,7 @@ TracerUpdateSenderPlugin::TracerUpdateSenderPlugin()
     _ipAddress = nullptr;
     _ipValidator = nullptr;
 
-    timer = new QTimer();
-    timer->setTimerType(Qt::PreciseTimer);
-    timer->start(0);
     _updateSenderContext = new zmq::context_t(1);
-
-    localTime = timer->interval() % 120;
 
     if (!msgSender) // trying to avoid multiple instances
         msgSender = new AnimHostMessageSender(false, _updateSenderContext);
@@ -52,7 +47,6 @@ TracerUpdateSenderPlugin::~TracerUpdateSenderPlugin()
     if (msgSender)
         msgSender->~AnimHostMessageSender();
     _updateSenderContext->close();
-    timer->stop();
 
     qDebug() << "~TracerUpdateSenderPlugin()";
 }
@@ -120,6 +114,11 @@ void TracerUpdateSenderPlugin::processInData(std::shared_ptr<NodeData> data, QtN
 void TracerUpdateSenderPlugin::run() {
     qDebug() << "TracerUpdateSenderPlugin running...";
 
+    if (!zeroMQTickReceiverThread->isRunning()) {
+        tickReceiver->requestStart();
+        zeroMQTickReceiverThread->start();
+    }
+
     // every time the buffer is **predicted to be** half-read, fill the next half buffer
     // TO BE UNCOMMENTED AS SOON AS I RECEIVE bufferSize and renderingFrameRate from receiver
     /*if (localTime % (bufferReadTime / 2) == 0) {
@@ -130,13 +129,12 @@ void TracerUpdateSenderPlugin::run() {
 // When TICK is received message sender is enabled
 // This Tick-Slot is connected to the Tick-Signal in the TickRecieverThread
 void TracerUpdateSenderPlugin::ticked(int externalTime) {
-    if (std::abs(externalTime - localTime) > 50) {
-        localTime = externalTime;
-        timer->stop();
-        timer->start(localTime);
+    if (std::abs(externalTime - ZMQMessageHandler::getLocalTimeStamp()) > 20) {
+        // Set the new timestamp
+        ZMQMessageHandler::setLocalTimeStamp(externalTime);
+        // Start the local clock with the same interval (timeout callback called N times a second, where N is the playback frame rate set from the TRACER Application)
+        ZMQMessageHandler::localTick->start(1000/ZMQMessageHandler::getPlaybackFrameRate());
     }
-    if(zeroMQSenderThread->isRunning())
-        msgSender->resume();
 }
 
 std::shared_ptr<NodeData> TracerUpdateSenderPlugin::outData(QtNodes::PortIndex port)
@@ -239,7 +237,7 @@ void TracerUpdateSenderPlugin::onButtonClicked() {
         msgSender->requestStart();
         zeroMQSenderThread->start();
     } else {
-        msgSender->resume();
+        //msgSender->resumeSendFrames();
     }   
 
     // Example of message creation

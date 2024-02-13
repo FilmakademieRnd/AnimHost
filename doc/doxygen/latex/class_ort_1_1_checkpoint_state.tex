@@ -1,0 +1,227 @@
+\doxysection{Ort\+::Checkpoint\+State Class Reference}
+\hypertarget{class_ort_1_1_checkpoint_state}{}\label{class_ort_1_1_checkpoint_state}\index{Ort::CheckpointState@{Ort::CheckpointState}}
+
+
+Holds the state of the training session.  
+
+
+
+
+{\ttfamily \#include $<$onnxruntime\+\_\+training\+\_\+cxx\+\_\+api.\+h$>$}
+
+
+
+Inheritance diagram for Ort\+::Checkpoint\+State\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=194pt]{class_ort_1_1_checkpoint_state__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Ort\+::Checkpoint\+State\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=194pt]{class_ort_1_1_checkpoint_state__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_ort_1_1_checkpoint_state_aab8f0755f677739dd1335b006a59f59e}\label{class_ort_1_1_checkpoint_state_aab8f0755f677739dd1335b006a59f59e} 
+{\bfseries Checkpoint\+State} (Ort\+Checkpoint\+State \texorpdfstring{$\ast$}{*}checkpoint\+\_\+state)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Accessing The Training Session State}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_ort_1_1_checkpoint_state_a18e12471a1f5eca44b8f2c15a7a7f801}{Add\+Property}} (const std\+::string \&property\+\_\+name, const Property \&property\+\_\+value)
+\begin{DoxyCompactList}\small\item\em Adds the given property to the checkpoint state. \end{DoxyCompactList}\item 
+Property \mbox{\hyperlink{class_ort_1_1_checkpoint_state_aea4163c2d1cefd73af25eb925aeeadc1}{Get\+Property}} (const std\+::string \&property\+\_\+name)
+\begin{DoxyCompactList}\small\item\em Gets the property value associated with the given name from the checkpoint state. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{class_ort_1_1_checkpoint_state}{Checkpoint\+State}} \mbox{\hyperlink{class_ort_1_1_checkpoint_state_a0afa164a5656c00f59c5f5bcab17dce2}{Load\+Checkpoint}} (const std\+::basic\+\_\+string$<$ ORTCHAR\+\_\+T $>$ \&path\+\_\+to\+\_\+checkpoint)
+\begin{DoxyCompactList}\small\item\em Load a checkpoint state from directory on disk into checkpoint\+\_\+state. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{class_ort_1_1_checkpoint_state_aeb65455e24b892fb64e2f375a86ddd4a}{Save\+Checkpoint}} (const \mbox{\hyperlink{class_ort_1_1_checkpoint_state}{Checkpoint\+State}} \&checkpoint\+\_\+state, const std\+::basic\+\_\+string$<$ ORTCHAR\+\_\+T $>$ \&path\+\_\+to\+\_\+checkpoint, const bool include\+\_\+optimizer\+\_\+state=false)
+\begin{DoxyCompactList}\small\item\em Save the given state to a checkpoint directory on disk. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ Ort\+Checkpoint\+State $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+using {\bfseries contained\+\_\+type}
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ Ort\+Checkpoint\+State $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+constexpr {\bfseries Base} (contained\+\_\+type \texorpdfstring{$\ast$}{*}p) noexcept
+\item 
+{\bfseries Base} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+{\bfseries Base} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+constexpr {\bfseries operator contained\+\_\+type \texorpdfstring{$\ast$}{*}} () const noexcept
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries release} ()
+\begin{DoxyCompactList}\small\item\em Relinquishes ownership of the contained C object pointer The underlying object is not destroyed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ Ort\+Checkpoint\+State $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries p\+\_\+}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Holds the state of the training session. 
+
+This class holds the entire training session state that includes model parameters, their gradients, optimizer parameters, and user properties. The \doxylink{class_ort_1_1_training_session}{Ort\+::\+Training\+Session} leverages the \doxylink{class_ort_1_1_checkpoint_state}{Ort\+::\+Checkpoint\+State} by accessing and updating the contained training state. \begin{DoxyNote}{Note}
+Note that the training session created with a checkpoint state uses this state to store the entire training state (including model parameters, its gradients, the optimizer states and the properties). The \doxylink{class_ort_1_1_training_session}{Ort\+::\+Training\+Session} does not hold a copy of the \doxylink{class_ort_1_1_checkpoint_state}{Ort\+::\+Checkpoint\+State} and as a result, it is required that the checkpoint state outlive the lifetime of the training session. 
+\end{DoxyNote}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_ort_1_1_checkpoint_state_a18e12471a1f5eca44b8f2c15a7a7f801}\label{class_ort_1_1_checkpoint_state_a18e12471a1f5eca44b8f2c15a7a7f801} 
+\index{Ort::CheckpointState@{Ort::CheckpointState}!AddProperty@{AddProperty}}
+\index{AddProperty@{AddProperty}!Ort::CheckpointState@{Ort::CheckpointState}}
+\doxysubsubsection{\texorpdfstring{AddProperty()}{AddProperty()}}
+{\footnotesize\ttfamily void Ort\+::\+Checkpoint\+State\+::\+Add\+Property (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{property\+\_\+name,  }\item[{const Property \&}]{property\+\_\+value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Adds the given property to the checkpoint state. 
+
+Runtime properties such as epoch, training step, best score, and others can be added to the checkpoint state by the user if they desire by calling this function with the appropriate property name and value. The given property name must be unique to be able to successfully add the property.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em property\+\_\+name} & Unique name of the property being added. \\
+\hline
+\mbox{\texttt{ in}}  & {\em property\+\_\+value} & Property value associated with the given name. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_ort_1_1_checkpoint_state_a18e12471a1f5eca44b8f2c15a7a7f801_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=188pt]{class_ort_1_1_checkpoint_state_a18e12471a1f5eca44b8f2c15a7a7f801_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_ort_1_1_checkpoint_state_aea4163c2d1cefd73af25eb925aeeadc1}\label{class_ort_1_1_checkpoint_state_aea4163c2d1cefd73af25eb925aeeadc1} 
+\index{Ort::CheckpointState@{Ort::CheckpointState}!GetProperty@{GetProperty}}
+\index{GetProperty@{GetProperty}!Ort::CheckpointState@{Ort::CheckpointState}}
+\doxysubsubsection{\texorpdfstring{GetProperty()}{GetProperty()}}
+{\footnotesize\ttfamily Property Ort\+::\+Checkpoint\+State\+::\+Get\+Property (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{property\+\_\+name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the property value associated with the given name from the checkpoint state. 
+
+Gets the property value from an existing entry in the checkpoint state. The property must exist in the checkpoint state to be able to retrieve it successfully.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em property\+\_\+name} & Unique name of the property being retrieved. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Property value associated with the given property name. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_ort_1_1_checkpoint_state_aea4163c2d1cefd73af25eb925aeeadc1_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=188pt]{class_ort_1_1_checkpoint_state_aea4163c2d1cefd73af25eb925aeeadc1_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_ort_1_1_checkpoint_state_a0afa164a5656c00f59c5f5bcab17dce2}\label{class_ort_1_1_checkpoint_state_a0afa164a5656c00f59c5f5bcab17dce2} 
+\index{Ort::CheckpointState@{Ort::CheckpointState}!LoadCheckpoint@{LoadCheckpoint}}
+\index{LoadCheckpoint@{LoadCheckpoint}!Ort::CheckpointState@{Ort::CheckpointState}}
+\doxysubsubsection{\texorpdfstring{LoadCheckpoint()}{LoadCheckpoint()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_ort_1_1_checkpoint_state}{Checkpoint\+State}} Ort\+::\+Checkpoint\+State\+::\+Load\+Checkpoint (\begin{DoxyParamCaption}\item[{const std\+::basic\+\_\+string$<$ ORTCHAR\+\_\+T $>$ \&}]{path\+\_\+to\+\_\+checkpoint }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Load a checkpoint state from directory on disk into checkpoint\+\_\+state. 
+
+This function will parse a checkpoint directory, pull relevant files and load the training state and return an instance of \doxylink{class_ort_1_1_checkpoint_state}{Ort\+::\+Checkpoint\+State}. This checkpoint state can then be used to create the training session by instantiating \doxylink{class_ort_1_1_training_session}{Ort\+::\+Training\+Session}. By doing so, the training session will resume training from the given checkpoint state.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em path\+\_\+to\+\_\+checkpoint} & Path to the checkpoint directory \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{class_ort_1_1_checkpoint_state}{Ort\+::\+Checkpoint\+State} object which holds the state of the training session parameters. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_ort_1_1_checkpoint_state_a0afa164a5656c00f59c5f5bcab17dce2_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=188pt]{class_ort_1_1_checkpoint_state_a0afa164a5656c00f59c5f5bcab17dce2_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_ort_1_1_checkpoint_state_aeb65455e24b892fb64e2f375a86ddd4a}\label{class_ort_1_1_checkpoint_state_aeb65455e24b892fb64e2f375a86ddd4a} 
+\index{Ort::CheckpointState@{Ort::CheckpointState}!SaveCheckpoint@{SaveCheckpoint}}
+\index{SaveCheckpoint@{SaveCheckpoint}!Ort::CheckpointState@{Ort::CheckpointState}}
+\doxysubsubsection{\texorpdfstring{SaveCheckpoint()}{SaveCheckpoint()}}
+{\footnotesize\ttfamily void Ort\+::\+Checkpoint\+State\+::\+Save\+Checkpoint (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_ort_1_1_checkpoint_state}{Checkpoint\+State}} \&}]{checkpoint\+\_\+state,  }\item[{const std\+::basic\+\_\+string$<$ ORTCHAR\+\_\+T $>$ \&}]{path\+\_\+to\+\_\+checkpoint,  }\item[{const bool}]{include\+\_\+optimizer\+\_\+state = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Save the given state to a checkpoint directory on disk. 
+
+This function serializes the provided checkpoint state to a directory on disk. This checkpoint can later be loaded by invoking \doxylink{class_ort_1_1_checkpoint_state_a0afa164a5656c00f59c5f5bcab17dce2}{Ort\+::\+Checkpoint\+State\+::\+Load\+Checkpoint} to resume training from this snapshot of the state.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em checkpoint\+\_\+state} & The checkpoint state to save. \\
+\hline
+\mbox{\texttt{ in}}  & {\em path\+\_\+to\+\_\+checkpoint} & Path to the checkpoint directory. \\
+\hline
+\mbox{\texttt{ in}}  & {\em include\+\_\+optimizer\+\_\+state} & Flag to indicate whether to save the optimizer state or not. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_ort_1_1_checkpoint_state_aeb65455e24b892fb64e2f375a86ddd4a_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=188pt]{class_ort_1_1_checkpoint_state_aeb65455e24b892fb64e2f375a86ddd4a_icgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+training\+\_\+cxx\+\_\+api.\+h\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+training\+\_\+cxx\+\_\+inline.\+h\end{DoxyCompactItemize}

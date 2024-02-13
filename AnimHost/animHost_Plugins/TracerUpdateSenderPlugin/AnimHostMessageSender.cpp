@@ -11,6 +11,7 @@ void AnimHostMessageSender::requestStart() {
     _working = true;
     _stop = false;
     _paused = false;
+    ZMQMessageHandler::localTick->start();
     qDebug() << "AnimHost Message Sender requested to start";// in Thread "<<thread()->currentThreadId();
 
     sendSocket = new zmq::socket_t(*context, zmq::socket_type::pub); // publisher socket
@@ -37,6 +38,7 @@ void AnimHostMessageSender::requestStop() {
 
 void AnimHostMessageSender::run() {
 
+    //ZMQMessageHandler::localTick->start(1000 / ZMQMessageHandler::getPlaybackFrameRate());
     //sendSocket = new zmq::socket_t(*context, zmq::socket_type::pub); // publisher socket
     sendSocket->connect(QString("tcp://127.0.0.1:5557").toLatin1().data());
 
@@ -49,82 +51,89 @@ void AnimHostMessageSender::run() {
     //zmq::message_t* tempMsg = new zmq::message_t();
     int type;
     size_t type_size = sizeof(type);
-    byte timestamp = 0;
-    while (_working) {
 
+    // Allows up- and down-sampling of the animation in order to keep the perceived speed the same even though the playback framerate is not the same
+    // w.r.t. the framerate, for which the animation was designed
+    deltaAnimFrame = (float)ZMQMessageHandler::getAnimFrameRate() / ZMQMessageHandler::getPlaybackFrameRate();
+
+    QByteArray* msgBodyAnim = new QByteArray();
+
+    // The length of the animation is defined by the bones that has the more frames
+    int animDataSize = 0;
+    for (Bone bone : animData->mBones) {
+        int boneFrames = bone.mRotationKeys.size();
+        if (boneFrames > animDataSize)
+            animDataSize = boneFrames;
+    }
+
+    int timestamp = INT_MIN;
+    float animFrame = 0;
+    while (_working) {
         // checks if process should be aborted
         mutex.lock();
         bool stop = _stop;
-        if (_paused)
-            waitCondition.wait(&mutex); // in this place, your thread will stop to execute until someone calls resume
-        else
-            _paused = true; // Execute once and pause at the beginning of next iteration of while-loop
         mutex.unlock();
 
-        bool msgIsExternal = false;
+        m_pauseMutex.lock();
+        sendFrameWaitCondition->wait(&m_pauseMutex);
+            
+        // Send Poses Sequentially from a KEYFRAMED animation
+        qDebug() << "Timer interval" << ZMQMessageHandler::localTick->interval() << "Timer status" << ZMQMessageHandler::localTick->remainingTime();
+        qDebug() << "LocalTimeStamp = " << ZMQMessageHandler::getLocalTimeStamp();
+        qDebug() << "AnimationFrame = " << animFrame;
 
-        QByteArray* msgBodyAnim = new QByteArray();
+        SerializePose(animData, charObj, sceneNodeList, msgBodyAnim, (int) animFrame);
+        //qDebug() << "animFrame =" << animFrame;
+        // Create ZMQ Message
+        // -> implemented in parent class because the message header is the same for all messages emitted from same client (not unique to parameter update messages)
+        createNewMessage(ZMQMessageHandler::getLocalTimeStamp(), ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
 
-        // The length of the animation is defined by the bones that has the more frames
-        int animDataSize = 0;
-        for (Bone bone : animData->mBones) {
-            int boneFrames = bone.mRotationKeys.size();
-            if (boneFrames > animDataSize)
-                animDataSize = boneFrames;
+        // Check message data
+        /*std::string debugOut;
+        char* debugDataArray = message->data();
+        for (int i = 0; i < message->size() / sizeof(char); i++) {
+            debugOut = debugOut + std::to_string(debugDataArray[i]) + " ";
+        }*/
+
+        sendSocket->getsockopt(ZMQ_TYPE, &type, &type_size);
+        //qDebug() << "Message size: " << message->size();
+        
+        // Sending message
+        int retunVal = sendSocket->send((void*) message->data(), message->size());
+        qDebug() << "Attempting SEND connection on" << ZMQMessageHandler::getOwnIP();
+        timestamp = ZMQMessageHandler::getLocalTimeStamp();
+
+        if (animDataSize == 1) {    // IF   the animation data contains only one frame
+            stop = true;            // THEN stop the loop even if the loop check is marked
         }
 
-        // Define duration single frame (default 17 = ~60fps) - [40 = 25fps] - [42 = ~24fps] - [33 = ~30fps]
-        int frameDurationMillisec = 17;
-        // In case the animation has a valid duration metadata, computing the duration of each frame
-        if (animData->mDuration > 0) {
-            frameDurationMillisec = (animData->mDuration * 1000) / animData->mDurationFrames;
+        if (animFrame >= animDataSize && loop) {    // IF   at the end of the animation AND LOOP is checked
+            animFrame = 0;                          // THEN restart streaming the animation
+        } else if (animFrame < animDataSize) {      // IF   the animation has not been fully sent
+            animFrame += deltaAnimFrame;            // THEN increase the frame count by the given delta (animFrameRate / playbackFrameRate)
+        } else {                                    // ELSE (the animation has been fully sent AND LOOP unchecked)
+            stop = true;                            //      stop the working loop
         }
+        // TODO: improving cleanup and re-connection for streaming animation again...and again...and again :)
+        
+        QThread::msleep(1);
 
-        // Send Poses Sequentially
-        for (int frame = 0; frame < animDataSize; frame++) {
-
-            SerializePose(animData, charObj, sceneNodeList, msgBodyAnim, frame);
-
-            byte timestamp = frame % 120;
-
-            // create ZMQ Message
-            // implemented in parent class because the message header is the same for all messages emitted from same client (not unique to parameter update messages)
-            createNewMessage(timestamp, ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
-
-            // Check message data
-            std::string debugOut;
-            char* debugDataArray = message->data();
-            for (int i = 0; i < message->size() / sizeof(char); i++) {
-                debugOut = debugOut + std::to_string(debugDataArray[i]) + " ";
-            }
-
-            sendSocket->getsockopt(ZMQ_TYPE, &type, &type_size);
-
-            qDebug() << "Message size: " << message->size();
-
-            // Sending message
-            int retunVal = sendSocket->send((void*) message->data(), message->size());
-            qDebug() << "Attempting SEND connection on" << ZMQMessageHandler::getOwnIP();
-
-            QThread::msleep(1);
-
-            // if loop enabled reset frame to 0 at the end of the animation (except when the animation has only one frame)
-            if (loop && frame > 0 && frame == animDataSize - 1)
-                frame = 0;
-        }
+        m_pauseMutex.unlock();
 
         if (stop) {
             qDebug() << "Stopping AnimHost Message Sender";// in Thread "<<thread()->currentThreadId();
             break;
         }
-        qDebug() << "AnimHostMessageSender Running";
-        QThread::yieldCurrentThread();
+        //qDebug() << "AnimHostMessageSender Running";
+        //QThread::yieldCurrentThread();
     }
 
     // Set _working to false -> process cannot be aborted anymore
     mutex.lock();
     _working = false;
     mutex.unlock();
+
+    QThread::yieldCurrentThread();
 
     qDebug() << "AnimHost Message Sender process stopped";// in Thread "<<thread()->currentThreadId();
 
@@ -188,7 +197,7 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
 
         std::vector<float> boneQuatVector = { boneQuat.x, boneQuat.y, boneQuat.z,  boneQuat.w }; // converting glm::quat in vector<float>
 
-        qDebug() << i << boneID << boneName << animData->mBones.at(animDataBoneID).mName << boneQuatVector;
+        //qDebug() << i << boneID << boneName << animData->mBones.at(animDataBoneID).mName << boneQuatVector;
 
         QByteArray msgBoneQuat = createMessageBody(targetSceneID, character->sceneObjectID, i + 3, ZMQMessageHandler::ParameterType::QUATERNION, boneQuatVector);
         byteArray->append(msgBoneQuat);

@@ -1,0 +1,5 @@
+<map id="TracerUpdateSenderPlugin::ticked" name="TracerUpdateSenderPlugin::ticked">
+<area shape="rect" id="Node000001" title="Slot called when the subthread responsible for receiving SYNC messages gets a message." alt="" coords="237,5,412,48"/>
+<area shape="rect" id="Node000002" href="$class_tracer_update_sender_plugin.html#a60da45d2340d52fd6e0f55a8e7b14cc2" title="Default constructor." alt="" coords="5,5,189,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="221,29,189,29,189,24,221,24"/>
+</map>

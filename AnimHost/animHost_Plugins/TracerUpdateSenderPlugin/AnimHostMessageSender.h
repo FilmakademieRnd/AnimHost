@@ -167,6 +167,24 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMe
     */
     bool loop = false;
 
+    //! The delta, by which the timestamp is increased for sending the next frame
+    /*!
+    * The default is 1, it's higher if the sent animation has a **lower** frame rate w.r.t. the target application
+    */
+    float deltaTimeStamp = 1;
+
+    //! The delta, by which the frame count is increased for selecting the next animation frame to be sent
+    /*!
+    * The default is 1, it's higher if the sent animation has a **higher** frame rate w.r.t. the target application
+    */
+    float deltaAnimFrame = 1;
+
+    //! The buffer slot, in which the first pose of the animation has to be written
+    /*!
+    * \todo To be received via handshake before starting pose streaming?
+    */
+    int initialOffset = 0;
+
     std::shared_ptr<Animation> animData = nullptr;                      //!< Animation data to be serialised and sent
     std::shared_ptr<CharacterObject> charObj = nullptr;                 //!< Character Object to which the animation will be applied
     std::shared_ptr<SceneNodeObjectSequence> sceneNodeList = nullptr;   //!< Description of the scene to be updated (contains the character that will be animated)

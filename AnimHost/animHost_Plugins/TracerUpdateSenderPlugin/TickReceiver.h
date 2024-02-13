@@ -106,25 +106,20 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
     void run() {
         // open socket
         receiveSocket = new zmq::socket_t(*context, zmq::socket_type::sub);
-        receiveSocket->connect(QString("tcp://" + ZMQMessageHandler::ownIP + ":5556").toLatin1().data());
-        receiveSocket->setsockopt(ZMQ_SUBSCRIBE, "client", 0);
-
-        zmq::pollitem_t pollItem = { static_cast<void*>(*receiveSocket), 0, ZMQ_POLLIN, 0 };
+        receiveSocket->connect(QString("tcp://127.0.0.1:5556").toLatin1().data());
+        receiveSocket->setsockopt(ZMQ_SUBSCRIBE, "");
 
         zmq::message_t recvMsg;
 
         while (_working) {
             qDebug() << "Waiting for SYNC message...";
-            // listen for tick
-            zmq::poll(&pollItem, 1, -1);
-            qDebug() << "Processing message...";
-
-            if (pollItem.revents & ZMQ_POLLIN) {
-                //try to receive a zeroMQ message
-                receiveSocket->recv(&recvMsg);
-            }
+            //try to receive zeroMQ messages
+            receiveSocket->recv(&recvMsg);
 
             if (recvMsg.size() > 0) {
+                
+                qDebug() << "Processing message...";
+
                 QByteArray msgArray = QByteArray((char*) recvMsg.data(), static_cast<int>(recvMsg.size())); // Convert message into explicit byte array
                 const MessageType msgType = static_cast<MessageType>(msgArray[2]);                          // Extract message type from byte array (always third byte)
 

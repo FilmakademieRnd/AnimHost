@@ -1,0 +1,93 @@
+\doxysection{Ort\+::Status Struct Reference}
+\hypertarget{struct_ort_1_1_status}{}\label{struct_ort_1_1_status}\index{Ort::Status@{Ort::Status}}
+
+
+The \doxylink{struct_ort_1_1_status}{Status} that holds ownership of Ort\+Status received from C API Use it to safely destroy Ort\+Status\texorpdfstring{$\ast$}{*} returned from the C API. Use appropriate constructors to construct an instance of a \doxylink{struct_ort_1_1_status}{Status} object from exceptions.  
+
+
+
+
+{\ttfamily \#include $<$onnxruntime\+\_\+cxx\+\_\+api.\+h$>$}
+
+
+
+Inheritance diagram for Ort\+::Status\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=173pt]{struct_ort_1_1_status__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Ort\+::Status\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=173pt]{struct_ort_1_1_status__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_1_1_status_af1b74eb88600899a54b4d1e937d0029f}\label{struct_ort_1_1_status_af1b74eb88600899a54b4d1e937d0029f} 
+{\bfseries Status} (std\+::nullptr\+\_\+t) noexcept
+\begin{DoxyCompactList}\small\item\em Create an empty object, must be assigned a valid one to be used. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1_status_a6fda7a8a715fb7ad88ac62fb2846e883}\label{struct_ort_1_1_status_a6fda7a8a715fb7ad88ac62fb2846e883} 
+{\bfseries Status} (Ort\+Status \texorpdfstring{$\ast$}{*}status) noexcept
+\begin{DoxyCompactList}\small\item\em Takes ownership of Ort\+Status instance returned from the C API. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1_status_a9f5ec7fb76b1b4e3e508b0315dfd20c5}\label{struct_ort_1_1_status_a9f5ec7fb76b1b4e3e508b0315dfd20c5} 
+{\bfseries Status} (const \mbox{\hyperlink{struct_ort_1_1_exception}{Exception}} \&) noexcept
+\begin{DoxyCompactList}\small\item\em Creates status instance out of exception. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1_status_abff266a0c43faa3685d460235939bc08}\label{struct_ort_1_1_status_abff266a0c43faa3685d460235939bc08} 
+{\bfseries Status} (const std\+::exception \&) noexcept
+\begin{DoxyCompactList}\small\item\em Creates status instance out of exception. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1_status_a1e051a3c83b72d716cd08cf4a6485a37}\label{struct_ort_1_1_status_a1e051a3c83b72d716cd08cf4a6485a37} 
+{\bfseries Status} (const char \texorpdfstring{$\ast$}{*}message, Ort\+Error\+Code code) noexcept
+\begin{DoxyCompactList}\small\item\em Creates status instance out of null-\/terminated string message. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1_status_a82e24c127b4b791a9075708a7b784f49}\label{struct_ort_1_1_status_a82e24c127b4b791a9075708a7b784f49} 
+std\+::string {\bfseries Get\+Error\+Message} () const
+\item 
+\Hypertarget{struct_ort_1_1_status_a19a0d483b009e0188971ddc9823922b2}\label{struct_ort_1_1_status_a19a0d483b009e0188971ddc9823922b2} 
+Ort\+Error\+Code {\bfseries Get\+Error\+Code} () const
+\item 
+\Hypertarget{struct_ort_1_1_status_a69459325c491143f034d7b19df08cbdf}\label{struct_ort_1_1_status_a69459325c491143f034d7b19df08cbdf} 
+bool {\bfseries Is\+OK} () const noexcept
+\begin{DoxyCompactList}\small\item\em Returns true if instance represents an OK (non-\/error) status. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ Ort\+Status $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+constexpr {\bfseries Base} (contained\+\_\+type \texorpdfstring{$\ast$}{*}p) noexcept
+\item 
+{\bfseries Base} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+{\bfseries Base} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+constexpr {\bfseries operator contained\+\_\+type \texorpdfstring{$\ast$}{*}} () const noexcept
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries release} ()
+\begin{DoxyCompactList}\small\item\em Relinquishes ownership of the contained C object pointer The underlying object is not destroyed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ Ort\+Status $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+using {\bfseries contained\+\_\+type}
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ Ort\+Status $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries p\+\_\+}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The \doxylink{struct_ort_1_1_status}{Status} that holds ownership of Ort\+Status received from C API Use it to safely destroy Ort\+Status\texorpdfstring{$\ast$}{*} returned from the C API. Use appropriate constructors to construct an instance of a \doxylink{struct_ort_1_1_status}{Status} object from exceptions. 
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+api.\+h\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+inline.\+h\end{DoxyCompactItemize}

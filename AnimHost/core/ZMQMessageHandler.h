@@ -53,6 +53,15 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
                                                                    + "(\\." + ipRangeRegex + ")"
                                                                    + "(\\." + ipRangeRegex + ")$");
 
+    static QTimer* localTick;   //!< Timer needed to keep sender and receiver in sync
+
+    //! Handles pause/resume specifically for the AnimationMessageSender subclass
+    /*!
+    * It's necessary to have the wait condition in the superclass in order to have access to it and unlock it every time the localTimeStamp is incremented.
+    * Every thread should have a dedicated wait condition in order to be able to wake them in the desired order.
+    */
+    static QWaitCondition* sendFrameWaitCondition;
+
     //! Request this process to start working
     /* \todo To be implemented in concrete class */
     virtual void requestStart() = 0; 
@@ -69,11 +78,11 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
         _debug = _debugState;
     }
 
-    //! Resumes main loop execution
+    //! Resumes the thread that is sending frames
     /*!
-     * Sets \c _paused to false and wakes all threads
+     * Sets \c _paused to false and wakes the specific thread that is waiting on the sendFrameWaitCondition
      */
-    void resume();
+    void resumeSendFrames();
 
     //! Pauses main loop execution
     /*!
@@ -144,6 +153,18 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
         return parameterDimension[parameterType];
     }
 
+    //! Increments the local timestamp
+    /*!
+    * Increments the local timestamp with the timing defined by the playback framerate (default is every ~17 msec = 60Hz).
+    * The timestamp always stays in the range 0-bufferSize (by default equals to 120).
+    */
+    static void increaseTimeStamp() {
+        localTimeStamp++;
+        localTimeStamp = localTimeStamp % bufferSize;
+
+        sendFrameWaitCondition->wakeAll();
+    }
+
     //! Gets the list of available IP Addresses
     static QList<QHostAddress> getIPList() {
         return ZMQMessageHandler::ipList;
@@ -193,6 +214,83 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
         return ZMQMessageHandler::targetSceneID;
     }
 
+    //! Sets the size of the client's buffer, to which the message will be written
+    /*!
+     * Static member function because it is supposed to update the size of the target buffer for all instances of \c ZMQMessageHandler subclasses,
+     * which can be created from different plugins in the Qt Application
+     */
+    static void setBufferSize(byte _bufferSize) {
+        ZMQMessageHandler::bufferSize = _bufferSize;
+    }
+
+    //! Returns the size of the client's buffer, to which the message will be written
+    /*!
+     * Static member function because it is supposed to return the same value for all instances of \c ZMQMessageHandler subclasses,
+     * which can be created from different plugins in the Qt Application.
+     */
+    static byte getBufferSize() {
+        return ZMQMessageHandler::bufferSize;
+    }
+
+    //! Sets the frame rate of the animation to be sent (default is 60 fps)
+    /*!
+     * Static member function because it is supposed to update the source-animation frame rate throughout all instances of \c ZMQMessageHandler subclasses,
+     * which can be created from different plugins in the Qt Application.
+     * The frame rate is used in the [AnimHostMessageSender](@ref AnimHostMessageSender) class in order to compute the timing for sending poses out.
+     */
+    static void setAnimFrameRate(byte _animFR) {
+        ZMQMessageHandler::animFrameRate = _animFR;
+    }
+
+    //! Returns the frame rate of the animation to be sent (default is 60 fps)
+    /*!
+     * Static member function because it is supposed to update the source-animation frame rate throughout all instances of \c ZMQMessageHandler subclasses,
+     * which can be created from different plugins in the Qt Application.
+     */
+    static byte getAnimFrameRate() {
+        return ZMQMessageHandler::animFrameRate;
+    }
+
+    //! Sets the frame rate of the rendering application (default is 60 fps)
+    /*!
+     * Static member function because it is supposed to update the target application frame rate throughout all instances of \c ZMQMessageHandler subclasses,
+     * which can be created from different plugins in the Qt Application.
+     * The frame rate is used in the [AnimHostMessageSender](@ref AnimHostMessageSender) class in order to compute the timing for sending poses out
+     * and the eventual sampling rate.
+     */
+    static void setPlaybackFrameRate(byte _renderFR) {
+        ZMQMessageHandler::playbackFrameRate = _renderFR;
+    }
+
+    //! Returns the frame rate of the rendering application (default is 60 fps)
+    /*!
+     * Static member function because it is supposed to update the rendering/receiving application frame rate throughout all instances of \c ZMQMessageHandler subclasses,
+     * which can be created from different plugins in the Qt Application.
+     */
+    static byte getPlaybackFrameRate() {
+        return ZMQMessageHandler::playbackFrameRate;
+    }
+
+    //! Sets the local current timestamp
+    /*!
+     * Static member function because it is supposed to update the timestamp throughout all instances of \c ZMQMessageHandler subclasses,
+     * which can be created from different plugins in the Qt Application.
+     * The timestamp is used in the [AnimHostMessageSender](@ref AnimHostMessageSender) class in order to write the next message in the right place in the buffer and
+     * it can be updated from the [TickReceiver](@ref TickReceiver), for example.
+     */
+    static void setLocalTimeStamp(byte _newTS) {
+        ZMQMessageHandler::localTimeStamp = _newTS % ZMQMessageHandler::bufferSize; // ensuring that the timestamp is in the interval 0-120
+    }
+
+    //! Returns the local current timestamp
+    /*!
+     * Static member function because it is supposed to update the rendering/receiving application frame rate throughout all instances of \c ZMQMessageHandler subclasses,
+     * which can be created from different plugins in the Qt Application.
+     */
+    static byte getLocalTimeStamp() {
+        return ZMQMessageHandler::localTimeStamp;
+    }
+
     //! Updates the currently selected IP address
     /*!
      * Updates the currently selected IP address, called when the selection in the drop-down menu in the UI of the TracerUpdateSender plugin changes
@@ -212,11 +310,11 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     /*!
      * Creates a 0MQ message, with a new header and overwrites the member variable \c message with the new one
      * \sa message
-     * \param[in]   time        Timestamp of the message; indicates where the message has to be placed in the input buffer of the receiver
+     * \param[in]   timestamp   The timestamp of the message
      * \param[in]   messageType The type of the mesage
      * \param[in]   body        The body of the message, with one or more concatenated payloads (depending on \c messageType)
      */
-    void createNewMessage(byte time, ZMQMessageHandler::MessageType messageType, QByteArray* body);
+    void createNewMessage(byte timestamp, ZMQMessageHandler::MessageType messageType, QByteArray* body);
 
     protected:
     
@@ -228,6 +326,11 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
 
     //! ID of the TRACER client that is supposed to receive the messages
     static byte targetSceneID;
+
+    static int bufferSize;          //!< Size of the receiving buffer (default = 120)
+    static int animFrameRate;       //!< Frame rate of the loaded or generated animation (default = 60fps)
+    static int playbackFrameRate;   //!< Frame rate used by the rendering application (default = 60fps)
+    static int localTimeStamp;      //!< Local current timestamp, where the next message will be placed in the receiver's buffer
     
     //! If true, the process gets stopped
     /*!
@@ -255,9 +358,7 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     * It avoids simultaneous changes to the executionstate variables from multiple processes
     */
     QMutex mutex;
-
-    //! Handles pause/resume signals
-    QWaitCondition waitCondition;
+    QMutex m_pauseMutex;
 
     //! 0MQ context pointer
     zmq::context_t* context = nullptr;

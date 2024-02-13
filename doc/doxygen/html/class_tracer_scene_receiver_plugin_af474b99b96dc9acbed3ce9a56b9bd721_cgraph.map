@@ -1,0 +1,11 @@
+<map id="TracerSceneReceiverPlugin::embeddedWidget" name="TracerSceneReceiverPlugin::embeddedWidget">
+<area shape="rect" id="Node000001" title="Initializes the plugin&#39;s UI elements." alt="" coords="5,56,185,99"/>
+<area shape="rect" id="Node000002" href="$class_tracer_scene_receiver_plugin.html#a9d81068544fe0a334dcdaead8d648bc5" title="Slot called when the &quot;Request Data&quot; button is clicked." alt="" coords="233,56,412,99"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="185,75,217,75,217,80,185,80"/>
+<area shape="rect" id="Node000003" href="$class_scene_receiver.html#a83bf02e624d24cfc6813699009945bf4" title="Opens a Request&#45;Receive communication socket." alt="" coords="460,5,662,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="411,53,488,34,490,39,413,58"/>
+<area shape="rect" id="Node000004" href="$class_tracer_scene_receiver_plugin.html#a318e46eb148e14de50f54d7713f7dcdd" title="Triggers requesting scene character data." alt="" coords="472,56,651,99"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="413,75,456,75,456,80,413,80"/>
+<area shape="rect" id="Node000005" href="$class_tracer_scene_receiver_plugin.html#af6e5beec2eaa2365f17a65ff4e1bbb60" title="Triggers requesting scene header data." alt="" coords="472,123,651,165"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="402,97,468,115,467,121,400,102"/>
+</map>

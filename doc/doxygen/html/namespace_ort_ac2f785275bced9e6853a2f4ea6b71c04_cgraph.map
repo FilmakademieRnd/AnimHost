@@ -1,0 +1,6 @@
+<map id="Ort::GetAvailableProviders" name="Ort::GetAvailableProviders">
+<area shape="rect" id="Node000001" title="This is a C++ wrapper for OrtApi::GetAvailableProviders() and returns a vector of strings representin..." alt="" coords="5,29,178,56"/>
+<area shape="poly" id="edge2_Node000001_Node000001" title=" " alt="" coords="61,30,56,21,59,11,72,5,92,3,113,5,124,12,122,16,111,10,91,8,73,10,63,15,61,20,66,28"/>
+<area shape="rect" id="Node000002" href="$namespace_ort.html#a296b5958479d9889218b17bdb08c1894" title="This returns a reference to the OrtApi interface in use." alt="" coords="226,29,313,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="178,40,210,40,210,45,178,45"/>
+</map>

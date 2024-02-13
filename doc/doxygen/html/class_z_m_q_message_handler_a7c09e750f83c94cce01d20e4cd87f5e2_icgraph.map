@@ -1,0 +1,9 @@
+<map id="ZMQMessageHandler::getOwnID" name="ZMQMessageHandler::getOwnID">
+<area shape="rect" id="Node000001" title="Returns the current Client ID of the AnimHost Qt Application." alt="" coords="685,5,840,48"/>
+<area shape="rect" id="Node000002" href="$class_z_m_q_message_handler.html#a58c28c32dfc7e15654c93729db4ea9df" title="Creates a new 0MQ formatted message." alt="" coords="483,5,637,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="670,29,637,29,637,24,670,24"/>
+<area shape="rect" id="Node000003" href="$class_anim_host_message_sender.html#a9b6353a89353c616330203b41df179fe" title="Main loop, executes all operations." alt="" coords="237,13,435,40"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="467,29,436,29,436,24,467,24"/>
+<area shape="rect" id="Node000004" href="$class_tracer_update_sender_plugin.html#a60da45d2340d52fd6e0f55a8e7b14cc2" title="Default constructor." alt="" coords="5,5,189,48"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="221,29,189,29,189,24,221,24"/>
+</map>

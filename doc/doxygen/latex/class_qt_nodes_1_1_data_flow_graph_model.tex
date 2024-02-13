@@ -1,0 +1,886 @@
+\doxysection{Qt\+Nodes\+::Data\+Flow\+Graph\+Model Class Reference}
+\hypertarget{class_qt_nodes_1_1_data_flow_graph_model}{}\label{class_qt_nodes_1_1_data_flow_graph_model}\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+
+
+Inheritance diagram for Qt\+Nodes\+::Data\+Flow\+Graph\+Model\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_qt_nodes_1_1_data_flow_graph_model__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Qt\+Nodes\+::Data\+Flow\+Graph\+Model\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_qt_nodes_1_1_data_flow_graph_model__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_qt_nodes_1_1_data_flow_graph_model_1_1_node_geometry_data}{Node\+Geometry\+Data}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Signals}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_aa99e3a9a65db75bac0b55cadcace3d7f}\label{class_qt_nodes_1_1_data_flow_graph_model_aa99e3a9a65db75bac0b55cadcace3d7f} 
+void {\bfseries in\+Port\+Data\+Was\+Set} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const)
+\item 
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a2b8bd91f7823e3cbcd0634cc0118c19e}\label{class_qt_nodes_1_1_data_flow_graph_model_a2b8bd91f7823e3cbcd0634cc0118c19e} 
+void {\bfseries embedded\+Widget\+Size\+Updated} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const)
+\item 
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_aa99e3a9a65db75bac0b55cadcace3d7f}\label{class_qt_nodes_1_1_data_flow_graph_model_aa99e3a9a65db75bac0b55cadcace3d7f} 
+void {\bfseries in\+Port\+Data\+Was\+Set} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const)
+\item 
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a2b8bd91f7823e3cbcd0634cc0118c19e}\label{class_qt_nodes_1_1_data_flow_graph_model_a2b8bd91f7823e3cbcd0634cc0118c19e} 
+void {\bfseries embedded\+Widget\+Size\+Updated} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const)
+\end{DoxyCompactItemize}
+\doxysubsection*{Signals inherited from \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}}
+\begin{DoxyCompactItemize}
+\item 
+void {\bfseries connection\+Created} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const connection\+Id)
+\item 
+void {\bfseries connection\+Deleted} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const connection\+Id)
+\item 
+void {\bfseries node\+Created} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id)
+\item 
+void {\bfseries node\+Deleted} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id)
+\item 
+void {\bfseries node\+Updated} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id)
+\item 
+void {\bfseries node\+Flags\+Updated} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id)
+\item 
+void {\bfseries node\+Position\+Updated} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id)
+\item 
+void {\bfseries model\+Reset} ()
+\item 
+void {\bfseries connection\+Created} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const connection\+Id)
+\item 
+void {\bfseries connection\+Deleted} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const connection\+Id)
+\item 
+void {\bfseries node\+Created} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id)
+\item 
+void {\bfseries node\+Deleted} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id)
+\item 
+void {\bfseries node\+Updated} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id)
+\item 
+void {\bfseries node\+Flags\+Updated} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id)
+\item 
+void {\bfseries node\+Position\+Updated} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id)
+\item 
+void {\bfseries model\+Reset} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a25b2bc984211208b055ae94b5343f83c}\label{class_qt_nodes_1_1_data_flow_graph_model_a25b2bc984211208b055ae94b5343f83c} 
+{\bfseries Data\+Flow\+Graph\+Model} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_registry}{Node\+Delegate\+Model\+Registry}} $>$ registry)
+\item 
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_af274249ab22e23e7ebe4f88e82c6818b}\label{class_qt_nodes_1_1_data_flow_graph_model_af274249ab22e23e7ebe4f88e82c6818b} 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_registry}{Node\+Delegate\+Model\+Registry}} $>$ {\bfseries data\+Model\+Registry} ()
+\item 
+std\+::unordered\+\_\+set$<$ \mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} $>$ \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a5922406bb3fe0c02c02e82863ed6374c}{all\+Node\+Ids}} () const override
+\begin{DoxyCompactList}\small\item\em Returns the full set of unique Node Ids. \end{DoxyCompactList}\item 
+std\+::unordered\+\_\+set$<$ \mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} $>$ \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_acced49a29c8b8fcd510c0a3e1fd037d6}{all\+Connection\+Ids}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id) const override
+\item 
+std\+::unordered\+\_\+set$<$ \mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} $>$ \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a062c3f2370b6d875121682b40ced6af4}{connections}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} node\+Id, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} port\+Index) const override
+\begin{DoxyCompactList}\small\item\em Returns all connected Node Ids for given port. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a1984c256357ee5622d769a8e091a5dab}{connection\+Exists}} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const connection\+Id) const override
+\begin{DoxyCompactList}\small\item\em Checks if two nodes with the given {\ttfamily connection\+Id} are connected. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a6972ef0939292fe34a8786f8245bdd92}{add\+Node}} (QString const node\+Type) override
+\begin{DoxyCompactList}\small\item\em Creates a new node instance in the derived class. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a96ce1e4acb79e2dff3521d2c745ee689}{connection\+Possible}} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const connection\+Id) const override
+\begin{DoxyCompactList}\small\item\em Model decides if a conection with a given connection Id possible. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_ab74944dc993e8b69739ed3b2b0199d47}{add\+Connection}} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const connection\+Id) override
+\begin{DoxyCompactList}\small\item\em Creates a new connection between two nodes. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a23ec795731696d51546484462f6f853e}{node\+Exists}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id) const override
+\item 
+QVariant \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_af349af13955142a2f2322487b8067988}{node\+Data}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} node\+Id, \mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596}{Node\+Role}} role) const override
+\begin{DoxyCompactList}\small\item\em Returns node-\/related data for requested Node\+Role. \end{DoxyCompactList}\item 
+Node\+Flags \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_ad77d31e2bfe562cafae6a30015caf42f}{node\+Flags}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} node\+Id) const override
+\item 
+bool \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a084453c0ba6a808021385b230af99a33}{set\+Node\+Data}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} node\+Id, \mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596}{Node\+Role}} role, QVariant value) override
+\begin{DoxyCompactList}\small\item\em Sets node properties. \end{DoxyCompactList}\item 
+QVariant \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_ad54054e2e731eeb4fdce18e488eae4e9}{port\+Data}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} node\+Id, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} port\+Index, \mbox{\hyperlink{_definitions_8hpp_af6d1882f3ed15bd00d36cce7f2093989}{Port\+Role}} role) const override
+\begin{DoxyCompactList}\small\item\em Returns port-\/related data for requested Node\+Role. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_ae12f816c9d4d8dddcbc3f3a15687759a}{set\+Port\+Data}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} node\+Id, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} port\+Index, QVariant const \&value, \mbox{\hyperlink{_definitions_8hpp_af6d1882f3ed15bd00d36cce7f2093989}{Port\+Role}} role=\mbox{\hyperlink{_definitions_8hpp_af6d1882f3ed15bd00d36cce7f2093989af6068daa29dbb05a7ead1e3b5a48bbee}{Port\+Role\+::\+Data}}) override
+\item 
+bool \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_ac5a05059ff5e9e7e2688b06327332bfc}{delete\+Connection}} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const connection\+Id) override
+\item 
+bool \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a7772d9b68738454363c959ed1778c9b0}{delete\+Node}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id) override
+\item 
+QJson\+Object \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a07556d53720721f2c1c304c7dea26a3c}{save\+Node}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const) const override
+\item 
+QJson\+Object \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_aeb5f52a56d8ba387fc67231eb20e087c}{save}} () const override
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_ae20d23ca78004893b10caa052e5556b6}{load\+Node}} (QJson\+Object const \&node\+Json) override
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_af4434972177f85bb1ffdd323207d6baa}{load}} (QJson\+Object const \&json) override
+\item 
+{\footnotesize template$<$typename Node\+Delegate\+Model\+Type $>$ }\\Node\+Delegate\+Model\+Type \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a3ff2a5c998afaf0ea053b7a1dd3f5a96}{delegate\+Model}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id)
+\item 
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a25b2bc984211208b055ae94b5343f83c}\label{class_qt_nodes_1_1_data_flow_graph_model_a25b2bc984211208b055ae94b5343f83c} 
+{\bfseries Data\+Flow\+Graph\+Model} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_registry}{Node\+Delegate\+Model\+Registry}} $>$ registry)
+\item 
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_af274249ab22e23e7ebe4f88e82c6818b}\label{class_qt_nodes_1_1_data_flow_graph_model_af274249ab22e23e7ebe4f88e82c6818b} 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_registry}{Node\+Delegate\+Model\+Registry}} $>$ {\bfseries data\+Model\+Registry} ()
+\item 
+std\+::unordered\+\_\+set$<$ \mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} $>$ \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a5922406bb3fe0c02c02e82863ed6374c}{all\+Node\+Ids}} () const override
+\begin{DoxyCompactList}\small\item\em Returns the full set of unique Node Ids. \end{DoxyCompactList}\item 
+std\+::unordered\+\_\+set$<$ \mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} $>$ \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_acced49a29c8b8fcd510c0a3e1fd037d6}{all\+Connection\+Ids}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id) const override
+\item 
+std\+::unordered\+\_\+set$<$ \mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} $>$ \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a062c3f2370b6d875121682b40ced6af4}{connections}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} node\+Id, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} port\+Index) const override
+\begin{DoxyCompactList}\small\item\em Returns all connected Node Ids for given port. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a1984c256357ee5622d769a8e091a5dab}{connection\+Exists}} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const connection\+Id) const override
+\begin{DoxyCompactList}\small\item\em Checks if two nodes with the given {\ttfamily connection\+Id} are connected. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a6972ef0939292fe34a8786f8245bdd92}{add\+Node}} (QString const node\+Type) override
+\begin{DoxyCompactList}\small\item\em Creates a new node instance in the derived class. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a96ce1e4acb79e2dff3521d2c745ee689}{connection\+Possible}} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const connection\+Id) const override
+\begin{DoxyCompactList}\small\item\em Model decides if a conection with a given connection Id possible. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_ab74944dc993e8b69739ed3b2b0199d47}{add\+Connection}} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const connection\+Id) override
+\begin{DoxyCompactList}\small\item\em Creates a new connection between two nodes. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a23ec795731696d51546484462f6f853e}{node\+Exists}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id) const override
+\item 
+QVariant \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_af349af13955142a2f2322487b8067988}{node\+Data}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} node\+Id, \mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596}{Node\+Role}} role) const override
+\begin{DoxyCompactList}\small\item\em Returns node-\/related data for requested Node\+Role. \end{DoxyCompactList}\item 
+Node\+Flags \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_ad77d31e2bfe562cafae6a30015caf42f}{node\+Flags}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} node\+Id) const override
+\item 
+bool \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a084453c0ba6a808021385b230af99a33}{set\+Node\+Data}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} node\+Id, \mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596}{Node\+Role}} role, QVariant value) override
+\begin{DoxyCompactList}\small\item\em Sets node properties. \end{DoxyCompactList}\item 
+QVariant \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_ad54054e2e731eeb4fdce18e488eae4e9}{port\+Data}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} node\+Id, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} port\+Index, \mbox{\hyperlink{_definitions_8hpp_af6d1882f3ed15bd00d36cce7f2093989}{Port\+Role}} role) const override
+\begin{DoxyCompactList}\small\item\em Returns port-\/related data for requested Node\+Role. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_ae12f816c9d4d8dddcbc3f3a15687759a}{set\+Port\+Data}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} node\+Id, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} port\+Index, QVariant const \&value, \mbox{\hyperlink{_definitions_8hpp_af6d1882f3ed15bd00d36cce7f2093989}{Port\+Role}} role=\mbox{\hyperlink{_definitions_8hpp_af6d1882f3ed15bd00d36cce7f2093989af6068daa29dbb05a7ead1e3b5a48bbee}{Port\+Role\+::\+Data}}) override
+\item 
+bool \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_ac5a05059ff5e9e7e2688b06327332bfc}{delete\+Connection}} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const connection\+Id) override
+\item 
+bool \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a7772d9b68738454363c959ed1778c9b0}{delete\+Node}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id) override
+\item 
+QJson\+Object \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a07556d53720721f2c1c304c7dea26a3c}{save\+Node}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const) const override
+\item 
+QJson\+Object \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_aeb5f52a56d8ba387fc67231eb20e087c}{save}} () const override
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_ae20d23ca78004893b10caa052e5556b6}{load\+Node}} (QJson\+Object const \&node\+Json) override
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_af4434972177f85bb1ffdd323207d6baa}{load}} (QJson\+Object const \&json) override
+\item 
+{\footnotesize template$<$typename Node\+Delegate\+Model\+Type $>$ }\\Node\+Delegate\+Model\+Type \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a3ff2a5c998afaf0ea053b7a1dd3f5a96}{delegate\+Model}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual bool {\bfseries detach\+Possible} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const) const
+\begin{DoxyCompactList}\small\item\em Defines if detaching the connection is possible. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a1c92a0f19078b503cef32170460346f1}{node\+Data}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} node\+Id, \mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596}{Node\+Role}} role) const
+\item 
+{\footnotesize template$<$typename T $>$ }\\T \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_afe3bd4d6ac3237e6f4a1ac2401c973f0}{port\+Data}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} node\+Id, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} index, \mbox{\hyperlink{_definitions_8hpp_af6d1882f3ed15bd00d36cce7f2093989}{Port\+Role}} role) const
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a7445e97295176be444d3bdec7cf44e27}{ports\+About\+To\+Be\+Deleted}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const first, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const last)
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a6f87b5072f09b98c3a22e5d67ed86ed0}{ports\+Deleted}} ()
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a1803a84abdaadc92ce208fedeb1b76f4}{ports\+About\+To\+Be\+Inserted}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const first, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const last)
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a11faa4430a1374017fc81b1ab6a0beed}{ports\+Inserted}} ()
+\item 
+virtual bool {\bfseries detach\+Possible} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const) const
+\begin{DoxyCompactList}\small\item\em Defines if detaching the connection is possible. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a1c92a0f19078b503cef32170460346f1}{node\+Data}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} node\+Id, \mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596}{Node\+Role}} role) const
+\item 
+{\footnotesize template$<$typename T $>$ }\\T \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_afe3bd4d6ac3237e6f4a1ac2401c973f0}{port\+Data}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} node\+Id, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} index, \mbox{\hyperlink{_definitions_8hpp_af6d1882f3ed15bd00d36cce7f2093989}{Port\+Role}} role) const
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a7445e97295176be444d3bdec7cf44e27}{ports\+About\+To\+Be\+Deleted}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const first, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const last)
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a6f87b5072f09b98c3a22e5d67ed86ed0}{ports\+Deleted}} ()
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a1803a84abdaadc92ce208fedeb1b76f4}{ports\+About\+To\+Be\+Inserted}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id, \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const first, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const last)
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a11faa4430a1374017fc81b1ab6a0beed}{ports\+Inserted}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Slots}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_ac37e3bb6714744b4a074262be4749404}{on\+Out\+Port\+Data\+Updated}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const port\+Index)
+\item 
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a4027acf340554a7cf3007c66ae7f511d}\label{class_qt_nodes_1_1_data_flow_graph_model_a4027acf340554a7cf3007c66ae7f511d} 
+void {\bfseries propagate\+Empty\+Data\+To} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const port\+Index)
+\begin{DoxyCompactList}\small\item\em Function is called after detaching a connection. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_ac37e3bb6714744b4a074262be4749404}{on\+Out\+Port\+Data\+Updated}} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const port\+Index)
+\item 
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a4027acf340554a7cf3007c66ae7f511d}\label{class_qt_nodes_1_1_data_flow_graph_model_a4027acf340554a7cf3007c66ae7f511d} 
+void {\bfseries propagate\+Empty\+Data\+To} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const port\+Index)
+\begin{DoxyCompactList}\small\item\em Function is called after detaching a connection. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a2684cf375efedfdf0772299882d4ff77}{new\+Node\+Id}} () override
+\begin{DoxyCompactList}\small\item\em Generates a new unique Node\+Id. \end{DoxyCompactList}\item 
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a69eb3cebc817c22364186bd5fc457b6d}\label{class_qt_nodes_1_1_data_flow_graph_model_a69eb3cebc817c22364186bd5fc457b6d} 
+void {\bfseries send\+Connection\+Creation} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const connection\+Id)
+\item 
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a521ddf63c9090624bd9c16d9dcd8a25b}\label{class_qt_nodes_1_1_data_flow_graph_model_a521ddf63c9090624bd9c16d9dcd8a25b} 
+void {\bfseries send\+Connection\+Deletion} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const connection\+Id)
+\item 
+\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} \mbox{\hyperlink{class_qt_nodes_1_1_data_flow_graph_model_a2684cf375efedfdf0772299882d4ff77}{new\+Node\+Id}} () override
+\begin{DoxyCompactList}\small\item\em Generates a new unique Node\+Id. \end{DoxyCompactList}\item 
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a69eb3cebc817c22364186bd5fc457b6d}\label{class_qt_nodes_1_1_data_flow_graph_model_a69eb3cebc817c22364186bd5fc457b6d} 
+void {\bfseries send\+Connection\+Creation} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const connection\+Id)
+\item 
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a521ddf63c9090624bd9c16d9dcd8a25b}\label{class_qt_nodes_1_1_data_flow_graph_model_a521ddf63c9090624bd9c16d9dcd8a25b} 
+void {\bfseries send\+Connection\+Deletion} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const connection\+Id)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a2eea072c646ccf1d3f8cd6a770d5c7a3}\label{class_qt_nodes_1_1_data_flow_graph_model_a2eea072c646ccf1d3f8cd6a770d5c7a3} 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_registry}{Node\+Delegate\+Model\+Registry}} $>$ {\bfseries \+\_\+registry}
+\item 
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a9150d1fac75b2b81b258f769090cfe9a}\label{class_qt_nodes_1_1_data_flow_graph_model_a9150d1fac75b2b81b258f769090cfe9a} 
+\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} {\bfseries \+\_\+next\+Node\+Id}
+\item 
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_ad05a21aad45bbc36df625477696923ea}\label{class_qt_nodes_1_1_data_flow_graph_model_ad05a21aad45bbc36df625477696923ea} 
+std\+::unordered\+\_\+map$<$ \mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}}, std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model}{Node\+Delegate\+Model}} $>$ $>$ {\bfseries \+\_\+models}
+\item 
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_ac33f213d6d18a0b06736903df3fc2c09}\label{class_qt_nodes_1_1_data_flow_graph_model_ac33f213d6d18a0b06736903df3fc2c09} 
+std\+::unordered\+\_\+set$<$ \mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} $>$ {\bfseries \+\_\+connectivity}
+\item 
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_aaeb0407e1e0b32caf4c80d21276f79cc}\label{class_qt_nodes_1_1_data_flow_graph_model_aaeb0407e1e0b32caf4c80d21276f79cc} 
+std\+::unordered\+\_\+map$<$ \mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}}, \mbox{\hyperlink{struct_qt_nodes_1_1_data_flow_graph_model_1_1_node_geometry_data}{Node\+Geometry\+Data}} $>$ {\bfseries \+\_\+node\+Geometry\+Data}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_ab74944dc993e8b69739ed3b2b0199d47}\label{class_qt_nodes_1_1_data_flow_graph_model_ab74944dc993e8b69739ed3b2b0199d47} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!addConnection@{addConnection}}
+\index{addConnection@{addConnection}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{addConnection()}{addConnection()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::add\+Connection (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const}]{connection\+Id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Creates a new connection between two nodes. 
+
+Default implementation emits signal {\ttfamily connection\+Created(connection\+Id)}
+
+In the derived classes user must emite the signal to notify the scene about the changes. 
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_ad8bc82b0c9ee2ebf6a71f32337085923}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_ab74944dc993e8b69739ed3b2b0199d47}\label{class_qt_nodes_1_1_data_flow_graph_model_ab74944dc993e8b69739ed3b2b0199d47} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!addConnection@{addConnection}}
+\index{addConnection@{addConnection}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{addConnection()}{addConnection()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::add\+Connection (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const}]{connection\+Id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Creates a new connection between two nodes. 
+
+Default implementation emits signal {\ttfamily connection\+Created(connection\+Id)}
+
+In the derived classes user must emite the signal to notify the scene about the changes. 
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_ad8bc82b0c9ee2ebf6a71f32337085923}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a6972ef0939292fe34a8786f8245bdd92}\label{class_qt_nodes_1_1_data_flow_graph_model_a6972ef0939292fe34a8786f8245bdd92} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!addNode@{addNode}}
+\index{addNode@{addNode}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{addNode()}{addNode()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::add\+Node (\begin{DoxyParamCaption}\item[{QString const}]{node\+Type }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Creates a new node instance in the derived class. 
+
+The model is responsible for generating a unique {\ttfamily Node\+Id}. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em node\+Type} & is free to be used and interpreted by the model on its own, it helps to distinguish between possible node types and create a correct instance inside. \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a726c782c2bf19560f49a207be0807d33}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a6972ef0939292fe34a8786f8245bdd92}\label{class_qt_nodes_1_1_data_flow_graph_model_a6972ef0939292fe34a8786f8245bdd92} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!addNode@{addNode}}
+\index{addNode@{addNode}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{addNode()}{addNode()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::add\+Node (\begin{DoxyParamCaption}\item[{QString const}]{node\+Type }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Creates a new node instance in the derived class. 
+
+The model is responsible for generating a unique {\ttfamily Node\+Id}. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em node\+Type} & is free to be used and interpreted by the model on its own, it helps to distinguish between possible node types and create a correct instance inside. \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a726c782c2bf19560f49a207be0807d33}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_acced49a29c8b8fcd510c0a3e1fd037d6}\label{class_qt_nodes_1_1_data_flow_graph_model_acced49a29c8b8fcd510c0a3e1fd037d6} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!allConnectionIds@{allConnectionIds}}
+\index{allConnectionIds@{allConnectionIds}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{allConnectionIds()}{allConnectionIds()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily std\+::unordered\+\_\+set$<$ \mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} $>$ Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::all\+Connection\+Ids (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const}]{node\+Id }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+A collection of all input and output connections for the given {\ttfamily node\+Id}. 
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a206c630a64583f388377084853fc7f56}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_acced49a29c8b8fcd510c0a3e1fd037d6}\label{class_qt_nodes_1_1_data_flow_graph_model_acced49a29c8b8fcd510c0a3e1fd037d6} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!allConnectionIds@{allConnectionIds}}
+\index{allConnectionIds@{allConnectionIds}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{allConnectionIds()}{allConnectionIds()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily std\+::unordered\+\_\+set$<$ \mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} $>$ Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::all\+Connection\+Ids (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const}]{node\+Id }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+A collection of all input and output connections for the given {\ttfamily node\+Id}. 
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a206c630a64583f388377084853fc7f56}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a5922406bb3fe0c02c02e82863ed6374c}\label{class_qt_nodes_1_1_data_flow_graph_model_a5922406bb3fe0c02c02e82863ed6374c} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!allNodeIds@{allNodeIds}}
+\index{allNodeIds@{allNodeIds}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{allNodeIds()}{allNodeIds()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily std\+::unordered\+\_\+set$<$ \mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} $>$ Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::all\+Node\+Ids (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Returns the full set of unique Node Ids. 
+
+Model creator is responsible for generating unique {\ttfamily unsigned int} Ids for all the nodes in the graph. From an Id it should be possible to trace back to the model\textquotesingle{}s internal representation of the node. 
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_ae414871d6bfe1e2869d3834b1ce1615a}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a5922406bb3fe0c02c02e82863ed6374c}\label{class_qt_nodes_1_1_data_flow_graph_model_a5922406bb3fe0c02c02e82863ed6374c} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!allNodeIds@{allNodeIds}}
+\index{allNodeIds@{allNodeIds}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{allNodeIds()}{allNodeIds()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily std\+::unordered\+\_\+set$<$ \mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} $>$ Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::all\+Node\+Ids (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Returns the full set of unique Node Ids. 
+
+Model creator is responsible for generating unique {\ttfamily unsigned int} Ids for all the nodes in the graph. From an Id it should be possible to trace back to the model\textquotesingle{}s internal representation of the node. 
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_ae414871d6bfe1e2869d3834b1ce1615a}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a1984c256357ee5622d769a8e091a5dab}\label{class_qt_nodes_1_1_data_flow_graph_model_a1984c256357ee5622d769a8e091a5dab} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!connectionExists@{connectionExists}}
+\index{connectionExists@{connectionExists}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{connectionExists()}{connectionExists()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::connection\+Exists (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const}]{connection\+Id }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Checks if two nodes with the given {\ttfamily connection\+Id} are connected. 
+
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_ab4722bb5caea158ca018e5ab8f7c5161}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a1984c256357ee5622d769a8e091a5dab}\label{class_qt_nodes_1_1_data_flow_graph_model_a1984c256357ee5622d769a8e091a5dab} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!connectionExists@{connectionExists}}
+\index{connectionExists@{connectionExists}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{connectionExists()}{connectionExists()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::connection\+Exists (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const}]{connection\+Id }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Checks if two nodes with the given {\ttfamily connection\+Id} are connected. 
+
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_ab4722bb5caea158ca018e5ab8f7c5161}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a96ce1e4acb79e2dff3521d2c745ee689}\label{class_qt_nodes_1_1_data_flow_graph_model_a96ce1e4acb79e2dff3521d2c745ee689} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!connectionPossible@{connectionPossible}}
+\index{connectionPossible@{connectionPossible}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{connectionPossible()}{connectionPossible()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::connection\+Possible (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const}]{connection\+Id }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Model decides if a conection with a given connection Id possible. 
+
+The default implementation compares corresponding data types.
+
+It is possible to override the function and connect non-\/equal data types. 
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a8586c6e03c7a0304f8a833d8cf361145}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a96ce1e4acb79e2dff3521d2c745ee689}\label{class_qt_nodes_1_1_data_flow_graph_model_a96ce1e4acb79e2dff3521d2c745ee689} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!connectionPossible@{connectionPossible}}
+\index{connectionPossible@{connectionPossible}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{connectionPossible()}{connectionPossible()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::connection\+Possible (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const}]{connection\+Id }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Model decides if a conection with a given connection Id possible. 
+
+The default implementation compares corresponding data types.
+
+It is possible to override the function and connect non-\/equal data types. 
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a8586c6e03c7a0304f8a833d8cf361145}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a062c3f2370b6d875121682b40ced6af4}\label{class_qt_nodes_1_1_data_flow_graph_model_a062c3f2370b6d875121682b40ced6af4} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!connections@{connections}}
+\index{connections@{connections}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{connections()}{connections()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily std\+::unordered\+\_\+set$<$ \mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} $>$ Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::connections (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}}}]{node\+Id,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}}]{port\+Type,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}}]{index }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Returns all connected Node Ids for given port. 
+
+The returned set of nodes and port indices correspond to the type opposite to the given {\ttfamily port\+Type}. 
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_ab2dcfa715357e89ad9765a906e60e275}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a062c3f2370b6d875121682b40ced6af4}\label{class_qt_nodes_1_1_data_flow_graph_model_a062c3f2370b6d875121682b40ced6af4} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!connections@{connections}}
+\index{connections@{connections}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{connections()}{connections()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily std\+::unordered\+\_\+set$<$ \mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} $>$ Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::connections (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}}}]{node\+Id,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}}]{port\+Type,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}}]{index }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Returns all connected Node Ids for given port. 
+
+The returned set of nodes and port indices correspond to the type opposite to the given {\ttfamily port\+Type}. 
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_ab2dcfa715357e89ad9765a906e60e275}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a3ff2a5c998afaf0ea053b7a1dd3f5a96}\label{class_qt_nodes_1_1_data_flow_graph_model_a3ff2a5c998afaf0ea053b7a1dd3f5a96} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!delegateModel@{delegateModel}}
+\index{delegateModel@{delegateModel}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{delegateModel()}{delegateModel()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename Node\+Delegate\+Model\+Type $>$ \\
+Node\+Delegate\+Model\+Type \texorpdfstring{$\ast$}{*} Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::delegate\+Model (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const}]{node\+Id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Fetches the \doxylink{class_qt_nodes_1_1_node_delegate_model}{Node\+Delegate\+Model} for the given {\ttfamily node\+Id} and tries to cast the stored pointer to the given type \Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a3ff2a5c998afaf0ea053b7a1dd3f5a96}\label{class_qt_nodes_1_1_data_flow_graph_model_a3ff2a5c998afaf0ea053b7a1dd3f5a96} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!delegateModel@{delegateModel}}
+\index{delegateModel@{delegateModel}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{delegateModel()}{delegateModel()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename Node\+Delegate\+Model\+Type $>$ \\
+Node\+Delegate\+Model\+Type \texorpdfstring{$\ast$}{*} Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::delegate\+Model (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const}]{node\+Id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Fetches the \doxylink{class_qt_nodes_1_1_node_delegate_model}{Node\+Delegate\+Model} for the given {\ttfamily node\+Id} and tries to cast the stored pointer to the given type \Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_ac5a05059ff5e9e7e2688b06327332bfc}\label{class_qt_nodes_1_1_data_flow_graph_model_ac5a05059ff5e9e7e2688b06327332bfc} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!deleteConnection@{deleteConnection}}
+\index{deleteConnection@{deleteConnection}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{deleteConnection()}{deleteConnection()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::delete\+Connection (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const}]{connection\+Id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_ac5a05059ff5e9e7e2688b06327332bfc}\label{class_qt_nodes_1_1_data_flow_graph_model_ac5a05059ff5e9e7e2688b06327332bfc} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!deleteConnection@{deleteConnection}}
+\index{deleteConnection@{deleteConnection}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{deleteConnection()}{deleteConnection()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::delete\+Connection (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const}]{connection\+Id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a7772d9b68738454363c959ed1778c9b0}\label{class_qt_nodes_1_1_data_flow_graph_model_a7772d9b68738454363c959ed1778c9b0} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!deleteNode@{deleteNode}}
+\index{deleteNode@{deleteNode}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{deleteNode()}{deleteNode()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::delete\+Node (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const}]{node\+Id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a7772d9b68738454363c959ed1778c9b0}\label{class_qt_nodes_1_1_data_flow_graph_model_a7772d9b68738454363c959ed1778c9b0} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!deleteNode@{deleteNode}}
+\index{deleteNode@{deleteNode}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{deleteNode()}{deleteNode()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::delete\+Node (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const}]{node\+Id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_af4434972177f85bb1ffdd323207d6baa}\label{class_qt_nodes_1_1_data_flow_graph_model_af4434972177f85bb1ffdd323207d6baa} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!load@{load}}
+\index{load@{load}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{load()}{load()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::load (\begin{DoxyParamCaption}\item[{QJson\+Object const \&}]{json }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_qt_nodes_1_1_serializable}{Qt\+Nodes\+::\+Serializable}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_af4434972177f85bb1ffdd323207d6baa}\label{class_qt_nodes_1_1_data_flow_graph_model_af4434972177f85bb1ffdd323207d6baa} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!load@{load}}
+\index{load@{load}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{load()}{load()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::load (\begin{DoxyParamCaption}\item[{QJson\+Object const \&}]{json }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_qt_nodes_1_1_serializable}{Qt\+Nodes\+::\+Serializable}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_ae20d23ca78004893b10caa052e5556b6}\label{class_qt_nodes_1_1_data_flow_graph_model_ae20d23ca78004893b10caa052e5556b6} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!loadNode@{loadNode}}
+\index{loadNode@{loadNode}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{loadNode()}{loadNode()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::load\+Node (\begin{DoxyParamCaption}\item[{QJson\+Object const \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+Reimplement the function if you want to support\+:
+
+
+\begin{DoxyItemize}
+\item graph save/restore operations,
+\item undo/redo operations after deleting the node.
+\end{DoxyItemize}
+
+QJson\+Object must contain following fields\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ id\ :\ 5,}
+\DoxyCodeLine{\ \ position\ :\ \{\ x\ :\ 100,\ y\ :\ 200\ \},}
+\DoxyCodeLine{\ \ internal-\/data\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}your\ model\ specific\ data\ here"{}}}
+\DoxyCodeLine{\ \ \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+The function must do almost exacly the same thing as the normal \doxylink{class_qt_nodes_1_1_data_flow_graph_model_a6972ef0939292fe34a8786f8245bdd92}{add\+Node()}. The main difference is in a model-\/specific {\ttfamily inner-\/data} processing. 
+
+Reimplemented from \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a095a04badfcd65262f41e5af8e70e0f1}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_ae20d23ca78004893b10caa052e5556b6}\label{class_qt_nodes_1_1_data_flow_graph_model_ae20d23ca78004893b10caa052e5556b6} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!loadNode@{loadNode}}
+\index{loadNode@{loadNode}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{loadNode()}{loadNode()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::load\+Node (\begin{DoxyParamCaption}\item[{QJson\+Object const \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+Reimplement the function if you want to support\+:
+
+
+\begin{DoxyItemize}
+\item graph save/restore operations,
+\item undo/redo operations after deleting the node.
+\end{DoxyItemize}
+
+QJson\+Object must contain following fields\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ id\ :\ 5,}
+\DoxyCodeLine{\ \ position\ :\ \{\ x\ :\ 100,\ y\ :\ 200\ \},}
+\DoxyCodeLine{\ \ internal-\/data\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}your\ model\ specific\ data\ here"{}}}
+\DoxyCodeLine{\ \ \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+The function must do almost exacly the same thing as the normal \doxylink{class_qt_nodes_1_1_data_flow_graph_model_a6972ef0939292fe34a8786f8245bdd92}{add\+Node()}. The main difference is in a model-\/specific {\ttfamily inner-\/data} processing. 
+
+Reimplemented from \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a095a04badfcd65262f41e5af8e70e0f1}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a2684cf375efedfdf0772299882d4ff77}\label{class_qt_nodes_1_1_data_flow_graph_model_a2684cf375efedfdf0772299882d4ff77} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!newNodeId@{newNodeId}}
+\index{newNodeId@{newNodeId}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{newNodeId()}{newNodeId()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::new\+Node\+Id (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [private]}, {\ttfamily [virtual]}}
+
+
+
+Generates a new unique Node\+Id. 
+
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a8337e42a623b4a5ba95dba488ac1a828}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a2684cf375efedfdf0772299882d4ff77}\label{class_qt_nodes_1_1_data_flow_graph_model_a2684cf375efedfdf0772299882d4ff77} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!newNodeId@{newNodeId}}
+\index{newNodeId@{newNodeId}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{newNodeId()}{newNodeId()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::new\+Node\+Id (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [private]}, {\ttfamily [virtual]}}
+
+
+
+Generates a new unique Node\+Id. 
+
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a8337e42a623b4a5ba95dba488ac1a828}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_af349af13955142a2f2322487b8067988}\label{class_qt_nodes_1_1_data_flow_graph_model_af349af13955142a2f2322487b8067988} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!nodeData@{nodeData}}
+\index{nodeData@{nodeData}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{nodeData()}{nodeData()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily QVariant Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::node\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}}}]{node\+Id,  }\item[{\mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596}{Node\+Role}}}]{role }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Returns node-\/related data for requested Node\+Role. 
+
+\begin{DoxyReturn}{Returns}
+Node Caption, Node Caption Visibility, Node Position etc. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_ab3897615bc8e4dcf88fe4a3df0ae78b4}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_af349af13955142a2f2322487b8067988}\label{class_qt_nodes_1_1_data_flow_graph_model_af349af13955142a2f2322487b8067988} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!nodeData@{nodeData}}
+\index{nodeData@{nodeData}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{nodeData()}{nodeData()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily QVariant Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::node\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}}}]{node\+Id,  }\item[{\mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596}{Node\+Role}}}]{role }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Returns node-\/related data for requested Node\+Role. 
+
+\begin{DoxyReturn}{Returns}
+Node Caption, Node Caption Visibility, Node Position etc. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_ab3897615bc8e4dcf88fe4a3df0ae78b4}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a23ec795731696d51546484462f6f853e}\label{class_qt_nodes_1_1_data_flow_graph_model_a23ec795731696d51546484462f6f853e} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!nodeExists@{nodeExists}}
+\index{nodeExists@{nodeExists}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{nodeExists()}{nodeExists()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::node\+Exists (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const}]{node\+Id }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if there is data in the model associated with the given {\ttfamily node\+Id}. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a4fcc618b5542d497b37cb221dd001d04}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a23ec795731696d51546484462f6f853e}\label{class_qt_nodes_1_1_data_flow_graph_model_a23ec795731696d51546484462f6f853e} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!nodeExists@{nodeExists}}
+\index{nodeExists@{nodeExists}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{nodeExists()}{nodeExists()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::node\+Exists (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const}]{node\+Id }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+\begin{DoxyReturn}{Returns}
+{\ttfamily true} if there is data in the model associated with the given {\ttfamily node\+Id}. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a4fcc618b5542d497b37cb221dd001d04}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_ad77d31e2bfe562cafae6a30015caf42f}\label{class_qt_nodes_1_1_data_flow_graph_model_ad77d31e2bfe562cafae6a30015caf42f} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!nodeFlags@{nodeFlags}}
+\index{nodeFlags@{nodeFlags}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{nodeFlags()}{nodeFlags()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Node\+Flags Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::node\+Flags (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}}}]{node\+Id }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_ad77d31e2bfe562cafae6a30015caf42f}\label{class_qt_nodes_1_1_data_flow_graph_model_ad77d31e2bfe562cafae6a30015caf42f} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!nodeFlags@{nodeFlags}}
+\index{nodeFlags@{nodeFlags}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{nodeFlags()}{nodeFlags()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Node\+Flags Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::node\+Flags (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}}}]{node\+Id }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_ac37e3bb6714744b4a074262be4749404}\label{class_qt_nodes_1_1_data_flow_graph_model_ac37e3bb6714744b4a074262be4749404} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!onOutPortDataUpdated@{onOutPortDataUpdated}}
+\index{onOutPortDataUpdated@{onOutPortDataUpdated}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{onOutPortDataUpdated}{onOutPortDataUpdated}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::on\+Out\+Port\+Data\+Updated (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const}]{node\+Id,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const}]{port\+Index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}, {\ttfamily [slot]}}
+
+Fuction is called in three cases\+:
+
+
+\begin{DoxyItemize}
+\item By underlying \doxylink{class_qt_nodes_1_1_node_delegate_model}{Node\+Delegate\+Model} when a node has new data to propagate. \begin{DoxySeeAlso}{See also}
+\doxylink{class_qt_nodes_1_1_data_flow_graph_model_a6972ef0939292fe34a8786f8245bdd92}{Data\+Flow\+Graph\+Model\+::add\+Node}
+\end{DoxySeeAlso}
+
+\item When a new connection is created. \begin{DoxySeeAlso}{See also}
+\doxylink{class_qt_nodes_1_1_data_flow_graph_model_ab74944dc993e8b69739ed3b2b0199d47}{Data\+Flow\+Graph\+Model\+::add\+Connection}
+\end{DoxySeeAlso}
+
+\item When a node restored from JSON an needs to send data downstream. \begin{DoxySeeAlso}{See also}
+\doxylink{class_qt_nodes_1_1_data_flow_graph_model_ae20d23ca78004893b10caa052e5556b6}{Data\+Flow\+Graph\+Model\+::load\+Node} 
+\end{DoxySeeAlso}
+
+\end{DoxyItemize}\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_ac37e3bb6714744b4a074262be4749404}\label{class_qt_nodes_1_1_data_flow_graph_model_ac37e3bb6714744b4a074262be4749404} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!onOutPortDataUpdated@{onOutPortDataUpdated}}
+\index{onOutPortDataUpdated@{onOutPortDataUpdated}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{onOutPortDataUpdated}{onOutPortDataUpdated}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::on\+Out\+Port\+Data\+Updated (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const}]{node\+Id,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const}]{port\+Index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}, {\ttfamily [slot]}}
+
+Fuction is called in three cases\+:
+
+
+\begin{DoxyItemize}
+\item By underlying \doxylink{class_qt_nodes_1_1_node_delegate_model}{Node\+Delegate\+Model} when a node has new data to propagate. \begin{DoxySeeAlso}{See also}
+\doxylink{class_qt_nodes_1_1_data_flow_graph_model_a6972ef0939292fe34a8786f8245bdd92}{Data\+Flow\+Graph\+Model\+::add\+Node}
+\end{DoxySeeAlso}
+
+\item When a new connection is created. \begin{DoxySeeAlso}{See also}
+\doxylink{class_qt_nodes_1_1_data_flow_graph_model_ab74944dc993e8b69739ed3b2b0199d47}{Data\+Flow\+Graph\+Model\+::add\+Connection}
+\end{DoxySeeAlso}
+
+\item When a node restored from JSON an needs to send data downstream. \begin{DoxySeeAlso}{See also}
+\doxylink{class_qt_nodes_1_1_data_flow_graph_model_ae20d23ca78004893b10caa052e5556b6}{Data\+Flow\+Graph\+Model\+::load\+Node} 
+\end{DoxySeeAlso}
+
+\end{DoxyItemize}\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_ad54054e2e731eeb4fdce18e488eae4e9}\label{class_qt_nodes_1_1_data_flow_graph_model_ad54054e2e731eeb4fdce18e488eae4e9} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!portData@{portData}}
+\index{portData@{portData}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{portData()}{portData()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily QVariant Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::port\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}}}]{node\+Id,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}}]{port\+Type,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}}]{index,  }\item[{\mbox{\hyperlink{_definitions_8hpp_af6d1882f3ed15bd00d36cce7f2093989}{Port\+Role}}}]{role }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Returns port-\/related data for requested Node\+Role. 
+
+\begin{DoxyReturn}{Returns}
+Port Data Type, Port Data, Connection Policy, Port Caption. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_acd076551b556335b7d2cd14432a6c035}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_ad54054e2e731eeb4fdce18e488eae4e9}\label{class_qt_nodes_1_1_data_flow_graph_model_ad54054e2e731eeb4fdce18e488eae4e9} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!portData@{portData}}
+\index{portData@{portData}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{portData()}{portData()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily QVariant Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::port\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}}}]{node\+Id,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}}]{port\+Type,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}}]{index,  }\item[{\mbox{\hyperlink{_definitions_8hpp_af6d1882f3ed15bd00d36cce7f2093989}{Port\+Role}}}]{role }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Returns port-\/related data for requested Node\+Role. 
+
+\begin{DoxyReturn}{Returns}
+Port Data Type, Port Data, Connection Policy, Port Caption. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_acd076551b556335b7d2cd14432a6c035}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_aeb5f52a56d8ba387fc67231eb20e087c}\label{class_qt_nodes_1_1_data_flow_graph_model_aeb5f52a56d8ba387fc67231eb20e087c} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!save@{save}}
+\index{save@{save}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{save()}{save()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily QJson\+Object Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::save (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_qt_nodes_1_1_serializable}{Qt\+Nodes\+::\+Serializable}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_aeb5f52a56d8ba387fc67231eb20e087c}\label{class_qt_nodes_1_1_data_flow_graph_model_aeb5f52a56d8ba387fc67231eb20e087c} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!save@{save}}
+\index{save@{save}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{save()}{save()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily QJson\+Object Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::save (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_qt_nodes_1_1_serializable}{Qt\+Nodes\+::\+Serializable}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a07556d53720721f2c1c304c7dea26a3c}\label{class_qt_nodes_1_1_data_flow_graph_model_a07556d53720721f2c1c304c7dea26a3c} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!saveNode@{saveNode}}
+\index{saveNode@{saveNode}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{saveNode()}{saveNode()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily QJson\+Object Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::save\+Node (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const}]{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+Reimplement the function if you want to store/restore the node\textquotesingle{}s inner state during undo/redo node deletion operations. 
+
+Reimplemented from \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a0e01e31b919849b3aeb97f5e55060a7e}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a07556d53720721f2c1c304c7dea26a3c}\label{class_qt_nodes_1_1_data_flow_graph_model_a07556d53720721f2c1c304c7dea26a3c} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!saveNode@{saveNode}}
+\index{saveNode@{saveNode}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{saveNode()}{saveNode()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily QJson\+Object Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::save\+Node (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const}]{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+Reimplement the function if you want to store/restore the node\textquotesingle{}s inner state during undo/redo node deletion operations. 
+
+Reimplemented from \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a0e01e31b919849b3aeb97f5e55060a7e}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a084453c0ba6a808021385b230af99a33}\label{class_qt_nodes_1_1_data_flow_graph_model_a084453c0ba6a808021385b230af99a33} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!setNodeData@{setNodeData}}
+\index{setNodeData@{setNodeData}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{setNodeData()}{setNodeData()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::set\+Node\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}}}]{node\+Id,  }\item[{\mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596}{Node\+Role}}}]{role,  }\item[{QVariant}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Sets node properties. 
+
+Sets\+: Node Caption, Node Caption Visibility, Shyle, State, Node Position etc. \begin{DoxySeeAlso}{See also}
+\doxylink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596}{Node\+Role}. 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a7546766d132b3b5da21c6dc95172ab51}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_a084453c0ba6a808021385b230af99a33}\label{class_qt_nodes_1_1_data_flow_graph_model_a084453c0ba6a808021385b230af99a33} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!setNodeData@{setNodeData}}
+\index{setNodeData@{setNodeData}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{setNodeData()}{setNodeData()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::set\+Node\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}}}]{node\+Id,  }\item[{\mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596}{Node\+Role}}}]{role,  }\item[{QVariant}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Sets node properties. 
+
+Sets\+: Node Caption, Node Caption Visibility, Shyle, State, Node Position etc. \begin{DoxySeeAlso}{See also}
+\doxylink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596}{Node\+Role}. 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model_a7546766d132b3b5da21c6dc95172ab51}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_ae12f816c9d4d8dddcbc3f3a15687759a}\label{class_qt_nodes_1_1_data_flow_graph_model_ae12f816c9d4d8dddcbc3f3a15687759a} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!setPortData@{setPortData}}
+\index{setPortData@{setPortData}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{setPortData()}{setPortData()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::set\+Port\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}}}]{node\+Id,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}}]{port\+Type,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}}]{port\+Index,  }\item[{QVariant const \&}]{value,  }\item[{\mbox{\hyperlink{_definitions_8hpp_af6d1882f3ed15bd00d36cce7f2093989}{Port\+Role}}}]{role = {\ttfamily \mbox{\hyperlink{_definitions_8hpp_af6d1882f3ed15bd00d36cce7f2093989af6068daa29dbb05a7ead1e3b5a48bbee}{Port\+Role\+::\+Data}}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+\Hypertarget{class_qt_nodes_1_1_data_flow_graph_model_ae12f816c9d4d8dddcbc3f3a15687759a}\label{class_qt_nodes_1_1_data_flow_graph_model_ae12f816c9d4d8dddcbc3f3a15687759a} 
+\index{QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}!setPortData@{setPortData}}
+\index{setPortData@{setPortData}!QtNodes::DataFlowGraphModel@{QtNodes::DataFlowGraphModel}}
+\doxysubsubsection{\texorpdfstring{setPortData()}{setPortData()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool Qt\+Nodes\+::\+Data\+Flow\+Graph\+Model\+::set\+Port\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}}}]{node\+Id,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}}]{port\+Type,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}}]{port\+Index,  }\item[{QVariant const \&}]{value,  }\item[{\mbox{\hyperlink{_definitions_8hpp_af6d1882f3ed15bd00d36cce7f2093989}{Port\+Role}}}]{role = {\ttfamily \mbox{\hyperlink{_definitions_8hpp_af6d1882f3ed15bd00d36cce7f2093989af6068daa29dbb05a7ead1e3b5a48bbee}{Port\+Role\+::\+Data}}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model}{Qt\+Nodes\+::\+Abstract\+Graph\+Model}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/core/\+QTNodes/include/\+Qt\+Nodes/internal/Data\+Flow\+Graph\+Model.\+hpp\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/core/\+QTNodes/include/\+Qt\+Nodes/internal/internal/Data\+Flow\+Graph\+Model.\+hpp\end{DoxyCompactItemize}
