@@ -8,6 +8,7 @@
 #include <commondatatypes.h>
 #include <nodedatatypes.h>
 #include <QtWidgets>
+#include <UIUtils.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -33,6 +34,7 @@ private:
     bool bDataValid;
 
     QWidget* widget;
+    FolderSelectionWidget* _folderSelect = nullptr;
     QPushButton* _pushButton;
     QLabel* _label;
     QHBoxLayout* _filePathLayout;
@@ -67,7 +69,8 @@ public:
     QString category() override { return "Import"; }; 
 
 private Q_SLOTS:
-    void onButtonClicked();
+    //void onButtonClicked();
+    void onFolderSelectionChanged();
 
 private:
     void loadAnimationData(aiAnimation* pASSIMPAnimation, Skeleton* pSkeleton, Animation* pAnimation, aiNode* pNode);

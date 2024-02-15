@@ -124,7 +124,8 @@ void AssimpLoaderPlugin::run() {
 
 		QString shorty = AnimHostHelper::shortenFilePath(file, 10);
 
-		_label->setText(shorty);
+		/*_label->setText(shorty);
+		_folderSelect->*/
 
 		importAssimpData();
 
@@ -141,22 +142,20 @@ void AssimpLoaderPlugin::run() {
 
 QWidget* AssimpLoaderPlugin::embeddedWidget()
 {
-	if (!_pushButton) {
-		_pushButton = new QPushButton("Import Animation");
-		_label = new QLabel("Select Animation Path");
-
-		_pushButton->resize(QSize(30, 30));
-		_filePathLayout = new QHBoxLayout();
-
-		_filePathLayout->addWidget(_label);
-		_filePathLayout->addWidget(_pushButton);
-
-		_filePathLayout->setSizeConstraint(QLayout::SetMinimumSize);
+	if (!widget) {
 
 		widget = new QWidget();
 
-		widget->setLayout(_filePathLayout);
-		connect(_pushButton, &QPushButton::released, this, &AssimpLoaderPlugin::onButtonClicked);
+		_folderSelect = new FolderSelectionWidget(widget);
+
+
+		QVBoxLayout* layout = new QVBoxLayout();
+
+		layout->addWidget(_folderSelect);
+		widget->setLayout(layout);
+
+		connect(_folderSelect, &FolderSelectionWidget::directoryChanged, this, &AssimpLoaderPlugin::onFolderSelectionChanged);
+
 	}
 
 	widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
@@ -166,6 +165,17 @@ QWidget* AssimpLoaderPlugin::embeddedWidget()
 	);
 
 	return widget;
+}
+
+void AssimpLoaderPlugin::onFolderSelectionChanged()
+{
+	SourceDirectory = _folderSelect->GetSelectedDirectory() + "/";
+
+	widget->adjustSize();
+	//widget->parentWidget()->adjustSize();
+	widget->updateGeometry();
+
+	Q_EMIT embeddedWidgetSizeUpdated();
 }
 
 void AssimpLoaderPlugin::loadAnimationData(aiAnimation* pASSIMPAnimation, Skeleton* pSkeleton, Animation* pAnimation, aiNode* pNode)
@@ -272,24 +282,6 @@ void AssimpLoaderPlugin::importAssimpData()
 		loadAnimationData(scene->mAnimations[0], _skeleton->getData().get(), _animation->getData().get(), scene->mRootNode);
 
 		bDataValid = true;
-	}
-}
-
-
-void AssimpLoaderPlugin::onButtonClicked()
-{
-	qDebug() << "Clicked";
-
-	selectDir();
-}
-
-
-void AssimpLoaderPlugin::selectDir() {
-
-	QString directory = QDir::toNativeSeparators(QFileDialog::getExistingDirectory(nullptr, "Import Animation", "C://"));
-
-	if (!directory.isEmpty()) {
-		SourceDirectory = directory;
 	}
 }
 
