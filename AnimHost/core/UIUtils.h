@@ -4,6 +4,11 @@
 #include <commondatatypes.h>
 #include <QtWidgets>
 #include <QObject>
+#include <QWidget>
+#include <QPainter>
+#include <QVector>
+#include <cmath>
+
 
 class ANIMHOSTCORESHARED_EXPORT BoneSelectionWidget : public QWidget {
 
@@ -54,6 +59,35 @@ Q_SIGNALS:
 
 private:
 	void SetDirectory(QString dir);
+
+
+};
+
+class ANIMHOSTCORESHARED_EXPORT PlotWidget : public QWidget {
+
+	Q_OBJECT
+private:
+
+	QVector<QPointF> points;
+	int pointSize = 8;
+	double scale = 20.0;
+
+public:
+
+	PlotWidget(QWidget* parent = nullptr);
+
+	void addPoint(float x, float y);
+
+	void clearPlot();
+
+protected:
+	void paintEvent(QPaintEvent* event) override;
+
+Q_SIGNALS:
+	void pointsChanged();
+
+
+
 
 
 };

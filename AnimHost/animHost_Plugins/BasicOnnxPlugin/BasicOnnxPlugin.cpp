@@ -76,6 +76,12 @@ QWidget* BasicOnnxPlugin::embeddedWidget()
         connect(b, &QPushButton::released, this, &BasicOnnxPlugin::onButtonClicked);
         widget->setMinimumHeight(widget->sizeHint().height());
         widget->setMaximumWidth(widget->sizeHint().width());
+
+       
+
+
+
+
 	}
 	return widget;
 }
@@ -168,11 +174,8 @@ void BasicOnnxPlugin::addPort()
         int numIn = _onnxModel->GetNumTensors();
         for (int i = 0; i < numIn; i++) {
             this->portsAboutToBeInserted(QtNodes::PortType::In, i, i);
-            _dataIn.emplace_back(std::weak_ptr<QtNodes::NodeData>());
-
-           
+            _dataIn.emplace_back(std::weak_ptr<QtNodes::NodeData>());  
         }
-
 
         int numOut = _onnxModel->GetNumTensors(false);
         for (int i = 0; i < numOut; i++) {

@@ -92,3 +92,50 @@ void FolderSelectionWidget::SetDirectory(QString dir)
 		updateGeometry();
 	}
 }
+
+
+///!=========================
+/// Plot Widget
+///!=========================
+
+PlotWidget::PlotWidget(QWidget* parent) : QWidget(parent)
+{
+	setFixedSize(400, 300);
+}
+
+void PlotWidget::addPoint(float x, float y)
+{
+	points.push_back(QPointF(x, y));
+	update(); // Trigger repaint
+
+}
+
+void PlotWidget::clearPlot()
+{
+	points.clear();
+}
+
+void PlotWidget::paintEvent(QPaintEvent* event)
+{
+	Q_UNUSED(event);
+
+	QPainter painter(this);
+
+	painter.fillRect(rect(), QColor(39, 45, 45));
+
+	// Draw the coordinate axes
+	painter.setPen(QColor(163, 155, 168));
+	painter.drawLine(0, height() / 2, width(), height() / 2); // X-axis
+	painter.drawLine(width() / 2, 0, width() / 2, height()); // Y-axis
+
+	// Draw the points
+	painter.setPen(QColor(35, 206, 107));
+	painter.setBrush(QColor(35, 206, 107));
+	for (const QPointF& point : points) {
+		int pixelX = static_cast<int>(width() / 2 + point.x() * scale);
+		int pixelY = static_cast<int>(height() / 2 - point.y() * scale);
+		painter.drawEllipse(pixelX - pointSize / 2, pixelY - pointSize / 2, pointSize, pointSize);
+	}
+}
+
+
