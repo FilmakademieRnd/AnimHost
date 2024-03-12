@@ -3,7 +3,6 @@
 #include "AnimHostMessageSender.h"
 #include "TickReceiver.h"
 
-
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 
@@ -28,7 +27,7 @@ TracerUpdateSenderPlugin::TracerUpdateSenderPlugin()
     QObject::connect(zeroMQSenderThread, &QThread::started, msgSender, &AnimHostMessageSender::run);
 
     if(!tickReceiver)
-        tickReceiver = new TickReceiver(this, false, _updateSenderContext);
+        tickReceiver = new TickReceiver(false, _updateSenderContext);
     if(!zeroMQTickReceiverThread)
         zeroMQTickReceiverThread = new QThread();
 

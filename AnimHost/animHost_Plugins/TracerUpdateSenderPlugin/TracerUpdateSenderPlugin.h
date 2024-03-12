@@ -35,7 +35,6 @@
 #include <zmq.hpp>
 #include <nzmqt/nzmqt.hpp>
 
-class ZMQMessageHandler;
 class AnimHostMessageSender;
 class TickReceiver;
 

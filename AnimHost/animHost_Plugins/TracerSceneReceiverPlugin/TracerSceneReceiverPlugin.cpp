@@ -263,6 +263,7 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 					currentChar = &characterListOut->getData()->mCharacterObjectSequence.at(characterCounter);
 
 					currentChar->sceneObjectID = editableSceneNodeCounter;
+					currentChar->characterRootID = characterListOut->getData()->mCharacterObjectSequence.at(characterCounter).characterRootID;
 					currentChar->objectName = nodeName.toStdString();
 
 					currentChar->pos = objPos;
@@ -290,9 +291,9 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 				// Save bindPoseLength (int) for later
 				int32_t bindPoseLength; memcpy(&bindPoseLength, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(bindPoseLength)).data(), sizeof(bindPoseLength)); // Copies byte values directly into the new variable, which interprets it as the correct type
 				nodeByteCounter += sizeof(bindPoseLength);
-				// Save characterRootID (int) for later
-				int32_t characterRootID; memcpy(&characterRootID, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(characterRootID)).data(), sizeof(characterRootID)); // Copies byte values directly into the new variable, which interprets it as the correct type
-				nodeByteCounter += sizeof(characterRootID);
+				// Save skeletonRootID (int) for later
+				int32_t skeletonRootID; memcpy(&skeletonRootID, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(skeletonRootID)).data(), sizeof(skeletonRootID)); // Copies byte values directly into the new variable, which interprets it as the correct type
+				nodeByteCounter += sizeof(skeletonRootID);
 				// Save bounding box dimensions (3 floats)
 				glm::vec3 boundExtents; memcpy(&boundExtents, sceneNodeByteArray->sliced(nodeByteCounter, sizeof(boundExtents)).data(), sizeof(boundExtents));
 				nodeByteCounter += sizeof(boundExtents);
@@ -326,7 +327,7 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 
 				// Double-check that the characterRootID of the skinnedMesh coincides with the one already present in the current character
 				// This proves that this skinnedMesh belogs to the current character
-				assert(characterRootID == currentChar->characterRootID);
+				assert(skeletonRootID == currentChar->characterRootID);
 				// Add the filled SkinnedMeshRenderer object to the currently active CharacterObject
 				currentChar->skinnedMeshList.push_back(skinnedMesh);
 
@@ -402,12 +403,15 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 	emitDataUpdate(0);
 }
 
-// TODO: Implement processHeaderByteData(QByteArray* headerByteArray) {}
 void TracerSceneReceiverPlugin::processHeaderByteData(QByteArray* headerByteArray) {
-	// - float lightIntensityFactor
-	// - byte  senderID
+	// - float	lightIntensityFactor (skipped)
+	// - byte	senderID
+	// - byte	framerate
 	unsigned char senderID; memcpy(&senderID, headerByteArray->sliced(4, sizeof(senderID)).data(), sizeof(senderID)); // Copies byte values directly into the new variable, which interprets it as the correct type
 	ZMQMessageHandler::setTargetSceneID(senderID);
-	//ZMQMessageHandler::setAnimFrameRate();
-	//ZMQMessageHandler::setRenderFrameRate();
+	
+	unsigned char framerate; memcpy(&framerate, headerByteArray->sliced(5, sizeof(framerate)).data(), sizeof(framerate)); // Copies byte values directly into the new variable, which interprets it as the correct type
+	// Set framerate only if a valid value (>0) is received
+	if (framerate > 0)
+		ZMQMessageHandler::setPlaybackFrameRate(framerate);
 }

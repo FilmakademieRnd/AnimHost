@@ -85,9 +85,9 @@ void AnimHostMessageSender::run() {
         sendFrameWaitCondition->wait(&m_pauseMutex);
             
         // Send Poses Sequentially from a KEYFRAMED animation
-        qDebug() << "Timer interval" << ZMQMessageHandler::localTick->interval() << "Timer status" << ZMQMessageHandler::localTick->remainingTime();
-        qDebug() << "LocalTimeStamp = " << ZMQMessageHandler::getLocalTimeStamp();
-        qDebug() << "AnimationFrame = " << animFrame;
+        //qDebug() << "Timer interval" << ZMQMessageHandler::localTick->interval() << "Timer status" << ZMQMessageHandler::localTick->remainingTime();
+        //qDebug() << "LocalTimeStamp = " << ZMQMessageHandler::getLocalTimeStamp();
+        //qDebug() << "AnimationFrame = " << animFrame;
 
         SerializePose(animData, charObj, sceneNodeList, msgBodyAnim, (int) animFrame);
         //qDebug() << "animFrame =" << animFrame;
@@ -213,7 +213,7 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
 
         std::vector<float> boneQuatVector = { boneQuat.x, boneQuat.y, boneQuat.z,  boneQuat.w }; // converting glm::quat in vector<float>
 
-        //qDebug() << i << boneID << boneName << animData->mBones.at(animDataBoneID).mName << boneQuatVector;
+        qDebug() << i << boneID << boneName << animData->mBones.at(animDataBoneID).mName << boneQuatVector;
 
         QByteArray msgBoneQuat = createMessageBody(targetSceneID, character->sceneObjectID, i + 3, ZMQMessageHandler::ParameterType::QUATERNION, boneQuatVector);
         byteArray->append(msgBoneQuat);

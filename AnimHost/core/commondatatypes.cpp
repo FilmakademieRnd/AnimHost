@@ -120,8 +120,10 @@ glm::mat4 Bone::GetTransform(int frame) const {
 
 };
 
+//! Fills in the gaps between the ControlPoints by sampling new ControlPoints for every frame required by the ControlPath
+void ControlPath::CreateSpline() {
 
-
+}
 
 //void Animation::SetRestingPosition(const aiNode& pNode, const Skeleton& pSkeleton)
 //{

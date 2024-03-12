@@ -14,4 +14,4 @@ add_subdirectory(TracerSceneReceiverPlugin)
 add_subdirectory(ModeAdaptivePreprocessPlugin)
 add_subdirectory(CoordinateConverterPlugin)
 add_subdirectory(CharacterSelectorPlugin)
-
+add_subdirectory(TracerUpdateReceiverPlugin)

@@ -19,15 +19,9 @@
             "outPortIndex": 0
         },
         {
-            "inPortIndex": 2,
-            "intNodeId": 1,
-            "outNodeId": 7,
-            "outPortIndex": 1
-        },
-        {
             "inPortIndex": 0,
-            "intNodeId": 6,
-            "outNodeId": 3,
+            "intNodeId": 1,
+            "outNodeId": 8,
             "outPortIndex": 0
         },
         {
@@ -37,6 +31,12 @@
             "outPortIndex": 2
         },
         {
+            "inPortIndex": 2,
+            "intNodeId": 1,
+            "outNodeId": 7,
+            "outPortIndex": 1
+        },
+        {
             "inPortIndex": 1,
             "intNodeId": 1,
             "outNodeId": 8,
@@ -44,8 +44,8 @@
         },
         {
             "inPortIndex": 0,
-            "intNodeId": 1,
-            "outNodeId": 8,
+            "intNodeId": 6,
+            "outNodeId": 3,
             "outPortIndex": 0
         },
         {
@@ -65,7 +65,7 @@
         {
             "id": 0,
             "internal-data": {
-                "dir": "C:\\Users\\m5963\\Documents\\AnimHost_TestData\\Animation",
+                "dir": "C:\\Users\\m5963\\Documents\\AnimHost_TestData\\Animation/",
                 "model-name": "Animation Import"
             },
             "position": {

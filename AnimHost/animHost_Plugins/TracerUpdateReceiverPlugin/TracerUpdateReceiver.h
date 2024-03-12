@@ -5,7 +5,7 @@
 //! \brief Class used to listen SYNC messages from TRACER clients
 //! \author Francesco Andreussi
 //! \version 0.5
-//! \date 26.01.2024
+//! \date 06.03.2024
 //!
 /*!
  * ###This class is instanced by the [TracerUpdateSenderPlugin](@ref TracerUpdateSenderPlugin) and is run in a subthread.
@@ -13,31 +13,31 @@
  * and notifies \c TracerUpdateSenderPlugin of the arrival of the message
  */
 
-#ifndef TICKRECEIVER_H
-#define TICKRECEIVER_H
+#ifndef TRACERUPDATERECEIVER_H
+#define TRACERUPDATERECEIVER_H
 
 #include "ZMQMessageHandler.h"
-#include "TracerUpdateSenderPlugin.h"
+#include "TracerUpdateReceiverPlugin.h"
 
 #include <QMutex>
 #include <QThread>
 #include <nzmqt/nzmqt.hpp>
 
-class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHandler {
+class TRACERUPDATERECEIVERPLUGINSHARED_EXPORT TracerUpdateReceiver : public ZMQMessageHandler {
 
-	Q_OBJECT
+    Q_OBJECT
 
-	public:
+    public:
 
     //! Default constructor
-	TickReceiver() {}
+    TracerUpdateReceiver() {}
 
     //! Constructor
     /*!
     * \param[in]    m_debugState    Whether the class should print out debug messages
-    * \param[in]    m_context       A pointer to the 0MQ COntext instanciated by \c TracerUpdateSenderPlugin
+    * \param[in]    m_context       A pointer to the 0MQ Context instanciated by the \c TracerUpdateReceiverPlugin
     */
-    TickReceiver(bool m_debugState, zmq::context_t* m_context) {
+    TracerUpdateReceiver(bool m_debugState, zmq::context_t* m_context) {
         _debug = m_debugState;
         context = m_context;
         _stop = true;
@@ -46,7 +46,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
     }
 
     //! Default destructor, closes connection and cleans up
-	~TickReceiver() {
+    ~TracerUpdateReceiver() {
         receiveSocket->close();
     }
 
@@ -59,7 +59,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
         _working = true;
         _stop = false;
         _paused = false;
-        qDebug() << "AnimHost Tick Receiver requested to start";// in Thread "<<thread()->currentThreadId();
+        qDebug() << "AnimHost Update Message Receiver requested to start";// in Thread "<<thread()->currentThreadId();
         mutex.unlock();
     }
 
@@ -73,15 +73,15 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
             _stop = true;
             _paused = false;
             //_working = false;
-            qDebug() << "AnimHost Tick Receiver stopping";// in Thread "<<thread()->currentThreadId();
+            qDebug() << "AnimHost Update Message Receiver stopping";// in Thread "<<thread()->currentThreadId();
         }
         mutex.unlock();
     }
 
     private:
-    zmq::socket_t* receiveSocket = nullptr;         //!< Pointer to the instance of the socket that will listen to the messages
+    zmq::socket_t* receiveSocket = nullptr;     //!< Pointer to the instance of the socket that will listen to the messages
 
-	public Q_SLOTS:
+    public Q_SLOTS:
     //! Main loop, executes all operations
     /*!
      * Gets triggered by the Qt Application UI thread, when the TracerUpdateSender Plugin is initialised.
@@ -91,6 +91,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
         // open socket
         receiveSocket = new zmq::socket_t(*context, zmq::socket_type::sub);
         receiveSocket->connect(QString("tcp://127.0.0.1:5556").toLatin1().data());
+
         // In order to subscribe to every topic it is necessary to specify a option-lenght of 0 (ZERO) characters
         // Using only an empty string doesn't work because by default it will contain an END-OF-STRING character so its length will be 1 instead of 0
         receiveSocket->setsockopt(ZMQ_SUBSCRIBE, "", 0);
@@ -98,23 +99,23 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
         zmq::message_t recvMsg;
 
         while (_working) {
-            qDebug() << "Waiting for SYNC message...";
+            //qDebug() << "Waiting for PARAMETERUPDATE message...";
             //try to receive zeroMQ messages
             receiveSocket->recv(&recvMsg);
 
             if (recvMsg.size() > 0) {
-                
-                qDebug() << "Processing message...";
+
+                //qDebug() << "Checking message...";
 
                 QByteArray msgArray = QByteArray((char*) recvMsg.data(), static_cast<int>(recvMsg.size())); // Convert message into explicit byte array
-                MessageType msgType = static_cast<MessageType>(msgArray[2]);                          // Extract message type from byte array (always third byte)
+                MessageType msgType = static_cast<MessageType>(msgArray[2]);                                // Extract message type from byte array (always third byte)
 
-                //if tick received with time tickTime
-                if (msgType == MessageType::SYNC) { // Should we check also against Client ID?
-                    const int syncTime = static_cast<int>(msgArray[1]); // Extract sync time from message (always second byte)
-                    qDebug() << "SYNC message received with time " << syncTime;
+                //if the message is of type PARAMETERUPDATE
+                if (msgType == MessageType::PARAMETERUPDATE) {
+                    qDebug() << "PARAMETERUPDATE message received";
+                    msgArray.remove(0, 3); // Remove first 3 bytes (aka the Header)
                     mutex.lock();
-                    tick(syncTime);
+                    processUpdateMessage(&msgArray);
                     mutex.unlock();
                 }
             }
@@ -122,7 +123,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
     }
 
     Q_SIGNALS:
-    void tick(int syncTime);    //!< Signal emitted when a SYNC message is received. Passes along the received timestamp
+    void processUpdateMessage(QByteArray* updateMessage);    //!< Signal emitted when a SYNC message is received. Passes along the received timestamp
     void stopped();             //!< Signal emitted when process is finished
 };
 #endif // TICKRECEIVER_H
