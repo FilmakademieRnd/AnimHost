@@ -101,7 +101,6 @@ glm::vec3 Bone::GetScale(int frame) const
 
 glm::mat4 Bone::GetTransform(int frame) const {
 
-
 	glm::quat outputRefJointRotation = GetOrientation(frame);
 	//glm::quat invOutputRefJointRotation = glm::inverse(outputRefJointRotation);
 

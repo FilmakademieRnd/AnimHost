@@ -27,7 +27,7 @@ void OnnxModel::LoadOnnxModel(QString Path)
         bModelValid = true;
 
         Ort::AllocatorWithDefaultOptions allocator;
-        qDebug() << "Input Node Name/Shape(" << input_names.size() << "): \n";
+        qDebug() << "\nInput Node Name/Shape: \n";
 
         for (std::size_t i = 0; i < session->GetInputCount(); i++) {
 
@@ -37,6 +37,7 @@ void OnnxModel::LoadOnnxModel(QString Path)
         }
 
         // output
+        qDebug() << "\nOutput Node Name/Shape: \n";
         for (std::size_t i = 0; i < session->GetOutputCount(); i++) {
             output_names.push_back(session->GetOutputNameAllocated(i, allocator).get());
             output_shapes.emplace_back(session->GetOutputTypeInfo(i).GetTensorTypeAndShapeInfo().GetShape());
@@ -92,9 +93,73 @@ std::vector<std::string> OnnxModel::GetTensorShapes(bool bGetInput)
     }
 }
 
-void OnnxModel::RunInference()
+std::vector<float> OnnxModel::RunInference(std::vector<float>& inputValue)
 {
+    if (!bModelValid) {
+        qDebug() << "Inference not possible. No model loaded or invalid.";
+        return std::vector<float>(0);
+    }
 
+    std::vector<Ort::Value> input_tensors;
+
+    for (std::size_t i = 0; i < session->GetInputCount(); i++) {
+        auto total_num_of_elements = std::accumulate(input_shapes[i].begin(), input_shapes[i].end(), 1,
+            [](int a, int b) { return a * b; });
+
+        if (total_num_of_elements == inputValue.size()) {
+            input_tensors.push_back(OnnxHelper::vecToTensor<float>(inputValue, input_shapes[i]));
+        }
+    }
+
+    qDebug() << "\ninput_tensor shape: " << shape_printer(input_tensors[0].GetTensorTypeAndShapeInfo().GetShape());
+
+    std::vector<const char*> input_names_c(input_names.size(), nullptr);
+    std::transform(input_names.begin(), input_names.end(), input_names_c.begin(),
+        [&](const std::string& str) { return str.c_str(); });
+
+    std::vector<const char*> output_names_c(output_names.size(), nullptr);
+    std::transform(output_names.begin(), output_names.end(), output_names_c.begin(),
+        [&](const std::string& str) { return str.c_str(); });
+
+    auto in_names = input_names_c.data();
+    auto in_tensor = input_tensors.data();
+    float* ret = input_tensors[0].GetTensorMutableData<float>();
+    auto in_size = input_names_c.size();
+    auto out_names = output_names_c.data();
+    auto out_size = output_names_c.size();
+
+
+    try {
+        auto out_tensors = session->Run(Ort::RunOptions{ nullptr }, in_names, in_tensor,
+            in_size, out_names, out_size);
+
+        ret = out_tensors[0].GetTensorMutableData<float>();
+        auto a = out_tensors[0].GetTensorTypeAndShapeInfo().GetShape();
+
+
+        qDebug() << "Result: " << output_names[0] << "\t" << ret[30];
+
+        auto out_num_of_elements = std::accumulate(a.begin(), a.end(), 1,
+            [](int a, int b) { return a * b; });
+
+        for (int i = 0; i < out_num_of_elements; i++) {
+            qDebug() << ret[i];
+        }
+
+        qDebug() << "... Done!";
+
+        return std::vector<float>(ret, ret + out_num_of_elements);
+    }
+    catch (const Ort::Exception& exception) {
+        qDebug() << "ERROR running model inference: " << exception.what();
+        return std::vector<float>(0);
+    }
+
+
+}
+
+
+void OnnxModel::RunInference() {
     //gen random input tensor
 
     if (!bModelValid) {
@@ -136,7 +201,7 @@ void OnnxModel::RunInference()
     auto out_names = output_names_c.data();
     auto out_size = output_names_c.size();
 
-//    ret = input_tensors[1].GetTensorMutableData<float>();
+    //    ret = input_tensors[1].GetTensorMutableData<float>();
 
     try {
         auto out_tensors = session->Run(Ort::RunOptions{ nullptr }, in_names, in_tensor,
@@ -146,7 +211,7 @@ void OnnxModel::RunInference()
         auto a = out_tensors[0].GetTensorTypeAndShapeInfo().GetShape();
 
 
-        qDebug() << "Result: " << output_names[0] << "\t" << ret[1];
+        qDebug() << "Result: " << output_names[0] << "\t" << ret[30];
 
         qDebug() << "... Done!";
     }

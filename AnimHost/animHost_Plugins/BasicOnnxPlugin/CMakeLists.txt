@@ -17,7 +17,7 @@ target_include_directories(BasicOnnxPlugin PUBLIC
     ./onnxruntime/include
 )
 
-target_compile_definitions(BasicOnnxPlugin PRIVATE
+target_compile_definitions(BasicOnnxPlugin PUBLIC
     BASICONNXPLUGIN_LIBRARY
 )
 
