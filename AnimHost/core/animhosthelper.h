@@ -15,6 +15,8 @@ public:
 
 	static void ForwardKinematics(const Skeleton& skeleton, const Animation& animation, std::vector<glm::mat4>& outTransforms, int frame);
 
+	static int FindParentBone(const std::map<int, std::vector<int>>& bone_hierarchy, int currentBone);
+
 };
 
 

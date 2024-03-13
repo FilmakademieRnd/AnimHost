@@ -76,3 +76,20 @@ void AnimHostHelper::ForwardKinematics(const Skeleton& skeleton, const Animation
     buildTranforms(initcurrentPos, initcurrentBone);
 
 }
+
+int AnimHostHelper::FindParentBone(const std::map<int, std::vector<int>>& bone_hierarchy, int currentBone)
+{
+    //search map values for current bone id and return the key/parent bone id
+
+    for (auto const& [key, val] : bone_hierarchy) {
+        for (int i : val) {
+            if (i == currentBone) {
+				return key;
+			}
+		}
+	}
+
+    qDebug() << "FindParentBone: Parent bone not found";
+
+    return -1;
+}
