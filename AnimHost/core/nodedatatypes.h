@@ -39,6 +39,8 @@ public:
 
     std::shared_ptr<T> getData() { return _data; }
 
+    void setData(std::shared_ptr<T> data) { _data = data; }
+
     QVariant getVariant() override { return QVariant::fromValue(_data); }
 
     void setVariant(QVariant variant) override { 
