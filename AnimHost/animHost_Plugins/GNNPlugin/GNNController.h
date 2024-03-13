@@ -59,6 +59,16 @@ private:
     std::vector<std::vector<glm::vec3>> genJointVel;
 
 
+    //Skeleton
+    std::shared_ptr<Skeleton> skeleton;
+
+    std::shared_ptr<Animation> animationIn;
+
+    std::shared_ptr<Animation> animationOut;
+
+
+
+
     //normalisation
 
     std::vector<float> stdIn;
@@ -68,15 +78,18 @@ private:
     std::vector<float> meanOut;
 
     //in & output tensors
+    std::vector<float> dummyIn;
+    std::vector<float> dummyPhase;
     std::vector<float> input_values;
     std::vector<float> output_values;
 
     int currentPivot = 0;
 
+    
 
     /* Neural Network */
     std::unique_ptr<OnnxModel> network;
-    QString NetworkModelPath = "C:\\DEV\\AI4Animation\\AI4Animation\\SIGGRAPH_2022\\PyTorch\\GNN\\Training\\147.onnx";
+    QString NetworkModelPath = "C:\\DEV\\AI4Animation\\AI4Animation\\SIGGRAPH_2022\\PyTorch\\GNN\\Training\\149.onnx";
 
 public:
     //initial joint positions
@@ -95,6 +108,16 @@ public:
 
     void InitDummyData();
 
+    void SetSkeleton(std::shared_ptr<Skeleton> skel);
+
+    void SetAnimationIn(std::shared_ptr<Animation> anim);
+
+    std::shared_ptr<Animation> GetAnimationOut();
+
+    void BuildAnimationSequence(const std::vector<glm::quat>& jointRot);
+    
+ 
+
 private:
 
     
@@ -102,7 +125,9 @@ private:
     void BuildInputTensor(const std::vector<glm::vec2>& pos, const std::vector<glm::vec2>& dir, const std::vector<glm::vec2>& vel, const std::vector<float>& speed,
         const std::vector<glm::vec3>& jointPos, const std::vector<glm::quat>& jointRot, const std::vector<glm::vec3>& jointVel);
     
-    void readOutput();
+    std::vector<glm::quat>  readOutput();
+
+    std::vector<glm::quat> ConvertRotationsToLocalSpace(const std::vector<glm::quat>& relativeJointRots);
 
     void DebugWriteOutputToFile(const std::vector<float> data, bool out);
 

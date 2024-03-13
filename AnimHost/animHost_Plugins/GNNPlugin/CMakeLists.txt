@@ -4,6 +4,7 @@ qt_add_library(GNNPlugin
     GNNController.cpp GNNController.h
     GNNPlugin_global.h
     HistoryBuffer.h
+    DummyData.h
 )
 target_include_directories(GNNPlugin PUBLIC
     ../PluginNodeInterface

@@ -23,6 +23,9 @@ private:
 
     std::weak_ptr<AnimNodeData<Animation>> _animationIn;
     std::weak_ptr<AnimNodeData<Skeleton>> _skeletonIn;
+    std::weak_ptr<AnimNodeData<JointVelocitySequence>> _jointVelocitySequenceIn;
+    
+    std::shared_ptr<AnimNodeData<Animation>> _animationOut;
 
 public:
     GNNPlugin();
