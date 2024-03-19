@@ -102,36 +102,49 @@ public:
 };
 Q_DECLARE_METATYPE(std::shared_ptr<Bone>)
 
-//! Skeleton holds maps to retreive bone names given an ID and vice versa
-//! It also stores the bone hierarchy (every bone ID is associated with an array of the IDs of its own children)
-//! Additional info (don't know if still relevant)
+/**
+ * @class Skeleton
+ * @brief A class that represents a skeleton in an animation.
+ *
+ * This class holds maps to retrieve bone names given an ID and vice versa.
+ * It also stores the bone hierarchy (every bone ID is associated with an array of the IDs of its own children).
+ */
 class ANIMHOSTCORESHARED_EXPORT Skeleton
 {
 public:
-    std::map<std::string, int> bone_names;
-    std::map<int, std::string> bone_names_reverse;
-    std::map<int, std::vector<int>> bone_hierarchy;
+    std::map<std::string, int> bone_names; ///< Map from bone names to IDs.
+    std::map<int, std::string> bone_names_reverse; ///< Map from bone IDs to names.
+    std::map<int, std::vector<int>> bone_hierarchy; ///< Map from bone IDs to a vector of its children's IDs.
 
-    int mAnimationDataSize = 0;
-    int mNumBones = 0;
-    int mRotationSize = 4;
-    int mNumKeyFrames = 0;
-    int mFrameOffset = 0;
-
-private:
-
+    int mAnimationDataSize = 0; ///< Size of the animation data.
+    int mNumBones = 0; ///< Number of bones in the skeleton.
+    int mRotationSize = 4; ///< Size of the rotation data.
+    int mNumKeyFrames = 0; ///< Number of keyframes in the animation.
+    int mFrameOffset = 0; ///< Offset for the frames in the animation.
 
 public:
+    /**
+     * @brief Default constructor for the Skeleton class.
+     */
     Skeleton() {};
+
+    /**
+     * @brief Destructor for the Skeleton class.
+     */
     ~Skeleton() {};
 
     COMMONDATA(skeleton, Skeleton)
 };
 Q_DECLARE_METATYPE(std::shared_ptr<Skeleton>)
 
-//! Animation data structure:
-//! Duration in seconds and in frames
-//! Array of Bone instances (sorted by ID) -> Bone instances contain sequences of pos/rot/sca of a specific bone (i.e. bone motions - see line 54 to 90)
+/**
+ * @class Animation
+ * @brief A class that represents an animation sequence.
+ *
+ * This class inherits from the Sequence class and contains a vector of Bone objects.
+ * Each Bone object represents a bone in the animation and contains sequences of positions, rotations, and scales.
+ * The Animation class also stores the duration of the animation in seconds and frames.
+ */
 class ANIMHOSTCORESHARED_EXPORT Animation : public Sequence
 {
 public:
@@ -141,8 +154,11 @@ public:
     std::vector<Bone> mBones;
 
 
-    //void SetRestingPosition(const aiNode& pNode, const Skeleton& pSkeleton);
-
+    /**
+     * @brief Default constructor for the Animation class.
+     *
+     * This constructor initializes the bones vector as an empty vector.
+     */
     Animation()
     {
         mBones = std::vector<Bone>();
@@ -150,12 +166,27 @@ public:
         qDebug() << "Animation()";
     };
 
-
+    /**
+     * @brief Copy constructor for the Animation class.
+     *
+     * This constructor creates a new Animation object as a copy of an existing one.
+     *
+     * @param o The Animation object to copy.
+     */
     Animation(const Animation& o) : mBones(o.mBones), mDurationFrames(o.mDurationFrames), mDuration(o.mDuration) { qDebug() << "Animation Copy"; };
 
-
+    /**
+     * @brief Move constructor for the Animation class.
+     *
+     * This constructor creates a new Animation object by moving the data from an existing one.
+     *
+     * @param o The Animation object to move.
+     */
     Animation(Animation&& o) noexcept : mBones(std::move(o.mBones)) { qDebug() << "Animation Move"; };
 
+    /**
+     * @brief Destructor for the Animation class.
+     */
     ~Animation() {};
 
     COMMONDATA(animation, Animation)
@@ -164,7 +195,12 @@ public:
 Q_DECLARE_METATYPE(std::shared_ptr<Animation>)
 
 
-//! Velocity of every character joint calculated based on global position V = Xt - X(t-1)
+/**
+ * @class JointVelocity
+ * @brief A class that represents the velocity of every character joint during a specific timestamp.
+ *
+ * This class calculates the velocity based on global position V = Xt - X(t-1).
+ */
 class ANIMHOSTCORESHARED_EXPORT JointVelocity
 {
     float timeStamp;
@@ -174,45 +210,71 @@ public:
     std::vector<glm::vec3> mJointVelocity;
 
 public: 
-    JointVelocity() {
-       mJointVelocity = std::vector<glm::vec3>();
-    };
+    /**
+     * @brief Default constructor for the JointVelocity class.
+     *
+     * This constructor initializes the joint velocity vector as an empty vector.
+     */
+    JointVelocity() : timeStamp(0.0f), mJointVelocity(std::vector<glm::vec3>()) {};
     
     COMMONDATA(jointVelocity, JointVelocity)
 
 };
 Q_DECLARE_METATYPE(std::shared_ptr<JointVelocity>)
 
-//! Sequence of joint velocities
+/**
+ * @class JointVelocitySequence
+ * @brief A class that represents a sequence of joint velocities in an animation.
+ *
+ * This class inherits from the Sequence class and contains a vector of JointVelocity objects.
+ * It provides methods to get the velocity of a bone at a specific frame.
+ */
 class ANIMHOSTCORESHARED_EXPORT JointVelocitySequence : public Sequence
 {
 public:
-    std::vector<JointVelocity> mJointVelocitySequence;
+    std::vector<JointVelocity> mJointVelocitySequence; ///< The sequence of joint velocities.
 
 
 public:
     JointVelocitySequence() {};
 
-    /// <summary>
-    /// Return the Velocity of the Root Bone. We assume root bone is the 1st element of the skeletal structure.
-    /// </summary>
-    /// <param name="FrameIndex"></param>
-    /// <returns>Returns the x & z component of the velocity vector. We assume x & Z define the ground plane.</returns>
+    /**
+     * @brief Get the 2D velocity of the root bone at a specific frame.
+     *
+     * This function returns the x and z components of the root bone's velocity,
+     * effectively projecting the 3D velocity onto the xz-plane.
+     *
+     * @param FrameIndex The index of the frame.
+     * @return The x and z components of the root bone's velocity at the specified frame.
+     */
     glm::vec2 GetRootVelocityAtFrame2D(int FrameIndex) {
 
         return glm::vec2(mJointVelocitySequence[FrameIndex].mJointVelocity[0].x, 
             mJointVelocitySequence[FrameIndex].mJointVelocity[0].z);
     }
 
-    /// <summary>
-    /// Return the Velocity of the Root Bone. We assume root bone is the 1st element of the skeletal structure.
-    /// </summary>
-    /// <param name="FrameIndex"></param>
-    /// <returns></returns>
+    /**
+     * @brief Get the 3D velocity of the root bone at a specific frame.
+     *
+     * This function returns the 3D velocity of the root bone at the specified frame.
+     *
+     * @param FrameIndex The index of the frame.
+     * @return The 3D velocity of the root bone at the specified frame.
+     */
     glm::vec3 GetRootVelocityAtFrame(int FrameIndex) {
         return GetVelocityAtFrame(FrameIndex,0);
     }
 
+
+    /**
+     * @brief Get the 3D velocity of a bone at a specific frame.
+     *
+     * This function returns the 3D velocity of the bone at the specified frame.
+     *
+     * @param FrameIndex The index of the frame.
+     * @param BoneIndx The index of the bone.
+     * @return The 3D velocity of the bone at the specified frame.
+     */
     glm::vec3 GetVelocityAtFrame(int FrameIndex, int BoneIndx) {
         return glm::vec3(mJointVelocitySequence[FrameIndex].mJointVelocity[BoneIndx]);
     }
@@ -227,55 +289,113 @@ Q_DECLARE_METATYPE(std::shared_ptr<JointVelocitySequence>)
 
 
 
-//! Positions of every character joint relative to Character Space with relative timestamp
-class ANIMHOSTCORESHARED_EXPORT Pose
+/**
+ * @class Pose
+ * @brief A class that represents a pose in an animation.
+ *
+ * This class holds the positions of every character in world space during a specific timestamp.
+ */
+    class ANIMHOSTCORESHARED_EXPORT Pose
 {
-    float timeStamp = -1;
+    float timeStamp = -1; ///< The timestamp of the pose.
 
 public:
 
-    std::vector<glm::vec3> mPositionData;
+    std::vector<glm::vec3> mPositionData; ///< The position data of the pose.
 
 public:
+    /**
+     * @brief Default constructor for the Pose class.
+     *
+     * This constructor initializes the position data as an empty vector.
+     */
     Pose() {
         mPositionData = std::vector<glm::vec3>();
     };
 
-    //Pose(const Pose& o) : mPositionData(o.mPositionData) {};
-
-
     COMMONDATA(pose, Pose)
-
-    
 };
 Q_DECLARE_METATYPE(std::shared_ptr<Pose>)
 
-//! Sequence of poses
+/**
+ * @class PoseSequence
+ * @brief A class that represents a sequence of poses in an animation.
+ *
+ * This class inherits from the Sequence class and contains a vector of Pose objects.
+ * It provides methods to get the position of a bone at a specific frame.
+ */
 class ANIMHOSTCORESHARED_EXPORT PoseSequence : public Sequence
 {
 public:
 
-    std::vector<Pose> mPoseSequence;
+    std::vector<Pose> mPoseSequence; ///< The sequence of poses.
+
 public:
 
     PoseSequence() { qDebug() << "PoseSequence()"; };
 
 
+    /**
+     * @brief Get the position of the root bone at a specific frame.
+     *
+     * This function returns the x and z coordinates of the root bone's position,
+     * effectively projecting the 3D position onto the xz-plane.
+     *
+     * @param FrameIndex The index of the frame.
+     * @return The x and z coordinates of the root bone's position at the specified frame.
+     */
     glm::vec2 GetRootPositionAtFrame(int FrameIndex) {
 
         // We assume the root bone is always at index 0 in the positional data.
         //Support different coordinate Systems
         return GetPositionAtFrame(FrameIndex, 0);
-            
+
     }
 
+    /**
+     * @brief Get the position of a bone at a specific frame.
+     *
+     * This function returns the x and z coordinates of the bone's position,
+     * effectively projecting the 3D position onto the xz-plane. 
+     *
+     * @param FrameIndex The index of the frame.
+     * @param boneIndex The index of the bone.
+     * @return The x and z coordinates of the bone's position at the specified frame.
+     */
     glm::vec2 GetPositionAtFrame(int FrameIndex, int boneIndex) {
 
-        // We assume the root bone is always at index 0 in the positional data.
-        //Support different coordinate Systems
-        return glm::vec2(mPoseSequence[FrameIndex].mPositionData[boneIndex].x,
-            mPoseSequence[FrameIndex].mPositionData[boneIndex].z);
+        if (FrameIndex < mPoseSequence.size() && boneIndex < mPoseSequence[FrameIndex].mPositionData.size()) {
+			return glm::vec2(mPoseSequence[FrameIndex].mPositionData[boneIndex].x,
+                				mPoseSequence[FrameIndex].mPositionData[boneIndex].z);
+        }
+        else {
+            qDebug() << "Error::GetPositionAtFrame: FrameIndex or boneIndex out of range";
+			return glm::vec2(0, 0);
+		}   
     }
+
+    /**
+     * @brief Get the 3D position of a bone at a specific frame.
+     *
+     * This function returns the 3D position of the bone at the specified frame.
+     * It checks if the FrameIndex and boneIndex are within the bounds of the data structure.
+     * If either index is out of bounds, it logs an error and returns a zero vector.
+     *
+     * @param FrameIndex The index of the frame.
+     * @param boneIndex The index of the bone.
+     * @return The 3D position of the bone at the specified frame.
+     */
+    glm::vec3 GetPositionAtFrame3D(int FrameIndex, int boneIndex) {
+
+        if (FrameIndex < mPoseSequence.size() && boneIndex < mPoseSequence[FrameIndex].mPositionData.size()) {
+			return mPoseSequence[FrameIndex].mPositionData[boneIndex];
+		}
+        else {
+			qDebug() << "Error::GetPositionAtFrame3D: FrameIndex or boneIndex out of range";
+			return glm::vec3(0, 0, 0);
+		}
+	}
+
 
     COMMONDATA(poseSequence, PoseSequence)
 };
