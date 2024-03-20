@@ -56,9 +56,9 @@ private:
     
 
 
-    int numSamples = 12;
+    int numSamples = 13;
     int pastSamples = 6;
-    int futureSamples = 5; // past samples + reference frame + future samples = numSamples
+    int futureSamples = 6; // past samples + reference frame + future samples = numSamples
 
     int rootbone_idx = 0;
 

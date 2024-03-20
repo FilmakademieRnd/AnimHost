@@ -20,20 +20,23 @@ public:
      * @param numSamples The number of samples in the range.
      * @param fps The number of frames per second in the animation.
      * @param referenceFrame The reference frame for the range.
+     * @param startIndex The start index for the range.
      */
-    FrameIterator(int numSamples, int fps, int referenceFrame)
-        : numSamples(numSamples), fps(fps), referenceFrame(referenceFrame), currentSampleIndex(0) {
+    FrameIterator(int numSamples, int fps, int referenceFrame, int startIndex = 0)
+        : numSamples(numSamples), fps(fps), referenceFrame(referenceFrame), currentSampleIndex(startIndex) {
         // Ensure total frames is odd, so the reference frame is always in the middle
-        totalFrames = 2 * fps;
-        if (totalFrames % 2 == 0) {
-            totalFrames++;
+        totalFrames = 2 * fps + 1;
+
+        if (numSamples % 2 == 0) {
+            numSamples++;
         }
 
         // Calculate the frame step based on the number of samples
-        frameStep = totalFrames / numSamples;
+        frameStep = round(static_cast<double>(totalFrames) / numSamples);
 
-        // Calculate the start frame index
-        startFrameIndex = referenceFrame - fps;
+        
+        // Calculate the start frame index so that the reference frame is in the middle
+        startFrameIndex = referenceFrame - frameStep * (numSamples / 2);
     }
 
     /**
@@ -128,9 +131,10 @@ public:
      * @param numSamples The number of samples in the range.
      * @param fps The number of frames per second in the animation.
      * @param referenceFrame The reference frame for the range.
+     * @param startIndex The start index for the range.
      */
-    FrameRange(int numSamples, int fps, int referenceFrame)
-        : beginIterator(numSamples, fps, referenceFrame), endIterator(numSamples, fps, referenceFrame) {
+    FrameRange(int numSamples, int fps, int referenceFrame, int startIndex = 0)
+        : beginIterator(numSamples, fps, referenceFrame, startIndex), endIterator(numSamples, fps, referenceFrame) {
         endIterator.setcurrentSampleIndex(numSamples);
     }
 

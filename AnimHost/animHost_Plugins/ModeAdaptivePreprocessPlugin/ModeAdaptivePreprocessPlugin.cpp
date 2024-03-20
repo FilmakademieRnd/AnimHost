@@ -131,7 +131,7 @@ void ModeAdaptivePreprocessPlugin::run()
 		qDebug() << "ModeAdaptivePreprocessPlugin: Input Data Complete";
 
 		//Test Frame Range, printing out the frame idxs
-		FrameRange frameRange(numSamples, 60, 10);
+		/*FrameRange frameRange(numSamples, 60, 10);
 		qDebug() << "Frame Range Test";
 		for (int frameIdx : frameRange) {
 			qDebug() << "Frame Index: " << frameIdx;
@@ -139,7 +139,7 @@ void ModeAdaptivePreprocessPlugin::run()
 
 		for (int frameIdx : frameRange) {
 			qDebug() << "Secend Run Frame Index: " << frameIdx;
-		}
+		}*/
 
 		rootSequenceData.clear();
 		sequenceRelativeJointPosition.clear();
@@ -153,11 +153,11 @@ void ModeAdaptivePreprocessPlugin::run()
 
 
 		//Offset to start of sequence, allows for enough frames to be left for past trajectory samples
-		int start = pastSamples;
+		int start = 60;
 
 		//Offset to last frame of sequence, allows for enough frames to be left for trajectory 
 		//and output (trajectory of next frame)
-		int end = animation->mDurationFrames - futureSamples - 2;
+		int end = animation->mDurationFrames - 60;
 
 		for (int frameCounter = start; frameCounter <= end; frameCounter++) {
 			processFrame(frameCounter, poseSequenceIn, animation, velSeq, skeleton);
@@ -253,14 +253,19 @@ std::pair<std::vector<float>, glm::vec2> ModeAdaptivePreprocessPlugin::prepareTr
 
 	glm::quat invRefRot = glm::inverse(refRot);
 
+	
+	int refIdx = referenceFrame + (isOutput ? 1 : 0);
 	// For output data, we only need to calculate the trajectory for the future steps.
 	// 6 is the start index for future steps. Might need to change this if the number of samples changes.
 	int startIdx = isOutput ? 6 : 0;
 
-	for (int i = startIdx; i < numSamples; i++) {
+	FrameRange frameRange(numSamples, 60, refIdx, startIdx);
+
+	int i = 0;
+
+	for (int frameIdx : frameRange) {
 
 		//if output we need to offset the frame index by 1
-		int frameIdx = pastFrameStartIdx + (isOutput ? 1 : 0) + i;
 
 		// Positional Trajectory, relative to root orientation
 		glm::vec2 samplePos = poseSequenceIn->GetPositionAtFrame(frameIdx, rootbone_idx) - refPos;
@@ -283,6 +288,8 @@ std::pair<std::vector<float>, glm::vec2> ModeAdaptivePreprocessPlugin::prepareTr
 
 		// Speed
 		desSpeedTrajectory[i] = glm::length(velTrajectory[i]);
+
+		i++;
 	}
 
 	// Flatten Root Trajectory data into single vector.
@@ -300,7 +307,11 @@ std::pair<std::vector<float>, glm::vec2> ModeAdaptivePreprocessPlugin::prepareTr
 	// required for generating the delta offset & angle for updating the root position after inference
 	glm::vec2 nextRefForward;
 	if (!isOutput) {
-		nextRefForward = forwardTrajectory[7];
+		// Direction relative to root orientation
+		glm::quat sampleRotation = animation->mBones[rootbone_idx].GetOrientation(refIdx+1);
+		auto sampleForward = sampleRotation * forwardBaseVector;
+		auto relativeSampleForward = invRefRot * sampleForward;
+		nextRefForward = glm::normalize(glm::vec2(relativeSampleForward.x, relativeSampleForward.z));
 	}
 
 	return { flatTrajectoryData, nextRefForward };
@@ -310,7 +321,7 @@ std::vector<glm::vec3> ModeAdaptivePreprocessPlugin::prepareJointPositions(int r
 {
 
 	//if output we need to offset the frame index by 1
-	int frameIdx = referenceFrame + (isOutput ? 0 : 1);
+	int frameIdx = referenceFrame + (isOutput ? 1 : 0);
 
 	std::vector<glm::vec3> relativeJointPosition = std::vector<glm::vec3>(poseSequenceIn->mPoseSequence[frameIdx].mPositionData.size());
 	glm::vec3 referencePosition = poseSequenceIn->mPoseSequence[frameIdx].mPositionData[rootbone_idx];
@@ -330,7 +341,7 @@ std::vector<glm::quat> ModeAdaptivePreprocessPlugin::prepareJointRotations(int r
 	std::vector<glm::quat> relativeJointRotations = std::vector<glm::quat>(skeleton->mNumBones);
 	std::vector<glm::mat4> transforms;
 
-	int frameIdx = referenceFrame + (isOutput ? 0 : 1);
+	int frameIdx = referenceFrame + (isOutput ? 1 : 0);
 
 	AnimHostHelper::ForwardKinematics(*skeleton, *animation, transforms, referenceFrame);
 
@@ -353,7 +364,7 @@ std::vector<glm::quat> ModeAdaptivePreprocessPlugin::prepareJointRotations(int r
 std::vector<glm::vec3> ModeAdaptivePreprocessPlugin::prepareJointVelocities(int referenceFrame, std::shared_ptr<JointVelocitySequence> velSeq, glm::quat inverseReferenceJointRotation, bool isOutput)
 {
 	// ... existing code ...
-	int frameIdx = referenceFrame + (isOutput ? 0 : 1);
+	int frameIdx = referenceFrame + (isOutput ? 1 : 0);
 	// Joint Velocities
 	std::vector<glm::vec3> relativeJointVelocities = std::vector<glm::vec3>(velSeq->mJointVelocitySequence[frameIdx].mJointVelocity.size());
 
