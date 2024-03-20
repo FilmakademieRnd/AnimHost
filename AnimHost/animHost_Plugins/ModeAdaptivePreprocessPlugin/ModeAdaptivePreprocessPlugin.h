@@ -44,6 +44,17 @@ private:
     QString dataXFileName = "data_X.bin";
     QString dataYFileName = "data_Y.bin";
 
+    //Define a forwardvector match forward of assimp
+    glm::vec4 forwardBaseVector = glm::vec4(0, 0, 1.0, 0);
+    
+    glm::vec2 curretRefPos;
+    glm::vec2 currentRefVel;
+    glm::quat referenceRotation;
+    glm::vec2 nextRefForward;
+    glm::quat inverseReferenceRotation;
+
+    
+
 
     int numSamples = 12;
     int pastSamples = 6;
@@ -78,12 +89,85 @@ public:
 
     std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;
     void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
+    
+    bool isDataAvailable();
+    
     void run() override;
+
+    /**
+     * This function processes a single frame of the animation sequence.
+     * It calculates the root trajectory, joint positions, joint rotations, and joint velocities for the current frame and the next frame.
+     * The calculated data is stored in the member variables of the class for later use.
+     *
+     * @param frameCounter The index of the frame to be processed.
+     * @param poseSequenceIn A shared pointer to the PoseSequence that contains the joint positions for all frames.
+     * @param animation A shared pointer to the Animation that contains the joint rotations for all frames.
+     * @param velSeq A shared pointer to the JointVelocitySequence that contains the joint velocities for all frames.
+     * @param skeleton A shared pointer to the Skeleton that contains the joint hierarchy.
+     */
+    void processFrame(int frameCounter, std::shared_ptr<PoseSequence> poseSequenceIn, std::shared_ptr<Animation> animation, std::shared_ptr<JointVelocitySequence> velSeq, std::shared_ptr<Skeleton> skeleton);
+
+    /**
+     * This function prepares the trajectory data for a given frame.
+     * It calculates the positional trajectory, direction, velocity, and speed relative to the root orientation.
+     * This function is used in the processFrame function to calculate the trajectory data for the current frame and the next frame.
+     *
+     * @param referenceFrame The frame for which the trajectory data are to be calculated.
+     * @param pastFrameStartIdx The start index of the past frames.
+     * @param poseSequenceIn A shared pointer to the PoseSequence that contains the joint positions for all frames.
+     * @param animation A shared pointer to the Animation that contains the joint rotations for all frames.
+     * @param velSeq A shared pointer to the JointVelocitySequence that contains the joint velocities for all frames.
+     * @param refPos The reference position.
+     * @param refRot The reference rotation.
+     * @param isOutput A boolean flag that indicates whether the function is being called for output data. If true, the function calculates the trajectory data for the next frame.
+     * @return A pair consisting of a vector of floats representing the flattened trajectory data and a 2D vector representing the forward direction for the next frame.
+     */
+    std::pair<std::vector<float>, glm::vec2> prepareTrajectoryData(int referenceFrame, int pastFrameStartIdx, std::shared_ptr<PoseSequence> poseSequenceIn, std::shared_ptr<Animation> animation, std::shared_ptr<JointVelocitySequence> velSeq, glm::vec2 refPos, glm::quat refRot, bool isOutput);
+
+    /**
+     * This function prepares the joint positions for a given frame.
+     * It calculates the relative joint positions by subtracting the reference joint position from each joint position.
+     * This function is used in the processFrame function to calculate the joint positions for the current frame and the next frame.
+     *
+     * @param referenceFrame The frame for which the joint positions are to be calculated.
+     * @param poseSequenceIn A shared pointer to the PoseSequence that contains the joint positions for all frames.
+     * @param isOutput A boolean flag that indicates whether the function is being called for output data. If true, the function calculates the joint positions for the next frame.
+     * @return A vector of 3D vectors representing the relative joint positions for the given frame.
+     */
+    std::vector<glm::vec3> prepareJointPositions(int referenceFrame, std::shared_ptr<PoseSequence> poseSequenceIn, bool isOutput = false);
+
+    /**
+     * This function prepares the joint rotations for a given frame.
+     * It calculates the relative joint rotations by multiplying the joint rotation with the inverse of the reference joint rotation.
+     * This function is used in the processFrame function to calculate the joint rotations for the current frame and the next frame.
+     *
+     * @param referenceFrame The frame for which the joint rotations are to be calculated.
+     * @param animation A shared pointer to the Animation that contains the joint rotations for all frames.
+     * @param skeleton A shared pointer to the Skeleton that contains the joint hierarchy.
+     * @param inverseReferenceJointRotation The inverse of the reference joint rotation.
+     * @param isOutput A boolean flag that indicates whether the function is being called for output data. If true, the function calculates the joint rotations for the next frame.
+     * @return A vector of quaternions representing the relative joint rotations for the given frame.
+     */
+    std::vector<glm::quat> prepareJointRotations(int referenceFrame, std::shared_ptr<Animation> animation, std::shared_ptr<Skeleton> skeleton, glm::quat inverseReferenceJointRotation, bool isOutput = false);
+
+    /**
+     * This function prepares the joint velocities for a given frame.
+     * It calculates the relative joint velocities by multiplying the joint velocity with the inverse of the reference joint rotation.
+     * This function is used in the processFrame function to calculate the joint velocities for the current frame and the next frame.
+     *
+     * @param referenceFrame The frame for which the joint velocities are to be calculated.
+     * @param velSeq A shared pointer to the JointVelocitySequence that contains the joint velocities for all frames.
+     * @param inverseReferenceJointRotation The inverse of the reference joint rotation.
+     * @param isOutput A boolean flag that indicates whether the function is being called for output data. If true, the function calculates the joint velocities for the next frame.
+     * @return A vector of 3D vectors representing the relative joint velocities for the given frame.
+     */
+    std::vector<glm::vec3> prepareJointVelocities(int referenceFrame, std::shared_ptr<JointVelocitySequence> velSeq, glm::quat inverseReferenceJointRotation, bool isOutput = false);
 
     QWidget* embeddedWidget() override;
 
 
 private:
+    void clearExistingData();
     void writeInputData();
     void writeOutputData();
     void writeMetaData();
