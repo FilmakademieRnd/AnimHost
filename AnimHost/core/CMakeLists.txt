@@ -10,6 +10,7 @@ qt_add_library(AnimHostCore SHARED
     ZMQMessageHandler.h ZMQMessageHandler.cpp
     UIUtils.h UIUtils.cpp
     FileHandler.h FileHandler.cpp
+    FrameRange.h FrameRange.cpp
 
     animhostcore_global.h
 )

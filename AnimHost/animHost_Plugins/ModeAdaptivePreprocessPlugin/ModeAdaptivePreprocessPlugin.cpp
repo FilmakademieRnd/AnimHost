@@ -4,6 +4,7 @@
 
 #include <QElapsedTimer>
 #include <FileHandler.h>
+#include <FrameRange.h>
 
 
 #include <glm/gtx/quaternion.hpp>
@@ -126,7 +127,19 @@ void ModeAdaptivePreprocessPlugin::run()
 		auto sp_skeleton = _skeletonIn.lock();
 		auto skeleton = sp_skeleton->getData();
 
+
 		qDebug() << "ModeAdaptivePreprocessPlugin: Input Data Complete";
+
+		//Test Frame Range, printing out the frame idxs
+		FrameRange frameRange(numSamples, 60, 10);
+		qDebug() << "Frame Range Test";
+		for (int frameIdx : frameRange) {
+			qDebug() << "Frame Index: " << frameIdx;
+		}
+
+		for (int frameIdx : frameRange) {
+			qDebug() << "Secend Run Frame Index: " << frameIdx;
+		}
 
 		rootSequenceData.clear();
 		sequenceRelativeJointPosition.clear();
@@ -352,7 +365,6 @@ std::vector<glm::vec3> ModeAdaptivePreprocessPlugin::prepareJointVelocities(int 
 
 }
 
-
 std::shared_ptr<NodeData> ModeAdaptivePreprocessPlugin::processOutData(QtNodes::PortIndex port)
 {
 	return nullptr;
@@ -418,7 +430,6 @@ QWidget* ModeAdaptivePreprocessPlugin::embeddedWidget()
 
 	return _widget;
 }
-
 
 void ModeAdaptivePreprocessPlugin::clearExistingData()
 {
@@ -703,8 +714,6 @@ void ModeAdaptivePreprocessPlugin::writeOutputData()
 		}
 	}
 }
-
-
 
 void ModeAdaptivePreprocessPlugin::onFolderSelectionChanged()
 {
