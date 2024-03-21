@@ -73,11 +73,12 @@ public:
     int mNumKeysScale;
 
     std::string mName;
+    glm::mat4 mRestingTransform;
+    glm::quat restingRotation;
+
     std::vector<KeyPosition> mPositonKeys;
     std::vector<KeyRotation> mRotationKeys;
     std::vector<KeyScale> mScaleKeys;
-    glm::mat4 mRestingTransform;
-    glm::quat restingRotation;
 
 public:
     Bone(std::string name, int id, int numPos, int numRot, int numScl, glm::mat4 rest);
@@ -116,11 +117,8 @@ public:
     std::map<int, std::string> bone_names_reverse; ///< Map from bone IDs to names.
     std::map<int, std::vector<int>> bone_hierarchy; ///< Map from bone IDs to a vector of its children's IDs.
 
-    int mAnimationDataSize = 0; ///< Size of the animation data.
     int mNumBones = 0; ///< Number of bones in the skeleton.
-    int mRotationSize = 4; ///< Size of the rotation data.
-    int mNumKeyFrames = 0; ///< Number of keyframes in the animation.
-    int mFrameOffset = 0; ///< Offset for the frames in the animation.
+    int rootBoneID = 0; ///< ID of the root bone.
 
 public:
     /**
@@ -134,6 +132,116 @@ public:
     ~Skeleton() {};
 
     COMMONDATA(skeleton, Skeleton)
+
+
+    /**
+     * @brief Creates a sub-skeleton from the current skeleton.
+     *
+     * This function creates a sub-skeleton starting from the root bone specified by rootBoneName.
+     * The sub-skeleton includes the root bone and all its descendants, stopping at the bones specified in endBoneNames.
+     * If a bone is in endBoneNames, it is included in the sub-skeleton, but its descendants are not.
+     *
+     * @param rootBoneName The name of the root bone of the sub-skeleton.
+     * @param endBoneNames The names of the bones that should be end bones in the sub-skeleton.
+     * @return The created sub-skeleton.
+     * @throws std::runtime_error If the root bone is not found in the original skeleton.
+     */
+    Skeleton CreateSubSkeleton(const std::string& rootBoneName, const std::vector<std::string>& endBoneNames) {
+        Skeleton subSkeleton;
+
+        // Check if the root bone exists in the original skeleton
+        if (bone_names.find(rootBoneName) == bone_names.end()) {
+            throw std::runtime_error("Root bone not found in the original skeleton.");
+        }
+
+        // Start creating the sub-skeleton from the root bone
+        subSkeleton.rootBoneID = bone_names[rootBoneName];
+        subSkeleton.bone_names[rootBoneName] = subSkeleton.rootBoneID;
+        subSkeleton.bone_names_reverse[subSkeleton.rootBoneID] = rootBoneName;
+        CreateSubSkeletonRecursive(subSkeleton.rootBoneID, endBoneNames, subSkeleton);
+
+        return subSkeleton;
+    }
+
+private:
+    /**
+     * @brief Recursively creates a sub-skeleton from the current skeleton.
+     *
+     * This function is used by CreateSubSkeleton to recursively add bones to the sub-skeleton.
+     * It adds the bone specified by boneId to the sub-skeleton, and then calls itself for each child of the bone.
+     * If the bone is in endBoneNames, it does not add the children of the bone to the sub-skeleton.
+     *
+     * @param boneId The ID of the bone to add to the sub-skeleton.
+     * @param endBoneNames The names of the bones that should be end bones in the sub-skeleton.
+     * @param subSkeleton The sub-skeleton to add the bone to.
+     */
+    void CreateSubSkeletonRecursive(int boneId, const std::vector<std::string>& endBoneNames, Skeleton& subSkeleton) {
+        // Add the current bone to the sub-skeleton
+        std::string boneName = bone_names_reverse[boneId];
+        subSkeleton.bone_names[boneName] = boneId;
+        subSkeleton.bone_names_reverse[boneId] = boneName;
+        subSkeleton.bone_hierarchy[boneId] = bone_hierarchy[boneId];
+
+        // If the current bone is an end bone, stop the recursion
+        if (std::find(endBoneNames.begin(), endBoneNames.end(), boneName) != endBoneNames.end()) {
+            // The current bone is an end bone, so we don't add its children to the sub-skeleton
+            subSkeleton.bone_hierarchy[boneId] = {};
+            return;
+        }
+
+        // Add the children of the current bone to the sub-skeleton
+        for (int childBoneId : bone_hierarchy[boneId]) {
+            // Recursively add the descendants of the child bone to the sub-skeleton
+            CreateSubSkeletonRecursive(childBoneId, endBoneNames, subSkeleton);
+        }
+    }
+
+public:
+    class Iterator {
+        const Skeleton& skeleton;
+        std::vector<int> stack;
+
+    public:
+        Iterator(const Skeleton& skeleton, int startBoneId = -1) : skeleton(skeleton) {
+            if (startBoneId != -1) {
+                stack.push_back(startBoneId);
+            }
+        }
+
+        int operator*() const {
+            return stack.back();
+        }
+
+        Iterator& operator++() {
+            if (!stack.empty()) {
+				int currentBoneId = stack.back();
+				stack.pop_back();
+
+				const auto& children = skeleton.bone_hierarchy.at(currentBoneId);
+				stack.insert(stack.end(), children.rbegin(), children.rend());
+			}
+
+            return *this;
+        }
+
+        bool operator==(const Iterator& other) const {
+            return stack == other.stack;
+        }
+
+        bool operator!=(const Iterator& other) const {
+            return !(*this == other);
+        }
+    };
+
+    Iterator begin() const {
+        // Assuming the root bone has ID 0.
+        return Iterator(*this, rootBoneID);
+    }
+
+    Iterator end() const {
+        return Iterator(*this);
+    }
+
 };
 Q_DECLARE_METATYPE(std::shared_ptr<Skeleton>)
 
@@ -188,6 +296,20 @@ public:
      * @brief Destructor for the Animation class.
      */
     ~Animation() {};
+
+    /**
+     * @brief Calculate Root Transform of Character.
+     *
+     * This function calculates the root transform of the character based on the given animation and frame.
+     * The given bone ii used to calculate the root transform. Its position and orientation is projected onto the ground plane.
+     *
+     * @param anim The animation to calculate the root transform from.
+     * @param frame The frame to calculate the root transform for.
+     * @param boneIdx The bone to calculate the root transform from.
+     * @return The root transform of the character as a 4x4 matrix.
+     * @note PLACEHOLDER FUNCTION
+     */
+    static glm::mat4 CalculateRootTransform(const std::shared_ptr<Animation>& anim, int frame, int boneIdx);
 
     COMMONDATA(animation, Animation)
 

@@ -119,6 +119,20 @@ glm::mat4 Bone::GetTransform(int frame) const {
 
 };
 
+
+glm::mat4 Animation::CalculateRootTransform(const std::shared_ptr<Animation>& anim, int frame, int boneIdx) {
+	
+	glm::mat4 rootTransform = glm::mat4(1.0f);
+	
+	return rootTransform;
+	// Get the root transform from the animation
+
+}
+
+
+
+
+
 //! Fills in the gaps between the ControlPoints by sampling new ControlPoints for every frame required by the ControlPath
 void ControlPath::CreateSpline() {
 
