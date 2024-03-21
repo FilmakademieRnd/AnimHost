@@ -120,9 +120,32 @@ glm::mat4 Bone::GetTransform(int frame) const {
 };
 
 
-glm::mat4 Animation::CalculateRootTransform(const std::shared_ptr<Animation>& anim, int frame, int boneIdx) {
+glm::mat4 Animation::CalculateRootTransform(int frame, int boneIdx) {
 	
-	glm::mat4 rootTransform = glm::mat4(1.0f);
+	//Check if the bone and frame has valid index
+	if (boneIdx >= mBones.size() || frame >= mDurationFrames) {
+
+		qDebug() << "Bone or frame index out of range";
+		return glm::mat4(1.0f);
+	}
+
+	glm::vec4 forwardBasis = glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
+	
+	glm::vec4 rootBonePosition = glm::vec4(mBones[boneIdx].GetPosition(frame), 1.0);
+	glm::vec4 rootBoneOrientation = glm::vec4(mBones[boneIdx].GetOrientation(frame) * forwardBasis);
+
+	//Project root bone position to the xz plane
+	glm::vec4 rootBonePositionXZ = glm::vec4(rootBonePosition.x, 0.0f, rootBonePosition.z, 1.0f);
+
+	//Project root bone orientation to the xz plane & normalize
+	glm::vec4 rootBoneOrientationXZ = glm::normalize(glm::vec4(rootBoneOrientation.x, 0.0f, rootBoneOrientation.z, 1.0f));
+
+	//Calculate the quaternion rotation between the forward basis and the root bone orientation
+	glm::quat rotation = glm::rotation(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(rootBoneOrientationXZ));
+
+
+	//Calculate the root transform from the root bone position and rotation
+	glm::mat4 rootTransform = glm::translate(glm::mat4(1.0f), glm::vec3(rootBonePositionXZ)) * glm::toMat4(rotation);
 	
 	return rootTransform;
 	// Get the root transform from the animation

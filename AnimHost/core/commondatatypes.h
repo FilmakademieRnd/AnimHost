@@ -307,9 +307,8 @@ public:
      * @param frame The frame to calculate the root transform for.
      * @param boneIdx The bone to calculate the root transform from.
      * @return The root transform of the character as a 4x4 matrix.
-     * @note PLACEHOLDER FUNCTION
      */
-    static glm::mat4 CalculateRootTransform(const std::shared_ptr<Animation>& anim, int frame, int boneIdx);
+    glm::mat4 CalculateRootTransform(int frame, int boneIdx);
 
     COMMONDATA(animation, Animation)
 
