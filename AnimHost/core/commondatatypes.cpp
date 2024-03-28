@@ -1,8 +1,11 @@
 #include "commondatatypes.h"
 
+#include <animhosthelper.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/ext/quaternion_float.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 //#include "AssimpHelper.h"
 
 Bone::Bone(std::string name, int id, int numPos, int numRot, int numScl, glm::mat4 rest)
@@ -119,6 +122,29 @@ glm::mat4 Bone::GetTransform(int frame) const {
 
 };
 
+void Animation::ApplyChangeOfBasis(int rootBoneIdx) {
+	glm::mat4 toBasis = AnimHostHelper::GetCoordinateSystemTransformationMatrix();
+
+
+	glm::mat4 transformation;
+	glm::vec3 scale;
+	glm::quat rotation;
+	glm::vec3 translation;
+	glm::vec3 skew;
+	glm::vec4 perspective;
+	
+
+	//Apply the change of basis to all keys of root bone
+	for (int i = 0; i < mBones[rootBoneIdx].mNumKeysPosition; i++) {
+		mBones[rootBoneIdx].mPositonKeys[i].position = toBasis * glm::vec4(mBones[rootBoneIdx].mPositonKeys[i].position, 1.0f);
+		glm::mat4 transform = toBasis * glm::toMat4(mBones[rootBoneIdx].mRotationKeys[i].orientation);
+
+		glm::decompose(transform, scale, rotation, translation, skew, perspective);
+		mBones[rootBoneIdx].mRotationKeys[i].orientation = glm::conjugate(rotation);
+	}
+
+}
+
 
 glm::mat4 Animation::CalculateRootTransform(int frame, int boneIdx) {
 	
@@ -130,15 +156,16 @@ glm::mat4 Animation::CalculateRootTransform(int frame, int boneIdx) {
 	}
 
 	glm::vec4 forwardBasis = glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
-	
+
 	glm::vec4 rootBonePosition = glm::vec4(mBones[boneIdx].GetPosition(frame), 1.0);
 	glm::vec4 rootBoneOrientation = glm::vec4(mBones[boneIdx].GetOrientation(frame) * forwardBasis);
+	
 
 	//Project root bone position to the xz plane
 	glm::vec4 rootBonePositionXZ = glm::vec4(rootBonePosition.x, 0.0f, rootBonePosition.z, 1.0f);
 
 	//Project root bone orientation to the xz plane & normalize
-	glm::vec4 rootBoneOrientationXZ = glm::normalize(glm::vec4(rootBoneOrientation.x, 0.0f, rootBoneOrientation.z, 1.0f));
+	glm::vec4 rootBoneOrientationXZ = glm::vec4(glm::normalize(glm::vec3(rootBoneOrientation.x, 0.0f, rootBoneOrientation.z)), 0.0f);
 
 	//Calculate the quaternion rotation between the forward basis and the root bone orientation
 	glm::quat rotation = glm::rotation(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(rootBoneOrientationXZ));

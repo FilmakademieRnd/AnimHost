@@ -160,6 +160,8 @@ public:
         subSkeleton.bone_names_reverse[subSkeleton.rootBoneID] = rootBoneName;
         CreateSubSkeletonRecursive(subSkeleton.rootBoneID, endBoneNames, subSkeleton);
 
+        subSkeleton.mNumBones = subSkeleton.bone_names.size();
+
         return subSkeleton;
     }
 
@@ -296,6 +298,8 @@ public:
      * @brief Destructor for the Animation class.
      */
     ~Animation() {};
+
+    void ApplyChangeOfBasis(int rootBoneIdx = 0);
 
     /**
      * @brief Calculate Root Transform of Character.

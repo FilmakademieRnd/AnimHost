@@ -129,6 +129,16 @@ void AssimpLoaderPlugin::run() {
 
 		importAssimpData();
 
+		//Experimental.
+		// If character is our own "survivor" character, we need to adjust the skeleton and animation data
+		if (bIsSurvivorChar)
+		{
+			UseSubSkeleton("hip", { "hand_R", "hand_L" });
+			_animation->getData()->ApplyChangeOfBasis();
+		}
+
+
+
 		emitDataUpdate(0);
 		emitDataUpdate(1);
 
@@ -236,6 +246,88 @@ void AssimpLoaderPlugin::loadAnimationData(aiAnimation* pASSIMPAnimation, Skelet
 	}
 }
 
+
+//takes the loaded skeleton and animation and creates a sub skeleton from the root bone and the leave bones, loaded animation gets updated
+void AssimpLoaderPlugin::UseSubSkeleton(std::string pRootBone, std::vector<std::string> pLeaveBones) {
+
+
+	auto oAnimation = _animation->getData();
+
+	auto subSkel = _skeleton->getData()->CreateSubSkeleton(pRootBone, pLeaveBones);
+
+	//print each bone in skeleton bone_names
+	qDebug() << "Bone Names before Subskeleton: ";
+	for (auto var : _skeleton->getData()->bone_names)
+	{
+		qDebug() << var.first.c_str() << " :: " << var.second;
+	}
+
+	//auto subSkel = skel->CreateSubSkeleton("hip", { "hand_R", "hand_L" });
+	qDebug() << "Bone Names after Subskeleton: ";
+	for (auto var : subSkel.bone_names)
+	{
+		qDebug() << var.first.c_str() << " :: " << var.second;
+	}
+
+
+	std::shared_ptr<Animation> anim = std::make_shared<Animation>();
+
+	anim->mDurationFrames = oAnimation->mDurationFrames;
+	anim->mDuration = oAnimation->mDuration;
+	anim->sequenceID = oAnimation->sequenceID;
+	anim->sourceName = oAnimation->sourceName;
+	anim->dataSetID = oAnimation->dataSetID;
+
+	anim->mBones = std::vector<Bone>(subSkel.mNumBones, Bone());
+
+	int newIdxCounter = 0;
+
+	for (auto idx : subSkel) {
+		anim->mBones[newIdxCounter] = oAnimation->mBones[idx];
+		newIdxCounter++;
+	}
+
+
+
+	//Create copy of SubSkeleton and reset the index of the bones in skeleton
+	Skeleton subSkelCopy = subSkel;
+
+	subSkelCopy.bone_names.clear();
+	subSkelCopy.bone_names_reverse.clear();
+	subSkelCopy.bone_hierarchy.clear();
+
+	subSkelCopy.rootBoneID = 0;
+
+	newIdxCounter = 0;
+
+	for (auto idx : subSkel) {
+		subSkelCopy.bone_names[subSkel.bone_names_reverse[idx]] = newIdxCounter;
+		subSkelCopy.bone_names_reverse[newIdxCounter] = subSkel.bone_names_reverse[idx];
+		newIdxCounter++;
+	}
+
+
+	//update bone hirarchy to match with new bone index
+	for (auto workingBoneIdx : subSkel) {
+		
+		std::string workingBoneName = subSkel.bone_names_reverse[workingBoneIdx];
+		int parendIdx = subSkelCopy.bone_names[workingBoneName];
+
+		subSkelCopy.bone_hierarchy[parendIdx] = std::vector<int>();
+
+		for(auto childIdx : subSkel.bone_hierarchy[workingBoneIdx]) {
+			std::string childName = subSkel.bone_names_reverse[childIdx];
+			subSkelCopy.bone_hierarchy[parendIdx].push_back(subSkelCopy.bone_names[childName]);
+		}
+
+	}
+
+	_animation->setData(anim);
+	_skeleton->setData(std::make_shared<Skeleton>(subSkelCopy));
+
+}
+
+
 void AssimpLoaderPlugin::importAssimpData()
 {
 	Assimp::Importer importer;
@@ -249,7 +341,7 @@ void AssimpLoaderPlugin::importAssimpData()
 	Assimp::DefaultLogger::get()->info("this is my info-call");
 
 
-	const unsigned int severity = Assimp::Logger::Debugging | Assimp::Logger::Info | Assimp::Logger::Err | Assimp::Logger::Warn;
+	const unsigned int severity =  Assimp::Logger::Info | Assimp::Logger::Err | Assimp::Logger::Warn;
 	Assimp::DefaultLogger::get()->attachStream(new AssimpQTStream, severity);
 
 	const  aiScene* scene = importer.ReadFile(SourceFilePath.toStdString(),
@@ -279,6 +371,36 @@ void AssimpLoaderPlugin::importAssimpData()
 		//_animation->getData()->uuId = QUuid::createUuid();
 
 		AssimpHelper::buildSkeletonFormAssimpNode(_skeleton->getData().get(), scene->mRootNode);
+
+		std::shared_ptr<Skeleton> skel = _skeleton->getData();
+
+		//print each bone in skeleton bone_names
+		//qDebug() << "Bone Names before Subskeleton: ";
+		//for (auto var : skel->bone_names)
+		//{
+		//	qDebug() << var.first.c_str() << " :: " << var.second;
+		//}
+
+		//auto subSkel = skel->CreateSubSkeleton("hip", { "hand_R", "hand_L" });
+		//qDebug() << "Bone Names after Subskeleton: ";
+		//for (auto var : subSkel.bone_names)
+		//{
+		//	qDebug() << var.first.c_str() << " :: " << var.second;
+		//}
+
+		////test the skeleton iterator
+		//for(auto it= subSkel.begin(); it != subSkel.end(); ++it)
+		//{
+		//	int bone = *it;
+		//	qDebug() << subSkel.bone_names_reverse[bone] << "::" << bone;
+		//}
+
+		//for(auto it: subSkel){
+		//	qDebug() << subSkel.bone_names_reverse[it] << "::" << it;
+		//}
+
+		//skel->bone_names
+
 		loadAnimationData(scene->mAnimations[0], _skeleton->getData().get(), _animation->getData().get(), scene->mRootNode);
 
 		bDataValid = true;

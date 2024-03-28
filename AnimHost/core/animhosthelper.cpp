@@ -93,3 +93,13 @@ int AnimHostHelper::FindParentBone(const std::map<int, std::vector<int>>& bone_h
 
     return -1;
 }
+
+glm::mat4 AnimHostHelper::GetCoordinateSystemTransformationMatrix()
+{
+    glm::mat4 matrix = { 1.0f, 0.0f,  0.0f, 0.0f,
+                         0.0f, 0.0f, -1.0f, 0.0f,
+                         0.0f, 1.0f,  0.0f, 0.0f,
+                         0.0f, 0.0f,  0.0f, 1.0f };
+
+    return matrix;
+}

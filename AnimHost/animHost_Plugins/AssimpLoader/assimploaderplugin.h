@@ -32,6 +32,7 @@ private:
     int sequenceCounter = 1;
 
     bool bDataValid;
+    bool bIsSurvivorChar = true;
 
     QWidget* widget;
     FolderSelectionWidget* _folderSelect = nullptr;
@@ -74,6 +75,17 @@ private Q_SLOTS:
 
 private:
     void loadAnimationData(aiAnimation* pASSIMPAnimation, Skeleton* pSkeleton, Animation* pAnimation, aiNode* pNode);
+
+
+    /**
+     * This function creates a sub-skeleton from the root bone and the leave bones.
+     * It also updates the loaded animation to match the new sub-skeleton.
+     * Modifies the loaded skeleton and animation!
+     *
+     * @param pRootBone The name of the root bone of the sub-skeleton.
+     * @param pLeaveBones A vector of names of the leave bones of the sub-skeleton.
+     */
+    void UseSubSkeleton(std::string pRootBone, std::vector<std::string> pLeaveBones);
     
     void importAssimpData();
     
