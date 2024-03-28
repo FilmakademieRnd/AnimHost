@@ -32,7 +32,9 @@ private:
     int sequenceCounter = 1;
 
     bool bDataValid;
-    bool bIsSurvivorChar = true;
+
+    //Experimental
+    bool bIsSurvivorChar = false;
 
     QWidget* widget;
     FolderSelectionWidget* _folderSelect = nullptr;
