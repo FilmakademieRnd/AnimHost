@@ -5,6 +5,7 @@
 #include <QElapsedTimer>
 #include <FileHandler.h>
 #include <FrameRange.h>
+#include <MathUtils.h>
 
 
 #include <glm/gtx/quaternion.hpp>
@@ -130,17 +131,6 @@ void ModeAdaptivePreprocessPlugin::run()
 
 		qDebug() << "ModeAdaptivePreprocessPlugin: Input Data Complete";
 
-		//Test Frame Range, printing out the frame idxs
-		/*FrameRange frameRange(numSamples, 60, 10);
-		qDebug() << "Frame Range Test";
-		for (int frameIdx : frameRange) {
-			qDebug() << "Frame Index: " << frameIdx;
-		}
-
-		for (int frameIdx : frameRange) {
-			qDebug() << "Secend Run Frame Index: " << frameIdx;
-		}*/
-
 		rootSequenceData.clear();
 		sequenceRelativeJointPosition.clear();
 		sequenceRelativeJointVelocities.clear();
@@ -183,11 +173,13 @@ void ModeAdaptivePreprocessPlugin::processFrame(int frameCounter, std::shared_pt
 	referenceRotation = animation->mBones[rootbone_idx].GetOrientation(referenceFrame);
 	inverseReferenceRotation = glm::inverse(referenceRotation);
 	curretRefPos = poseSequenceIn->GetPositionAtFrame(referenceFrame, rootbone_idx);
-	currentRefVel = velSeq->GetVelocityAtFrame(referenceFrame, rootbone_idx);
+
+
+	glm::mat4 matRoot = animation->CalculateRootTransform(referenceFrame, rootbone_idx);
 
 	//Root Trajectory
 
-	auto [flatTrajectoryData, nextRefForward] = prepareTrajectoryData(referenceFrame, pastFrameStartIdx, poseSequenceIn, animation, velSeq, curretRefPos, referenceRotation, false);
+	auto [flatTrajectoryData, nextRefForward] = prepareTrajectoryData(referenceFrame, pastFrameStartIdx, poseSequenceIn, animation, velSeq, curretRefPos, referenceRotation, matRoot,false);
 	rootSequenceData.push_back(flatTrajectoryData);
 
 
@@ -211,7 +203,7 @@ void ModeAdaptivePreprocessPlugin::processFrame(int frameCounter, std::shared_pt
 	// For output data
 	glm::vec2 outputRefPos = poseSequenceIn->GetPositionAtFrame(referenceFrame + 1, rootbone_idx);
 	glm::quat outputRefRot = animation->mBones[rootbone_idx].GetOrientation(referenceFrame + 1);
-	auto [outFlatTrajectoryData, _nextRef] = prepareTrajectoryData(referenceFrame, pastFrameStartIdx, poseSequenceIn, animation, velSeq, outputRefPos, outputRefRot, true);
+	auto [outFlatTrajectoryData, _nextRef] = prepareTrajectoryData(referenceFrame, pastFrameStartIdx, poseSequenceIn, animation, velSeq, outputRefPos, outputRefRot, matRoot,true);
 	Y_RootSequenceData.push_back(outFlatTrajectoryData);
 
 	//Output Joint Positions
@@ -244,7 +236,7 @@ void ModeAdaptivePreprocessPlugin::processFrame(int frameCounter, std::shared_pt
 	Y_SequenceDeltaUpdate.push_back(delta);
 }
 
-std::pair<std::vector<float>, glm::vec2> ModeAdaptivePreprocessPlugin::prepareTrajectoryData(int referenceFrame, int pastFrameStartIdx, std::shared_ptr<PoseSequence> poseSequenceIn, std::shared_ptr<Animation> animation, std::shared_ptr<JointVelocitySequence> velSeq, glm::vec2 refPos, glm::quat refRot, bool isOutput)
+std::pair<std::vector<float>, glm::vec2> ModeAdaptivePreprocessPlugin::prepareTrajectoryData(int referenceFrame, int pastFrameStartIdx, std::shared_ptr<PoseSequence> poseSequenceIn, std::shared_ptr<Animation> animation, std::shared_ptr<JointVelocitySequence> velSeq, glm::vec2 refPos, glm::quat refRot, glm::mat4 Root,bool isOutput)
 {
 	std::vector<glm::vec2> posTrajectory = std::vector<glm::vec2>(numSamples);
 	std::vector<glm::vec2> forwardTrajectory = std::vector<glm::vec2>(numSamples);
@@ -265,26 +257,44 @@ std::pair<std::vector<float>, glm::vec2> ModeAdaptivePreprocessPlugin::prepareTr
 
 	for (int frameIdx : frameRange) {
 
-		//if output we need to offset the frame index by 1
+		//NEW TRAJECTORY DATA
+		glm::mat4 frameRoot = animation->CalculateRootTransform(frameIdx, rootbone_idx);
+
+		//relative Pos
+		glm::vec2 relativePos = MathUtils::PositionTo(frameRoot, Root);
+		posTrajectory[i] = relativePos;
+
+		//relative Forward
+		glm::vec2 relativeForward = MathUtils::ForwardTo(frameRoot, Root);
+		forwardTrajectory[i] =	relativeForward;
+
+		//relative Velocity
+		glm::vec3 cPos = frameRoot * glm::vec4(0.0, 0.0, 0.0, 1.0);
+		glm::mat4 pFrameRoot = animation->CalculateRootTransform(glm::max(0, frameIdx - 1), rootbone_idx);
+		glm::vec3 pPos = pFrameRoot * glm::vec4(0.0, 0.0, 0.0, 1.0);
+		glm::vec3 v = (cPos - pPos) / (1.f / 60.f); // Velocity Unit: cm/s)
+
+		glm::vec3 relativeVelocity = MathUtils::VelocityTo(v, Root);
+		velTrajectory[i] = glm::vec2( relativeVelocity.x, relativeVelocity.z ) / 100.f; // Velocity Unit: m/s
 
 		// Positional Trajectory, relative to root orientation
-		glm::vec2 samplePos = poseSequenceIn->GetPositionAtFrame(frameIdx, rootbone_idx) - refPos;
+		/*glm::vec2 samplePos = poseSequenceIn->GetPositionAtFrame(frameIdx, rootbone_idx) - refPos;
 		glm::vec3 temp(samplePos.x, 0, samplePos.y);
 		temp = invRefRot * temp;
-		posTrajectory[i] = { temp.x, temp.z };
+		posTrajectory[i] = { temp.x, temp.z };*/
 
 		// Direction relative to root orientation
-		glm::quat sampleRotation = animation->mBones[rootbone_idx].GetOrientation(frameIdx);
+		/*glm::quat sampleRotation = animation->mBones[rootbone_idx].GetOrientation(frameIdx);
 		auto sampleForward = sampleRotation * forwardBaseVector;
 		auto relativeSampleForward = invRefRot * sampleForward;
-		forwardTrajectory[i] = glm::normalize(glm::vec2(relativeSampleForward.x, relativeSampleForward.z));
+		forwardTrajectory[i] = glm::normalize(glm::vec2(relativeSampleForward.x, relativeSampleForward.z));*/
 
 		// Velocity relative to root orientation
-		glm::vec2 cPos = poseSequenceIn->GetPositionAtFrame(frameIdx, rootbone_idx);
-		glm::vec2 pPos = poseSequenceIn->GetPositionAtFrame(glm::max(0, frameIdx - 1), rootbone_idx);
-		glm::vec2 v = (cPos - pPos) / (1.f / 60.f); // Velocity Unit: cm/s
-		auto relativeSampleVelocity = invRefRot * glm::vec3(v.x, 0.0, v.y);
-		velTrajectory[i] = glm::vec2(relativeSampleVelocity.x, relativeSampleVelocity.z) / 100.f; // Velocity Unit: m/s
+		//glm::vec2 cPos = poseSequenceIn->GetPositionAtFrame(frameIdx, rootbone_idx);
+		//glm::vec2 pPos = poseSequenceIn->GetPositionAtFrame(glm::max(0, frameIdx - 1), rootbone_idx);
+		//glm::vec2 v = (cPos - pPos) / (1.f / 60.f); // Velocity Unit: cm/s
+		//auto relativeSampleVelocity = invRefRot * glm::vec3(v.x, 0.0, v.y);
+		//velTrajectory[i] = glm::vec2(relativeSampleVelocity.x, relativeSampleVelocity.z) / 100.f; // Velocity Unit: m/s
 
 		// Speed
 		desSpeedTrajectory[i] = glm::length(velTrajectory[i]);

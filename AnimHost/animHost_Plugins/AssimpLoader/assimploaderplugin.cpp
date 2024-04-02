@@ -137,8 +137,6 @@ void AssimpLoaderPlugin::run() {
 			_animation->getData()->ApplyChangeOfBasis();
 		}
 
-
-
 		emitDataUpdate(0);
 		emitDataUpdate(1);
 

@@ -34,7 +34,7 @@ private:
     bool bDataValid;
 
     //Experimental
-    bool bIsSurvivorChar = false;
+    bool bIsSurvivorChar = true;
 
     QWidget* widget;
     FolderSelectionWidget* _folderSelect = nullptr;

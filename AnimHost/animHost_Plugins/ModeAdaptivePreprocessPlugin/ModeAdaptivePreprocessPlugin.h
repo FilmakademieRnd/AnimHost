@@ -48,7 +48,6 @@ private:
     glm::vec4 forwardBaseVector = glm::vec4(0, 0, 1.0, 0);
     
     glm::vec2 curretRefPos;
-    glm::vec2 currentRefVel;
     glm::quat referenceRotation;
     glm::vec2 nextRefForward;
     glm::quat inverseReferenceRotation;
@@ -122,7 +121,7 @@ public:
      * @param isOutput A boolean flag that indicates whether the function is being called for output data. If true, the function calculates the trajectory data for the next frame.
      * @return A pair consisting of a vector of floats representing the flattened trajectory data and a 2D vector representing the forward direction for the next frame.
      */
-    std::pair<std::vector<float>, glm::vec2> prepareTrajectoryData(int referenceFrame, int pastFrameStartIdx, std::shared_ptr<PoseSequence> poseSequenceIn, std::shared_ptr<Animation> animation, std::shared_ptr<JointVelocitySequence> velSeq, glm::vec2 refPos, glm::quat refRot, bool isOutput);
+    std::pair<std::vector<float>, glm::vec2> prepareTrajectoryData(int referenceFrame, int pastFrameStartIdx, std::shared_ptr<PoseSequence> poseSequenceIn, std::shared_ptr<Animation> animation, std::shared_ptr<JointVelocitySequence> velSeq, glm::vec2 refPos, glm::quat refRot, glm::mat4 Root, bool isOutput);
 
     /**
      * This function prepares the joint positions for a given frame.
