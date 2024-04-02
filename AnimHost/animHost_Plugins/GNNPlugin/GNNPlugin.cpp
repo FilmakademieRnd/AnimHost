@@ -10,7 +10,7 @@
 
 GNNPlugin::GNNPlugin()
 {
-    _pushButton = nullptr;
+    _widget = nullptr;
     qDebug() << "GNNPlugin created";
 
     controller = std::make_unique<GNNController>();
@@ -24,7 +24,7 @@ GNNPlugin::~GNNPlugin()
 unsigned int GNNPlugin::nDataPorts(QtNodes::PortType portType) const
 {
     if (portType == QtNodes::PortType::In)
-        return 3;
+        return 4;
     else            
         return 1;
 }
@@ -40,6 +40,8 @@ NodeDataType GNNPlugin::dataPortType(QtNodes::PortType portType, QtNodes::PortIn
             return AnimNodeData<Animation>::staticType();
         case 2:
             return AnimNodeData<JointVelocitySequence>::staticType();
+        case 3:
+            return AnimNodeData<ControlPath>::staticType();
 
         default:
             return type;
@@ -61,11 +63,15 @@ void GNNPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex
             break;
         case 1:
             _animationIn.reset();
+            break;
         case 2:
             _jointVelocitySequenceIn.reset();
-
+            break;
+        case 3:
+            _controlPathIn.reset();
+            break;
         default:
-            return;
+            break;
         }
         return;
     }
@@ -80,9 +86,15 @@ void GNNPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex
         break;
     case 2:
         _jointVelocitySequenceIn = std::static_pointer_cast<AnimNodeData<JointVelocitySequence>>(data);
+        break;
+    case 3:
+        _controlPathIn = std::static_pointer_cast<AnimNodeData<ControlPath>>(data);
+		break;
     default:
-        return;
+        break;
     }
+
+    return;
 }
 
 void GNNPlugin::run()
@@ -135,6 +147,7 @@ void GNNPlugin::run()
                 controller->prepareInput();
 
                 auto animOut = controller->GetAnimationOut();
+                animOut->mDurationFrames = 1;
 
                 _animationOut = std::make_shared<AnimNodeData<Animation>>();
                 _animationOut->setData(animOut);
@@ -157,14 +170,11 @@ std::shared_ptr<NodeData> GNNPlugin::processOutData(QtNodes::PortIndex port)
 
 QWidget* GNNPlugin::embeddedWidget()
 {
-	if (!_pushButton) {
-		_pushButton = new QPushButton("Example Widget");
-		_pushButton->resize(QSize(100, 50));
-
-		connect(_pushButton, &QPushButton::released, this, &GNNPlugin::onButtonClicked);
-	}
-
-	return _pushButton;
+    if (!_widget) {
+       // _widget = new QWidget();
+      
+    }
+    return nullptr;
 }
 
 void GNNPlugin::onButtonClicked()

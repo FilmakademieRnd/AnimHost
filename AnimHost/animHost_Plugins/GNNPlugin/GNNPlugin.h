@@ -7,6 +7,9 @@
 #include <pluginnodeinterface.h>
 #include "GNNController.h"
 
+
+
+
 class QPushButton;
 
 class GNNPLUGINSHARED_EXPORT GNNPlugin : public PluginNodeInterface
@@ -16,13 +19,16 @@ class GNNPLUGINSHARED_EXPORT GNNPlugin : public PluginNodeInterface
     Q_INTERFACES(PluginNodeInterface)
 
 private:
-    QPushButton* _pushButton;
+   // QPushButton* _pushButton;
+
+    QWidget * _widget;
     std::unique_ptr<GNNController> controller;
 
-
+    
 
     std::weak_ptr<AnimNodeData<Animation>> _animationIn;
     std::weak_ptr<AnimNodeData<Skeleton>> _skeletonIn;
+    std::weak_ptr<AnimNodeData<ControlPath>> _controlPathIn;
     std::weak_ptr<AnimNodeData<JointVelocitySequence>> _jointVelocitySequenceIn;
     
     std::shared_ptr<AnimNodeData<Animation>> _animationOut;

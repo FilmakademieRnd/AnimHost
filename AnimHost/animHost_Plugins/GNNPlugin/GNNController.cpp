@@ -326,7 +326,7 @@ std::vector<glm::quat> GNNController::ConvertRotationsToLocalSpace(const std::ve
 			localRots.push_back(localRot);
 		}
 		else {
-			localRots.push_back(rsJointRot);
+			localRots.push_back(glm::conjugate(rsJointRot) * rsJointRot);
 		}
 	}
 

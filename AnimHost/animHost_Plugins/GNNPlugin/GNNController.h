@@ -85,7 +85,7 @@ private:
 
     int currentPivot = 0;
 
-    
+public:
 
     /* Neural Network */
     std::unique_ptr<OnnxModel> network;
