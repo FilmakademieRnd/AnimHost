@@ -11,6 +11,7 @@ qt_add_library(AnimHostCore SHARED
     UIUtils.h UIUtils.cpp
     FileHandler.h FileHandler.cpp
     FrameRange.h FrameRange.cpp
+    MathUtils.h MathUtils.cpp
 
     animhostcore_global.h
 )
