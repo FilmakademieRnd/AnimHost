@@ -63,6 +63,9 @@ private:
     */
     std::shared_ptr<AnimNodeData<SceneNodeObjectSequence>> sceneNodeListOut;
 
+    // !!!TEMPORARY!!!
+    std::shared_ptr<AnimNodeData<ControlPath>> controlPathOut;
+
     zmq::context_t* _sceneReceiverContext = nullptr;    //!< 0MQ context to establish connection, send and receive messages
     QThread* zeroMQSceneReceiverThread = nullptr;       //!< Sub-thread to handle sending request messages and receiving replies
 
@@ -144,6 +147,7 @@ public:
     void requestCharacterData();    //!< Triggers requesting scene character data
     void requestSceneNodeData();    //!< Triggers requesting scene description data
     void requestHeaderData();       //!< Triggers requesting scene header data
+    void requestControlPathData();       //!< Triggers requesting scene header data !!!TEMPORARY!!!
 
 private Q_SLOTS:
     
@@ -173,6 +177,9 @@ private Q_SLOTS:
     * for now only the \c targetSceneID is set
     */
     void processHeaderByteData(QByteArray* headerByteArray);
+
+    // !!!TEMPORARY!!!
+    void processControlPathByteData(QByteArray* headerByteArray);
 
 };
 

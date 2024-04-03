@@ -89,16 +89,12 @@ std::shared_ptr<NodeData> TracerUpdateReceiverPlugin::processOutData(QtNodes::Po
 void TracerUpdateReceiverPlugin::run() {
     qDebug() << "TracerUpdateReceiverPlugin running...";
 
+    // start receiving thread
     if (!zeroMQUpdateReceiverThread->isRunning()) {
         msgReceiver->requestStart();
         zeroMQUpdateReceiverThread->start();
     }
 
-    // every time the buffer is **predicted to be** half-read, fill the next half buffer
-    // TO BE UNCOMMENTED AS SOON AS I RECEIVE bufferSize and renderingFrameRate from receiver
-    /*if (localTime % (bufferReadTime / 2) == 0) {
-        msgSender->resume();
-    }*/
 }
 
 void TracerUpdateReceiverPlugin::processParameterUpdate(QByteArray* paramUpdateMsg) {

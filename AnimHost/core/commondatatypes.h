@@ -542,11 +542,11 @@ Q_DECLARE_METATYPE(std::shared_ptr<RunSignal>)
 
 class ANIMHOSTCORESHARED_EXPORT ControlPoint {
     public:
-    int frameTimestamp;
+    int frameTimestamp = 0;
 
-    glm::vec3 position;
-    glm::quat lookAt;
-    float velocity;
+    glm::vec3 position = glm::vec3(0, 0, 0);
+    glm::quat lookAt = glm::quat(1, 0, 0, 0);
+    float velocity =  0;
 
     //int styleLabel;
 

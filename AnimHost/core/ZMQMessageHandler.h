@@ -135,13 +135,14 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
      * COLOR      | 9         | The message contains a vector with four floats, interpreted and used as a RGBA colour |
      * STRING     | 10        | The message contains a string of variable size                                        |
      * LIST       | 11        | The message contains a list of ??? of variable size                                   |
-     * UNKNOWN    | 100       | Uninitialised message                                                                 |
+     * SPLINE     | 12        | The message contains spline data - size 3*num_of_keyframes (xyzxyzxyzxyzxyz...)       |
+     * UNKNOWN    | 100       | Uninitialised message                                                                 |     
      */
     enum ParameterType : byte {
         NONE, ACTION, BOOL,                     // Generic
         INT, FLOAT,                             // Scalar
         VECTOR2, VECTOR3, VECTOR4, QUATERNION,  // Vectors
-        COLOR, STRING, LIST,                    // Other Data Structures
+        COLOR, STRING, LIST, SPLINE,            // Other Data Structures
         UNKNOWN = 100
     };
 
@@ -408,12 +409,13 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     * STRING     | 100
     * LIST       | 100
     * UNKNOWN    | 100
+    * SPLINE     | 1000
     */
-    static constexpr byte parameterDimension[13] = {
+    static constexpr byte parameterDimension[14] = {
         0, 1, sizeof(std::int32_t),
         sizeof(std::int32_t), sizeof(float),
         sizeof(float)*2, sizeof(float)*3, sizeof(float)*4, sizeof(float)*4,
-        sizeof(float)*4, 100, 100, 100 };
+        sizeof(float)*4, 100, 100, 100, 100 }; //element 14 should be longer
     
     //! Utility function to convert a char value to a short scalar
     /*!

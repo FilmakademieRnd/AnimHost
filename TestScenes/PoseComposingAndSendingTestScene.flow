@@ -53,13 +53,19 @@
             "intNodeId": 6,
             "outNodeId": 3,
             "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 3,
+            "intNodeId": 1,
+            "outNodeId": 6,
+            "outPortIndex": 2
         }
     ],
     "nodes": [
         {
             "id": 0,
             "internal-data": {
-                "dir": "C:\\Users\\m5963\\Documents\\100STYLE\\00_Test",
+                "dir": "C:\\Users\\m5963\\Documents\\AnimHost_TestData\\Animation/",
                 "model-name": "Animation Import"
             },
             "position": {
@@ -73,8 +79,8 @@
                 "model-name": "TracerUpdateSenderPlugin"
             },
             "position": {
-                "x": 390.27729512630447,
-                "y": -180.9531574890283
+                "x": 443.09365334329857,
+                "y": -88.11234697411832
             }
         },
         {
@@ -113,8 +119,8 @@
                 "model-name": "CharacterSelectorPlugin"
             },
             "position": {
-                "x": -29.85984,
-                "y": -64.19865599999997
+                "x": 23.695606114540865,
+                "y": -89.32764451658919
             }
         }
     ]
