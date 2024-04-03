@@ -30,13 +30,17 @@ public:
 
 
 	static glm::vec3 PositionTo(const glm::vec3& from, const glm::mat4& to) {
-		glm::vec4 pos = glm::inverse(to) * glm::vec4(from.x, 0.0, from.y, 1.0f);
+		glm::vec4 pos = glm::inverse(to) * glm::vec4(from, 1.0f);
 		return glm::vec3(pos.x, pos.y, pos.z);
 	}
 
 	static glm::vec2 ForwardTo(const glm::mat4& from, const glm::mat4& to) {
 		glm::vec3 dir = glm::inverse(to) * from * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
 		return glm::normalize(glm::vec2(dir.x, dir.z));
+	}
+
+	static glm::mat4 RelativeTransform(const glm::mat4& from, const glm::mat4& to) {
+		return glm::inverse(to) * from;
 	}
 
 

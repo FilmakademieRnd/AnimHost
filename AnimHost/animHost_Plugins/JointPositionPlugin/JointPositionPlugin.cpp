@@ -1,4 +1,5 @@
 #include "JointPositionPlugin.h"
+#include "animhosthelper.h"
 #include <iostream>
 #include <QFileInfo>
 #include <QDateTime>
@@ -40,47 +41,34 @@ void JointPositionPlugin::run(QVariantList in, QVariantList& out)
     poseSequence->mPoseSequence = std::vector<Pose>(animation->mDurationFrames);
 
 
-    std::function<void(glm::mat4, int)> lBuildPose;
-    lBuildPose = [&](glm::mat4 currentT, int currentBone) {
+    //std::function<void(glm::mat4, int)> lBuildPose;
+    //lBuildPose = [&](glm::mat4 currentT, int currentBone) {
+
+    //    glm::vec4 result = glm::vec4(0.0, 0.0, 0.0, 1.0);
+
+    //    glm::quat orientation = animation->mBones[currentBone].GetOrientation(frame);
+    //    glm::mat4 rotation = glm::toMat4(orientation);
+
+    //    glm::vec3 scl = animation->mBones[currentBone].GetScale(frame);
+    //    glm::mat4 scale = glm::scale(glm::mat4(1.0f), scl);
+
+    //    glm::vec3 pos = animation->mBones[currentBone].GetPosition(frame);
+    //    glm::mat4 translation (1.0f);
 
 
-        //currently not used (positional keys seem to include offsets)
-        //glm::mat4 transform = animation->mBones[currentBone].GetRestingTransform();
+    //    translation = glm::translate(translation, pos);
 
-        glm::vec4 result = glm::vec4(0.0, 0.0, 0.0, 1.0);
-
-        glm::quat orientation = animation->mBones[currentBone].GetOrientation(frame);
-        glm::mat4 rotation = glm::toMat4(orientation);
-
-        glm::vec3 scl = animation->mBones[currentBone].GetScale(frame);
-        glm::mat4 scale = glm::scale(glm::mat4(1.0f), scl);
-
-        glm::vec3 pos = animation->mBones[currentBone].GetPosition(frame);
-        glm::mat4 translation (1.0f);
-        /*if (currentBone == 0) {
-            translation = glm::translate(translation, glm::vec3(0.0, pos.y, 0.0));
-        }
-        else {
-            translation = glm::translate(translation, pos);
-        }*/
-
-        translation = glm::translate(translation, pos);
-        //glm::mat4 translation = glm::translate(glm::mat4(1.0f), pos);
-
-        glm::mat4 local_transform = translation * rotation * scale;
+    //    glm::mat4 local_transform = translation * rotation * scale;
   
-        glm::mat4 globalT = currentT * local_transform;
-        result = globalT * result;
+    //    glm::mat4 globalT = currentT * local_transform;
+    //    result = globalT * result;
 
-        poseSequence->mPoseSequence[frame].mPositionData[currentBone] = result;
-        /*if (currentBone == 0) {
-            poseSequence->mPoseSequence[frame].mPositionData[currentBone] += glm::vec3(pos.x, 0, pos.z);
-        }*/
+    //    poseSequence->mPoseSequence[frame].mPositionData[currentBone] = result;
 
-        for (int i : skeleton->bone_hierarchy[currentBone]) {
-            lBuildPose(globalT, i);
-        }
-    };
+    //    for (int i : skeleton->bone_hierarchy[currentBone]) {
+    //        lBuildPose(globalT, i);
+    //    }
+    //};
 
 
     for (int i = 0; i < animation->mDurationFrames; i++) {
@@ -90,7 +78,15 @@ void JointPositionPlugin::run(QVariantList in, QVariantList& out)
 
         poseSequence->mPoseSequence[frame].mPositionData = std::vector<glm::vec3>(skeleton->mNumBones, glm::vec3(0.0));
 
-        lBuildPose(initcurrentPos, initcurrentBone);
+        //lBuildPose(initcurrentPos, initcurrentBone);
+
+
+        std::vector<glm::mat4> transforms;
+        AnimHostHelper::ForwardKinematics(*skeleton, *animation, transforms, frame);
+
+        for(int j = 0; j < skeleton->mNumBones; j++) {
+			poseSequence->mPoseSequence[frame].mPositionData[j] = transforms[j] * glm::vec4(0.0, 0.0, 0.0, 1.0);
+		}
 
         frame++;
     }
@@ -98,7 +94,6 @@ void JointPositionPlugin::run(QVariantList in, QVariantList& out)
     poseSequence->dataSetID = animation->dataSetID;
     poseSequence->sourceName = animation->sourceName;
     poseSequence->sequenceID = animation->sequenceID;
-    //poseSequence->uuId = animation->uuId;
 
     out.append(QVariant::fromValue(poseSequence));
 }

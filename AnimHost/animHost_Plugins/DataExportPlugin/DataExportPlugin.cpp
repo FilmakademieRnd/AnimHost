@@ -49,6 +49,10 @@ void DataExportPlugin::load(QJsonObject const& p)
 
         if (!strDir.isEmpty()) {
             exportDirectory = strDir;
+
+            exportDirectory = exportDirectory;
+            QString shorty = AnimHostHelper::shortenFilePath(exportDirectory, 10);
+            _label->setText(shorty);
         }
     }
 
