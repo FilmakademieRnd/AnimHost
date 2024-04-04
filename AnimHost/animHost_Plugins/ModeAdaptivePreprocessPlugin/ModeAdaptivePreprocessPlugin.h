@@ -8,6 +8,7 @@
 #include <nodedatatypes.h>
 #include <UIUtils.h>
 #include <commondatatypes.h>
+#include <MathUtils.h>
 
 
 class MODEADAPTIVEPREPROCESSPLUGINSHARED_EXPORT ModeAdaptivePreprocessPlugin : public PluginNodeInterface
@@ -63,11 +64,13 @@ private:
     std::vector<std::vector<float>> rootSequenceData;
     std::vector<std::vector<glm::vec3>> sequenceRelativeJointPosition;
     std::vector<std::vector<glm::quat>> sequenceRelativJointRotations;
+    std::vector<std::vector<Rotation6D>> sequenceRelativJointRotations6D;
     std::vector<std::vector<glm::vec3>> sequenceRelativeJointVelocities;
 
     std::vector<std::vector<float>> Y_RootSequenceData;
     std::vector<std::vector<glm::vec3>> Y_SequenceRelativeJointPosition;
     std::vector<std::vector<glm::quat>> Y_SequenceRelativJointRotations;
+    std::vector<std::vector<Rotation6D>> Y_SequenceRelativJointRotations6D;
     std::vector<std::vector<glm::vec3>> Y_SequenceRelativeJointVelocities;
     std::vector<glm::vec3> Y_SequenceDeltaUpdate;
 

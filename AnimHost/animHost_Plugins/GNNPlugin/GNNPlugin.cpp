@@ -127,7 +127,7 @@ void GNNPlugin::run()
                     glm::vec4 perspective;
 
                     glm::decompose(transforms[i], scale, rotation, translation, skew, perspective);
-                    rotation = glm::conjugate(rotation);
+                    //rotation = glm::conjugate(rotation);
 
                     controller->initJointPos.push_back(translation);
                     controller->initJointRot.push_back(rotation);

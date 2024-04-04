@@ -164,11 +164,13 @@ void ModeAdaptivePreprocessPlugin::run()
 		sequenceRelativeJointPosition.clear();
 		sequenceRelativeJointVelocities.clear();
 		sequenceRelativJointRotations.clear();
+		sequenceRelativJointRotations6D.clear();
 
 		Y_RootSequenceData.clear();
 		Y_SequenceRelativeJointPosition.clear();
 		Y_SequenceRelativeJointVelocities.clear();
 		Y_SequenceRelativJointRotations.clear();
+		Y_SequenceRelativJointRotations6D.clear();
 
 
 		//Offset to start of sequence, allows for enough frames to be left for past trajectory samples
@@ -222,10 +224,16 @@ void ModeAdaptivePreprocessPlugin::processFrame(int frameCounter, std::shared_pt
 
 	// Joint Rotations
 	std::vector<glm::quat> relativeJointRotations = prepareJointRotations(referenceFrame, animation, skeleton, inverseReferenceJointRotation, rootTransform);
+	//convert to 6D rotations
+	std::vector<Rotation6D> relativeJointRotations6D = MathUtils::convertQuaternionsTo6DRotations(relativeJointRotations);
+	sequenceRelativJointRotations6D.push_back(relativeJointRotations6D);
+
 	sequenceRelativJointRotations.push_back(relativeJointRotations);
 
 	// Joint Velocity
 	std::vector<glm::vec3> relativeJointVelocities = prepareJointVelocities(referenceFrame, velSeq, inverseReferenceJointRotation, rootTransform);
+	
+	
 	sequenceRelativeJointVelocities.push_back(relativeJointVelocities);
 
 	// For output data
@@ -246,6 +254,9 @@ void ModeAdaptivePreprocessPlugin::processFrame(int frameCounter, std::shared_pt
 	glm::quat outputRefJointRotation = animation->mBones[rootbone_idx].GetOrientation(referenceFrame + 1);
 	glm::quat invOutputRefJointRotation = glm::inverse(outputRefJointRotation);
 	std::vector<glm::quat> OutputJointRotations = prepareJointRotations(referenceFrame, animation, skeleton, invOutputRefJointRotation, nextRootTransform, true);
+	//convert to 6D rotations
+	std::vector<Rotation6D> OutputJointRotations6D = MathUtils::convertQuaternionsTo6DRotations(OutputJointRotations);
+	Y_SequenceRelativJointRotations6D.push_back(OutputJointRotations6D);
 	Y_SequenceRelativJointRotations.push_back(OutputJointRotations);
 
 	//Output Joint Velocities
@@ -351,7 +362,7 @@ std::vector<glm::vec3> ModeAdaptivePreprocessPlugin::prepareJointPositions(int r
 
 		//TODO skip root / start from specified root
 		//relativeJointPosition[i] = samplePosition - referencePosition;
-		relativeJointPosition[i] = MathUtils::PositionTo( samplePosition, Root);
+		relativeJointPosition[i] = MathUtils::PositionTo(samplePosition, Root);
 	}
 
 	return relativeJointPosition;
@@ -377,7 +388,7 @@ std::vector<glm::quat> ModeAdaptivePreprocessPlugin::prepareJointRotations(int r
 		glm::vec4 perspective;
 
 		glm::decompose(relativeTransform, scale, rotation, translation, skew, perspective);
-		rotation = glm::conjugate(rotation);
+		//rotation = glm::conjugate(rotation);
 
 		relativeJointRotations[i] = rotation;
 	}
@@ -528,16 +539,22 @@ void ModeAdaptivePreprocessPlugin::writeMetaData() {
 						header += ",jpos_y_" + boneName;
 						header += ",jpos_z_" + boneName;
 
-						header += ",jrot_x_" + boneName;
+						/*header += ",jrot_x_" + boneName;
 						header += ",jrot_y_" + boneName;
 						header += ",jrot_z_" + boneName;
-						header += ",jrot_W_" + boneName;
+						header += ",jrot_W_" + boneName;*/
+						header += ",jrot_0_" + boneName;
+						header += ",jrot_1_" + boneName;
+						header += ",jrot_2_" + boneName;
+						header += ",jrot_3_" + boneName;
+						header += ",jrot_4_" + boneName;
+						header += ",jrot_5_" + boneName;
 
 						header += ",jvel_x_" + boneName;
 						header += ",jvel_y_" + boneName;
 						header += ",jvel_z_" + boneName;
 
-						featureCount += 10;
+						featureCount += 12;
 
 					}
 					header += "\n";
@@ -575,16 +592,22 @@ void ModeAdaptivePreprocessPlugin::writeMetaData() {
 						header += ",out_jpos_y_" + boneName;
 						header += ",out_jpos_z_" + boneName;
 
-						header += ",out_jrot_x_" + boneName;
+						/*header += ",out_jrot_x_" + boneName;
 						header += ",out_jrot_y_" + boneName;
 						header += ",out_jrot_z_" + boneName;
-						header += ",out_jrot_W_" + boneName;
+						header += ",out_jrot_W_" + boneName;*/
+						header += ",out_jrot_0_" + boneName;
+						header += ",out_jrot_1_" + boneName;
+						header += ",out_jrot_2_" + boneName;
+						header += ",out_jrot_3_" + boneName;
+						header += ",out_jrot_4_" + boneName;
+						header += ",out_jrot_5_" + boneName;
 
 						header += ",out_jvel_x_" + boneName;
 						header += ",out_jvel_y_" + boneName;
 						header += ",out_jvel_z_" + boneName;
 
-						featureCount += 10;
+						featureCount += 12;
 
 					}
 					header += "\n";
@@ -646,7 +669,7 @@ void ModeAdaptivePreprocessPlugin::writeInputData()
 
 					QDataStream& outData = fileData.getStream();
 					outData.setByteOrder(QDataStream::LittleEndian);
-					int countFeatures = (rootSequenceData[0].size() + (poseSequenceIn->mPoseSequence[0].mPositionData.size() * 10));
+					int countFeatures = (rootSequenceData[0].size() + (poseSequenceIn->mPoseSequence[0].mPositionData.size() * 12));
 					int sizeFrame = countFeatures * sizeof(float);
 					std::vector<float> flattenedOutput(countFeatures, 0.0f);
 
@@ -664,16 +687,18 @@ void ModeAdaptivePreprocessPlugin::writeInputData()
 							flattenedOutput[fltIdx + 1] = sequenceRelativeJointPosition[idx][i].y;
 							flattenedOutput[fltIdx + 2] = sequenceRelativeJointPosition[idx][i].z;
 
-							flattenedOutput[fltIdx + 3] = sequenceRelativJointRotations[idx][i].x;
-							flattenedOutput[fltIdx + 4] = sequenceRelativJointRotations[idx][i].y;
-							flattenedOutput[fltIdx + 5] = sequenceRelativJointRotations[idx][i].z;
-							flattenedOutput[fltIdx + 6] = sequenceRelativJointRotations[idx][i].w;
+							flattenedOutput[fltIdx + 3] = sequenceRelativJointRotations6D[idx][i][0];
+							flattenedOutput[fltIdx + 4] = sequenceRelativJointRotations6D[idx][i][1];
+							flattenedOutput[fltIdx + 5] = sequenceRelativJointRotations6D[idx][i][2];
+							flattenedOutput[fltIdx + 6] = sequenceRelativJointRotations6D[idx][i][3];
+							flattenedOutput[fltIdx + 7] = sequenceRelativJointRotations6D[idx][i][4];
+							flattenedOutput[fltIdx + 8] = sequenceRelativJointRotations6D[idx][i][5];
 
-							flattenedOutput[fltIdx + 7] = sequenceRelativeJointVelocities[idx][i].x;
-							flattenedOutput[fltIdx + 8] = sequenceRelativeJointVelocities[idx][i].y;
-							flattenedOutput[fltIdx + 9] = sequenceRelativeJointVelocities[idx][i].z;
+							flattenedOutput[fltIdx + 9] = sequenceRelativeJointVelocities[idx][i].x;
+							flattenedOutput[fltIdx + 10] = sequenceRelativeJointVelocities[idx][i].y;
+							flattenedOutput[fltIdx + 11] = sequenceRelativeJointVelocities[idx][i].z;
 
-							fltIdx += 10;
+							fltIdx += 12;
 						}
 
 						int byteswritten = outData.writeRawData(reinterpret_cast<const char*>(flattenedOutput.data()), sizeFrame);
@@ -706,7 +731,7 @@ void ModeAdaptivePreprocessPlugin::writeOutputData()
 					FileHandler<QDataStream> fileData = FileHandler<QDataStream>(fileNameData);
 
 					QDataStream& outData = fileData.getStream();
-					int countFeatures = Y_RootSequenceData.size() * ( 3 + Y_RootSequenceData[0].size() + (poseSequenceIn->mPoseSequence[0].mPositionData.size() * 10));
+					int countFeatures = Y_RootSequenceData.size() * ( 3 + Y_RootSequenceData[0].size() + (poseSequenceIn->mPoseSequence[0].mPositionData.size() * 12));
 					int sizeFrame = countFeatures * sizeof(float);
 					std::vector<float> flattenedOutput(countFeatures); 
 
@@ -730,16 +755,18 @@ void ModeAdaptivePreprocessPlugin::writeOutputData()
 							flattenedOutput[fltIdx + 1] = Y_SequenceRelativeJointPosition[idx][i].y;
 							flattenedOutput[fltIdx + 2] = Y_SequenceRelativeJointPosition[idx][i].z;
 
-							flattenedOutput[fltIdx + 3] = Y_SequenceRelativJointRotations[idx][i].x;
-							flattenedOutput[fltIdx + 4] = Y_SequenceRelativJointRotations[idx][i].y;
-							flattenedOutput[fltIdx + 5] = Y_SequenceRelativJointRotations[idx][i].z;
-							flattenedOutput[fltIdx + 6] = Y_SequenceRelativJointRotations[idx][i].w;
+							flattenedOutput[fltIdx + 3] = Y_SequenceRelativJointRotations6D[idx][i][0];
+							flattenedOutput[fltIdx + 4] = Y_SequenceRelativJointRotations6D[idx][i][1];
+							flattenedOutput[fltIdx + 5] = Y_SequenceRelativJointRotations6D[idx][i][2];
+							flattenedOutput[fltIdx + 6] = Y_SequenceRelativJointRotations6D[idx][i][3];
+							flattenedOutput[fltIdx + 7] = Y_SequenceRelativJointRotations6D[idx][i][4];
+							flattenedOutput[fltIdx + 8] = Y_SequenceRelativJointRotations6D[idx][i][5];
 
 							flattenedOutput[fltIdx + 7] = Y_SequenceRelativeJointVelocities[idx][i].x;
 							flattenedOutput[fltIdx + 8] = Y_SequenceRelativeJointVelocities[idx][i].y;
 							flattenedOutput[fltIdx + 9] = Y_SequenceRelativeJointVelocities[idx][i].z;
 							
-							fltIdx += 10;
+							fltIdx += 12;
 						}			
 					}
 
