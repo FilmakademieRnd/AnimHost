@@ -140,7 +140,7 @@ void Animation::ApplyChangeOfBasis(int rootBoneIdx) {
 		glm::mat4 transform = toBasis * glm::toMat4(mBones[rootBoneIdx].mRotationKeys[i].orientation);
 
 		glm::decompose(transform, scale, rotation, translation, skew, perspective);
-		mBones[rootBoneIdx].mRotationKeys[i].orientation = glm::conjugate(rotation);
+		mBones[rootBoneIdx].mRotationKeys[i].orientation = rotation;  //::conjugate(rotation);
 	}
 
 }

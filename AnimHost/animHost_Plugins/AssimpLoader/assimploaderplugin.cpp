@@ -55,6 +55,10 @@ void AssimpLoaderPlugin::load(QJsonObject const& p)
 
 		if (!strDir.isEmpty()) {
 			SourceDirectory = strDir;
+			_folderSelect->SetDirectory(SourceDirectory);
+
+			widget->adjustSize();
+			widget->updateGeometry();
 		}
 	}
 }

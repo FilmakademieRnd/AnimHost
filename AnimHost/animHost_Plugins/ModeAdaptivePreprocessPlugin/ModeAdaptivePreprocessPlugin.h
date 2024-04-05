@@ -8,6 +8,7 @@
 #include <nodedatatypes.h>
 #include <UIUtils.h>
 #include <commondatatypes.h>
+#include <MathUtils.h>
 
 
 class MODEADAPTIVEPREPROCESSPLUGINSHARED_EXPORT ModeAdaptivePreprocessPlugin : public PluginNodeInterface
@@ -49,7 +50,6 @@ private:
     
     glm::vec2 curretRefPos;
     glm::quat referenceRotation;
-    glm::vec2 nextRefForward;
     glm::quat inverseReferenceRotation;
 
     
@@ -64,11 +64,13 @@ private:
     std::vector<std::vector<float>> rootSequenceData;
     std::vector<std::vector<glm::vec3>> sequenceRelativeJointPosition;
     std::vector<std::vector<glm::quat>> sequenceRelativJointRotations;
+    std::vector<std::vector<Rotation6D>> sequenceRelativJointRotations6D;
     std::vector<std::vector<glm::vec3>> sequenceRelativeJointVelocities;
 
     std::vector<std::vector<float>> Y_RootSequenceData;
     std::vector<std::vector<glm::vec3>> Y_SequenceRelativeJointPosition;
     std::vector<std::vector<glm::quat>> Y_SequenceRelativJointRotations;
+    std::vector<std::vector<Rotation6D>> Y_SequenceRelativJointRotations6D;
     std::vector<std::vector<glm::vec3>> Y_SequenceRelativeJointVelocities;
     std::vector<glm::vec3> Y_SequenceDeltaUpdate;
 
@@ -85,6 +87,9 @@ public:
 
     unsigned int nDataPorts(QtNodes::PortType portType) const override;
     NodeDataType dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
+
+    QJsonObject save() const override;
+    void load(QJsonObject const& p) override;
 
     std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;
     void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
@@ -121,7 +126,7 @@ public:
      * @param isOutput A boolean flag that indicates whether the function is being called for output data. If true, the function calculates the trajectory data for the next frame.
      * @return A pair consisting of a vector of floats representing the flattened trajectory data and a 2D vector representing the forward direction for the next frame.
      */
-    std::pair<std::vector<float>, glm::vec2> prepareTrajectoryData(int referenceFrame, int pastFrameStartIdx, std::shared_ptr<PoseSequence> poseSequenceIn, std::shared_ptr<Animation> animation, std::shared_ptr<JointVelocitySequence> velSeq, glm::vec2 refPos, glm::quat refRot, glm::mat4 Root, bool isOutput);
+    std::vector<float> prepareTrajectoryData(int referenceFrame, int pastFrameStartIdx, std::shared_ptr<PoseSequence> poseSequenceIn, std::shared_ptr<Animation> animation, std::shared_ptr<JointVelocitySequence> velSeq, glm::vec2 refPos, glm::quat refRot, glm::mat4 Root, bool isOutput);
 
     /**
      * This function prepares the joint positions for a given frame.
@@ -133,7 +138,7 @@ public:
      * @param isOutput A boolean flag that indicates whether the function is being called for output data. If true, the function calculates the joint positions for the next frame.
      * @return A vector of 3D vectors representing the relative joint positions for the given frame.
      */
-    std::vector<glm::vec3> prepareJointPositions(int referenceFrame, std::shared_ptr<PoseSequence> poseSequenceIn, bool isOutput = false);
+    std::vector<glm::vec3> prepareJointPositions(int referenceFrame, std::shared_ptr<PoseSequence> poseSequenceIn, glm::mat4 Root, bool isOutput = false);
 
     /**
      * This function prepares the joint rotations for a given frame.
@@ -147,7 +152,7 @@ public:
      * @param isOutput A boolean flag that indicates whether the function is being called for output data. If true, the function calculates the joint rotations for the next frame.
      * @return A vector of quaternions representing the relative joint rotations for the given frame.
      */
-    std::vector<glm::quat> prepareJointRotations(int referenceFrame, std::shared_ptr<Animation> animation, std::shared_ptr<Skeleton> skeleton, glm::quat inverseReferenceJointRotation, bool isOutput = false);
+    std::vector<glm::quat> prepareJointRotations(int referenceFrame, std::shared_ptr<Animation> animation, std::shared_ptr<Skeleton> skeleton, glm::quat inverseReferenceJointRotation, glm::mat4 Root, bool isOutput = false);
 
     /**
      * This function prepares the joint velocities for a given frame.
@@ -160,7 +165,7 @@ public:
      * @param isOutput A boolean flag that indicates whether the function is being called for output data. If true, the function calculates the joint velocities for the next frame.
      * @return A vector of 3D vectors representing the relative joint velocities for the given frame.
      */
-    std::vector<glm::vec3> prepareJointVelocities(int referenceFrame, std::shared_ptr<JointVelocitySequence> velSeq, glm::quat inverseReferenceJointRotation, bool isOutput = false);
+    std::vector<glm::vec3> prepareJointVelocities(int referenceFrame, std::shared_ptr<JointVelocitySequence> velSeq, glm::quat inverseReferenceJointRotation, glm::mat4 Root, bool isOutput = false);
 
     QWidget* embeddedWidget() override;
 

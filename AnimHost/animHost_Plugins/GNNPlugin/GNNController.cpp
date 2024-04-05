@@ -382,7 +382,7 @@ std::vector<glm::quat> GNNController::GetRelativeJointRot(const std::vector<glm:
 	glm::vec4 perspective;
 
 	glm::decompose(root, scale, rotation, translation, skew, perspective);
-	rotation = glm::conjugate(rotation);
+	//rotation = glm::conjugate(rotation);
 	glm::quat inv_rotation = glm::inverse(rotation);
 
 	for (int i = 0; i < globalJointRot.size(); i++) {

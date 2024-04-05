@@ -101,5 +101,17 @@ glm::mat4 AnimHostHelper::GetCoordinateSystemTransformationMatrix()
                          0.0f, 1.0f,  0.0f, 0.0f,
                          0.0f, 0.0f,  0.0f, 1.0f };
 
-    return matrix;
+    glm::mat4 newmatrix(1.0f);
+
+    newmatrix[0].x = 1.f;
+    newmatrix[1].y = 0.f;
+    newmatrix[1].z = -1.f;
+    newmatrix[2].y = 1.f;
+    newmatrix[2].z = 0.f;
+
+    if (newmatrix == matrix) {
+        qDebug() << "GetCoordinateSystemTransformationMatrix: Transformation matrix is correct";
+    }
+
+    return newmatrix;
 }

@@ -52,13 +52,10 @@ public:
 	void UpdateDirectory();
 
 	QString GetSelectedDirectory();
+	void SetDirectory(QString dir);
 
 Q_SIGNALS:
 	void directoryChanged();
-
-
-private:
-	void SetDirectory(QString dir);
 
 
 };
