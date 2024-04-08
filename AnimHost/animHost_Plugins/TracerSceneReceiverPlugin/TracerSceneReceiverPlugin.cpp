@@ -422,6 +422,9 @@ void TracerSceneReceiverPlugin::processHeaderByteData(QByteArray* headerByteArra
 }
 
 void TracerSceneReceiverPlugin::processControlPathByteData(QByteArray* controlPointByteArray) {
+	if (controlPointByteArray->size() == 0)
+		return;
+
 	// - int	size of data (3 * N_of_frames)
 	// - float	data (frame1_xyz, frame2_xyz, frame3_xyz, ..., frameN_xyz)
 	unsigned int size; memcpy(&size, controlPointByteArray->sliced(0, sizeof(size)).data(), sizeof(size)); // Copies byte values directly into the new variable, which interprets it as the correct type
