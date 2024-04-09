@@ -59,6 +59,14 @@ void AnimHostMessageSender::run() {
     int type;
     size_t type_size = sizeof(type);
 
+    // LOCK CHARACTER (necessary for applying root animations)
+    sendSocket->getsockopt(ZMQ_TYPE, &type, &type_size);
+
+    createLockMessage(ZMQMessageHandler::getLocalTimeStamp(), charObj->sceneObjectID, true);
+
+    qDebug() << "send lock message" << lockMessage->data();
+    QThread::msleep(1);
+
     // Allows up- and down-sampling of the animation in order to keep the perceived speed the same even though the playback framerate is not the same
     // w.r.t. the framerate, for which the animation was designed
     deltaAnimFrame = (float)ZMQMessageHandler::getAnimFrameRate() / ZMQMessageHandler::getPlaybackFrameRate();
@@ -102,10 +110,11 @@ void AnimHostMessageSender::run() {
             debugOut = debugOut + std::to_string(debugDataArray[i]) + " ";
         }*/
 
-        sendSocket->getsockopt(ZMQ_TYPE, &type, &type_size);
+        //sendSocket->getsockopt(ZMQ_TYPE, &type, &type_size);
         //qDebug() << "Message size: " << message->size();
         
         // Sending message
+        int retunLockVal = sendSocket->send((void*) lockMessage->data(), lockMessage->size());
         int retunVal = sendSocket->send((void*) message->data(), message->size());
         qDebug() << "Attempting SEND connection on" << ZMQMessageHandler::getOwnIP();
         timestamp = ZMQMessageHandler::getLocalTimeStamp();
@@ -143,6 +152,9 @@ void AnimHostMessageSender::run() {
         //qDebug() << "AnimHostMessageSender Running";
         //QThread::yieldCurrentThread();
     }
+
+    createLockMessage(ZMQMessageHandler::getLocalTimeStamp(), charObj->sceneObjectID, false);
+    int retunUnlockVal = sendSocket->send((void*) lockMessage->data(), lockMessage->size());
 
     // Set _working to false -> process cannot be aborted anymore
     mutex.lock();
@@ -184,6 +196,26 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
         qDebug() << "ParameterID array mismatch: " << animData->mBones.size() << " elements required, " << sizeof(parameterID)/sizeof(std::int32_t) << " provided";
         return;
     }*/
+
+    Bone rootBone = animData->mBones.at(0);                 // The first bone in the animation data should be the root
+    
+    glm::vec3 rootPos = rootBone.GetPosition(frame);        // Getting Root Bone Position Vector
+    glm::quat rootRot = rootBone.GetOrientation(frame);     // Getting Root Bone Rotation Quaternion
+    glm::vec3 rootScl = rootBone.GetScale(frame);           // Getting Root Bone Scale    Vector
+
+    std::vector<float> rootPosVector = { rootPos.x, rootPos.y, rootPos.z };             // converting glm::vec3 in vector<float>
+    std::vector<float> rootRotVector = { rootRot.x, rootRot.y, rootRot.z, rootRot.w };  // converting glm::quat in vector<float>
+    std::vector<float> rootSclVector = { rootScl.x, rootScl.y, rootScl.z };             // converting glm::quat in vector<float>
+
+    qDebug() << rootBone.mName << rootPosVector;
+
+    // Create messages for sending out the Character Root TRS and appending them to the byte array that is going to be sent to TRACER applications
+    QByteArray msgRootPos = createMessageBody(targetSceneID, character->sceneObjectID, 0, ZMQMessageHandler::ParameterType::VECTOR3,    rootPosVector);
+    byteArray->append(msgRootPos);
+    QByteArray msgRootRot = createMessageBody(targetSceneID, character->sceneObjectID, 1, ZMQMessageHandler::ParameterType::QUATERNION, rootRotVector);
+    byteArray->append(msgRootRot);
+    QByteArray msgRootScl = createMessageBody(targetSceneID, character->sceneObjectID, 2, ZMQMessageHandler::ParameterType::VECTOR3,    rootSclVector);
+    byteArray->append(msgRootScl);
 
     int rootBoneID = character->skinnedMeshList.at(0).boneMapIDs.at(0);
     for (ushort i = 0; i < character->skinnedMeshList.at(0).boneMapIDs.size(); i++) {

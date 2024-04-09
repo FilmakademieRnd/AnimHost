@@ -373,9 +373,16 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
 
     //! Message used for synchronising different clients
     /*!
-    * It consists of exclusively of an TRACER message header (it doesn't have a body)
+    * It exclusively consists of a TRACER message header (it doesn't have a body)
     */
     byte syncMessage[3] = { 0, 0, MessageType::EMPTY };
+
+    //! Message used for locking and unlocking characters (necessary for applying root transformations)
+    /*!
+    * It consists of TRACER message header, plus the ID of the scene to target, the ID of the specific Scene Object to lock/unlock,
+    * and the boolean representing whether the object is going to be locked (when \c true) or unlocked (when \c false)
+    */
+    QByteArray* lockMessage = new QByteArray();
 
     //! Map of last states
     QMap<QByteArray, QByteArray> objectStateMap;
@@ -452,6 +459,34 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
         
         // increase local time for controlling client timeouts
         m_time++;
+    }
+
+    //! Populates/overwrites the lock message
+    /*!
+    * The sync message will always have the following structure:
+    * 0. current ClientID of the AnimHost application
+    * 1. current timestamp
+    * 2. message type \c MessageType::LOCK
+    * 3. ID of the targeted scene
+    * 4. ID of the targeted scene object
+    * 5. state boolean
+    * \sa message
+    * \param[in]   timestamp    The timestamp of the message
+    * \param[in]   soID         The ID of the targeted scene object
+    * \param[in]   locking      Whether the object will be locked (\c true) or unlocked (\c false)
+    */
+    void createLockMessage(int timestamp, int soID, bool locking) {
+
+        byte soID_1 = (byte) (soID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
+        byte soID_2 = (byte) ((soID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
+
+        lockMessage->insert(0, getOwnID());
+        lockMessage->insert(1, (byte) timestamp);
+        lockMessage->insert(2, MessageType::LOCK);
+        lockMessage->insert(3, ZMQMessageHandler::getTargetSceneID());
+        lockMessage->insert(4, soID_1);
+        lockMessage->insert(5, soID_2);
+        lockMessage->insert(6, locking);
     }
 };
 
