@@ -26,6 +26,7 @@ TracerSceneReceiverPlugin::TracerSceneReceiverPlugin() {
 	QObject::connect(sceneReceiver, &SceneReceiver::passControlPathByteArray, this, &TracerSceneReceiverPlugin::processControlPathByteData);
 	QObject::connect(this, &TracerSceneReceiverPlugin::requestCharacterData, sceneReceiver, &SceneReceiver::requestCharacterData);
 	QObject::connect(this, &TracerSceneReceiverPlugin::requestSceneNodeData, sceneReceiver, &SceneReceiver::requestSceneNodeData);
+	QObject::connect(this, &TracerSceneReceiverPlugin::requestHeaderData, sceneReceiver, &SceneReceiver::requestHeaderData);
 	QObject::connect(this, &TracerSceneReceiverPlugin::requestControlPathData, sceneReceiver, &SceneReceiver::requestControlPathData);
 
 	qDebug() << "TracerSceneReceiverPlugin created";
