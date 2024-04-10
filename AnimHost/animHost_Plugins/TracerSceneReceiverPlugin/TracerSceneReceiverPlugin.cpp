@@ -67,7 +67,8 @@ std::shared_ptr<NodeData> TracerSceneReceiverPlugin::processOutData(QtNodes::Por
 		return characterListOut;
 	else if (port == 1)
 		return sceneNodeListOut;
-	
+	else if (port == 2)
+		return controlPathOut;
 }
 
 QWidget* TracerSceneReceiverPlugin::embeddedWidget() {

@@ -240,7 +240,11 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
                 break;
             }
         }
-        assert(animDataBoneID >= 0);
+        
+        if(animDataBoneID == -1) {
+			qDebug() << "Bone not found in animation data: " << boneName;
+			continue;
+		}
 
         Bone selectedBone = animData->mBones.at(animDataBoneID);
 
