@@ -153,6 +153,8 @@ public:
      * @return A vector of quaternions representing the relative joint rotations for the given frame.
      */
     std::vector<glm::quat> prepareJointRotations(int referenceFrame, std::shared_ptr<Animation> animation, std::shared_ptr<Skeleton> skeleton, glm::quat inverseReferenceJointRotation, glm::mat4 Root, bool isOutput = false);
+    std::vector<Rotation6D> prepareJointRotations6D(int referenceFrame, std::shared_ptr<Animation> animation, std::shared_ptr<Skeleton> skeleton, glm::quat inverseReferenceJointRotation, glm::mat4 Root, bool isOutput);
+
 
     /**
      * This function prepares the joint velocities for a given frame.
