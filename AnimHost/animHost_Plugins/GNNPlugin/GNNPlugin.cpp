@@ -2,6 +2,7 @@
 #include "GNNPlugin.h"
 #include <QPushButton>
 #include <animhosthelper.h>
+#include <MathUtils.h>
 
 #include <glm/gtx/quaternion.hpp>
 #include <glm/ext/quaternion_float.hpp>
@@ -108,60 +109,69 @@ void GNNPlugin::run()
             if (auto sp_velSeq = _jointVelocitySequenceIn.lock()) {
                 auto velSeq = sp_velSeq->getData();
 
-
-
-                //generate dummy joint data
-
-                std::vector<glm::mat4> transforms;
-                AnimHostHelper::ForwardKinematics(*skeleton, *animation, transforms, 20);
-
-                controller->initJointPos.clear();
-                controller->initJointRot.clear();
-                controller->initJointVel.clear();
-
-                for (int i = 0; i < transforms.size(); i++) {
-                    glm::vec3 scale;
-                    glm::quat rotation;
-                    glm::vec3 translation;
-                    glm::vec3 skew;
-                    glm::vec4 perspective;
-
-                    glm::decompose(transforms[i], scale, rotation, translation, skew, perspective);
-                    //rotation = glm::conjugate(rotation);
-
-                    controller->initJointPos.push_back(translation);
-                    controller->initJointRot.push_back(rotation);
-
-                    controller->initJointVel.push_back(velSeq->mJointVelocitySequence[10].mJointVelocity[i]);
-                }
-
-
-                controller->SetAnimationIn(animation);
-                controller->SetSkeleton(skeleton);
+                if(auto sp_controlPath = _controlPathIn.lock()) {
+					auto controlPath = sp_controlPath->getData();
 
 
 
-                //dummy data
-                controller->InitDummyData();
 
-                controller->prepareInput();
+                    //generate dummy joint data
 
-                auto animOut = controller->GetAnimationOut();
-                animOut->mDurationFrames = 1;
+                    std::vector<glm::mat4> transforms;
+                    AnimHostHelper::ForwardKinematics(*skeleton, *animation, transforms, 20);
 
-                _animationOut = std::make_shared<AnimNodeData<Animation>>();
-                _animationOut->setData(animOut);
+                    controller->initJointPos.clear();
+                    controller->initJointRot.clear();
+                    controller->initJointVel.clear();
 
-                emitDataUpdate(0);
-                emitRunNextNode();
+                    for (int i = 0; i < transforms.size(); i++) {
+                        glm::vec3 scale;
+                        glm::quat rotation;
+                        glm::vec3 translation;
+                        glm::vec3 skew;
+                        glm::vec4 perspective;
 
+
+                        glm::mat4 root = animation->CalculateRootTransform(20, 0);
+                        glm::mat4 relativeTransform = glm::inverse(root) * transforms[i];
+
+
+                        glm::decompose(relativeTransform, scale, rotation, translation, skew, perspective);
+                        //rotation = glm::conjugate(rotation);
+
+                        
+
+                   
+
+                        controller->initJointPos.push_back(translation);
+                        controller->initJointRot.push_back(rotation);
+
+                        controller->initJointVel.push_back(velSeq->mJointVelocitySequence[20].mJointVelocity[i]);
+                    }
+
+
+                    controller->SetAnimationIn(animation);
+                    controller->SetSkeleton(skeleton);
+
+                    //dummy data
+                    controller->InitDummyData();
+
+                    controller->prepareInput();
+
+                    auto animOut = controller->GetAnimationOut();
+                    animOut->mDurationFrames = 1;
+
+                    _animationOut = std::make_shared<AnimNodeData<Animation>>();
+                    _animationOut->setData(animOut);
+
+                    emitDataUpdate(0);
+                    emitRunNextNode();
+
+                }  
             }
-            
         }
     }
-
-    
-}
+ }
 
 std::shared_ptr<NodeData> GNNPlugin::processOutData(QtNodes::PortIndex port)
 {

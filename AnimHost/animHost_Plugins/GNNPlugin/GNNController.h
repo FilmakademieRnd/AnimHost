@@ -2,6 +2,7 @@
 
 #include "HistoryBuffer.h"
 #include "OnnxModel.h"
+#include "PhaseSequence.h"
 
 class GNNPLUGINSHARED_EXPORT GNNController
 {
@@ -9,7 +10,7 @@ private:
 
 
     int pastKeys = 6;
-    int futureKeys = 5;
+    int futureKeys = 6;
 
     int totalKeys = pastKeys + futureKeys + 1;
 
@@ -32,10 +33,12 @@ private:
    
 
     /* Phase data */
-    std::vector<float> Phase;
-    std::vector<float> Amplitude;
+    //std::vector<float> Phase;
+    //std::vector<float> Amplitude;
 
-    std::vector<glm::vec2> phase2D;
+    //std::vector<glm::vec2> phase2D;
+
+    PhaseSequence phaseSequence;
 
     /* Generated  deserialized network output.
        Cleanup and blending also computet on output. */
@@ -59,8 +62,13 @@ private:
     std::vector<std::vector<glm::vec3>> genJointVel;
 
 
+    std::vector<std::vector<glm::vec2>> genPhase2D;
+
+
     //Skeleton
     std::shared_ptr<Skeleton> skeleton;
+
+    std::shared_ptr<ControlPath> controlPath;
 
     std::shared_ptr<Animation> animationIn;
 
@@ -81,7 +89,7 @@ private:
     std::vector<float> dummyIn;
     std::vector<float> dummyPhase;
     std::vector<float> input_values;
-    std::vector<float> output_values;
+    //std::vector<float> output_values;
 
     int currentPivot = 0;
 
@@ -89,7 +97,7 @@ public:
 
     /* Neural Network */
     std::unique_ptr<OnnxModel> network;
-    QString NetworkModelPath = "C:\\DEV\\AI4Animation\\AI4Animation\\SIGGRAPH_2022\\PyTorch\\GNN\\Training\\149.onnx";
+    QString NetworkModelPath = "C:\\DEV\\AI4Animation\\AI4Animation\\SIGGRAPH_2022\\PyTorch\\GNN\\Training\\80.onnx";
 
 public:
     //initial joint positions
@@ -114,7 +122,7 @@ public:
 
     std::shared_ptr<Animation> GetAnimationOut();
 
-    void BuildAnimationSequence(const std::vector<glm::quat>& jointRot);
+    void BuildAnimationSequence(const std::vector<std::vector<glm::quat>>& jointRotSequence);
     
  
 
@@ -125,7 +133,9 @@ private:
     void BuildInputTensor(const std::vector<glm::vec2>& pos, const std::vector<glm::vec2>& dir, const std::vector<glm::vec2>& vel, const std::vector<float>& speed,
         const std::vector<glm::vec3>& jointPos, const std::vector<glm::quat>& jointRot, const std::vector<glm::vec3>& jointVel);
     
-    std::vector<glm::quat>  readOutput();
+    void  readOutput(const std::vector<float>& output_values, std::vector<glm::vec3>& outJointPosition,
+        std::vector<glm::quat>& outJointRotation, std::vector<glm::vec3>& outJointVelocity,
+        std::vector<std::vector<glm::vec2>>& outPhase2D, std::vector<std::vector<float>>& outAmplitude, std::vector<std::vector<float>>& outFrequency);
 
     std::vector<glm::quat> ConvertRotationsToLocalSpace(const std::vector<glm::quat>& relativeJointRots);
 
@@ -137,12 +147,11 @@ private:
 
     std::vector<glm::quat> GetRelativeJointRot(const std::vector<glm::quat>& globalJointRot, const glm::mat4& root);
 
-    int sampleCount() { return pastKeys + futureKeys + 1; }
+    void GetGlobalJointPosition(std::vector<glm::vec3>& globalJointPos, const glm::mat4& root);
+    void GetGlobalJointRotation(std::vector<glm::quat>& globalJointRot, const glm::mat4& root);
+    void GetGlobalJointVelocity(std::vector<glm::vec3>& globalJointVel, const glm::mat4& root);
 
-    glm::vec3 PositionTo(const glm::vec3& from, const glm::mat4& to);
-    glm::vec2 PositionTo(const glm::vec2& from, const glm::mat4& to);
-    glm::vec3 DirectionTo(const glm::vec3& from, const glm::mat4& to);
-    glm::vec2 Direction2DTo(const glm::vec3& from, const glm::mat4& to);
+    int sampleCount() { return pastKeys + futureKeys + 1; }
 
     glm::vec2 Calc2DPhase(float phaseValue, float amplitude);
 
