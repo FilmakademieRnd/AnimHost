@@ -52,6 +52,7 @@ void CharacterSelectorPlugin::processInData(std::shared_ptr<NodeData> data, QtNo
             _selectionMenu->addItem(QString::fromStdString(chpkg.objectName));
         }
         _widget->adjustSize();
+        _widget->updateGeometry();
     } else {
         return;
     }
@@ -70,11 +71,15 @@ QWidget* CharacterSelectorPlugin::embeddedWidget()
     if (!_widget) {
         _selectionLayout = new QVBoxLayout();
         _selectionMenu = new QComboBox();
+        _selectionMenu->setSizeAdjustPolicy(QComboBox::SizeAdjustPolicy::AdjustToContents);
         connect(_selectionMenu, &QComboBox::currentIndexChanged, this, &CharacterSelectorPlugin::onChangedSelection);
 
         _selectionLayout->addWidget(_selectionMenu);
 
         _selectionLayout->setSizeConstraint(QLayout::SetMinimumSize);
+        
+
+      
 
         _widget = new QWidget();
         _widget->setLayout(_selectionLayout);

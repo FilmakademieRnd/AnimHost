@@ -2,6 +2,8 @@
 #include "CoordinateConverterPlugin.h"
 #include <QPushButton>
 #include "../../core/commondatatypes.h"
+#include "animhosthelper.h"
+#include <MathUtils.h>
 
 CoordinateConverterPlugin::CoordinateConverterPlugin()
 {
@@ -58,7 +60,7 @@ void CoordinateConverterPlugin::run()
         negW = wButton->isChecked();
         swapYZ = swapYzButton->isChecked();
         
-        for(int i = 0; i < animOut->mBones.size(); i++) {
+        /*for(int i = 0; i < animOut->mBones.size(); i++) {
             int numKeys = animOut->mBones[i].mNumKeysRotation;
             for (int j = 0; j < numKeys; j++) {
                 animOut->mBones[i].mRotationKeys[j].orientation = ConvertToTargetSystem(animOut->mBones[i].mRotationKeys[j].orientation,
@@ -82,7 +84,18 @@ void CoordinateConverterPlugin::run()
 
             animOut->mBones[i].mRestingTransform = ConvertToTargetSystem(animOut->mBones[i].mRestingTransform,
                 swapYZ, negX, negY, negZ, negW);
+        }*/
+
+        //Apply Transform to Root Bone
+        for (int i = 0; i < animOut->mBones[0].mPositonKeys.size(); i++) {
+
+            //animOut->mBones[0].mPositonKeys[i].position = glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix()) * glm::vec4(animOut->mBones[0].mPositonKeys[i].position, 1.0f);
+
+             glm::mat4 rotation = glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix()) * glm::toMat4(animOut->mBones[0].mRotationKeys[i].orientation);
+
+             animOut->mBones[0].mRotationKeys[i].orientation = MathUtils::DecomposeRotation(rotation);
         }
+			
 
         _animationOut->setVariant(QVariant::fromValue(animOut));
 

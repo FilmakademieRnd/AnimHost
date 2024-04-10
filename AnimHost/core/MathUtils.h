@@ -45,8 +45,6 @@ public:
 		return glm::inverse(to) * from;
 	}
 
-
-
 	static glm::vec3 DirectionTo(const glm::vec3& from, const glm::mat4& to) {
 		glm::vec4 dir = glm::inverse(to) * glm::vec4(from, 0.0f);
 		return glm::normalize(glm::vec3(dir.x, dir.y, dir.z));
@@ -136,6 +134,25 @@ public:
 
 		// Convert the rotation matrix into a quaternion and return it.
 		return glm::quat_cast(rotMat);
+	}
+
+
+	static std::vector<glm::quat> convert6DRotationToQuaternions(const std::vector<Rotation6D>& rotations6d) {
+		std::vector<glm::quat> quaternions;
+
+		std::transform(rotations6d.begin(), rotations6d.end(), std::back_inserter(quaternions), [](const Rotation6D& rotation6D) {
+			return MathUtils::Convert6DToRotation(rotation6D);
+			});
+
+		return quaternions;
+	}
+
+
+	static glm::vec2 rotateVec2(const glm::vec2& v, float deg) {
+		float rad = glm::radians(deg);
+		glm::mat2 rotMatrix = glm::mat2(glm::cos(rad), -glm::sin(rad),
+			                            glm::sin(rad), glm::cos(rad));
+		return rotMatrix * v;
 	}
 };
 

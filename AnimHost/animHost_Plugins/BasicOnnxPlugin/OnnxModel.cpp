@@ -111,7 +111,7 @@ std::vector<float> OnnxModel::RunInference(std::vector<float>& inputValue)
         }
     }
 
-    qDebug() << "\ninput_tensor shape: " << shape_printer(input_tensors[0].GetTensorTypeAndShapeInfo().GetShape());
+   // qDebug() << "\ninput_tensor shape: " << shape_printer(input_tensors[0].GetTensorTypeAndShapeInfo().GetShape());
 
     std::vector<const char*> input_names_c(input_names.size(), nullptr);
     std::transform(input_names.begin(), input_names.end(), input_names_c.begin(),
@@ -137,16 +137,16 @@ std::vector<float> OnnxModel::RunInference(std::vector<float>& inputValue)
         auto a = out_tensors[0].GetTensorTypeAndShapeInfo().GetShape();
 
 
-        qDebug() << "Result: " << output_names[0] << "\t" << ret[30];
+        //qDebug() << "Result: " << output_names[0] << "\t" << ret[30];
 
         auto out_num_of_elements = std::accumulate(a.begin(), a.end(), 1,
             [](int a, int b) { return a * b; });
 
-        for (int i = 0; i < out_num_of_elements; i++) {
+        /*for (int i = 0; i < out_num_of_elements; i++) {
             qDebug() << ret[i];
-        }
+        }*/
 
-        qDebug() << "... Done!";
+        //qDebug() << "... Done!";
 
         return std::vector<float>(ret, ret + out_num_of_elements);
     }

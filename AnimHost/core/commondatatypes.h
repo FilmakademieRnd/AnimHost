@@ -45,6 +45,8 @@ struct ANIMHOSTCORESHARED_EXPORT KeyPosition
 {
     float timeStamp;
     glm::vec3 position;
+
+    KeyPosition(float ts, glm::vec3 pos) : timeStamp(ts), position(pos) {}
 };
 
 //! 3D rotation keyframe of an animation with timestamp
@@ -52,6 +54,8 @@ struct ANIMHOSTCORESHARED_EXPORT KeyRotation
 {
     float timeStamp;
     glm::quat orientation;
+
+    KeyRotation(float ts, glm::quat ori) : timeStamp(ts), orientation(ori) {}
 };
 
 //! 3D scale keyframe of an animation with timestamp
