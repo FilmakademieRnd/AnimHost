@@ -427,6 +427,8 @@ void TracerSceneReceiverPlugin::processControlPathByteData(QByteArray* controlPo
 	if (controlPointByteArray->size() == 0)
 		return;
 
+	controlPathOut->getData()->mControlPath.clear();	// clearing controlPathOut every time a new path is (requested and) received
+
 	// - int	size of data (3 * N_of_frames)
 	// - float	data (frame1_xyz, frame2_xyz, frame3_xyz, ..., frameN_xyz)
 	unsigned int size; memcpy(&size, controlPointByteArray->sliced(0, sizeof(size)).data(), sizeof(size)); // Copies byte values directly into the new variable, which interprets it as the correct type
