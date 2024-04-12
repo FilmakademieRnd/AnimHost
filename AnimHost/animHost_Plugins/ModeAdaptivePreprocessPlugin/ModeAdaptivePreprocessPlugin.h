@@ -182,7 +182,6 @@ private Q_SLOTS:
     void onRootBoneSelectionChanged(const int text);
     void onFolderSelectionChanged();
     void onOverrideCheckbox(int state);
-
 };
 
 #endif // MODEADAPTIVEPREPROCESSPLUGINPLUGIN_H

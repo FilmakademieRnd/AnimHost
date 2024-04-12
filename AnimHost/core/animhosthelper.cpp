@@ -89,18 +89,16 @@ int AnimHostHelper::FindParentBone(const std::map<int, std::vector<int>>& bone_h
 		}
 	}
 
-    qDebug() << "FindParentBone: Parent bone not found";
+    //
+    // 
+    // 
+    // qDebug() << "FindParentBone: Parent bone not found";
 
     return -1;
 }
 
 glm::mat4 AnimHostHelper::GetCoordinateSystemTransformationMatrix()
 {
-    glm::mat4 matrix = { 1.0f, 0.0f,  0.0f, 0.0f,
-                         0.0f, 0.0f, -1.0f, 0.0f,
-                         0.0f, 1.0f,  0.0f, 0.0f,
-                         0.0f, 0.0f,  0.0f, 1.0f };
-
     glm::mat4 newmatrix(1.0f);
 
     newmatrix[0].x = 1.f;
@@ -109,9 +107,9 @@ glm::mat4 AnimHostHelper::GetCoordinateSystemTransformationMatrix()
     newmatrix[2].y = 1.f;
     newmatrix[2].z = 0.f;
 
-    if (newmatrix == matrix) {
+    /*if (newmatrix == matrix) {
         qDebug() << "GetCoordinateSystemTransformationMatrix: Transformation matrix is correct";
-    }
+    }*/
 
     return newmatrix;
 }

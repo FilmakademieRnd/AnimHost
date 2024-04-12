@@ -89,14 +89,14 @@ void CoordinateConverterPlugin::run()
         //Apply Transform to Root Bone
         for (int i = 0; i < animOut->mBones[0].mPositonKeys.size(); i++) {
 
-            //animOut->mBones[0].mPositonKeys[i].position = glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix()) * glm::vec4(animOut->mBones[0].mPositonKeys[i].position, 1.0f);
+             //animOut->mBones[0].mPositonKeys[i].position = (glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix()) * glm::vec4(animOut->mBones[0].mPositonKeys[i].position, 1.0f)) / 100.f;
+             animOut->mBones[0].mPositonKeys[i].position = glm::vec4(animOut->mBones[0].mPositonKeys[i].position, 1.0f) / 100.f;
 
              glm::mat4 rotation = glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix()) * glm::toMat4(animOut->mBones[0].mRotationKeys[i].orientation);
 
              animOut->mBones[0].mRotationKeys[i].orientation = MathUtils::DecomposeRotation(rotation);
         }
 			
-
         _animationOut->setVariant(QVariant::fromValue(animOut));
 
         emitDataUpdate(0);

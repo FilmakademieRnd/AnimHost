@@ -35,7 +35,6 @@ void PhaseSequence::UpdateSequence(const std::vector<std::vector<glm::vec2>>& ne
 
 			float frequency = glm::abs(newFrequencies[inIdx][channel]);
 
-
 			glm::vec2 current = Calculate2dPhase(phaseSequence[index][channel], 1.0);
 			//glm::vec3 update3d = glm::angleAxis(-frequency * 360.f * (1.f / 60.f), glm::vec3(0.f, 1.f, 0.f)) * glm::vec3(current.x, 0.0f, current.y);
 
@@ -44,12 +43,7 @@ void PhaseSequence::UpdateSequence(const std::vector<std::vector<glm::vec2>>& ne
 			glm::vec2 updated = MathUtils::rotateVec2(current, degrees);
 			updated = glm::normalize(updated);
 
-		
-
-
 			glm::vec2 next = glm::normalize(newPhases[inIdx][channel]);
-
-
 
 			float a = -glm::orientedAngle(glm::vec2(0.f, 1.f), updated);
 			float b = -glm::orientedAngle(glm::vec2(0.f, 1.f), next);
@@ -67,14 +61,11 @@ void PhaseSequence::UpdateSequence(const std::vector<std::vector<glm::vec2>>& ne
 				qDebug() << updated.x << " " << updated.y;
 				qDebug() << "Mixed:	";
 				qDebug() << mixed.x << " " << mixed.y;*/
-				qDebug() << phaseSequence[index][channel];
+				//qDebug() << phaseSequence[index][channel];
 			};
 
 
 			phaseSequence[index][channel] = CalcPhaseValue(mixed);
-
-		
-
 			frequencySequence[index][channel] = frequency;
 			amplitudeSequence[index][channel] = amplitude;
 			

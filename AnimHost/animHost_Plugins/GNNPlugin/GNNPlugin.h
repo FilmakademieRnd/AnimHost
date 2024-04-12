@@ -24,8 +24,6 @@ private:
     QWidget * _widget;
     std::unique_ptr<GNNController> controller;
 
-    
-
     std::weak_ptr<AnimNodeData<Animation>> _animationIn;
     std::weak_ptr<AnimNodeData<Skeleton>> _skeletonIn;
     std::weak_ptr<AnimNodeData<ControlPath>> _controlPathIn;

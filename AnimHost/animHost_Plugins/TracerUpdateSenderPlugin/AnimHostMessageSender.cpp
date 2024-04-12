@@ -198,16 +198,16 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
         return;
     }*/
 
-    /*  ELEMENT 0 IN THE ANIMATION DATA IS EMPTY AT THE MOMENT, SO WE CAN IGNORE THE FOLLOWING SECTION OF THE CODE
+    //ELEMENT 0 IN THE ANIMATION DATA IS EMPTY AT THE MOMENT, SO WE CAN IGNORE THE FOLLOWING SECTION OF THE CODE
     Bone rootBone = animData->mBones.at(0);                 // The first bone in the animation data should be the root
     
     glm::vec3 rootPos = rootBone.GetPosition(frame);        // Getting Root Bone Position Vector
-    glm::quat rootRot = rootBone.GetOrientation(frame);     // Getting Root Bone Rotation Quaternion
-    glm::vec3 rootScl = rootBone.GetScale(frame);           // Getting Root Bone Scale    Vector
+    //glm::quat rootRot = rootBone.GetOrientation(frame);     // Getting Root Bone Rotation Quaternion
+    //glm::vec3 rootScl = rootBone.GetScale(frame);           // Getting Root Bone Scale    Vector
 
     std::vector<float> rootPosVector = { rootPos.x, rootPos.y, rootPos.z };             // converting glm::vec3 in vector<float>
-    std::vector<float> rootRotVector = { rootRot.x, rootRot.y, rootRot.z, rootRot.w };  // converting glm::quat in vector<float>
-    std::vector<float> rootSclVector = { rootScl.x, rootScl.y, rootScl.z };             // converting glm::quat in vector<float>
+    //std::vector<float> rootRotVector = { rootRot.x, rootRot.y, rootRot.z, rootRot.w };  // converting glm::quat in vector<float>
+    //std::vector<float> rootSclVector = { rootScl.x, rootScl.y, rootScl.z };             // converting glm::quat in vector<float>
 
     // Test for sending root transform
     //rootPosVector[2] = rootPosVector[2] - (0.01 * frame);
@@ -217,11 +217,11 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
     // Create messages for sending out the Character Root TRS and appending them to the byte array that is going to be sent to TRACER applications
     QByteArray msgRootPos = createMessageBody(targetSceneID, character->sceneObjectID, 0, ZMQMessageHandler::ParameterType::VECTOR3,    rootPosVector);
     byteArray->append(msgRootPos);
-    QByteArray msgRootRot = createMessageBody(targetSceneID, character->sceneObjectID, 1, ZMQMessageHandler::ParameterType::QUATERNION, rootRotVector);
-    byteArray->append(msgRootRot);
-    QByteArray msgRootScl = createMessageBody(targetSceneID, character->sceneObjectID, 2, ZMQMessageHandler::ParameterType::VECTOR3,    rootSclVector);
-    byteArray->append(msgRootScl);
-    */
+    /*QByteArray msgRootRot = createMessageBody(targetSceneID, character->sceneObjectID, 1, ZMQMessageHandler::ParameterType::QUATERNION, rootRotVector);
+    byteArray->append(msgRootRot);*/
+    /*QByteArray msgRootScl = createMessageBody(targetSceneID, character->sceneObjectID, 2, ZMQMessageHandler::ParameterType::VECTOR3,    rootSclVector);
+    byteArray->append(msgRootScl);*/
+    
 
     int rootBoneID = character->skinnedMeshList.at(0).boneMapIDs.at(0);
     for (ushort i = 0; i < character->skinnedMeshList.at(0).boneMapIDs.size(); i++) {

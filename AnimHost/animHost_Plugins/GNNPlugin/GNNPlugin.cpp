@@ -131,17 +131,10 @@ void GNNPlugin::run()
                         glm::vec3 skew;
                         glm::vec4 perspective;
 
-
                         glm::mat4 root = animation->CalculateRootTransform(20, 0);
                         glm::mat4 relativeTransform = glm::inverse(root) * transforms[i];
 
-
                         glm::decompose(relativeTransform, scale, rotation, translation, skew, perspective);
-                        //rotation = glm::conjugate(rotation);
-
-                        
-
-                   
 
                         controller->initJointPos.push_back(translation);
                         controller->initJointRot.push_back(rotation);
@@ -152,6 +145,7 @@ void GNNPlugin::run()
 
                     controller->SetAnimationIn(animation);
                     controller->SetSkeleton(skeleton);
+                    controller->SetControlPath(controlPath);
 
                     //dummy data
                     controller->InitDummyData();

@@ -151,7 +151,7 @@ public:
 	static glm::vec2 rotateVec2(const glm::vec2& v, float deg) {
 		float rad = glm::radians(deg);
 		glm::mat2 rotMatrix = glm::mat2(glm::cos(rad), -glm::sin(rad),
-			                            glm::sin(rad), glm::cos(rad));
+			                           glm::sin(rad), glm::cos(rad));
 		return rotMatrix * v;
 	}
 };

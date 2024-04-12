@@ -97,7 +97,7 @@ public:
 
     /* Neural Network */
     std::unique_ptr<OnnxModel> network;
-    QString NetworkModelPath = "C:\\DEV\\AI4Animation\\AI4Animation\\SIGGRAPH_2022\\PyTorch\\GNN\\Training\\80.onnx";
+    QString NetworkModelPath = "C:\\DEV\\AI4Animation\\AI4Animation\\SIGGRAPH_2022\\PyTorch\\GNN\\Training\\149.onnx";
 
 public:
     //initial joint positions
@@ -119,6 +119,8 @@ public:
     void SetSkeleton(std::shared_ptr<Skeleton> skel);
 
     void SetAnimationIn(std::shared_ptr<Animation> anim);
+
+    void SetControlPath(std::shared_ptr<ControlPath> path);
 
     std::shared_ptr<Animation> GetAnimationOut();
 

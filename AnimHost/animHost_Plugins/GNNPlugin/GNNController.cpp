@@ -22,7 +22,19 @@ void GNNController::prepareInput()
 	genJointRot.clear();
 	genJointVel.clear();
 
-	for (int genIdx = 0; genIdx < 100; genIdx++) {
+    qDebug() << "Generate Animation with Control Path of size: " << controlPath->mControlPath.size();
+
+
+    ctrlTrajPos.clear();
+    ctrlTrajForward.clear();
+
+    for (auto& p : controlPath->mControlPath) {
+        ctrlTrajPos.push_back(glm::vec2( p.position.x, p.position.z)*100.f);
+        ctrlTrajForward.push_back(p.lookAt);
+	}
+
+
+	for (int genIdx = 0; genIdx < ctrlTrajPos.size(); genIdx++) {
 
 		std::vector<glm::vec2> inTrajPos;
 		std::vector<glm::vec2> inTrajDir;
@@ -55,14 +67,14 @@ void GNNController::prepareInput()
 		for (int i : frameRange) {
 
 			int idx = glm::max(i, 0);
-			idx = glm::min(idx, int(ctrlTrajPos.size() - 1));
+			idx = glm::min(idx, int(controlPath->mControlPath.size() - 1));
 
 			//relative position
 			glm::vec2 pos = MathUtils::PositionTo(ctrlTrajPos[idx], root);
 			inTrajPos.push_back(pos);
 
 			//relative character forward direction
-			auto fwrd = ctrlTrajForward[idx] * forward;
+			auto fwrd = ctrlTrajForward[genIdx] * forward;
 			glm::vec3 dir = MathUtils::DirectionTo(fwrd, root);
 			glm::vec2 dir2d = glm::vec2(dir.x, dir.z);
 			//glm::vec2 dir2d = glm::vec2(0, 1);
@@ -81,21 +93,9 @@ void GNNController::prepareInput()
 			//Speed
 			inTrajSpeed.push_back(glm::length(rVelocity));
 		}
+
+
 		//prepare character input
-
-		//initJointVel = std::vector<glm::vec3>(initJointPos.size());
-
-		//HOTFIX: Move Char to first root pos
-		/*glm::mat4 hfTranslation = glm::mat4(1.0);
-		hfTranslation = glm::translate(hfTranslation, initJointPos[0]);
-        hfTranslation = animationIn->CalculateRootTransform(20, 0);
-		initJointPos = GetRelativeJointPos(initJointPos, hfTranslation);
-
-		for (int i = 0; i < initJointPos.size(); i++) {
-			initJointPos[i] = initJointPos[i] + glm::vec3(ctrlTrajPos[0].x, 0.0, ctrlTrajPos[0].y);
-		}*/
-		//!HOTFIX
-
 		if (genJointPos.size() <= 0) {
             inJointPos = initJointPos;// GetRelativeJointPos(initJointPos, root);
             inJointRot = initJointRot;// GetRelativeJointRot(initJointRot, root);
@@ -112,26 +112,15 @@ void GNNController::prepareInput()
 		BuildInputTensor(inTrajPos, inTrajDir, inTrajVel, inTrajSpeed,
 			inJointPos, inJointRot, inJointVel);
 
-	
-
-
 		/*DebugWriteOutputToFile(input_values, false);*/
-		
-
 		/*int dummyIdx = genIdx % DummyIN.size();
 		input_values = DummyIN[dummyIdx];*/
-
-
 		/*if (genJointPos.size() <= 0) {
 			input_values = DummyIN[0];
 		}*/
 
 		//Inference
 		auto outputValues = network->RunInference(input_values);
-
-        //outputValues = DummyOUT[1];
-
-		
 
 		std::vector<glm::vec3> outJointPosition;
 		std::vector<glm::quat> outJointRotation;
@@ -426,6 +415,11 @@ void GNNController::SetSkeleton(std::shared_ptr<Skeleton> skel)
 	skeleton = skel;
 }
 
+void GNNController::SetControlPath(std::shared_ptr<ControlPath> path)
+{
+    controlPath = path;
+}
+
 std::vector<glm::quat> GNNController::GetRelativeJointRot(const std::vector<glm::quat>& globalJointRot, const glm::mat4& root) {
 
 	std::vector<glm::quat> relativeRot;
@@ -511,6 +505,7 @@ glm::mat4 GNNController::BuildRootTransform(const glm::vec3& pos, const glm::qua
 {
 	return glm::mat4();
 }
+
 
 
 void GNNController::InitDummyData(){
