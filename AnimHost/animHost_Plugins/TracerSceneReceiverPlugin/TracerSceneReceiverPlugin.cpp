@@ -437,7 +437,7 @@ void TracerSceneReceiverPlugin::processControlPathByteData(QByteArray* controlPo
 	for (int frame = 0; frame < size/3; frame++) {
 		ControlPoint key;
 		float x, y, z;
-		int currentXPos = (sizeof(x) + sizeof(y) + sizeof(z)) * frame;
+		int currentXPos = (sizeof(x) * 6 ) * frame;
 		int currentYPos = currentXPos + sizeof(x);
 		int currentZPos = currentYPos + sizeof(y);
 		memcpy(&x, controlPointByteArray->sliced(currentXPos, sizeof(x)), sizeof(x));
@@ -447,7 +447,7 @@ void TracerSceneReceiverPlugin::processControlPathByteData(QByteArray* controlPo
 		key.position = glm::vec3(x, y, z);
 		qDebug() << "Frame" << frame << "- Pos(" << key.position.x << "," << key.position.y << "," << key.position.z << ")";
 
-		int currentXDir = (sizeof(x) + sizeof(y) + sizeof(z)) * frame;
+		int currentXDir = currentZPos + sizeof(x);
 		int currentYDir = currentXDir + sizeof(x);
 		int currentZDir = currentYDir + sizeof(y);
 		memcpy(&x, controlPointByteArray->sliced(currentXDir, sizeof(x)), sizeof(x));
