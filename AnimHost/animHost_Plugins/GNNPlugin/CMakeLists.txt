@@ -4,7 +4,6 @@ qt_add_library(GNNPlugin
     GNNController.cpp GNNController.h
     GNNPlugin_global.h
     HistoryBuffer.h
-    DummyData.h
     PhaseSequence.h PhaseSequence.cpp
 )
 target_include_directories(GNNPlugin PUBLIC

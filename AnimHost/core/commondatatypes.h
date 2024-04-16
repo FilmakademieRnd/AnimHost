@@ -159,7 +159,7 @@ public:
         }
 
         // Start creating the sub-skeleton from the root bone
-        subSkeleton.rootBoneID = bone_names[rootBoneName];
+            subSkeleton.rootBoneID = bone_names[rootBoneName];
         subSkeleton.bone_names[rootBoneName] = subSkeleton.rootBoneID;
         subSkeleton.bone_names_reverse[subSkeleton.rootBoneID] = rootBoneName;
         CreateSubSkeletonRecursive(subSkeleton.rootBoneID, endBoneNames, subSkeleton);
@@ -700,5 +700,31 @@ class ANIMHOSTCORESHARED_EXPORT CharacterObjectSequence : public Sequence {
 };
 Q_DECLARE_METATYPE(CharacterObjectSequence)
 Q_DECLARE_METATYPE(std::shared_ptr<CharacterObjectSequence>)
+
+
+
+
+
+class ANIMHOSTCORESHARED_EXPORT DebugSignal
+{
+
+public:
+
+    std::vector<glm::vec3> controllPathPositions;
+    std::vector<glm::vec3> controllPathLookAt;
+
+    std::vector<glm::vec3> currentTrajectoryPosition;
+
+    glm::mat4 rootTransform;
+
+
+
+    DebugSignal() { qDebug() << "DebugSignal()"; };
+
+    COMMONDATA(debugSignal, Debug)
+
+
+};
+Q_DECLARE_METATYPE(std::shared_ptr<DebugSignal>)
 
 #endif // COMMONDATATYPES_H

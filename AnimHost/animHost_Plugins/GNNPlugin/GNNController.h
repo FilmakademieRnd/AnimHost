@@ -74,6 +74,8 @@ private:
 
     std::shared_ptr<Animation> animationOut;
 
+    std::shared_ptr<DebugSignal> debugSignal;
+
 
 
 
@@ -123,6 +125,7 @@ public:
     void SetControlPath(std::shared_ptr<ControlPath> path);
 
     std::shared_ptr<Animation> GetAnimationOut();
+    std::shared_ptr<DebugSignal> GetDebugSignal(){return debugSignal; }
 
     void BuildAnimationSequence(const std::vector<std::vector<glm::quat>>& jointRotSequence);
     

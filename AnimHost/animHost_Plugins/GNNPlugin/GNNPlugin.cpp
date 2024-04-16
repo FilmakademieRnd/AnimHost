@@ -27,7 +27,7 @@ unsigned int GNNPlugin::nDataPorts(QtNodes::PortType portType) const
     if (portType == QtNodes::PortType::In)
         return 4;
     else            
-        return 1;
+        return 2;
 }
 
 NodeDataType GNNPlugin::dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
@@ -49,7 +49,17 @@ NodeDataType GNNPlugin::dataPortType(QtNodes::PortType portType, QtNodes::PortIn
             break;
         }
     else
-        return AnimNodeData<Animation>::staticType();;
+        switch (portIndex) {
+        case 0:
+            return AnimNodeData<Animation>::staticType();
+        case 1:
+            return AnimNodeData<DebugSignal>::staticType();
+        default:
+            return type;
+            break;
+        }
+
+
 }
 
 void GNNPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex)
@@ -158,7 +168,14 @@ void GNNPlugin::run()
                     _animationOut = std::make_shared<AnimNodeData<Animation>>();
                     _animationOut->setData(animOut);
 
+
+                    _debugSignalOut = std::make_shared<AnimNodeData<DebugSignal>>();
+                    _debugSignalOut->setData(controller->GetDebugSignal());
+
+
+
                     emitDataUpdate(0);
+                    emitDataUpdate(1);
                     emitRunNextNode();
 
                 }  
@@ -169,7 +186,12 @@ void GNNPlugin::run()
 
 std::shared_ptr<NodeData> GNNPlugin::processOutData(QtNodes::PortIndex port)
 {
-	return _animationOut;
+    switch (port) {
+    case 0:
+        return _animationOut;
+    case 1:
+        return _debugSignalOut;
+    }
 }
 
 QWidget* GNNPlugin::embeddedWidget()

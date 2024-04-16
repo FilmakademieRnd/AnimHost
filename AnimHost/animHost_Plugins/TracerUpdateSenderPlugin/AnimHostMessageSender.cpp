@@ -203,6 +203,8 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
     
     //glm::vec3 rootPos = rootBone.GetPosition(frame);        // Getting Root Bone Position Vector
     //glm::quat rootRot = rootBone.GetOrientation(frame);     // Getting Root Bone Rotation Quaternion
+    //glm::vec3 rootPos = rootBone.GetPosition(frame);        // Getting Root Bone Position Vector
+    //glm::quat rootRot = rootBone.GetOrientation(frame);     // Getting Root Bone Rotation Quaternion
     //glm::vec3 rootScl = rootBone.GetScale(frame);           // Getting Root Bone Scale    Vector
 
     //std::vector<float> rootPosVector = { rootPos.x, rootPos.y, rootPos.z };             // converting glm::vec3 in vector<float>

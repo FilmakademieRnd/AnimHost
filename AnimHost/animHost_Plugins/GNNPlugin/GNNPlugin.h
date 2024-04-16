@@ -30,6 +30,7 @@ private:
     std::weak_ptr<AnimNodeData<JointVelocitySequence>> _jointVelocitySequenceIn;
     
     std::shared_ptr<AnimNodeData<Animation>> _animationOut;
+    std::shared_ptr<AnimNodeData<DebugSignal>> _debugSignalOut;
 
 public:
     GNNPlugin();

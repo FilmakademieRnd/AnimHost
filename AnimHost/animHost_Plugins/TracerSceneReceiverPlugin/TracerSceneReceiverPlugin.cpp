@@ -1,6 +1,9 @@
 
 #include "TracerSceneReceiverPlugin.h"
 #include "SceneReceiver.h"
+#include "animhosthelper.h"
+#include <glm/gtx/quaternion.hpp>
+#include <glm/ext/quaternion_float.hpp>
 
 TracerSceneReceiverPlugin::TracerSceneReceiverPlugin() {
     _pushButton = nullptr;
@@ -437,23 +440,27 @@ void TracerSceneReceiverPlugin::processControlPathByteData(QByteArray* controlPo
 	for (int frame = 0; frame < size; frame++) {
 		ControlPoint key;
 		float x, y, z;
-		int currentXPos = (sizeof(x) * 6 ) * frame;
+		int currentXPos = (sizeof(x) * 3 ) * frame;
 		int currentYPos = currentXPos + sizeof(x);
 		int currentZPos = currentYPos + sizeof(y);
 		memcpy(&x, controlPointByteArray->sliced(currentXPos, sizeof(x)), sizeof(x));
 		memcpy(&y, controlPointByteArray->sliced(currentYPos, sizeof(y)), sizeof(y));
 		memcpy(&z, controlPointByteArray->sliced(currentZPos, sizeof(z)), sizeof(z));
 		key.frameTimestamp = frame;
-		key.position = glm::vec3(x, y, z);
+		key.position = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(x, y, z, 1.0f);
 		qDebug() << "Frame" << frame << "- Pos(" << key.position.x << "," << key.position.y << "," << key.position.z << ")";
 
-		int currentXDir = currentZPos + sizeof(x);
+
+
+		int currentXDir =  (size * sizeof(float) * 3) + (sizeof(x) * 3) * frame;
 		int currentYDir = currentXDir + sizeof(x);
 		int currentZDir = currentYDir + sizeof(y);
 		memcpy(&x, controlPointByteArray->sliced(currentXDir, sizeof(x)), sizeof(x));
 		memcpy(&y, controlPointByteArray->sliced(currentYDir, sizeof(y)), sizeof(y));
 		memcpy(&z, controlPointByteArray->sliced(currentZDir, sizeof(z)), sizeof(z));
-		key.lookAt = glm::quat(glm::vec3(x, y, z), glm::vec3(0, 0, 1));
+		glm::vec3 tLookAt = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(x, y, z, 1.0f);
+		key.lookAt = glm::rotation(glm::vec3(0, 0, 1), tLookAt);
+	
 		qDebug() << "Frame" << frame << "- Dir(" << key.lookAt.w << "," << key.lookAt.x << "," << key.lookAt.y << "," << key.lookAt.z << ")";
 		
 		controlPathOut->getData()->mControlPath.push_back(key);
