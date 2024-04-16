@@ -4,6 +4,30 @@
 #include "OnnxModel.h"
 #include "PhaseSequence.h"
 
+
+/**
+ * @struct JointsFrameData
+ * @brief A structure to hold frame data for multiple joints.
+ *
+ * This structure encapsulates the position, rotation, and velocity of multiple joints in a frame.
+ * Each member is a vector that represents a different aspect of the joints' state.
+ *
+ * @var std::vector<glm::vec3> jointPos
+ *   A vector of 3D vectors representing the positions of the joints.
+ *
+ * @var std::vector<glm::quat> jointRot
+ *   A vector of quaternions representing the rotations of the joints.
+ *
+ * @var std::vector<glm::vec3> jointVel
+ *   A vector of 3D vectors representing the velocities of the joints.
+ */
+struct JointsFrameData
+{
+    std::vector<glm::vec3> jointPos;
+    std::vector<glm::quat> jointRot;
+    std::vector<glm::vec3> jointVel;
+};
+
 class GNNPLUGINSHARED_EXPORT GNNController
 {
 private:
@@ -136,11 +160,11 @@ private:
     
 
     void BuildInputTensor(const std::vector<glm::vec2>& pos, const std::vector<glm::vec2>& dir, const std::vector<glm::vec2>& vel, const std::vector<float>& speed,
-        const std::vector<glm::vec3>& jointPos, const std::vector<glm::quat>& jointRot, const std::vector<glm::vec3>& jointVel);
+        const JointsFrameData& inJointFrame);
     
-    void  readOutput(const std::vector<float>& output_values, std::vector<glm::vec3>& outJointPosition,
-        std::vector<glm::quat>& outJointRotation, std::vector<glm::vec3>& outJointVelocity,
-        std::vector<std::vector<glm::vec2>>& outPhase2D, std::vector<std::vector<float>>& outAmplitude, std::vector<std::vector<float>>& outFrequency);
+    void  readOutput(const std::vector<float>& output_values,JointsFrameData& outJointFrame, 
+        std::vector<std::vector<glm::vec2>>& outPhase2D, std::vector<std::vector<float>>& outAmplitude, 
+        std::vector<std::vector<float>>& outFrequency);
 
     std::vector<glm::quat> ConvertRotationsToLocalSpace(const std::vector<glm::quat>& relativeJointRots);
 

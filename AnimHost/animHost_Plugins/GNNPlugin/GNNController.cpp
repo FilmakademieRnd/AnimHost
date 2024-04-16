@@ -90,23 +90,25 @@ void GNNController::prepareInput()
 			inTrajSpeed.push_back(glm::length(rVelocity));
 		}
 
+		JointsFrameData inJointFrame;
 
 		//prepare character input
 		if (genJointPos.size() <= 0) {
-            inJointPos = initJointPos;
-            inJointRot = initJointRot;
-            inJointVel = initJointVel;
+            inJointFrame.jointPos = initJointPos;
+            inJointFrame.jointRot = initJointRot;
+            inJointFrame.jointVel = initJointVel;
 		}
 		else {
-			inJointPos = genJointPos.back();
-			inJointRot = genJointRot.back();
-			inJointVel = genJointVel.back();
+			//set inJointFrame
+			inJointFrame.jointPos = genJointPos.back();
+			inJointFrame.jointRot = genJointRot.back();
+			inJointFrame.jointVel = genJointVel.back();
 
 		}
 
 
 		BuildInputTensor(inTrajPos, inTrajDir, inTrajVel, inTrajSpeed,
-			inJointPos, inJointRot, inJointVel);
+			inJointFrame);
 
 		//Inference
 		auto outputValues = network->RunInference(input_values);
@@ -119,8 +121,9 @@ void GNNController::prepareInput()
 		std::vector<std::vector<float>> outAmplitude;
 		std::vector<std::vector<float>> outFrequency;
 
+		JointsFrameData outJointFrame;
 
-		readOutput(outputValues,outJointPosition, outJointRotation, outJointVelocity,outPhase2D, outAmplitude, outFrequency);
+		readOutput(outputValues, outJointFrame ,outPhase2D, outAmplitude, outFrequency);
 
 
 		phaseSequence.IncrementSequence(0, pastKeys);
@@ -128,9 +131,9 @@ void GNNController::prepareInput()
 
         //pushback frame 10 times
         for (int i = 0; i < 1; i++) {
-            genJointPos.push_back(outJointPosition);
-            genJointRot.push_back(outJointRotation);
-            genJointVel.push_back(outJointVelocity);
+            genJointPos.push_back(outJointFrame.jointPos);
+            genJointRot.push_back(outJointFrame.jointRot);
+            genJointVel.push_back(outJointFrame.jointVel);
         }
 
         if(genIdx == 100) {
@@ -235,9 +238,9 @@ void GNNController::DebugWriteOutputToFile(const std::vector<float> data, bool o
 }
 
 void GNNController::BuildInputTensor(const std::vector<glm::vec2>& pos, const std::vector<glm::vec2>& dir, const std::vector<glm::vec2>& vel, const std::vector<float>& speed, 
-	const std::vector<glm::vec3>& jointPos, const std::vector<glm::quat>& jointRot, const std::vector<glm::vec3>& jointVel)  {
+	const JointsFrameData& inJointFrame)  {
 
-	std::vector<Rotation6D> jointRot6D = MathUtils::convertQuaternionsTo6DRotations(jointRot);
+	std::vector<Rotation6D> jointRot6D = MathUtils::convertQuaternionsTo6DRotations(inJointFrame.jointRot);
 
 	input_values.clear();
 
@@ -256,10 +259,10 @@ void GNNController::BuildInputTensor(const std::vector<glm::vec2>& pos, const st
 		input_values.push_back(speed[i]);
 	}
 
-	for (int i = 0; i < jointPos.size(); i++) {
-		input_values.push_back(jointPos[i].x);
-		input_values.push_back(jointPos[i].y);
-		input_values.push_back(jointPos[i].z);
+	for (int i = 0; i < inJointFrame.jointPos.size(); i++) {
+		input_values.push_back(inJointFrame.jointPos[i].x);
+		input_values.push_back(inJointFrame.jointPos[i].y);
+		input_values.push_back(inJointFrame.jointPos[i].z);
 
 		input_values.push_back(jointRot6D[i][0]);
 		input_values.push_back(jointRot6D[i][1]);
@@ -268,9 +271,9 @@ void GNNController::BuildInputTensor(const std::vector<glm::vec2>& pos, const st
 		input_values.push_back(jointRot6D[i][4]);
 		input_values.push_back(jointRot6D[i][5]);
 
-		input_values.push_back(jointVel[i].x);
-		input_values.push_back(jointVel[i].y);
-		input_values.push_back(jointVel[i].z);
+		input_values.push_back(inJointFrame.jointVel[i].x);
+		input_values.push_back(inJointFrame.jointVel[i].y);
+		input_values.push_back(inJointFrame.jointVel[i].z);
 	}
 
 	
@@ -281,8 +284,9 @@ void GNNController::BuildInputTensor(const std::vector<glm::vec2>& pos, const st
 	}
 }
 
-void GNNController::readOutput(const std::vector<float>& output_values, std::vector<glm::vec3>& outJointPosition, 
-	std::vector<glm::quat>& outJointRotation, std::vector<glm::vec3>& outJointVelocity, std::vector< std::vector<glm::vec2>>& outPhase2D, std::vector< std::vector<float>>& outAmplitude, std::vector< std::vector<float>>& outFrequency)
+void GNNController::readOutput(const std::vector<float>& output_values, JointsFrameData& outJointFrame, 
+	std::vector< std::vector<glm::vec2>>& outPhase2D, 
+	std::vector< std::vector<float>>& outAmplitude, std::vector< std::vector<float>>& outFrequency)
 {
 	int f_idx = 0; //feature index
 	
@@ -290,7 +294,6 @@ void GNNController::readOutput(const std::vector<float>& output_values, std::vec
 	float delta_angle = output_values[f_idx + 2];
 
 	f_idx += 3;
-	
 	
 	std::vector<glm::vec2> outTrajPos;
 	std::vector<glm::vec2> outTrajDir;
@@ -317,12 +320,12 @@ void GNNController::readOutput(const std::vector<float>& output_values, std::vec
 
 	for (int i = 0; i < initJointPos.size(); i++) {
 
-		outJointPosition.push_back({ output_values[f_idx], output_values[f_idx + 1], output_values[f_idx + 2] });
+		outJointFrame.jointPos.push_back({ output_values[f_idx], output_values[f_idx + 1], output_values[f_idx + 2] });
 
 		outJointRot.push_back({ output_values[f_idx+3], output_values[f_idx+4], output_values[f_idx+5],
 					            output_values[f_idx+6], output_values[f_idx+7], output_values[f_idx+8]});
 
-		outJointVelocity.push_back({output_values[f_idx+9], output_values[f_idx+10] , output_values[f_idx+11]});
+		outJointFrame.jointVel.push_back({output_values[f_idx+9], output_values[f_idx+10] , output_values[f_idx+11]});
 
 		f_idx += 12;
 		
@@ -350,7 +353,7 @@ void GNNController::readOutput(const std::vector<float>& output_values, std::vec
 		}
 	}
 
-    outJointRotation = MathUtils::convert6DRotationToQuaternions(outJointRot);
+    outJointFrame.jointRot = MathUtils::convert6DRotationToQuaternions(outJointRot);
 
 }
 
