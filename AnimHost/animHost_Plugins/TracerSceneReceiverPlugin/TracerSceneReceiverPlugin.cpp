@@ -434,7 +434,7 @@ void TracerSceneReceiverPlugin::processControlPathByteData(QByteArray* controlPo
 	unsigned int size; memcpy(&size, controlPointByteArray->sliced(0, sizeof(size)).data(), sizeof(size)); // Copies byte values directly into the new variable, which interprets it as the correct type
 	controlPointByteArray->remove(0, sizeof(size)); // removing first 4 bytes (aka first int) so that reading keyframes can start from 0
 
-	for (int frame = 0; frame < size/3; frame++) {
+	for (int frame = 0; frame < size; frame++) {
 		ControlPoint key;
 		float x, y, z;
 		int currentXPos = (sizeof(x) * 6 ) * frame;
@@ -459,5 +459,5 @@ void TracerSceneReceiverPlugin::processControlPathByteData(QByteArray* controlPo
 		controlPathOut->getData()->mControlPath.push_back(key);
 	}
 
-	qDebug() << "Control Path with" << size/3 << "frames received!";
+	qDebug() << "Control Path with" << size << "frames received!";
 }
