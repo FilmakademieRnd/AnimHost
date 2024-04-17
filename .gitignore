@@ -38,3 +38,5 @@ AnimHost/animHost_Plugins/GNNPlugin/DummyData.h
 /python/data
 /python/blendhub-master
 /AnimHost/bin
+/AnimHost/plugins
+/AnimHost/translations
