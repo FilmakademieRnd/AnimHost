@@ -23,17 +23,23 @@ target_link_libraries(${target_name} PRIVATE
     AnimHostCore
 )
 
-install(TARGETS ${target_name}
-    BUNDLE DESTINATION .
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
+#message(APP:Bindir:: "${CMAKE_INSTALL_BINDIR}")
+#install(TARGETS ${target_name}
+#    BUNDLE DESTINATION .
+#    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+#)
 
 qt_generate_deploy_app_script(
     TARGET AnimHost
-    FILENAME_VARIABLE deploy_script
+    OUTPUT_SCRIPT deploy_script
     NO_UNSUPPORTED_PLATFORM_ERROR
 )
-install(SCRIPT ${deploy_script})
+
+message(APP:DeployScript:: "${deploy_script}")
+message(APP:InstallPrefix:: "${CMAKE_INSTALL_PREFIX}")
+install(SCRIPT ${deploy_script}
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
 
 #Copy QTNodes dll
 # Define the paths to the prebuilt libraries
@@ -43,7 +49,7 @@ if(WIN32)
     if(CMAKE_BUILD_TYPE MATCHES Debug)
         set(PREBUILT_LIBRARY_PATH ${PREBUILT_LIBRARY_DIR}/debug/QTNodes.dll)
     else()
-        set(PREBUILT_LIBRARY_PATH ${PREBUILT_LIBRARY_DIR}/debug/QTNodes.dll)
+        set(PREBUILT_LIBRARY_PATH ${PREBUILT_LIBRARY_DIR}/release/QTNodes.dll)
     endif()
 elseif(APPLE)
     if(CMAKE_BUILD_TYPE MATCHES Debug)
@@ -52,6 +58,7 @@ elseif(APPLE)
         set(PREBUILT_LIBRARY_PATH ${PREBUILT_LIBRARY_DIR}/Release/QTNodes.dylib)
     endif()
 endif()
+
 
 # Copy the prebuilt library to the output directory after the build is completed
 add_custom_command(TARGET AnimHost POST_BUILD

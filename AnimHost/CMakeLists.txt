@@ -23,13 +23,14 @@ add_subdirectory(animHost_Plugins)
 add_subdirectory(animHostApp)
 
 
-install(TARGETS ${i_targets}
-		DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
-)
+message(AH:InstallPrefix:: "${CMAKE_INSTALL_PREFIX}")
+#install(TARGETS ${i_targets}
+#		DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
+#)
 
-install(TARGETS $ENV{i_plugin_targets} 
-		DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/plugins
-)
+#install(TARGETS $ENV{i_plugin_targets} 
+#		DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/plugins
+#)
 
 #qt_generate_deploy_app_script(
 #    TARGET AnimHost
