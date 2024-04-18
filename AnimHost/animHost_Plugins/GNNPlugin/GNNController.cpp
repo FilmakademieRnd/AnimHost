@@ -9,7 +9,7 @@
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
-GNNController::GNNController()
+GNNController::GNNController(QString networkPath) : NetworkModelPath(networkPath)
 {
 	network = std::make_unique<OnnxModel>();	
 	network->LoadOnnxModel(NetworkModelPath);

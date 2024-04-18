@@ -70,13 +70,29 @@ FolderSelectionWidget::FolderSelectionWidget(QWidget* parent, SelectionType sele
 void FolderSelectionWidget::UpdateDirectory()
 {
 
-	
+	QFileDialog dialog(this);
 
-	QString directory = QDir::toNativeSeparators(QFileDialog::getExistingDirectory(this, "Select Directory"));
-	if (!directory.isEmpty()) {
-		SetDirectory(directory);
-		Q_EMIT directoryChanged();
+	if (_selectionType == SelectionType::Directory) {
+		dialog.setFileMode(QFileDialog::Directory);
 	}
+	else if (_selectionType == SelectionType::File) {
+		dialog.setFileMode(QFileDialog::ExistingFile);
+	}
+
+
+	QString filePath;
+
+	if (dialog.exec())
+	{
+		filePath = dialog.selectedFiles().at(0);
+		if (!filePath.isEmpty()) {
+			SetDirectory(filePath);
+			Q_EMIT directoryChanged();
+		}
+	}
+
+
+	
 }
 
 QString FolderSelectionWidget::GetSelectedDirectory()
