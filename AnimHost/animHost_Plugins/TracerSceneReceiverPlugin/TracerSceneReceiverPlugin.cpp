@@ -65,6 +65,10 @@ void TracerSceneReceiverPlugin::processInData(std::shared_ptr<NodeData> data, Qt
     qDebug() << "TracerSceneReceiverPlugin setInData";
 }
 
+bool TracerSceneReceiverPlugin::isDataAvailable() {
+	return true;
+}
+
 std::shared_ptr<NodeData> TracerSceneReceiverPlugin::processOutData(QtNodes::PortIndex port) {
 	if (port == 0)
 		return characterListOut;
@@ -424,6 +428,7 @@ void TracerSceneReceiverPlugin::processHeaderByteData(QByteArray* headerByteArra
 	// Set framerate only if a valid value (>0) is received
 	if (framerate > 0)
 		ZMQMessageHandler::setPlaybackFrameRate(framerate);
+	qDebug() << "Playback Framerate" << ZMQMessageHandler::getPlaybackFrameRate();
 }
 
 void TracerSceneReceiverPlugin::processControlPathByteData(QByteArray* controlPointByteArray) {

@@ -58,6 +58,10 @@ void HistoryPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::PortI
     }
 }
 
+bool HistoryPlugin::isDataAvailable() {
+    return !_inPoseSeq.expired();
+}
+
 void HistoryPlugin::run()
 {
 

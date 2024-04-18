@@ -44,6 +44,10 @@ void CoordinateConverterPlugin::processInData(std::shared_ptr<NodeData> data, Qt
     qDebug() << "CoordinateConverterPlugin setInData";
 }
 
+bool CoordinateConverterPlugin::isDataAvailable() {
+    return !_animationIn.expired();
+}
+
 void CoordinateConverterPlugin::run()
 {
     if (auto spAnimationIn = _animationIn.lock()) {

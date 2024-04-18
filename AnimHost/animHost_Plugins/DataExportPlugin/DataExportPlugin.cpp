@@ -138,6 +138,10 @@ void DataExportPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::Po
     }
 }
 
+bool DataExportPlugin::isDataAvailable() {
+    return !_skeletonIn.expired() && !_poseSequenceIn.expired() && !_jointVelocitySequenceIn.expired();
+}
+
 void DataExportPlugin::run()
 {
     if (!exportDirectory.isEmpty()) {

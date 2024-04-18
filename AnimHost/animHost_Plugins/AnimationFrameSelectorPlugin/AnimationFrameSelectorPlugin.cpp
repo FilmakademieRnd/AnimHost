@@ -70,6 +70,10 @@ void AnimationFrameSelectorPlugin::processInData(std::shared_ptr<NodeData> data,
     qDebug() << "AnimationFrameSelectorPlugin setInData";
 }
 
+bool AnimationFrameSelectorPlugin::isDataAvailable() {
+    return !_animationIn.expired();
+}
+
 QWidget* AnimationFrameSelectorPlugin::embeddedWidget()
 {
 	if (!_widget) {

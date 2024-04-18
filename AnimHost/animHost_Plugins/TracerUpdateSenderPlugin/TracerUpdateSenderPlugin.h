@@ -117,7 +117,8 @@ public:
     std::shared_ptr<NodeData> outData(QtNodes::PortIndex port) override;            //!< Given a port index, returns the type of data of the corresponding OUT port
     std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;     //!< Given a port index, processes and returns a pointer to the data of the corresponding OUT port
 
-    void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override; //!< Given a port index, processes the data of the corresponding IN port
+    void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;  //!< Given a port index, processes the data of the corresponding IN port
+    bool isDataAvailable() override;                                                            //!< Checks whether the input data of the plugin is valid and available. If not the plugin run function is not going to be run
 
     //! Initializes the plugin's UI elements
     /*!

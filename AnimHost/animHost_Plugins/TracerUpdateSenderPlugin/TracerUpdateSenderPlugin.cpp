@@ -110,7 +110,14 @@ void TracerUpdateSenderPlugin::processInData(std::shared_ptr<NodeData> data, QtN
     qDebug() << "TracerUpdateSenderPlugin setInData";
 }
 
+bool TracerUpdateSenderPlugin::isDataAvailable() {
+    return !_animIn.expired() && !_characterIn.expired() && !_sceneNodeListIn.expired();
+}
+
 void TracerUpdateSenderPlugin::run() {
+    if (!isDataAvailable())
+        return;
+
     qDebug() << "TracerUpdateSenderPlugin running...";
 
     if (!zeroMQTickReceiverThread->isRunning()) {

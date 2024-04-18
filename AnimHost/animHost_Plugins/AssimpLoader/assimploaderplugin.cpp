@@ -110,6 +110,10 @@ std::shared_ptr<NodeData> AssimpLoaderPlugin::processOutData(QtNodes::PortIndex 
 	return nullptr;
 }
 
+bool AssimpLoaderPlugin::isDataAvailable() {
+	return true;
+}
+
 void AssimpLoaderPlugin::run() {
 	
 	//ToDo Move Processing

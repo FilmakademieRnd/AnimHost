@@ -41,8 +41,8 @@ private:
     zmq::context_t* _updateReceiverContext = nullptr;       //!< 0MQ context to establish connection and receive messages
     QThread* zeroMQUpdateReceiverThread = nullptr;          //!< Sub-thread to handle message listening to and receiving messages without making the UI thread unresponsive
 
-    std::shared_ptr<AnimNodeData<CharacterObjectSequence>> _characterListIn;  //!< A list of characters present in the previously received TRACER. Necessary to match animation data to character rig - **Data set by UI PortIn**
-    std::shared_ptr<AnimNodeData<ControlPath>> _controlPathOut;               //!< The control path that the character has to follow. It will be fed to a NN model for generating a character animation - **Data sent via UI PortOut**
+    std::weak_ptr<AnimNodeData<CharacterObjectSequence>> _characterListIn;      //!< A list of characters present in the previously received TRACER. Necessary to match animation data to character rig - **Data set by UI PortIn**
+    std::shared_ptr<AnimNodeData<ControlPath>> _controlPathOut;                 //!< The control path that the character has to follow. It will be fed to a NN model for generating a character animation - **Data sent via UI PortOut**
 
     TracerUpdateReceiver* msgReceiver = nullptr;           //!< Pointer to instance of the class that receives update messages
 
@@ -82,6 +82,7 @@ public:
 
     std::shared_ptr<NodeData> outData(QtNodes::PortIndex port) override;            //!< Given a port index, returns the type of data of the corresponding OUT port
     std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;     //!< Given a port index, processes and returns a pointer to the data of the corresponding OUT port
+    bool isDataAvailable() override;                                                //!< Checks whether the input data of the plugin is valid and available. If not the plugin run function is not going to be run
 
     void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override; //!< Given a port index, processes the data of the corresponding IN port
 

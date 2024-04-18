@@ -70,6 +70,7 @@ public:
 
     std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;                 //!< Given a port index, processes and returns a pointer to the data of the corresponding OUT port
     void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;  //!< Given a port index, processes the data of the corresponding IN port
+    bool isDataAvailable() override;                                                            //!< Checks whether the input data of the plugin is valid and available. If not the plugin run function is not going to be run
     void run() override;                                                                        //!< Called when plugin execution is triggered (by the Qt Application). It only pases along the \c run signal to the next node
 
     //! Initializes the plugin's UI elements

@@ -86,6 +86,10 @@ std::shared_ptr<NodeData> TracerUpdateReceiverPlugin::processOutData(QtNodes::Po
         return nullptr;
 }
 
+bool TracerUpdateReceiverPlugin::isDataAvailable() {
+    return !_characterListIn.expired();
+}
+
 void TracerUpdateReceiverPlugin::run() {
     qDebug() << "TracerUpdateReceiverPlugin running...";
 

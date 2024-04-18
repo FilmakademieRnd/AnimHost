@@ -64,6 +64,14 @@ void BasicOnnxPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::Por
     qDebug() << "BasicOnnxPlugin setInData";
 }
 
+bool BasicOnnxPlugin::isDataAvailable() {
+    bool availableData = true;
+    for (auto& data : _dataIn) {
+        availableData = availableData && (!data.expired());
+    }
+    return availableData;
+}
+
 void BasicOnnxPlugin::run() {
 
 }

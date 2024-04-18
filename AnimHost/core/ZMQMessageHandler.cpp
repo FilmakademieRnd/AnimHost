@@ -12,7 +12,7 @@ QList<QHostAddress> ZMQMessageHandler::ipList;
 QTimer* ZMQMessageHandler::localTick = new QTimer();
 int ZMQMessageHandler::localTimeStamp = 0;
 int ZMQMessageHandler::bufferSize = 120;
-int ZMQMessageHandler::animFrameRate = 30;
+int ZMQMessageHandler::animFrameRate = 60;
 int ZMQMessageHandler::playbackFrameRate = 60;
 
 ZMQMessageHandler::ZMQMessageHandler() {
