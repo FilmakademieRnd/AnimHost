@@ -6,6 +6,7 @@
 #include <QMetaType>
 #include <pluginnodeinterface.h>
 #include "GNNController.h"
+#include "UIUtils.h"
 
 
 
@@ -19,18 +20,27 @@ class GNNPLUGINSHARED_EXPORT GNNPlugin : public PluginNodeInterface
     Q_INTERFACES(PluginNodeInterface)
 
 private:
-   // QPushButton* _pushButton;
 
-    QWidget * _widget;
-    std::unique_ptr<GNNController> controller;
-
+    // Input Data
     std::weak_ptr<AnimNodeData<Animation>> _animationIn;
     std::weak_ptr<AnimNodeData<Skeleton>> _skeletonIn;
     std::weak_ptr<AnimNodeData<ControlPath>> _controlPathIn;
     std::weak_ptr<AnimNodeData<JointVelocitySequence>> _jointVelocitySequenceIn;
-    
+
+
+    //Output Data
     std::shared_ptr<AnimNodeData<Animation>> _animationOut;
     std::shared_ptr<AnimNodeData<DebugSignal>> _debugSignalOut;
+
+    //Neural Network Controller
+    std::unique_ptr<GNNController> controller;
+    QString _NetworkPath;
+
+    //UI
+    QWidget* _widget = nullptr;
+    FolderSelectionWidget* _fileSelectionWidget = nullptr;
+   
+   
 
 public:
     GNNPlugin();
@@ -47,12 +57,13 @@ public:
 
     std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;
     void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
+    bool isDataAvailable();
     void run() override;
 
     QWidget* embeddedWidget() override;
 
 private Q_SLOTS:
-    void onButtonClicked();
+    void onFileSelectionChanged();
 
 };
 

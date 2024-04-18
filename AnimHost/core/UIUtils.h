@@ -38,15 +38,23 @@ class ANIMHOSTCORESHARED_EXPORT FolderSelectionWidget : public QWidget {
 
 	Q_OBJECT
 
+public:
+	enum SelectionType {
+		Directory,
+		File
+	};
+
 private:
 	QString _selectedDirectory = "";
+
+	SelectionType _selectionType = SelectionType::Directory;
 
 	QHBoxLayout* _filePathLayout = nullptr;
 	QLabel* _label = nullptr;
 	QPushButton* _pushButton = nullptr;
 
 public:
-	FolderSelectionWidget(QWidget* parent = nullptr);
+	FolderSelectionWidget(QWidget* parent = nullptr, SelectionType selectionType = SelectionType::Directory);
 	~FolderSelectionWidget() {};
 
 	void UpdateDirectory();

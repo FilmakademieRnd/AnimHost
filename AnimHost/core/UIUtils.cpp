@@ -42,8 +42,10 @@ QString BoneSelectionWidget::GetSelectedBone()
 	return comboBox->currentText();
 }
 
-FolderSelectionWidget::FolderSelectionWidget(QWidget* parent)
+FolderSelectionWidget::FolderSelectionWidget(QWidget* parent, SelectionType selectionType)
 {
+	_selectionType = selectionType;
+
 	_filePathLayout = new QHBoxLayout();
 
 	_label = new QLabel("Select new path");
@@ -67,6 +69,9 @@ FolderSelectionWidget::FolderSelectionWidget(QWidget* parent)
 
 void FolderSelectionWidget::UpdateDirectory()
 {
+
+	
+
 	QString directory = QDir::toNativeSeparators(QFileDialog::getExistingDirectory(this, "Select Directory"));
 	if (!directory.isEmpty()) {
 		SetDirectory(directory);
