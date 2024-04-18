@@ -14,12 +14,34 @@ GNNPlugin::GNNPlugin()
     _widget = nullptr;
     qDebug() << "GNNPlugin created";
 
-    controller = std::make_unique<GNNController>();
 }
 
 GNNPlugin::~GNNPlugin()
 {
     qDebug() << "~GNNPlugin()";
+}
+
+QJsonObject GNNPlugin::save() const
+{
+	QJsonObject modelJson = NodeDelegateModel::save();
+	if (_fileSelectionWidget) {
+		modelJson["fileSelection"] = _fileSelectionWidget->GetSelectedDirectory();
+	}
+	return modelJson;
+}
+
+void GNNPlugin::load(QJsonObject const& p)
+{
+	QJsonValue v = p["fileSelection"];
+    if (!v.isUndefined()) {
+		_NetworkPath = v.toString();
+        if (!_NetworkPath.isEmpty()) {
+            _fileSelectionWidget->SetDirectory(_NetworkPath);
+
+            _widget->adjustSize();
+            _widget->updateGeometry();
+        }
+	}
 }
 
 unsigned int GNNPlugin::nDataPorts(QtNodes::PortType portType) const
@@ -107,6 +129,7 @@ void GNNPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex
 
     return;
 }
+
 bool GNNPlugin::isDataAvailable() {
     return _skeletonIn.lock() && _animationIn.lock() && _jointVelocitySequenceIn.lock() && _controlPathIn.lock();
 }
@@ -126,6 +149,7 @@ void GNNPlugin::run()
 					auto controlPath = sp_controlPath->getData();
 
 
+                    controller = std::make_unique<GNNController>(_NetworkPath);
 
 
                     //generate dummy joint data
@@ -201,7 +225,7 @@ QWidget* GNNPlugin::embeddedWidget()
 {
     if (!_widget) {
        _widget = new QWidget();
-       _fileSelectionWidget = new FolderSelectionWidget(_widget);
+       _fileSelectionWidget = new FolderSelectionWidget(_widget, FolderSelectionWidget::File);
 
        QVBoxLayout* layout = new QVBoxLayout();
 
@@ -243,12 +267,12 @@ QWidget* GNNPlugin::embeddedWidget()
            "subcontrol-origin: margin;}"
        );
 
-      
     }
-    return nullptr;
+    return _widget;
 }
 
 void GNNPlugin::onFileSelectionChanged()
 {
-	qDebug() << "Example Widget Clicked";
+    _NetworkPath = _fileSelectionWidget->GetSelectedDirectory();
+    Q_EMIT embeddedWidgetSizeUpdated();
 }

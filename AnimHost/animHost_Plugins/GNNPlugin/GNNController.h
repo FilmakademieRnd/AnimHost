@@ -137,7 +137,7 @@ public:
 
 public:
 
-    GNNController();
+    GNNController(QString networkPath);
     void prepareInput();
 
     void InitDummyData();

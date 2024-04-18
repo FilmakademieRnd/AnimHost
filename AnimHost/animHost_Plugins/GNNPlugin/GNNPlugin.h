@@ -45,6 +45,9 @@ private:
 public:
     GNNPlugin();
     ~GNNPlugin();
+
+    QJsonObject save() const override;
+    void load(QJsonObject const& p) override;
     
     std::unique_ptr<NodeDelegateModel> Init() override { return  std::unique_ptr<GNNPlugin>(new GNNPlugin()); };
 

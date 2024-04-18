@@ -58,11 +58,7 @@ endif()
 add_custom_command(TARGET AnimHost POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${PREBUILT_LIBRARY_PATH}
-        $<TARGET_FILE_DIR:AnimHost>
-)
-
-add_custom_command(TARGET AnimHost POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${CMAKE_SOURCE_DIR}/../assimp/bin/Debug/assimp-vc143-mtd.dll
+        ${CMAKE_SOURCE_DIR}/animHost_Plugins/BasicOnnxPlugin/onnxruntime/lib/onnxruntime.dll
         $<TARGET_FILE_DIR:AnimHost>
 )
