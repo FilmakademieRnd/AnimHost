@@ -55,7 +55,7 @@ void ZMQMessageHandler::createNewMessage(byte timestamp, ZMQMessageHandler::Mess
         qDebug() << "Invalid target host ID";
     }*/
 
-    qDebug() << "Creating ZMQ Message from existing QByteArray. OwnID =" << ZMQMessageHandler::getOwnID() << "and time" << timestamp;
+    //qDebug() << "Creating ZMQ Message from existing QByteArray. OwnID =" << ZMQMessageHandler::getOwnID() << "and time" << timestamp;
 
     // Constructing new message
     message->clear();

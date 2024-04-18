@@ -38,6 +38,7 @@ private:
 
     QWidget* widget;
     FolderSelectionWidget* _folderSelect = nullptr;
+    QCheckBox* _subsamplingCheck = nullptr;
     QPushButton* _pushButton;
     QLabel* _label;
     QHBoxLayout* _filePathLayout;

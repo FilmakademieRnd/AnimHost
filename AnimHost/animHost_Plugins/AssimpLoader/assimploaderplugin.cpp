@@ -139,7 +139,7 @@ void AssimpLoaderPlugin::run() {
 
 		//Experimental.
 		// If character is our own "survivor" character, we need to adjust the skeleton and animation data
-		if (bIsSurvivorChar)
+		if (_subsamplingCheck->isChecked())
 		{
 			UseSubSkeleton("hip", { "hand_R", "hand_L" });
 			_animation->getData()->ApplyChangeOfBasis();
@@ -163,11 +163,12 @@ QWidget* AssimpLoaderPlugin::embeddedWidget()
 		widget = new QWidget();
 
 		_folderSelect = new FolderSelectionWidget(widget);
-
+		_subsamplingCheck = new QCheckBox("Enable subsample for GNN");
 
 		QVBoxLayout* layout = new QVBoxLayout();
 
 		layout->addWidget(_folderSelect);
+		layout->addWidget(_subsamplingCheck);
 		widget->setLayout(layout);
 
 		connect(_folderSelect, &FolderSelectionWidget::directoryChanged, this, &AssimpLoaderPlugin::onFolderSelectionChanged);

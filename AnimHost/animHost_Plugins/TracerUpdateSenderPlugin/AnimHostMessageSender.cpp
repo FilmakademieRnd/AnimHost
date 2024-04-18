@@ -116,7 +116,7 @@ void AnimHostMessageSender::run() {
         
         // Sending new pose message
         int retunVal = sendSocket->send((void*) message->data(), message->size());
-        qDebug() << "Attempting SEND connection on" << ZMQMessageHandler::getOwnIP();
+        //qDebug() << "Attempting SEND connection on" << ZMQMessageHandler::getOwnIP();
         timestamp = ZMQMessageHandler::getLocalTimeStamp();
 
         if (animDataSize == 1) {    // IF   the animation data contains only one frame
@@ -245,7 +245,7 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
             }
         }
         if (animDataBoneID < 0) {
-            qDebug() << boneName << "not found in the Animation Data";
+            //qDebug() << boneName << "not found in the Animation Data";
             continue;
         }
 
@@ -256,7 +256,7 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
         std::vector<float> boneQuatVector = { boneQuat.x, boneQuat.y, boneQuat.z,  boneQuat.w };    // converting glm::quat in vector<float>
         std::vector<float> bonePosVector  = { bonePos.x,  bonePos.y,  bonePos.z };                  // converting glm::vec3 in vector<float>
 
-        qDebug() << animDataBoneID << boneID << boneName << animData->mBones.at(animDataBoneID).mName << boneQuatVector << bonePosVector;
+        //qDebug() << animDataBoneID << boneID << boneName << animData->mBones.at(animDataBoneID).mName << boneQuatVector << bonePosVector;
 
         QByteArray msgBoneQuat = createMessageBody(targetSceneID, character->sceneObjectID, i + 3,
                                                    ZMQMessageHandler::ParameterType::QUATERNION, boneQuatVector);
