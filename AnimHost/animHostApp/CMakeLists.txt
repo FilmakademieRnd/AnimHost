@@ -43,13 +43,13 @@ install(SCRIPT ${deploy_script}
 
 #Copy QTNodes dll
 # Define the paths to the prebuilt libraries
-set(PREBUILT_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/core/QTNodes/lib)
+set(PREBUILT_LIBRARY_DIR ${CMAKE_SOURCE_DIR}/core/QTNodes/bin)
 
 if(WIN32)
     if(CMAKE_BUILD_TYPE MATCHES Debug)
-        set(PREBUILT_LIBRARY_PATH ${PREBUILT_LIBRARY_DIR}/debug/QTNodes.dll)
+        set(PREBUILT_LIBRARY_PATH ${PREBUILT_LIBRARY_DIR}/Debug/QTNodes.dll)
     else()
-        set(PREBUILT_LIBRARY_PATH ${PREBUILT_LIBRARY_DIR}/release/QTNodes.dll)
+        set(PREBUILT_LIBRARY_PATH ${PREBUILT_LIBRARY_DIR}/Release/QTNodes.dll)
     endif()
 elseif(APPLE)
     if(CMAKE_BUILD_TYPE MATCHES Debug)
