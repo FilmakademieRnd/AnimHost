@@ -22,7 +22,7 @@
 #include <QMutex>
 #include <QMultiMap>
 #include <QElapsedTimer>
-#include <nzmqt/nzmqt.hpp>
+//#include <nzmqt/nzmqt.hpp>
 #include <zmq.h>
 
 

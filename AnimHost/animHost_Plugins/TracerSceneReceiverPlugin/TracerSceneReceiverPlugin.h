@@ -34,7 +34,7 @@
 #include <commondatatypes.h>
 
 #include <zmq.hpp>
-#include <nzmqt/nzmqt.hpp>
+//#include <nzmqt/nzmqt.hpp>
 
 class SceneReceiver;
 
