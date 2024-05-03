@@ -1,4 +1,7 @@
-qt_add_library(AssimpLoader
+set(target_name AssimpLoader)
+
+
+qt_add_library(${target_name}
     assimploaderplugin.cpp assimploaderplugin.h
     assimploaderplugin_global.h
     assimphelper.h assimphelper.cpp
@@ -16,7 +19,7 @@ target_compile_definitions(AssimpLoader PRIVATE
     ASSIMPLOADERPLUGIN_LIBRARY
 )
 
-target_link_directories(AnimHostCore PUBLIC 
+target_link_directories(${target_name} PUBLIC 
     ../../../assimp/lib/Debug
 )
 
@@ -26,4 +29,8 @@ target_link_libraries(AssimpLoader PUBLIC
 )
 
 
+install(TARGETS ${target_name}
+    BUNDLE DESTINATION .
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
 
