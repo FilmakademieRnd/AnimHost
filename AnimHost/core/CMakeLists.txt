@@ -26,6 +26,11 @@ target_compile_definitions(AnimHostCore PRIVATE
     ANIMHOSTCORE_LIBRARY
 )
 
+target_link_directories(AnimHostCore PUBLIC 
+    ./QTNodes/lib
+)
+
+
 target_link_libraries(AnimHostCore PUBLIC  
     Qt6::Core
     Qt6::Gui
@@ -46,12 +51,6 @@ target_include_directories(AnimHostCore PUBLIC
     ../animHost_Plugins/PluginNodeInterface
     ./
 )
-
-target_link_directories(AnimHostCore PUBLIC 
-    ./QTNodes/lib
-  #  ../../nzmqt/3rdparty/zmq/lib
-)
-
 
 install(TARGETS AnimHostCore
     BUNDLE DESTINATION .
