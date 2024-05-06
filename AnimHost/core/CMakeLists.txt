@@ -30,8 +30,7 @@ target_include_directories(AnimHostCore PUBLIC
 )
 
 target_link_directories(AnimHostCore PUBLIC 
-    $<$<CONFIG:Debug>:./QTNodes/lib/debug>
-    $<$<CONFIG:Release>:./QTNodes/lib/release>
+    ${CMAKE_SOURCE_DIR}/core/QTNodes/lib
 )
 
 
