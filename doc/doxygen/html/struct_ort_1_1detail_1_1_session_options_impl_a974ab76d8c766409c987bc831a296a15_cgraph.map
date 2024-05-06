@@ -1,0 +1,5 @@
+<map id="Ort::detail::SessionOptionsImpl::SetCustomJoinThreadFn" name="Ort::detail::SessionOptionsImpl::SetCustomJoinThreadFn">
+<area shape="rect" id="Node000001" title="Wraps OrtApi::SessionOptionsSetCustomJoinThreadFn." alt="" coords="5,5,201,48"/>
+<area shape="rect" id="Node000002" href="$namespace_ort.html#a296b5958479d9889218b17bdb08c1894" title="This returns a reference to the OrtApi interface in use." alt="" coords="249,13,336,40"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="201,24,233,24,233,29,201,29"/>
+</map>

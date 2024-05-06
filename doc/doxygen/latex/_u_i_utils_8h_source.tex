@@ -1,0 +1,36 @@
+\doxysection{UIUtils.\+h}
+\hypertarget{_u_i_utils_8h_source}{}\label{_u_i_utils_8h_source}\index{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/core/UIUtils.h@{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/core/UIUtils.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ ANIMHOST\_UI\_UTIL\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ ANIMHOST\_UI\_UTIL\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <commondatatypes.h>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <QtWidgets>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <QObject>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{keyword}{class\ }ANIMHOSTCORESHARED\_EXPORT\ \mbox{\hyperlink{class_bone_selection_widget}{BoneSelectionWidget}}\ :\ \textcolor{keyword}{public}\ QWidget\ \{}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \ \ \ \ Q\_OBJECT}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{private}:\ }
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \ \ \ \ QHBoxLayout*\ layout\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00015\ \ \ \ \ QLabel*\ label\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00016\ \ \ \ \ QComboBox*\ comboBox\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00019\ \ \ \ \ \mbox{\hyperlink{class_bone_selection_widget}{BoneSelectionWidget}}(QWidget*\ parent\ =\ \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00020\ \ \ \ \ \mbox{\hyperlink{class_bone_selection_widget}{\string~BoneSelectionWidget}}()\ \{\};}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{void}\ UpdateBoneSelection(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_skeleton}{Skeleton}}\&\ skeleton);}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \ \ QString\ GetSelectedBone();}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ Q\_SIGNALS:}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{void}\ currentBoneChanged(\textcolor{keyword}{const}\ QString\&\ text);}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \};}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ ANIMHOST\_UI\_UTIL\_H}}
+
+\end{DoxyCode}

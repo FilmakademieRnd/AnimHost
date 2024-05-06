@@ -1,0 +1,65 @@
+\doxysection{Plugin\+Interface Class Reference}
+\hypertarget{class_plugin_interface}{}\label{class_plugin_interface}\index{PluginInterface@{PluginInterface}}
+
+
+Interface for plugins for the \doxylink{class_anim_host}{Anim\+Host}.  
+
+
+
+
+{\ttfamily \#include $<$plugininterface.\+h$>$}
+
+
+
+Inheritance diagram for Plugin\+Interface\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_plugin_interface__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Plugin\+Interface\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=160pt]{class_plugin_interface__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_plugin_interface_a8df2fe4ada2d307829a8b892e5840063}\label{class_plugin_interface_a8df2fe4ada2d307829a8b892e5840063} 
+virtual void {\bfseries run} (QVariant\+List in, QVariant\+List \&out)=0
+\item 
+\Hypertarget{class_plugin_interface_a7633b14ac9ccaed788addae4737f49bc}\label{class_plugin_interface_a7633b14ac9ccaed788addae4737f49bc} 
+virtual QString {\bfseries name} ()
+\item 
+\Hypertarget{class_plugin_interface_a134d41df41400475f5ce9bdb238a402f}\label{class_plugin_interface_a134d41df41400475f5ce9bdb238a402f} 
+virtual QString {\bfseries category} ()=0
+\item 
+\Hypertarget{class_plugin_interface_a8346379706ae0d6c7d8d948f70f98599}\label{class_plugin_interface_a8346379706ae0d6c7d8d948f70f98599} 
+virtual QList$<$ QMeta\+Type $>$ {\bfseries input\+Types} ()=0
+\item 
+\Hypertarget{class_plugin_interface_ac26596913cb1c45681aaaf1f6647d099}\label{class_plugin_interface_ac26596913cb1c45681aaaf1f6647d099} 
+virtual QList$<$ QMeta\+Type $>$ {\bfseries output\+Types} ()=0
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_plugin_interface_a6c53083a8b9ef21426789c04a0d97fd1}\label{class_plugin_interface_a6c53083a8b9ef21426789c04a0d97fd1} 
+QList$<$ QMeta\+Type $>$ {\bfseries inputs}
+\item 
+\Hypertarget{class_plugin_interface_abe551816e604913392a781ff961c8528}\label{class_plugin_interface_abe551816e604913392a781ff961c8528} 
+QList$<$ QMeta\+Type $>$ {\bfseries outputs}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Interface for plugins for the \doxylink{class_anim_host}{Anim\+Host}. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Plugin\+Interface/plugininterface.\+h\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Plugin\+Interface/plugininterface.\+cpp\end{DoxyCompactItemize}

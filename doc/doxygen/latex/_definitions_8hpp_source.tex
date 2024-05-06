@@ -1,0 +1,107 @@
+\doxysection{Definitions.\+hpp}
+\hypertarget{_definitions_8hpp_source}{}\label{_definitions_8hpp_source}\index{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/core/QTNodes/include/QtNodes/internal/Definitions.hpp@{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/core/QTNodes/include/QtNodes/internal/Definitions.hpp}}
+\mbox{\hyperlink{_definitions_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}Export.hpp"{}}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <QtCore/QMetaObject>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <limits>}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{namespace\ }QtNodes\ \{}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#if\ QT\_VERSION\ <\ QT\_VERSION\_CHECK(6,\ 0,\ 0)}}
+\DoxyCodeLine{00016\ NODE\_EDITOR\_PUBLIC\ Q\_NAMESPACE}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00018\ Q\_NAMESPACE\_EXPORT(NODE\_EDITOR\_PUBLIC)}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596}{NodeRole}}\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596aa1fa27779242b4902f7ae3bdd5c6d508}{Type}}\ =\ 0,\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596a52f5e0bc3859bc5f5e25130b6c7e8881}{Position}}\ =\ 1,\ \ \ \ \ \ \ }
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596a6f6cb72d544962fa333e2e34ce64f719}{Size}}\ =\ 2,\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596afe9d5822b019d924bc63bf0830e08b77}{CaptionVisible}}\ =\ 3,\ }
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596a272ba7d164aa836995be6319a698be84}{Caption}}\ =\ 4,\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_qt_nodes_1_1_style}{Style}}\ =\ 5,\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596a8647f2ce42ebaaaf3fedf6423e77e659}{InternalData}}\ =\ 6,\ \ \ }
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596ac30f7dfaff4d26afcb0e7084fcd95949}{InPortCount}}\ =\ 7,\ \ \ \ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596a65b4104d48b5776a028b8508ccd166fb}{OutPortCount}}\ =\ 9,\ \ \ }
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596a6ed562a0d4381eef12d92c87520f3208}{Widget}}\ =\ 10,\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00035\ \ \ \ \ \};}
+\DoxyCodeLine{00036\ Q\_ENUM\_NS(NodeRole)}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00041\ enum\ \mbox{\hyperlink{_definitions_8hpp_ac36f53b54e844143b07d4eb1be9b5134}{NodeFlag}}\ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_ac36f53b54e844143b07d4eb1be9b5134a1d752fd081f5630ef6e4a9bb8de66aa5}{NoFlags}}\ =\ 0x0,\ \ \ }
+\DoxyCodeLine{00043\ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_ac36f53b54e844143b07d4eb1be9b5134a4ad861b0ec8cad695b39954ee03a4e21}{Resizable}}\ =\ 0x1,\ }
+\DoxyCodeLine{00044\ \ \ \ \ Locked\ =\ 0x2}
+\DoxyCodeLine{00045\ \};}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ Q\_DECLARE\_FLAGS(NodeFlags,\ NodeFlag)}
+\DoxyCodeLine{00048\ Q\_FLAG\_NS(NodeFlags)}
+\DoxyCodeLine{00049\ Q\_DECLARE\_OPERATORS\_FOR\_FLAGS(NodeFlags)}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00054\ enum\ class\ \mbox{\hyperlink{_definitions_8hpp_af6d1882f3ed15bd00d36cce7f2093989}{PortRole}}\ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_af6d1882f3ed15bd00d36cce7f2093989af6068daa29dbb05a7ead1e3b5a48bbee}{Data}}\ =\ 0,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00056\ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_af6d1882f3ed15bd00d36cce7f2093989aaa2aaa59ac1a7c24e5e86c068bda3d20}{DataType}}\ =\ 1,\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00057\ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_af6d1882f3ed15bd00d36cce7f2093989a7dad3637a34e698d16dadb668e456137}{ConnectionPolicyRole}}\ =\ 2,\ }
+\DoxyCodeLine{00058\ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596afe9d5822b019d924bc63bf0830e08b77}{CaptionVisible}}\ =\ 3,\ \ \ \ \ \ \ }
+\DoxyCodeLine{00059\ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_a21a521c8e3ae884aa19df1f67d7eb596a272ba7d164aa836995be6319a698be84}{Caption}}\ =\ 4,\ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00060\ \};}
+\DoxyCodeLine{00061\ Q\_ENUM\_NS(PortRole)}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00067\ enum\ class\ \mbox{\hyperlink{_definitions_8hpp_a23527e8a5775fe989d2ef3f595e2d369}{ConnectionPolicy}}\ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_a23527e8a5775fe989d2ef3f595e2d369a06c2cea18679d64399783748fa367bdd}{One}},\ \ }
+\DoxyCodeLine{00069\ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_a23527e8a5775fe989d2ef3f595e2d369a5ae7fb3197b6fd8c723c7766a5680e2e}{Many}},\ }
+\DoxyCodeLine{00070\ \};}
+\DoxyCodeLine{00071\ Q\_ENUM\_NS(ConnectionPolicy)}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00076\ enum\ class\ \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{PortType}}\ \{}
+\DoxyCodeLine{00077\ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2faefeb369cccbd560588a756610865664c}{In}}\ =\ 0,\ \ }
+\DoxyCodeLine{00078\ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2fa7c147cda9e49590f6abe83d118b7353b}{Out}}\ =\ 1,\ }
+\DoxyCodeLine{00079\ \ \ \ \ None\ =\ 2}
+\DoxyCodeLine{00080\ \};}
+\DoxyCodeLine{00081\ Q\_ENUM\_NS(PortType)}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \textcolor{keyword}{using\ }PortCount\ =\ \textcolor{keywordtype}{unsigned}\ int;}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00086\ \textcolor{keyword}{using\ }\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{PortIndex}}\ =\ \textcolor{keywordtype}{unsigned}\ int;}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{PortIndex}}\ InvalidPortIndex\ =\ std::numeric\_limits<PortIndex>::max();}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00091\ \textcolor{keyword}{using\ }\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{NodeId}}\ =\ \textcolor{keywordtype}{unsigned}\ int;}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{NodeId}}\ InvalidNodeId\ =\ std::numeric\_limits<NodeId>::max();}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00099\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{ConnectionId}}}
+\DoxyCodeLine{00100\ \{}
+\DoxyCodeLine{00101\ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{NodeId}}\ outNodeId;}
+\DoxyCodeLine{00102\ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{PortIndex}}\ outPortIndex;}
+\DoxyCodeLine{00103\ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{NodeId}}\ inNodeId;}
+\DoxyCodeLine{00104\ \ \ \ \ \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{PortIndex}}\ inPortIndex;}
+\DoxyCodeLine{00105\ \};}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ operator==(\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{ConnectionId}}\ \textcolor{keyword}{const}\ \&a,\ \mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{ConnectionId}}\ \textcolor{keyword}{const}\ \&b)}
+\DoxyCodeLine{00108\ \{}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordflow}{return}\ a.outNodeId\ ==\ b.outNodeId\ \&\&\ a.outPortIndex\ ==\ b.outPortIndex}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \&\&\ a.inNodeId\ ==\ b.inNodeId\ \&\&\ a.inPortIndex\ ==\ b.inPortIndex;}
+\DoxyCodeLine{00111\ \}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ operator!=(ConnectionId\ \textcolor{keyword}{const}\ \&a,\ ConnectionId\ \textcolor{keyword}{const}\ \&b)}
+\DoxyCodeLine{00114\ \{}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordflow}{return}\ !(a\ ==\ b);}
+\DoxyCodeLine{00116\ \}}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ invertConnection(ConnectionId\ \&\textcolor{keywordtype}{id})}
+\DoxyCodeLine{00119\ \{}
+\DoxyCodeLine{00120\ \ \ \ \ std::swap(\textcolor{keywordtype}{id}.outNodeId,\ \textcolor{keywordtype}{id}.inNodeId);}
+\DoxyCodeLine{00121\ \ \ \ \ std::swap(\textcolor{keywordtype}{id}.outPortIndex,\ \textcolor{keywordtype}{id}.inPortIndex);}
+\DoxyCodeLine{00122\ \}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \}\ \textcolor{comment}{//\ namespace\ QtNodes}}
+
+\end{DoxyCode}

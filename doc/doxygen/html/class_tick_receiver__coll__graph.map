@@ -1,0 +1,27 @@
+<map id="TickReceiver" name="TickReceiver">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,248,100,275"/>
+<area shape="rect" id="Node000004" href="$class_tracer_update_sender_plugin.html" title=" " alt="" coords="97,339,272,365"/>
+<area shape="poly" id="edge15_Node000004_Node000001" title=" " alt="" coords="33,288,27,301,30,313,40,320,55,327,97,338,96,343,53,332,37,325,26,316,22,301,28,286"/>
+<area shape="rect" id="Node000002" href="$class_z_m_q_message_handler.html" title=" " alt="" coords="119,172,266,199"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="157,208,78,250,75,245,154,204"/>
+<area shape="rect" id="Node000010" href="$class_anim_host_message_sender.html" title=" " alt="" coords="124,248,296,275"/>
+<area shape="poly" id="edge14_Node000010_Node000002" title=" " alt="" coords="201,213,210,247,204,248,196,214"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="222,81,291,108"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="241,122,204,173,199,170,236,119"/>
+<area shape="rect" id="Node000006" href="$class_qt_nodes_1_1_node_delegate_model.html" title=" " alt="" coords="290,172,487,199"/>
+<area shape="poly" id="edge6_Node000006_Node000003" title=" " alt="" coords="282,115,365,169,362,174,279,120"/>
+<area shape="poly" id="edge8_Node000006_Node000003" title=" " alt="" coords="296,114,378,169,375,174,293,119"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="152,332,106,301,70,278,73,273,109,296,155,328"/>
+<area shape="rect" id="Node000005" href="$class_plugin_node_interface.html" title="Interface for plugins for the AnimHost." alt="" coords="320,248,457,275"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="353,284,283,317,222,340,220,336,281,312,350,279"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="391,214,391,248,386,248,386,214"/>
+<area shape="rect" id="Node000007" href="$class_qt_nodes_1_1_serializable.html" title=" " alt="" coords="315,81,462,108"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="383,124,385,171,379,172,377,124"/>
+<area shape="poly" id="edge9_Node000006_Node000007" title=" " alt="" coords="400,124,398,172,392,171,394,124"/>
+<area shape="rect" id="Node000008" href="$class_qt_nodes_1_1_node_style.html" title=" " alt="" coords="486,81,627,108"/>
+<area shape="poly" id="edge10_Node000006_Node000008" title=" " alt="" coords="520,118,414,174,411,169,518,113"/>
+<area shape="rect" id="Node000009" href="$class_qt_nodes_1_1_style.html" title=" " alt="" coords="501,5,612,32"/>
+<area shape="poly" id="edge11_Node000008_Node000009" title=" " alt="" coords="550,47,552,81,547,81,545,47"/>
+<area shape="poly" id="edge12_Node000008_Node000009" title=" " alt="" coords="568,47,566,81,561,81,563,47"/>
+<area shape="poly" id="edge13_Node000004_Node000010" title=" " alt="" coords="211,291,206,315,195,340,190,337,201,314,205,290"/>
+</map>

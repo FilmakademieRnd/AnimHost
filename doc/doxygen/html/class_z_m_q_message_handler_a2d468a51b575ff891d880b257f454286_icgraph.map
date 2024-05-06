@@ -1,0 +1,11 @@
+<map id="ZMQMessageHandler::getTargetSceneID" name="ZMQMessageHandler::getTargetSceneID">
+<area shape="rect" id="Node000001" title="Returns the ID of the client that is supposed to receive the update." alt="" coords="703,39,858,81"/>
+<area shape="rect" id="Node000002" href="$class_anim_host_message_sender.html#a34e4352d9f27a778bc8babb2f1320d2a" title="Creating a TRACER Update Message Body, given a specific vector of floats to send." alt="" coords="483,5,655,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="688,48,655,43,656,38,689,43"/>
+<area shape="rect" id="Node000003" href="$class_anim_host_message_sender.html#a3f21ada977b3885844e69c26eaeeff40" title="Converting an animation frame to a series of bytes." alt="" coords="483,72,655,115"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="689,77,656,82,655,77,688,72"/>
+<area shape="rect" id="Node000004" href="$class_anim_host_message_sender.html#a9b6353a89353c616330203b41df179fe" title="Main loop, executes all operations." alt="" coords="237,80,435,107"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="468,96,435,96,435,91,468,91"/>
+<area shape="rect" id="Node000005" href="$class_tracer_update_sender_plugin.html#a60da45d2340d52fd6e0f55a8e7b14cc2" title="Default constructor." alt="" coords="5,72,189,115"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="221,96,189,96,189,91,221,91"/>
+</map>

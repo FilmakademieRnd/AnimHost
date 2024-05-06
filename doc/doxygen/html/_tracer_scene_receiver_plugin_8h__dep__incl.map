@@ -1,0 +1,5 @@
+<map id="C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost_Plugins/TracerSceneReceiverPlugin/TracerSceneReceiverPlugin.h" name="C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost_Plugins/TracerSceneReceiverPlugin/TracerSceneReceiverPlugin.h">
+<area shape="rect" id="Node000001" title="Plugin allowing the user to request scene data from TRACER." alt="" coords="5,5,262,80"/>
+<area shape="rect" id="Node000002" href="$_scene_receiver_8h.html" title="Class used to receive Scene and Character data from the the scene to update." alt="" coords="5,128,262,203"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="136,96,136,128,131,128,131,96"/>
+</map>

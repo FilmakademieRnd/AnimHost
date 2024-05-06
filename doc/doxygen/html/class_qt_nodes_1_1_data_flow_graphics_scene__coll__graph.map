@@ -1,0 +1,21 @@
+<map id="QtNodes::DataFlowGraphicsScene" name="QtNodes::DataFlowGraphicsScene">
+<area shape="rect" id="Node000001" title="An advanced scene working with data&#45;propagating graphs." alt="" coords="13,263,200,305"/>
+<area shape="rect" id="Node000002" href="$class_qt_nodes_1_1_basic_graphics_scene.html" title="An instance of QGraphicsScene, holds connections and nodes." alt="" coords="5,172,208,199"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,214,102,262,96,262,96,214"/>
+<area shape="poly" id="edge7_Node000001_Node000002" title=" " alt="" coords="117,214,117,262,111,262,112,214"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="46,81,167,108"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="101,124,103,171,97,172,95,124"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="118,124,116,172,110,171,112,124"/>
+<area shape="rect" id="Node000004" href="$class_qt_nodes_1_1_abstract_graph_model.html" title=" " alt="" coords="191,81,390,108"/>
+<area shape="poly" id="edge4_Node000002_Node000004" title=" " alt="" coords="252,118,134,174,132,169,249,113"/>
+<area shape="rect" id="Node000006" href="$class_qt_nodes_1_1_data_flow_graph_model.html" title=" " alt="" coords="232,172,437,199"/>
+<area shape="poly" id="edge9_Node000006_Node000004" title=" " alt="" coords="298,121,324,170,319,173,293,124"/>
+<area shape="poly" id="edge11_Node000006_Node000004" title=" " alt="" coords="314,120,337,170,332,173,309,122"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="256,5,325,32"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="284,47,286,81,281,81,279,47"/>
+<area shape="poly" id="edge6_Node000004_Node000005" title=" " alt="" coords="302,47,300,81,295,81,297,47"/>
+<area shape="poly" id="edge8_Node000001_Node000006" title=" " alt="" coords="292,208,157,264,154,260,290,203"/>
+<area shape="rect" id="Node000007" href="$class_qt_nodes_1_1_serializable.html" title=" " alt="" coords="414,81,562,108"/>
+<area shape="poly" id="edge10_Node000006_Node000007" title=" " alt="" coords="447,118,351,174,349,169,445,113"/>
+<area shape="poly" id="edge12_Node000006_Node000007" title=" " alt="" coords="461,119,364,174,362,169,458,114"/>
+</map>

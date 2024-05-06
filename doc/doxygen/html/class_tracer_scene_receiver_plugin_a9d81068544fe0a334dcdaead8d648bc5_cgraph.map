@@ -1,0 +1,9 @@
+<map id="TracerSceneReceiverPlugin::onButtonClicked" name="TracerSceneReceiverPlugin::onButtonClicked">
+<area shape="rect" id="Node000001" title="Slot called when the &quot;Request Data&quot; button is clicked." alt="" coords="5,56,185,99"/>
+<area shape="rect" id="Node000002" href="$class_scene_receiver.html#a83bf02e624d24cfc6813699009945bf4" title="Opens a Request&#45;Receive communication socket." alt="" coords="233,5,435,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="184,53,261,34,262,39,185,58"/>
+<area shape="rect" id="Node000003" href="$class_tracer_scene_receiver_plugin.html#a318e46eb148e14de50f54d7713f7dcdd" title="Triggers requesting scene character data." alt="" coords="244,56,424,99"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="185,75,229,75,229,80,185,80"/>
+<area shape="rect" id="Node000004" href="$class_tracer_scene_receiver_plugin.html#af6e5beec2eaa2365f17a65ff4e1bbb60" title="Triggers requesting scene header data." alt="" coords="244,123,424,165"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="174,97,241,115,240,121,173,102"/>
+</map>

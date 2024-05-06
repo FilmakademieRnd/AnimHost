@@ -1,0 +1,9 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" href="$class_qt_nodes_1_1_style.html" title=" " alt="" coords="5,56,116,83"/>
+<area shape="rect" id="Node000001" href="$class_qt_nodes_1_1_connection_style.html" title=" " alt="" coords="171,5,347,32"/>
+<area shape="poly" id="edge94_Node000000_Node000001" title=" " alt="" coords="130,49,203,30,204,35,131,54"/>
+<area shape="rect" id="Node000002" href="$class_qt_nodes_1_1_graphics_view_style.html" title=" " alt="" coords="164,56,354,83"/>
+<area shape="poly" id="edge95_Node000000_Node000002" title=" " alt="" coords="131,67,163,67,163,72,131,72"/>
+<area shape="rect" id="Node000003" href="$class_qt_nodes_1_1_node_style.html" title=" " alt="" coords="189,107,329,133"/>
+<area shape="poly" id="edge96_Node000000_Node000003" title=" " alt="" coords="131,85,204,103,203,109,130,90"/>
+</map>

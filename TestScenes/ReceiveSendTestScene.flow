@@ -1,0 +1,149 @@
+{
+    "connections": [
+        {
+            "inPortIndex": 1,
+            "intNodeId": 2,
+            "outNodeId": 0,
+            "outPortIndex": 2
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 8,
+            "outNodeId": 2,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 2,
+            "outNodeId": 0,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 7,
+            "outNodeId": 6,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 0,
+            "outNodeId": 3,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 7,
+            "outNodeId": 6,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 2,
+            "intNodeId": 1,
+            "outNodeId": 7,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 6,
+            "outNodeId": 3,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 3,
+            "intNodeId": 1,
+            "outNodeId": 6,
+            "outPortIndex": 2
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 8,
+            "outNodeId": 2,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 1,
+            "outNodeId": 8,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 1,
+            "outNodeId": 8,
+            "outPortIndex": 0
+        }
+    ],
+    "nodes": [
+        {
+            "id": 0,
+            "internal-data": {
+                "dir": "C:\\Users\\m5963\\Documents\\AnimHost_TestData\\Animation",
+                "model-name": "Animation Import"
+            },
+            "position": {
+                "x": -390,
+                "y": -248
+            }
+        },
+        {
+            "id": 8,
+            "internal-data": {
+                "model-name": "CoordinateConverterPlugin"
+            },
+            "position": {
+                "x": 372.0680770321241,
+                "y": -233.28077845664936
+            }
+        },
+        {
+            "id": 1,
+            "internal-data": {
+                "model-name": "TracerUpdateSenderPlugin"
+            },
+            "position": {
+                "x": 674.2424131983131,
+                "y": -91.8452821684615
+            }
+        },
+        {
+            "id": 2,
+            "internal-data": {
+                "model-name": "AnimationFrameSelectorPlugin"
+            },
+            "position": {
+                "x": 53,
+                "y": -233.30610180890687
+            }
+        },
+        {
+            "id": 3,
+            "internal-data": {
+                "model-name": "RunTriggerPlugin"
+            },
+            "position": {
+                "x": -645.0837279596979,
+                "y": -157.44332493702774
+            }
+        },
+        {
+            "id": 6,
+            "internal-data": {
+                "model-name": "TracerSceneReceiverPlugin"
+            },
+            "position": {
+                "x": -482.2364159999997,
+                "y": -64.198656
+            }
+        },
+        {
+            "id": 7,
+            "internal-data": {
+                "model-name": "CharacterSelectorPlugin"
+            },
+            "position": {
+                "x": -6.012982931685826,
+                "y": -88.87713689542105
+            }
+        }
+    ]
+}

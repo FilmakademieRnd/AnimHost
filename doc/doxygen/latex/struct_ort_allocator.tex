@@ -1,0 +1,44 @@
+\doxysection{Ort\+Allocator Struct Reference}
+\hypertarget{struct_ort_allocator}{}\label{struct_ort_allocator}\index{OrtAllocator@{OrtAllocator}}
+
+
+Memory allocation interface.  
+
+
+
+
+{\ttfamily \#include $<$onnxruntime\+\_\+c\+\_\+api.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_allocator_a4d830c91d72e72fc4b5838484eefcddf}\label{struct_ort_allocator_a4d830c91d72e72fc4b5838484eefcddf} 
+void \texorpdfstring{$\ast$}{*}ORT\+\_\+\+API\+\_\+\+CALL \texorpdfstring{$\ast$}{*} {\bfseries Alloc} (struct \mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}} \texorpdfstring{$\ast$}{*}this\+\_\+, size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Returns a pointer to an allocated block of {\ttfamily size} bytes. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_allocator_a52dd4faac2d58bd3b816b531e9bd8829}\label{struct_ort_allocator_a52dd4faac2d58bd3b816b531e9bd8829} 
+{\bfseries void} (ORT\+\_\+\+API\+\_\+\+CALL \texorpdfstring{$\ast$}{*}Free)(struct \mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}} \texorpdfstring{$\ast$}{*}this\+\_\+
+\item 
+\Hypertarget{struct_ort_allocator_a48d04f84c71d7158fd20f056ec885dd6}\label{struct_ort_allocator_a48d04f84c71d7158fd20f056ec885dd6} 
+const struct Ort\+Memory\+Info \texorpdfstring{$\ast$}{*}ORT\+\_\+\+API\+\_\+\+CALL \texorpdfstring{$\ast$}{*} {\bfseries Info} (const struct \mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}} \texorpdfstring{$\ast$}{*}this\+\_\+)
+\begin{DoxyCompactList}\small\item\em Return a pointer to an \+::\+Ort\+Memory\+Info that describes this allocator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_allocator_a508b90a31a7aec4f3ccd3d875c750b64}\label{struct_ort_allocator_a508b90a31a7aec4f3ccd3d875c750b64} 
+uint32\+\_\+t {\bfseries version}
+\begin{DoxyCompactList}\small\item\em Must be initialized to ORT\+\_\+\+API\+\_\+\+VERSION. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_allocator_a1f486d66ff457bf4d23f0822042dd3b1}\label{struct_ort_allocator_a1f486d66ff457bf4d23f0822042dd3b1} 
+void \texorpdfstring{$\ast$}{*} {\bfseries p}
+\begin{DoxyCompactList}\small\item\em Free a block of memory previously allocated with \doxylink{struct_ort_allocator_a4d830c91d72e72fc4b5838484eefcddf}{Ort\+Allocator\+::\+Alloc}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Memory allocation interface. 
+
+Structure of function pointers that defines a memory allocator. This can be created and filled in by the user for custom allocators.
+
+When an allocator is passed to any function, be sure that the allocator object is not destroyed until the last allocated object using it is freed. 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+c\+\_\+api.\+h\end{DoxyCompactItemize}

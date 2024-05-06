@@ -1,0 +1,8 @@
+<map id="Ort::Value::CreateSparseTensor" name="Ort::Value::CreateSparseTensor">
+<area shape="rect" id="Node000001" title="Creates an instance of OrtValue containing sparse tensor. The created instance has no data...." alt="" coords="5,47,173,89"/>
+<area shape="rect" id="Node000002" href="$struct_ort_1_1_value.html#a23c32a59c2149a0faf54187af3cc5bb8" title="Creates a tensor with a user supplied buffer. Wraps OrtApi::CreateTensorWithDataAsOrtValue." alt="" coords="221,29,386,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="172,55,205,52,205,57,173,61"/>
+<area shape="rect" id="Node000003" href="$namespace_ort.html#a296b5958479d9889218b17bdb08c1894" title="This returns a reference to the OrtApi interface in use." alt="" coords="260,80,347,107"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="173,75,245,84,244,89,172,81"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="267,30,261,21,265,11,280,5,303,3,329,5,342,12,340,16,327,10,303,8,281,10,269,15,266,20,271,27"/>
+</map>

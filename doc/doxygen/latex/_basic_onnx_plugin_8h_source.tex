@@ -1,0 +1,101 @@
+\doxysection{Basic\+Onnx\+Plugin.\+h}
+\hypertarget{_basic_onnx_plugin_8h_source}{}\label{_basic_onnx_plugin_8h_source}\index{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost\_Plugins/BasicOnnxPlugin/BasicOnnxPlugin.h@{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost\_Plugins/BasicOnnxPlugin/BasicOnnxPlugin.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#ifndef\ BASICONNXPLUGINPLUGIN\_H}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#define\ BASICONNXPLUGINPLUGIN\_H}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}BasicOnnxPlugin\_global.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <QMetaType>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <QtWidgets>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <pluginnodeinterface.h>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <onnxruntime\_cxx\_api.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}OnnxModel.h"{}}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_onnx_model_view_widget}{OnnxModelViewWidget}};}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{class\ }BASICONNXPLUGINSHARED\_EXPORT\ \mbox{\hyperlink{class_basic_onnx_plugin}{BasicOnnxPlugin}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_plugin_node_interface}{PluginNodeInterface}}}
+\DoxyCodeLine{00017\ \{}
+\DoxyCodeLine{00018\ \ \ \ \ Q\_OBJECT}
+\DoxyCodeLine{00019\ \ \ \ \ Q\_PLUGIN\_METADATA(IID\ \textcolor{stringliteral}{"{}de.animhost.BasicOnnx"{}}\ FILE\ \textcolor{stringliteral}{"{}BasicOnnxPlugin.json"{}})}
+\DoxyCodeLine{00020\ \ \ \ \ Q\_INTERFACES(\mbox{\hyperlink{class_plugin_node_interface}{PluginNodeInterface}})}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \ \ }
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{comment}{//GUI}}
+\DoxyCodeLine{00027\ \ \ \ \ \mbox{\hyperlink{class_onnx_model_view_widget}{OnnxModelViewWidget}}*\ widget;}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{comment}{//TodO.\ Link\ Model\ to\ ModelView}}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{comment}{//Add\ Tensor\ Class}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ std::unique\_ptr<OnnxModel>\ \_onnxModel;}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ QString\ OnnxModelFilePath\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{bool}\ bModelDescValid\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ std::vector<std::weak\_ptr<NodeData>>\ \_dataIn;}
+\DoxyCodeLine{00040\ \ \ \ \ std::vector<std::shared\_ptr<NodeData>>\ \_dataOut;}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00046\ \ \ \ \ \mbox{\hyperlink{class_basic_onnx_plugin}{BasicOnnxPlugin}}();}
+\DoxyCodeLine{00047\ \ \ \ \ \mbox{\hyperlink{class_basic_onnx_plugin}{\string~BasicOnnxPlugin}}();}
+\DoxyCodeLine{00048\ \ \ \ \ }
+\DoxyCodeLine{00049\ \ \ \ \ std::unique\_ptr<NodeDelegateModel>\ Init()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \ std::unique\_ptr<BasicOnnxPlugin>(\textcolor{keyword}{new}\ \mbox{\hyperlink{class_basic_onnx_plugin}{BasicOnnxPlugin}}());\ \};}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ QString\ \mbox{\hyperlink{class_basic_onnx_plugin_a11086657b8c053807d5bed93d7735745}{caption}}()\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}Onnx\ Runtime\ Inference"{}};\ \ \}}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_basic_onnx_plugin_aad17dc3750001fdea40e6a0e815ea7ac}{captionVisible}}()\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};\ \}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_plugin_node_interface_a2614e702055e634adac2d220445a89af}{nDataPorts}}(\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{QtNodes::PortType}}\ portType)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00055\ \ \ \ \ \mbox{\hyperlink{struct_qt_nodes_1_1_node_data_type}{NodeDataType}}\ \mbox{\hyperlink{class_plugin_node_interface_ab846cdb3b5aa6d61de83a4b484105cb7}{dataPortType}}(\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{QtNodes::PortType}}\ portType,\ \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{QtNodes::PortIndex}}\ portIndex)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ std::shared\_ptr<NodeData>\ processOutData(\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{QtNodes::PortIndex}}\ port)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{void}\ processInData(std::shared\_ptr<NodeData>\ data,\ \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{QtNodes::PortIndex}}\ portIndex)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{void}\ run()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ QWidget*\ \mbox{\hyperlink{class_plugin_node_interface_a0a1b864019583682fd1c15d3e88af73a}{embeddedWidget}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{comment}{//QTNodes}}
+\DoxyCodeLine{00068\ \ \ \ \ QString\ category()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}Operator"{}};\ \};\ \ \textcolor{comment}{//\ Returns\ a\ category\ for\ the\ node}}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_basic_onnx_plugin_a0725f5bf163df04ab2b8798efd161a77}{portCaptionVisible}}(\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{QtNodes::PortType}}\ portType,\ \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{QtNodes::PortIndex}}\ portIndex)\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};\ \}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00074\ \ \ \ \ QString\ \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_add0dedb3ab8acf9c4086f72ecbc97504}{portCaption}}(\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{QtNodes::PortType}},\ \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{QtNodes::PortIndex}})\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{void}\ LoadOnnxModel();}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordtype}{void}\ RunDummyInference();}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordtype}{void}\ clearPorts();}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keywordtype}{void}\ addPort();}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ std::string\ shape\_printer(\textcolor{keyword}{const}\ std::vector<int64\_t>\&\ vec)\ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ std::accumulate(vec.begin(),\ vec.end(),\ std::string\{\},}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ [](\textcolor{keyword}{const}\ std::string\&\ a,\ \textcolor{keywordtype}{int}\ b)\ \{}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ return\ a.empty()\ ?\ std::to\_string(b)\ :\ a\ +\ \textcolor{stringliteral}{"{}\ "{}}\ +\ std::to\_string(b);}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{00089\ \ \ \ \ \}}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{keyword}{private}\ Q\_SLOTS:}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordtype}{void}\ onButtonClicked();}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \};}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ BASICONNXPLUGINPLUGIN\_H}}
+
+\end{DoxyCode}

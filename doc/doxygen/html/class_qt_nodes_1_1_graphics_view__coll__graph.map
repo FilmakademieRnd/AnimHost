@@ -1,0 +1,8 @@
+<map id="QtNodes::GraphicsView" name="QtNodes::GraphicsView">
+<area shape="rect" id="Node000001" title="A central view able to render objects from BasicGraphicsScene." alt="" coords="5,112,166,139"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="30,13,141,40"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="80,56,82,112,77,112,75,56"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="96,56,94,112,89,112,91,56"/>
+<area shape="rect" id="Node000003" href="$struct_qt_nodes_1_1_graphics_view_1_1_scale_range.html" title=" " alt="" coords="165,5,326,48"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="200,59,108,114,105,109,197,54"/>
+</map>

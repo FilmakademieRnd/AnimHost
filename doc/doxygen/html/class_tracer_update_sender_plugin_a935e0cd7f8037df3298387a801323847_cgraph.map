@@ -1,0 +1,9 @@
+<map id="TracerUpdateSenderPlugin::onButtonClicked" name="TracerUpdateSenderPlugin::onButtonClicked">
+<area shape="rect" id="Node000001" title="Slot called when the &quot;Send Animation&quot; button is clicked." alt="" coords="5,72,181,115"/>
+<area shape="rect" id="Node000002" href="$class_anim_host_message_sender.html#aa32827b94e778e799570f8dad4fd6dea" title="Request this process to start working." alt="" coords="239,5,411,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="169,69,233,50,234,55,170,74"/>
+<area shape="rect" id="Node000003" href="$class_z_m_q_message_handler.html#ad1bc17167c1b398bdff98d8f77810e98" title="Resumes main loop execution." alt="" coords="248,72,402,115"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="181,91,232,91,232,96,181,96"/>
+<area shape="rect" id="Node000004" href="$class_anim_host_message_sender.html#a726b2c693e8d06b909f2197fb12fda58" title="Setting data necessary to create new TRACER Update Message representing a character pose." alt="" coords="229,139,421,181"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="170,113,234,131,233,136,169,118"/>
+</map>

@@ -1,0 +1,12 @@
+<map id="QtNodes::DataFlowGraphModel" name="QtNodes::DataFlowGraphModel">
+<area shape="rect" id="Node000001" title=" " alt="" coords="102,155,306,181"/>
+<area shape="rect" id="Node000002" href="$class_qt_nodes_1_1_abstract_graph_model.html" title=" " alt="" coords="5,80,205,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="128,115,181,152,178,156,125,119"/>
+<area shape="poly" id="edge5_Node000001_Node000002" title=" " alt="" coords="143,113,195,152,192,156,140,117"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="70,5,140,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="99,47,101,79,95,80,94,48"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="116,48,115,80,109,79,111,47"/>
+<area shape="rect" id="Node000004" href="$class_qt_nodes_1_1_serializable.html" title=" " alt="" coords="229,80,376,107"/>
+<area shape="poly" id="edge4_Node000001_Node000004" title=" " alt="" coords="267,117,215,156,212,152,264,113"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="282,119,230,156,226,152,279,115"/>
+</map>

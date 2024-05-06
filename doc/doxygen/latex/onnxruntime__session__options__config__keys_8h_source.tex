@@ -1,0 +1,198 @@
+\doxysection{onnxruntime\+\_\+session\+\_\+options\+\_\+config\+\_\+keys.\+h}
+\hypertarget{onnxruntime__session__options__config__keys_8h_source}{}\label{onnxruntime__session__options__config__keys_8h_source}\index{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost\_Plugins/BasicOnnxPlugin/onnxruntime/include/onnxruntime\_session\_options\_config\_keys.h@{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost\_Plugins/BasicOnnxPlugin/onnxruntime/include/onnxruntime\_session\_options\_config\_keys.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Copyright\ (c)\ Microsoft\ Corporation.\ All\ rights\ reserved.}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Licensed\ under\ the\ MIT\ License.}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ This\ file\ defines\ SessionOptions\ Config\ Keys\ and\ format\ of\ the\ Config\ Values.}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ The\ Naming\ Convention\ for\ a\ SessionOptions\ Config\ Key,}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ "{}[Area][.[SubArea1].[SubArea2]...].[Keyname]"{}}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ Such\ as\ "{}ep.cuda.use\_arena"{}}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *\ The\ Config\ Key\ cannot\ be\ empty}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ The\ maximum\ length\ of\ the\ Config\ Key\ is\ 128}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ The\ string\ format\ of\ a\ SessionOptions\ Config\ Value\ is\ defined\ individually\ for\ each\ Config.}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ The\ maximum\ length\ of\ the\ Config\ Value\ is\ 1024}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ Key\ for\ disable\ PrePacking,}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ If\ the\ config\ value\ is\ set\ to\ "{}1"{}\ then\ the\ prepacking\ is\ disabled,\ otherwise\ prepacking\ is\ enabled\ (default\ value)}}
+\DoxyCodeLine{00021\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsConfigDisablePrepacking\ =\ \textcolor{stringliteral}{"{}session.disable\_prepacking"{}};}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{comment}{//\ A\ value\ of\ "{}1"{}\ means\ allocators\ registered\ in\ the\ env\ will\ be\ used.\ "{}0"{}\ means\ the\ allocators\ created\ in\ the\ session}}
+\DoxyCodeLine{00024\ \textcolor{comment}{//\ will\ be\ used.\ Use\ this\ to\ override\ the\ usage\ of\ env\ allocators\ on\ a\ per\ session\ level.}}
+\DoxyCodeLine{00025\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsConfigUseEnvAllocators\ =\ \textcolor{stringliteral}{"{}session.use\_env\_allocators"{}};}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ Set\ to\ 'ORT'\ (case\ sensitive)\ to\ load\ an\ ORT\ format\ model.}}
+\DoxyCodeLine{00028\ \textcolor{comment}{//\ If\ unset,\ model\ type\ will\ default\ to\ ONNX\ unless\ inferred\ from\ filename\ ('.ort'\ ==\ ORT\ format)\ or\ bytes\ to\ be\ ORT}}
+\DoxyCodeLine{00029\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsConfigLoadModelFormat\ =\ \textcolor{stringliteral}{"{}session.load\_model\_format"{}};}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{comment}{//\ Set\ to\ 'ORT'\ (case\ sensitive)\ to\ save\ optimized\ model\ in\ ORT\ format\ when\ SessionOptions.optimized\_model\_path\ is\ set.}}
+\DoxyCodeLine{00032\ \textcolor{comment}{//\ If\ unset,\ format\ will\ default\ to\ ONNX\ unless\ optimized\_model\_filepath\ ends\ in\ '.ort'.}}
+\DoxyCodeLine{00033\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsConfigSaveModelFormat\ =\ \textcolor{stringliteral}{"{}session.save\_model\_format"{}};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{comment}{//\ If\ a\ value\ is\ "{}1"{},\ flush-\/to-\/zero\ and\ denormal-\/as-\/zero\ are\ applied.\ The\ default\ is\ "{}0"{}.}}
+\DoxyCodeLine{00036\ \textcolor{comment}{//\ When\ multiple\ sessions\ are\ created,\ a\ main\ thread\ doesn't\ override\ changes\ from\ succeeding\ session\ options,}}
+\DoxyCodeLine{00037\ \textcolor{comment}{//\ but\ threads\ in\ session\ thread\ pools\ follow\ option\ changes.}}
+\DoxyCodeLine{00038\ \textcolor{comment}{//\ When\ ORT\ runs\ with\ OpenMP,\ the\ same\ rule\ is\ applied,\ i.e.\ the\ first\ session\ option\ to\ flush-\/to-\/zero\ and}}
+\DoxyCodeLine{00039\ \textcolor{comment}{//\ denormal-\/as-\/zero\ is\ only\ applied\ to\ global\ OpenMP\ thread\ pool,\ which\ doesn't\ support\ per-\/session\ thread\ pool.}}
+\DoxyCodeLine{00040\ \textcolor{comment}{//\ Note\ that\ an\ alternative\ way\ not\ using\ this\ option\ at\ runtime\ is\ to\ train\ and\ export\ a\ model\ without\ denormals}}
+\DoxyCodeLine{00041\ \textcolor{comment}{//\ and\ that's\ recommended\ because\ turning\ this\ option\ on\ may\ hurt\ model\ accuracy.}}
+\DoxyCodeLine{00042\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsConfigSetDenormalAsZero\ =\ \textcolor{stringliteral}{"{}session.set\_denormal\_as\_zero"{}};}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{comment}{//\ It\ controls\ to\ run\ quantization\ model\ in\ QDQ\ (QuantizelinearDeQuantizelinear)\ format\ or\ not.}}
+\DoxyCodeLine{00045\ \textcolor{comment}{//\ "{}0"{}:\ enable.\ ORT\ does\ fusion\ logic\ for\ QDQ\ format.}}
+\DoxyCodeLine{00046\ \textcolor{comment}{//\ "{}1"{}:\ disable.\ ORT\ doesn't\ do\ fusion\ logic\ for\ QDQ\ format.}}
+\DoxyCodeLine{00047\ \textcolor{comment}{//\ Its\ default\ value\ is\ "{}0"{}\ unless\ the\ DirectML\ execution\ provider\ is\ registered,\ in\ which\ case\ it\ defaults\ to\ "{}1"{}.}}
+\DoxyCodeLine{00048\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsDisableQuantQDQ\ =\ \textcolor{stringliteral}{"{}session.disable\_quant\_qdq"{}};}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{comment}{//\ It\ controls\ whether\ to\ enable\ Double\ QDQ\ remover\ and\ Identical\ Children\ Consolidation}}
+\DoxyCodeLine{00051\ \textcolor{comment}{//\ "{}0"{}:\ not\ to\ disable.\ ORT\ does\ remove\ the\ middle\ 2\ Nodes\ from\ a\ Q-\/>(QD-\/>Q)-\/>QD\ pairs}}
+\DoxyCodeLine{00052\ \textcolor{comment}{//\ "{}1"{}:\ disable.\ ORT\ doesn't\ remove\ the\ middle\ 2\ Nodes\ from\ a\ Q-\/>(QD-\/>Q)-\/>QD\ pairs}}
+\DoxyCodeLine{00053\ \textcolor{comment}{//\ Its\ default\ value\ is\ "{}0"{}}}
+\DoxyCodeLine{00054\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsDisableDoubleQDQRemover\ =\ \textcolor{stringliteral}{"{}session.disable\_double\_qdq\_remover"{}};}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{comment}{//\ If\ set\ to\ "{}1"{},\ enables\ the\ removal\ of\ QuantizeLinear/DequantizeLinear\ node\ pairs\ once\ all\ QDQ\ handling\ has\ been}}
+\DoxyCodeLine{00057\ \textcolor{comment}{//\ completed.\ e.g.\ If\ after\ all\ QDQ\ handling\ has\ completed\ and\ we\ have\ -\/>\ FloatOp\ -\/>\ Q\ -\/>\ DQ\ -\/>\ FloatOp\ -\/>\ the}}
+\DoxyCodeLine{00058\ \textcolor{comment}{//\ Q\ -\/>\ DQ\ could\ potentially\ be\ removed.\ This\ will\ provide\ a\ performance\ benefit\ by\ avoiding\ going\ from\ float\ to}}
+\DoxyCodeLine{00059\ \textcolor{comment}{//\ 8-\/bit\ and\ back\ to\ float,\ but\ could\ impact\ accuracy.\ The\ impact\ on\ accuracy\ will\ be\ model\ specific\ and\ depend\ on}}
+\DoxyCodeLine{00060\ \textcolor{comment}{//\ other\ factors\ like\ whether\ the\ model\ was\ created\ using\ Quantization\ Aware\ Training\ or\ Post\ Training\ Quantization.}}
+\DoxyCodeLine{00061\ \textcolor{comment}{//\ As\ such,\ it's\ best\ to\ test\ to\ determine\ if\ enabling\ this\ works\ well\ for\ your\ scenario.}}
+\DoxyCodeLine{00062\ \textcolor{comment}{//\ The\ default\ value\ is\ "{}0"{}}}
+\DoxyCodeLine{00063\ \textcolor{comment}{//\ Available\ since\ version\ 1.11.}}
+\DoxyCodeLine{00064\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsEnableQuantQDQCleanup\ =\ \textcolor{stringliteral}{"{}session.enable\_quant\_qdq\_cleanup"{}};}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{comment}{//\ Enable\ or\ disable\ gelu\ approximation\ in\ graph\ optimization.\ "{}0"{}:\ disable;\ "{}1"{}:\ enable.\ The\ default\ is\ "{}0"{}.}}
+\DoxyCodeLine{00067\ \textcolor{comment}{//\ GeluApproximation\ has\ side\ effects\ which\ may\ change\ the\ inference\ results.\ It\ is\ disabled\ by\ default\ due\ to\ this.}}
+\DoxyCodeLine{00068\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsEnableGeluApproximation\ =\ \textcolor{stringliteral}{"{}optimization.enable\_gelu\_approximation"{}};}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#ifdef\ ENABLE\_TRAINING}}
+\DoxyCodeLine{00071\ \textcolor{comment}{//\ Specifies\ a\ list\ of\ op\ types\ for\ memory\ footprint\ reduction.}}
+\DoxyCodeLine{00072\ \textcolor{comment}{//\ The\ value\ should\ be\ a\ "{},"{}-\/delimited\ list\ of\ pair\ of}}
+\DoxyCodeLine{00073\ \textcolor{comment}{//\ <subgraph\ string\ :\ optimization\ strategy\ :\ number\ of\ subgraph\ to\ apply>.}}
+\DoxyCodeLine{00074\ \textcolor{comment}{//\ For\ example,\ "{}Gelu+Cast+:1:0,Dropout+:1:1"{}.}}
+\DoxyCodeLine{00075\ \textcolor{comment}{//\ \ \ A\ valid\ "{}subgraph\ string"{}\ should\ be\ one\ subgraph\ representation\ output\ by\ ORT\ graph\ transformations.}}
+\DoxyCodeLine{00076\ \textcolor{comment}{//\ \ \ "{}optimization\ strategy"{}\ currently\ has\ valid\ values:\ 0\ -\/\ disabled,\ 1\ -\/\ recompute.}}
+\DoxyCodeLine{00077\ \textcolor{comment}{//\ \ \ "{}number\ of\ subgraph\ to\ apply"{}\ is\ used\ to\ control\ how\ many\ subgraphs\ to\ apply\ optimization,\ to\ avoid\ "{}oversaving"{}}}
+\DoxyCodeLine{00078\ \textcolor{comment}{//\ \ \ the\ memory.}}
+\DoxyCodeLine{00079\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsMemoryOptimizerEnabler\ =\ \textcolor{stringliteral}{"{}optimization.enable\_memory\_optimizer"{}};}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{comment}{//\ Specifies\ the\ level\ for\ detecting\ subgraphs\ for\ memory\ footprint\ reduction.}}
+\DoxyCodeLine{00082\ \textcolor{comment}{//\ The\ value\ should\ be\ an\ integer.\ The\ default\ value\ is\ 0.}}
+\DoxyCodeLine{00083\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsMemoryOptimizerProbeLevel\ =\ \textcolor{stringliteral}{"{}optimization.enable\_memory\_probe\_recompute\_level"{}};}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \textcolor{comment}{//\ Enable\ or\ disable\ using\ device\ allocator\ for\ allocating\ initialized\ tensor\ memory.\ "{}1"{}:\ enable;\ "{}0"{}:\ disable.\ The\ default\ is\ "{}0"{}.}}
+\DoxyCodeLine{00087\ \textcolor{comment}{//\ Using\ device\ allocators\ means\ the\ memory\ allocation\ is\ made\ using\ malloc/new.}}
+\DoxyCodeLine{00088\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsUseDeviceAllocatorForInitializers\ =\ \textcolor{stringliteral}{"{}session.use\_device\_allocator\_for\_initializers"{}};}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \textcolor{comment}{//\ Configure\ whether\ to\ allow\ the\ inter\_op/intra\_op\ threads\ spinning\ a\ number\ of\ times\ before\ blocking}}
+\DoxyCodeLine{00091\ \textcolor{comment}{//\ "{}0"{}:\ thread\ will\ block\ if\ found\ no\ job\ to\ run}}
+\DoxyCodeLine{00092\ \textcolor{comment}{//\ "{}1"{}:\ default,\ thread\ will\ spin\ a\ number\ of\ times\ before\ blocking}}
+\DoxyCodeLine{00093\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsConfigAllowInterOpSpinning\ =\ \textcolor{stringliteral}{"{}session.inter\_op.allow\_spinning"{}};}
+\DoxyCodeLine{00094\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsConfigAllowIntraOpSpinning\ =\ \textcolor{stringliteral}{"{}session.intra\_op.allow\_spinning"{}};}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \textcolor{comment}{//\ Key\ for\ using\ model\ bytes\ directly\ for\ ORT\ format}}
+\DoxyCodeLine{00097\ \textcolor{comment}{//\ If\ a\ session\ is\ created\ using\ an\ input\ byte\ array\ contains\ the\ ORT\ format\ model\ data,}}
+\DoxyCodeLine{00098\ \textcolor{comment}{//\ By\ default\ we\ will\ copy\ the\ model\ bytes\ at\ the\ time\ of\ session\ creation\ to\ ensure\ the\ model\ bytes}}
+\DoxyCodeLine{00099\ \textcolor{comment}{//\ buffer\ is\ valid.}}
+\DoxyCodeLine{00100\ \textcolor{comment}{//\ Setting\ this\ option\ to\ "{}1"{}\ will\ disable\ copy\ the\ model\ bytes,\ and\ use\ the\ model\ bytes\ directly.\ The\ caller}}
+\DoxyCodeLine{00101\ \textcolor{comment}{//\ has\ to\ guarantee\ that\ the\ model\ bytes\ are\ valid\ until\ the\ ORT\ session\ using\ the\ model\ bytes\ is\ destroyed.}}
+\DoxyCodeLine{00102\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsConfigUseORTModelBytesDirectly\ =\ \textcolor{stringliteral}{"{}session.use\_ort\_model\_bytes\_directly"{}};}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00111\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsConfigUseORTModelBytesForInitializers\ =}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{stringliteral}{"{}session.use\_ort\_model\_bytes\_for\_initializers"{}};}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \textcolor{comment}{//\ This\ should\ only\ be\ specified\ when\ exporting\ an\ ORT\ format\ model\ for\ use\ on\ a\ different\ platform.}}
+\DoxyCodeLine{00115\ \textcolor{comment}{//\ If\ the\ ORT\ format\ model\ will\ be\ used\ on\ ARM\ platforms\ set\ to\ "{}1"{}.\ For\ other\ platforms\ set\ to\ "{}0"{}}}
+\DoxyCodeLine{00116\ \textcolor{comment}{//\ Available\ since\ version\ 1.11.}}
+\DoxyCodeLine{00117\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsQDQIsInt8Allowed\ =\ \textcolor{stringliteral}{"{}session.qdqisint8allowed"{}};}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \textcolor{comment}{//\ x64\ SSE4.1/AVX2/AVX512(with\ no\ VNNI)\ has\ overflow\ problem\ with\ quantizied\ matrix\ multiplication\ with\ U8S8.}}
+\DoxyCodeLine{00120\ \textcolor{comment}{//\ To\ avoid\ this\ we\ need\ to\ use\ slower\ U8U8\ matrix\ multiplication\ instead.\ This\ option,\ if}}
+\DoxyCodeLine{00121\ \textcolor{comment}{//\ turned\ on,\ use\ slower\ U8U8\ matrix\ multiplications.\ Only\ effective\ with\ AVX2\ or\ AVX512}}
+\DoxyCodeLine{00122\ \textcolor{comment}{//\ platforms.}}
+\DoxyCodeLine{00123\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsAvx2PrecisionMode\ =\ \textcolor{stringliteral}{"{}session.x64quantprecision"{}};}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \textcolor{comment}{//\ Specifies\ how\ minimal\ build\ graph\ optimizations\ are\ handled\ in\ a\ full\ build.}}
+\DoxyCodeLine{00126\ \textcolor{comment}{//\ These\ optimizations\ are\ at\ the\ extended\ level\ or\ higher.}}
+\DoxyCodeLine{00127\ \textcolor{comment}{//\ Possible\ values\ and\ their\ effects\ are:}}
+\DoxyCodeLine{00128\ \textcolor{comment}{//\ "{}save"{}:\ Save\ runtime\ optimizations\ when\ saving\ an\ ORT\ format\ model.}}
+\DoxyCodeLine{00129\ \textcolor{comment}{//\ "{}apply"{}:\ Only\ apply\ optimizations\ available\ in\ a\ minimal\ build.}}
+\DoxyCodeLine{00130\ \textcolor{comment}{//\ "{}"{}/<unspecified>:\ Apply\ optimizations\ available\ in\ a\ full\ build.}}
+\DoxyCodeLine{00131\ \textcolor{comment}{//\ Available\ since\ version\ 1.11.}}
+\DoxyCodeLine{00132\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsConfigMinimalBuildOptimizations\ =}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{stringliteral}{"{}optimization.minimal\_build\_optimizations"{}};}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \textcolor{comment}{//\ Note:\ The\ options\ specific\ to\ an\ EP\ should\ be\ specified\ prior\ to\ appending\ that\ EP\ to\ the\ session\ options\ object\ in}}
+\DoxyCodeLine{00136\ \textcolor{comment}{//\ order\ for\ them\ to\ take\ effect.}}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \textcolor{comment}{//\ Specifies\ a\ list\ of\ stop\ op\ types.\ Nodes\ of\ a\ type\ in\ the\ stop\ op\ types\ and\ nodes\ downstream\ from\ them\ will\ not\ be}}
+\DoxyCodeLine{00139\ \textcolor{comment}{//\ run\ by\ the\ NNAPI\ EP.}}
+\DoxyCodeLine{00140\ \textcolor{comment}{//\ The\ value\ should\ be\ a\ "{},"{}-\/delimited\ list\ of\ op\ types.\ For\ example,\ "{}Add,Sub"{}.}}
+\DoxyCodeLine{00141\ \textcolor{comment}{//\ If\ not\ specified,\ the\ default\ set\ of\ stop\ ops\ is\ used.\ To\ specify\ an\ empty\ stop\ ops\ types\ list\ and\ disable\ stop\ op}}
+\DoxyCodeLine{00142\ \textcolor{comment}{//\ exclusion,\ set\ the\ value\ to\ "{}"{}.}}
+\DoxyCodeLine{00143\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsConfigNnapiEpPartitioningStopOps\ =\ \textcolor{stringliteral}{"{}ep.nnapi.partitioning\_stop\_ops"{}};}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \textcolor{comment}{//\ Enabling\ dynamic\ block-\/sizing\ for\ multithreading.}}
+\DoxyCodeLine{00146\ \textcolor{comment}{//\ With\ a\ positive\ value,\ thread\ pool\ will\ split\ a\ task\ of\ N\ iterations\ to\ blocks\ of\ size\ starting\ from:}}
+\DoxyCodeLine{00147\ \textcolor{comment}{//\ N\ /\ (num\_of\_threads\ *\ dynamic\_block\_base)}}
+\DoxyCodeLine{00148\ \textcolor{comment}{//\ As\ execution\ progresses,\ the\ size\ will\ decrease\ according\ to\ the\ diminishing\ residual\ of\ N,}}
+\DoxyCodeLine{00149\ \textcolor{comment}{//\ meaning\ the\ task\ will\ be\ distributed\ in\ smaller\ granularity\ for\ better\ parallelism.}}
+\DoxyCodeLine{00150\ \textcolor{comment}{//\ For\ some\ models,\ it\ helps\ to\ reduce\ the\ variance\ of\ E2E\ inference\ latency\ and\ boost\ performance.}}
+\DoxyCodeLine{00151\ \textcolor{comment}{//\ The\ feature\ will\ not\ function\ by\ default,\ specify\ any\ positive\ integer,\ e.g.\ "{}4"{},\ to\ enable\ it.}}
+\DoxyCodeLine{00152\ \textcolor{comment}{//\ Available\ since\ version\ 1.11.}}
+\DoxyCodeLine{00153\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsConfigDynamicBlockBase\ =\ \textcolor{stringliteral}{"{}session.dynamic\_block\_base"{}};}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \textcolor{comment}{//\ This\ option\ allows\ to\ decrease\ CPU\ usage\ between\ infrequent}}
+\DoxyCodeLine{00156\ \textcolor{comment}{//\ requests\ and\ forces\ any\ TP\ threads\ spinning\ stop\ immediately\ when\ the\ last\ of}}
+\DoxyCodeLine{00157\ \textcolor{comment}{//\ concurrent\ Run()\ call\ returns.}}
+\DoxyCodeLine{00158\ \textcolor{comment}{//\ Spinning\ is\ restarted\ on\ the\ next\ Run()\ call.}}
+\DoxyCodeLine{00159\ \textcolor{comment}{//\ Applies\ only\ to\ internal\ thread-\/pools}}
+\DoxyCodeLine{00160\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsConfigForceSpinningStop\ =\ \textcolor{stringliteral}{"{}session.force\_spinning\_stop"{}};}
+\DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ \textcolor{comment}{//\ "{}1"{}:\ all\ inconsistencies\ encountered\ during\ shape\ and\ type\ inference}}
+\DoxyCodeLine{00163\ \textcolor{comment}{//\ will\ result\ in\ failures.}}
+\DoxyCodeLine{00164\ \textcolor{comment}{//\ "{}0"{}:\ in\ some\ cases\ warnings\ will\ be\ logged\ but\ processing\ will\ continue.\ The\ default.}}
+\DoxyCodeLine{00165\ \textcolor{comment}{//\ May\ be\ useful\ to\ expose\ bugs\ in\ models.}}
+\DoxyCodeLine{00166\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsConfigStrictShapeTypeInference\ =\ \textcolor{stringliteral}{"{}session.strict\_shape\_type\_inference"{}};}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \textcolor{comment}{//\ The\ file\ saves\ configuration\ for\ partitioning\ node\ among\ logic\ streams}}
+\DoxyCodeLine{00169\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kNodePartitionConfigFile\ =\ \textcolor{stringliteral}{"{}session.node\_partition\_config\_file"{}};}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \textcolor{comment}{//\ This\ Option\ allows\ setting\ affinities\ for\ intra\ op\ threads.}}
+\DoxyCodeLine{00172\ \textcolor{comment}{//\ Affinity\ string\ follows\ format:}}
+\DoxyCodeLine{00173\ \textcolor{comment}{//\ logical\_processor\_id,logical\_processor\_id;logical\_processor\_id,logical\_processor\_id}}
+\DoxyCodeLine{00174\ \textcolor{comment}{//\ Semicolon\ isolates\ configurations\ among\ threads,\ while\ comma\ split\ processors\ where\ ith\ thread\ expected\ to\ attach\ to.}}
+\DoxyCodeLine{00175\ \textcolor{comment}{//\ e.g.1,2,3;4,5}}
+\DoxyCodeLine{00176\ \textcolor{comment}{//\ specifies\ affinities\ for\ two\ threads,\ with\ the\ 1st\ thread\ attach\ to\ the\ 1st,\ 2nd,\ and\ 3rd\ processor,\ and\ 2nd\ thread\ to\ the\ 4th\ and\ 5th.}}
+\DoxyCodeLine{00177\ \textcolor{comment}{//\ To\ ease\ the\ configuration,\ an\ "{}interval"{}\ is\ also\ allowed:}}
+\DoxyCodeLine{00178\ \textcolor{comment}{//\ e.g.\ 1-\/8;8-\/16;17-\/24}}
+\DoxyCodeLine{00179\ \textcolor{comment}{//\ orders\ that\ the\ 1st\ thread\ runs\ on\ first\ eight\ processors,\ 2nd\ thread\ runs\ on\ next\ eight\ processors,\ and\ so\ forth.}}
+\DoxyCodeLine{00180\ \textcolor{comment}{//\ Note:}}
+\DoxyCodeLine{00181\ \textcolor{comment}{//\ 1.\ Once\ set,\ the\ number\ of\ thread\ affinities\ must\ equal\ to\ intra\_op\_num\_threads\ -\/\ 1,\ since\ ort\ does\ not\ set\ affinity\ on\ the\ main\ thread\ which}}
+\DoxyCodeLine{00182\ \textcolor{comment}{//\ \ \ \ is\ started\ and\ managed\ by\ the\ calling\ app;}}
+\DoxyCodeLine{00183\ \textcolor{comment}{//\ 2.\ For\ windows,\ ort\ will\ infer\ the\ group\ id\ from\ a\ logical\ processor\ id,\ for\ example,\ assuming\ there\ are\ two\ groups\ with\ each\ has\ 64\ logical\ processors,}}
+\DoxyCodeLine{00184\ \textcolor{comment}{//\ \ \ \ an\ id\ of\ 64\ will\ be\ inferred\ as\ the\ last\ processor\ of\ the\ 1st\ group,\ while\ 65\ will\ be\ interpreted\ as\ the\ 1st\ processor\ of\ the\ second\ group.}}
+\DoxyCodeLine{00185\ \textcolor{comment}{//\ \ \ \ Hence\ 64-\/65\ is\ an\ invalid\ configuration,\ because\ a\ windows\ thread\ cannot\ be\ attached\ to\ processors\ across\ group\ boundary.}}
+\DoxyCodeLine{00186\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kOrtSessionOptionsConfigIntraOpThreadAffinities\ =\ \textcolor{stringliteral}{"{}session.intra\_op\_thread\_affinities"{}};}
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00188\ \textcolor{comment}{//\ This\ option\ will\ dump\ out\ the\ model\ to\ assist\ debugging\ any\ issues\ with\ layout\ transformation,}}
+\DoxyCodeLine{00189\ \textcolor{comment}{//\ and\ is\ primarily\ intended\ for\ developer\ usage.\ It\ is\ only\ relevant\ if\ an\ execution\ provider\ that\ requests}}
+\DoxyCodeLine{00190\ \textcolor{comment}{//\ NHWC\ layout\ is\ enabled\ such\ as\ NNAPI,\ XNNPACK\ or\ QNN.}}
+\DoxyCodeLine{00191\ \textcolor{comment}{//}}
+\DoxyCodeLine{00192\ \textcolor{comment}{//\ Default\ is\ off.\ Set\ to\ "{}1"{}\ to\ enable.}}
+\DoxyCodeLine{00193\ \textcolor{comment}{//}}
+\DoxyCodeLine{00194\ \textcolor{comment}{//\ If\ modified\ by\ layout\ transformation\ the\ model\ will\ be\ dumped\ after\ these\ steps:}}
+\DoxyCodeLine{00195\ \textcolor{comment}{//\ \ \ 1)\ insertion\ of\ the\ layout\ transformation\ Transpose\ nodes}}
+\DoxyCodeLine{00196\ \textcolor{comment}{//\ \ \ 2)\ after\ those\ are\ optimized\ using\ the\ transpose\ optimizer,}}
+\DoxyCodeLine{00197\ \textcolor{comment}{//\ \ \ 3)\ after\ the\ L1\ transformers\ are\ applied\ to\ the\ updated\ graph.}}
+\DoxyCodeLine{00198\ \textcolor{comment}{//\ The\ model\ will\ be\ saved\ to\ filename\ post\_layout\_transform\_step\_<step\_number>.onnx.}}
+\DoxyCodeLine{00199\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keyword}{const}\ kDebugLayoutTransformation\ =\ \textcolor{stringliteral}{"{}session.debug\_layout\_transformation"{}};}
+
+\end{DoxyCode}

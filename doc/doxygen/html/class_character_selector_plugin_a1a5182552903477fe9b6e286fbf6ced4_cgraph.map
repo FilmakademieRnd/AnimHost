@@ -1,0 +1,5 @@
+<map id="CharacterSelectorPlugin::caption" name="CharacterSelectorPlugin::caption">
+<area shape="rect" id="Node000001" title="Defines the category of this plugin as Operator for the plugin selection menu of the AnimHost Applica..." alt="" coords="5,5,167,48"/>
+<area shape="rect" id="Node000002" href="$class_plugin_node_interface.html#a7017ba11069f47b4bc117d676c3d5d2e" title="Name makes this model unique." alt="" coords="215,5,351,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="167,24,199,24,199,29,167,29"/>
+</map>

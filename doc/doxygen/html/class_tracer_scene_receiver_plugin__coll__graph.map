@@ -1,0 +1,24 @@
+<map id="TracerSceneReceiverPlugin" name="TracerSceneReceiverPlugin">
+<area shape="rect" id="Node000001" title=" " alt="" coords="125,349,304,376"/>
+<area shape="rect" id="Node000008" href="$class_scene_receiver.html" title=" " alt="" coords="69,440,176,467"/>
+<area shape="poly" id="edge13_Node000008_Node000001" title=" " alt="" coords="221,392,220,405,214,418,198,433,178,444,175,439,194,429,210,414,214,404,216,391"/>
+<area shape="rect" id="Node000002" href="$class_plugin_node_interface.html" title="Interface for plugins for the AnimHost." alt="" coords="146,273,283,300"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="217,315,217,349,212,349,212,315"/>
+<area shape="rect" id="Node000003" href="$class_qt_nodes_1_1_node_delegate_model.html" title=" " alt="" coords="116,172,313,199"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="217,214,217,273,212,273,212,214"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="48,81,117,108"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="108,115,191,169,188,174,105,120"/>
+<area shape="poly" id="edge5_Node000003_Node000004" title=" " alt="" coords="122,114,204,169,201,174,119,119"/>
+<area shape="rect" id="Node000009" href="$class_z_m_q_message_handler.html" title=" " alt="" coords="5,223,152,249"/>
+<area shape="poly" id="edge12_Node000009_Node000004" title=" " alt="" coords="84,123,82,222,76,222,79,123"/>
+<area shape="rect" id="Node000005" href="$class_qt_nodes_1_1_serializable.html" title=" " alt="" coords="141,81,288,108"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="209,124,211,171,205,172,203,124"/>
+<area shape="poly" id="edge6_Node000003_Node000005" title=" " alt="" coords="226,124,224,172,218,171,220,124"/>
+<area shape="rect" id="Node000006" href="$class_qt_nodes_1_1_node_style.html" title=" " alt="" coords="312,81,453,108"/>
+<area shape="poly" id="edge7_Node000003_Node000006" title=" " alt="" coords="346,118,240,174,237,169,344,113"/>
+<area shape="rect" id="Node000007" href="$class_qt_nodes_1_1_style.html" title=" " alt="" coords="327,5,438,32"/>
+<area shape="poly" id="edge8_Node000006_Node000007" title=" " alt="" coords="376,47,378,81,373,81,371,47"/>
+<area shape="poly" id="edge9_Node000006_Node000007" title=" " alt="" coords="394,47,392,81,387,81,389,47"/>
+<area shape="poly" id="edge10_Node000001_Node000008" title=" " alt="" coords="115,424,116,411,122,399,136,384,153,374,156,379,139,388,126,401,121,412,120,425"/>
+<area shape="poly" id="edge11_Node000008_Node000009" title=" " alt="" coords="86,264,116,415,122,439,116,440,111,417,81,265"/>
+</map>

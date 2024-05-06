@@ -1,0 +1,11 @@
+<map id="QtNodes::BasicGraphicsScene" name="QtNodes::BasicGraphicsScene">
+<area shape="rect" id="Node000001" title="An instance of QGraphicsScene, holds connections and nodes." alt="" coords="5,172,208,199"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="46,81,167,108"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,124,103,171,97,172,95,124"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="118,124,116,172,110,171,112,124"/>
+<area shape="rect" id="Node000003" href="$class_qt_nodes_1_1_abstract_graph_model.html" title=" " alt="" coords="191,81,390,108"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="252,118,134,174,132,169,249,113"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="256,5,325,32"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="284,47,286,81,281,81,279,47"/>
+<area shape="poly" id="edge5_Node000003_Node000004" title=" " alt="" coords="302,47,300,81,295,81,297,47"/>
+</map>

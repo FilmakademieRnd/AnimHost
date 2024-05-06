@@ -1,0 +1,5 @@
+<map id="Ort::detail::ValueImpl::FillSparseTensorBlockSparse" name="Ort::detail::ValueImpl::FillSparseTensorBlockSparse">
+<area shape="rect" id="Node000001" title="The API will allocate memory using the allocator instance supplied to the CreateSparseTensor() API an..." alt="" coords="5,5,206,48"/>
+<area shape="rect" id="Node000002" href="$namespace_ort.html#a296b5958479d9889218b17bdb08c1894" title="This returns a reference to the OrtApi interface in use." alt="" coords="254,13,341,40"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="206,24,238,24,238,29,206,29"/>
+</map>

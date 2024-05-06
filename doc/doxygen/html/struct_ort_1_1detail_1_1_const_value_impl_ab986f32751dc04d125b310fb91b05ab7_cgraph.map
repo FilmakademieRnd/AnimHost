@@ -1,0 +1,5 @@
+<map id="Ort::detail::ConstValueImpl::GetSparseTensorValuesTypeAndShapeInfo" name="Ort::detail::ConstValueImpl::GetSparseTensorValuesTypeAndShapeInfo">
+<area shape="rect" id="Node000001" title="The API returns type and shape information for stored non&#45;zero values of the sparse tensor...." alt="" coords="5,5,284,48"/>
+<area shape="rect" id="Node000002" href="$namespace_ort.html#a296b5958479d9889218b17bdb08c1894" title="This returns a reference to the OrtApi interface in use." alt="" coords="332,13,419,40"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="284,24,316,24,316,29,284,29"/>
+</map>

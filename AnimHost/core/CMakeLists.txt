@@ -9,6 +9,9 @@ qt_add_library(AnimHostCore SHARED
     animhosthelper.h animhosthelper.cpp
     ZMQMessageHandler.h ZMQMessageHandler.cpp
     UIUtils.h UIUtils.cpp
+    FileHandler.h FileHandler.cpp
+    FrameRange.h FrameRange.cpp
+    MathUtils.h MathUtils.cpp
 
     animhostcore_global.h
 )
@@ -16,6 +19,8 @@ qt_add_library(AnimHostCore SHARED
 set_target_properties (AnimHostCore PROPERTIES
     FOLDER Core
 )
+
+find_package(cppzmq CONFIG REQUIRED)
 
 target_compile_definitions(AnimHostCore PRIVATE
     ANIMHOSTCORE_LIBRARY
@@ -25,7 +30,8 @@ target_link_libraries(AnimHostCore PUBLIC
     Qt6::Core
     Qt6::Gui
     Qt6::Widgets
-    libzmq-mt-4_3_5
+    Qt6::Network
+    cppzmq
     QTNodes
 )
 
@@ -33,8 +39,8 @@ target_include_directories(AnimHostCore INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_include_directories(AnimHostCore PUBLIC
     ../../glm
-    ../../nzmqt/3rdparty/cppzmq
-    ../../nzmqt/include
+    #../../nzmqt/3rdparty/cppzmq
+    #../../nzmqt/include
     ./QTNodes/include
     ../animHost_Plugins/PluginInterface
     ../animHost_Plugins/PluginNodeInterface
@@ -43,7 +49,13 @@ target_include_directories(AnimHostCore PUBLIC
 
 target_link_directories(AnimHostCore PUBLIC 
     ./QTNodes/lib
-    ../../nzmqt/3rdparty/zmq/lib
+  #  ../../nzmqt/3rdparty/zmq/lib
+)
+
+
+install(TARGETS AnimHostCore
+    BUNDLE DESTINATION .
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
 

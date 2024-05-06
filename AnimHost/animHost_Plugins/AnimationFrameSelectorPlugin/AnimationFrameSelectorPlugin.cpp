@@ -38,7 +38,7 @@ NodeDataType AnimationFrameSelectorPlugin::dataPortType(QtNodes::PortType portTy
 
 void AnimationFrameSelectorPlugin::run()
 {
-    qDebug() << this->name() << " RUN";
+    onFrameChange(0);
 }
 
 std::shared_ptr<NodeData> AnimationFrameSelectorPlugin::processOutData(QtNodes::PortIndex port)
@@ -132,11 +132,9 @@ void AnimationFrameSelectorPlugin::onFrameChange(int value)
         }
 
         emitDataUpdate(0);
-
         emitRunNextNode();
     }
     else {
         emitDataInvalidated(0);
     }
-
 }

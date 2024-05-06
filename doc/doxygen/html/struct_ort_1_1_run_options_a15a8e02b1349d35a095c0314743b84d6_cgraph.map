@@ -1,0 +1,5 @@
+<map id="Ort::RunOptions::SetTerminate" name="Ort::RunOptions::SetTerminate">
+<area shape="rect" id="Node000001" title="Terminates all currently executing Session::Run calls that were made using this RunOptions instance." alt="" coords="5,5,206,32"/>
+<area shape="rect" id="Node000002" href="$namespace_ort.html#a296b5958479d9889218b17bdb08c1894" title="This returns a reference to the OrtApi interface in use." alt="" coords="254,5,341,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="206,16,238,16,238,21,206,21"/>
+</map>

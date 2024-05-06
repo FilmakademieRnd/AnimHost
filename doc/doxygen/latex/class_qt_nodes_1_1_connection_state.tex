@@ -1,0 +1,142 @@
+\doxysection{Qt\+Nodes\+::Connection\+State Class Reference}
+\hypertarget{class_qt_nodes_1_1_connection_state}{}\label{class_qt_nodes_1_1_connection_state}\index{QtNodes::ConnectionState@{QtNodes::ConnectionState}}
+
+
+{\ttfamily \#include $<$Connection\+State.\+hpp$>$}
+
+
+
+Collaboration diagram for Qt\+Nodes\+::Connection\+State\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_qt_nodes_1_1_connection_state__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{class_qt_nodes_1_1_connection_state_af4bcfc1c7ff04d5cf83c7237b6953480}{Loose\+End}} \{ {\bfseries Pending} = 0
+, {\bfseries Connected} = 1
+, {\bfseries Pending} = 0
+, {\bfseries Connected} = 1
+ \}
+\item 
+enum \mbox{\hyperlink{class_qt_nodes_1_1_connection_state_af4bcfc1c7ff04d5cf83c7237b6953480}{Loose\+End}} \{ {\bfseries Pending} = 0
+, {\bfseries Connected} = 1
+, {\bfseries Pending} = 0
+, {\bfseries Connected} = 1
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_a979c63e70d4fc1bd3609e95589cd9985}\label{class_qt_nodes_1_1_connection_state_a979c63e70d4fc1bd3609e95589cd9985} 
+{\bfseries Connection\+State} (\mbox{\hyperlink{class_qt_nodes_1_1_connection_graphics_object}{Connection\+Graphics\+Object}} \&cgo)
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_a88ce58828d75223a7b6b419f82b94464}\label{class_qt_nodes_1_1_connection_state_a88ce58828d75223a7b6b419f82b94464} 
+{\bfseries Connection\+State} (\mbox{\hyperlink{class_qt_nodes_1_1_connection_state}{Connection\+State}} const \&)=delete
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_a2b90cdd8a4cba1cb363c201069474b50}\label{class_qt_nodes_1_1_connection_state_a2b90cdd8a4cba1cb363c201069474b50} 
+{\bfseries Connection\+State} (\mbox{\hyperlink{class_qt_nodes_1_1_connection_state}{Connection\+State}} \&\&)=delete
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_a7637f66c5ebd764c8cd0a2da3bb7107d}\label{class_qt_nodes_1_1_connection_state_a7637f66c5ebd764c8cd0a2da3bb7107d} 
+\mbox{\hyperlink{class_qt_nodes_1_1_connection_state}{Connection\+State}} \& {\bfseries operator=} (\mbox{\hyperlink{class_qt_nodes_1_1_connection_state}{Connection\+State}} const \&)=delete
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_ada4cdce36d907111b451e19921a357b2}\label{class_qt_nodes_1_1_connection_state_ada4cdce36d907111b451e19921a357b2} 
+\mbox{\hyperlink{class_qt_nodes_1_1_connection_state}{Connection\+State}} \& {\bfseries operator=} (\mbox{\hyperlink{class_qt_nodes_1_1_connection_state}{Connection\+State}} \&\&)=delete
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_af559ffc922b29ca361b528991f6be2f3}\label{class_qt_nodes_1_1_connection_state_af559ffc922b29ca361b528991f6be2f3} 
+\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} {\bfseries required\+Port} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_a08ea4ca2cb99a0c6a6c6f43d7beccf8e}\label{class_qt_nodes_1_1_connection_state_a08ea4ca2cb99a0c6a6c6f43d7beccf8e} 
+bool {\bfseries requires\+Port} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_a991652238699db0dcd8a24003b5ca9de}\label{class_qt_nodes_1_1_connection_state_a991652238699db0dcd8a24003b5ca9de} 
+bool {\bfseries hovered} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_a8e5c1f8c49239aa3c105534f68060d67}\label{class_qt_nodes_1_1_connection_state_a8e5c1f8c49239aa3c105534f68060d67} 
+void {\bfseries set\+Hovered} (bool hovered)
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_a0db869adc1337c3b79840fb08f1c3bc3}\label{class_qt_nodes_1_1_connection_state_a0db869adc1337c3b79840fb08f1c3bc3} 
+void {\bfseries set\+Last\+Hovered\+Node} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id)
+\begin{DoxyCompactList}\small\item\em Caches Node\+Id for further interaction. \end{DoxyCompactList}\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_a8f7c1d9b65475a345b0c3ac5751c52d1}\label{class_qt_nodes_1_1_connection_state_a8f7c1d9b65475a345b0c3ac5751c52d1} 
+\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} {\bfseries last\+Hovered\+Node} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_ab2cd2ad02df3582fd82b8c6ce4c6005a}\label{class_qt_nodes_1_1_connection_state_ab2cd2ad02df3582fd82b8c6ce4c6005a} 
+void {\bfseries reset\+Last\+Hovered\+Node} ()
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_a979c63e70d4fc1bd3609e95589cd9985}\label{class_qt_nodes_1_1_connection_state_a979c63e70d4fc1bd3609e95589cd9985} 
+{\bfseries Connection\+State} (\mbox{\hyperlink{class_qt_nodes_1_1_connection_graphics_object}{Connection\+Graphics\+Object}} \&cgo)
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_a88ce58828d75223a7b6b419f82b94464}\label{class_qt_nodes_1_1_connection_state_a88ce58828d75223a7b6b419f82b94464} 
+{\bfseries Connection\+State} (\mbox{\hyperlink{class_qt_nodes_1_1_connection_state}{Connection\+State}} const \&)=delete
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_a2b90cdd8a4cba1cb363c201069474b50}\label{class_qt_nodes_1_1_connection_state_a2b90cdd8a4cba1cb363c201069474b50} 
+{\bfseries Connection\+State} (\mbox{\hyperlink{class_qt_nodes_1_1_connection_state}{Connection\+State}} \&\&)=delete
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_a7637f66c5ebd764c8cd0a2da3bb7107d}\label{class_qt_nodes_1_1_connection_state_a7637f66c5ebd764c8cd0a2da3bb7107d} 
+\mbox{\hyperlink{class_qt_nodes_1_1_connection_state}{Connection\+State}} \& {\bfseries operator=} (\mbox{\hyperlink{class_qt_nodes_1_1_connection_state}{Connection\+State}} const \&)=delete
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_ada4cdce36d907111b451e19921a357b2}\label{class_qt_nodes_1_1_connection_state_ada4cdce36d907111b451e19921a357b2} 
+\mbox{\hyperlink{class_qt_nodes_1_1_connection_state}{Connection\+State}} \& {\bfseries operator=} (\mbox{\hyperlink{class_qt_nodes_1_1_connection_state}{Connection\+State}} \&\&)=delete
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_af559ffc922b29ca361b528991f6be2f3}\label{class_qt_nodes_1_1_connection_state_af559ffc922b29ca361b528991f6be2f3} 
+\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} {\bfseries required\+Port} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_a08ea4ca2cb99a0c6a6c6f43d7beccf8e}\label{class_qt_nodes_1_1_connection_state_a08ea4ca2cb99a0c6a6c6f43d7beccf8e} 
+bool {\bfseries requires\+Port} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_a991652238699db0dcd8a24003b5ca9de}\label{class_qt_nodes_1_1_connection_state_a991652238699db0dcd8a24003b5ca9de} 
+bool {\bfseries hovered} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_a8e5c1f8c49239aa3c105534f68060d67}\label{class_qt_nodes_1_1_connection_state_a8e5c1f8c49239aa3c105534f68060d67} 
+void {\bfseries set\+Hovered} (bool hovered)
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_a0db869adc1337c3b79840fb08f1c3bc3}\label{class_qt_nodes_1_1_connection_state_a0db869adc1337c3b79840fb08f1c3bc3} 
+void {\bfseries set\+Last\+Hovered\+Node} (\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} const node\+Id)
+\begin{DoxyCompactList}\small\item\em Caches Node\+Id for further interaction. \end{DoxyCompactList}\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_a8f7c1d9b65475a345b0c3ac5751c52d1}\label{class_qt_nodes_1_1_connection_state_a8f7c1d9b65475a345b0c3ac5751c52d1} 
+\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} {\bfseries last\+Hovered\+Node} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_ab2cd2ad02df3582fd82b8c6ce4c6005a}\label{class_qt_nodes_1_1_connection_state_ab2cd2ad02df3582fd82b8c6ce4c6005a} 
+void {\bfseries reset\+Last\+Hovered\+Node} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_a95fe59e0d945e812b4a8645fdd89f0ff}\label{class_qt_nodes_1_1_connection_state_a95fe59e0d945e812b4a8645fdd89f0ff} 
+\mbox{\hyperlink{class_qt_nodes_1_1_connection_graphics_object}{Connection\+Graphics\+Object}} \& {\bfseries \+\_\+cgo}
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_add668d0998e1f5651a39afd4479036ac}\label{class_qt_nodes_1_1_connection_state_add668d0998e1f5651a39afd4479036ac} 
+bool {\bfseries \+\_\+hovered}
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_state_ad684efbcc59c43ff5abc08fa45ea1713}\label{class_qt_nodes_1_1_connection_state_ad684efbcc59c43ff5abc08fa45ea1713} 
+\mbox{\hyperlink{_definitions_8hpp_a7883a827397342fb69135c5efaeedff3}{Node\+Id}} {\bfseries \+\_\+last\+Hovered\+Node} \{Invalid\+Node\+Id\}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Stores currently draggind end. Remembers last hovered Node. 
+
+\doxysubsection{Member Enumeration Documentation}
+\Hypertarget{class_qt_nodes_1_1_connection_state_af4bcfc1c7ff04d5cf83c7237b6953480}\label{class_qt_nodes_1_1_connection_state_af4bcfc1c7ff04d5cf83c7237b6953480} 
+\index{QtNodes::ConnectionState@{QtNodes::ConnectionState}!LooseEnd@{LooseEnd}}
+\index{LooseEnd@{LooseEnd}!QtNodes::ConnectionState@{QtNodes::ConnectionState}}
+\doxysubsubsection{\texorpdfstring{LooseEnd}{LooseEnd}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{class_qt_nodes_1_1_connection_state_af4bcfc1c7ff04d5cf83c7237b6953480}{Qt\+Nodes\+::\+Connection\+State\+::\+Loose\+End}}}
+
+Defines whether we construct a new connection or it is already binding two nodes. \Hypertarget{class_qt_nodes_1_1_connection_state_af4bcfc1c7ff04d5cf83c7237b6953480}\label{class_qt_nodes_1_1_connection_state_af4bcfc1c7ff04d5cf83c7237b6953480} 
+\index{QtNodes::ConnectionState@{QtNodes::ConnectionState}!LooseEnd@{LooseEnd}}
+\index{LooseEnd@{LooseEnd}!QtNodes::ConnectionState@{QtNodes::ConnectionState}}
+\doxysubsubsection{\texorpdfstring{LooseEnd}{LooseEnd}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{class_qt_nodes_1_1_connection_state_af4bcfc1c7ff04d5cf83c7237b6953480}{Qt\+Nodes\+::\+Connection\+State\+::\+Loose\+End}}}
+
+Defines whether we construct a new connection or it is already binding two nodes. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/core/\+QTNodes/include/\+Qt\+Nodes/internal/Connection\+State.\+hpp\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/core/\+QTNodes/include/\+Qt\+Nodes/internal/internal/Connection\+State.\+hpp\end{DoxyCompactItemize}

@@ -1,0 +1,28 @@
+<map id="Ort::Value::CreateTensor" name="Ort::Value::CreateTensor">
+<area shape="rect" id="Node000001" title="Creates a tensor with a user supplied buffer. Wraps OrtApi::CreateTensorWithDataAsOrtValue." alt="" coords="453,307,618,333"/>
+<area shape="poly" id="edge10_Node000001_Node000001" title=" " alt="" coords="574,294,561,288,536,285,512,287,500,292,497,297,502,305,498,308,491,298,496,288,511,282,536,280,562,283,576,289"/>
+<area shape="rect" id="Node000002" href="$struct_ort_1_1_value.html#a6b8285d4630300fcc313cd10a2acba30" title="Wraps OrtApi::CreateValue." alt="" coords="237,5,389,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="527,292,513,239,490,173,454,104,430,73,403,46,386,35,388,30,407,42,434,70,458,101,495,170,518,237,532,291"/>
+<area shape="rect" id="Node000003" href="$struct_ort_1_1_value.html#a0c36d72cdbef90aa1213a9d2553dfff2" title="Wraps OrtApi::CreateOpaqueValue." alt="" coords="227,56,399,83"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="524,293,508,250,483,196,448,142,427,118,403,97,384,85,387,81,407,93,431,114,452,139,487,194,513,248,529,291"/>
+<area shape="rect" id="Node000004" href="$struct_ort_1_1_value.html#aa3f882f8fa47dadd335c07b350db954d" title="Wraps OrtApi::CreateValue." alt="" coords="221,107,405,133"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="519,294,501,260,475,220,442,181,403,148,382,136,385,132,407,143,446,177,479,217,505,257,524,291"/>
+<area shape="rect" id="Node000005" href="$struct_ort_1_1_value.html#a7d1841b3f7caadcb33711701cef97615" title="This is a simple forwarding method to the other overload that helps deducing data type enum value fro..." alt="" coords="229,181,397,224"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="499,300,404,245,366,227,368,222,406,240,501,296"/>
+<area shape="rect" id="Node000006" href="$struct_ort_1_1_value.html#a5f05df6028c8e6dadaa930be29af221a" title="This is a simple forwarding method to the below CreateSparseTensor. This helps to specify data type e..." alt="" coords="5,211,173,253"/>
+<area shape="poly" id="edge8_Node000001_Node000006" title=" " alt="" coords="469,305,404,289,172,247,173,242,406,284,470,300"/>
+<area shape="rect" id="Node000007" href="$struct_ort_1_1_value.html#a69a8b95060c2a3a7c99178b5fc8bbd0d" title="Creates an OrtValue instance containing SparseTensor. This constructs a sparse tensor that makes use ..." alt="" coords="229,299,397,341"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="437,323,397,323,397,317,437,317"/>
+<area shape="rect" id="Node000008" href="$struct_ort_1_1_value.html#a7d998fdcad3c495fe5e7022a33e5690e" title="Creates an instance of OrtValue containing sparse tensor. The created instance has no data...." alt="" coords="229,365,397,408"/>
+<area shape="poly" id="edge9_Node000001_Node000008" title=" " alt="" coords="475,341,387,367,386,362,473,336"/>
+<area shape="rect" id="Node000009" href="$struct_ort_1_1_value.html#a30dfeeee6f819d5c9df530cb164e4626" title="Creates a tensor with a user supplied buffer. Wraps OrtApi::CreateTensorWithDataAsOrtValue." alt="" coords="230,432,396,459"/>
+<area shape="poly" id="edge11_Node000001_Node000009" title=" " alt="" coords="511,346,464,385,406,422,377,434,375,429,404,418,461,381,508,342"/>
+<area shape="rect" id="Node000010" href="$struct_ort_1_1_value.html#ae6214620fce2d87d9015ab44ebec0a11" title="Creates a tensor using a supplied OrtAllocator. Wraps OrtApi::CreateTensorAsOrtValue." alt="" coords="230,483,396,509"/>
+<area shape="poly" id="edge12_Node000001_Node000010" title=" " alt="" coords="521,348,475,411,443,444,406,473,383,484,380,480,404,468,439,440,471,407,516,345"/>
+<area shape="rect" id="Node000011" href="$struct_ort_1_1_value.html#a29ade31d524988ca8b461ca62b88c21a" title="Creates a tensor using a supplied OrtAllocator. Wraps OrtApi::CreateTensorAsOrtValue." alt="" coords="230,533,396,560"/>
+<area shape="poly" id="edge13_Node000001_Node000011" title=" " alt="" coords="527,349,509,388,483,435,449,483,407,523,386,535,383,530,403,519,445,479,479,432,504,386,522,347"/>
+<area shape="rect" id="Node000012" href="$class_ort_1_1_training_session.html#a80f2f71bc5f0889957a5cd5f28f004a8" title="Returns a contiguous buffer that holds a copy of all training state parameters." alt="" coords="243,584,383,627"/>
+<area shape="poly" id="edge14_Node000001_Node000012" title=" " alt="" coords="530,349,514,397,490,457,454,519,432,548,407,574,384,589,381,584,403,570,428,545,450,517,485,455,509,395,525,347"/>
+<area shape="poly" id="edge5_Node000005_Node000005" title=" " alt="" coords="349,168,335,162,313,160,292,162,279,167,274,173,276,180,270,181,269,171,276,162,291,157,313,155,337,157,351,163"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="214,218,173,224,173,218,213,213"/>
+</map>

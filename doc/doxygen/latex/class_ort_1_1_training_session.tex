@@ -1,0 +1,548 @@
+\doxysection{Ort\+::Training\+Session Class Reference}
+\hypertarget{class_ort_1_1_training_session}{}\label{class_ort_1_1_training_session}\index{Ort::TrainingSession@{Ort::TrainingSession}}
+
+
+Trainer class that provides training, evaluation and optimizer methods for training an ONNX models.  
+
+
+
+
+{\ttfamily \#include $<$onnxruntime\+\_\+training\+\_\+cxx\+\_\+api.\+h$>$}
+
+
+
+Inheritance diagram for Ort\+::Training\+Session\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=191pt]{class_ort_1_1_training_session__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Ort\+::Training\+Session\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=191pt]{class_ort_1_1_training_session__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{Indent}\textbf{ Constructing the Training Session}\par
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_ort_1_1_training_session_afce2cfbc95c88626e5f0802e8b76a5a1}{Training\+Session}} (const \mbox{\hyperlink{struct_ort_1_1_env}{Env}} \&env, const \mbox{\hyperlink{struct_ort_1_1_session_options}{Session\+Options}} \&session\+\_\+options, \mbox{\hyperlink{class_ort_1_1_checkpoint_state}{Checkpoint\+State}} \&checkpoint\+\_\+state, const std\+::basic\+\_\+string$<$ ORTCHAR\+\_\+T $>$ \&train\+\_\+model\+\_\+path, const std\+::optional$<$ std\+::basic\+\_\+string$<$ ORTCHAR\+\_\+T $>$ $>$ \&eval\+\_\+model\+\_\+path=std\+::nullopt, const std\+::optional$<$ std\+::basic\+\_\+string$<$ ORTCHAR\+\_\+T $>$ $>$ \&optimizer\+\_\+model\+\_\+path=std\+::nullopt)
+\begin{DoxyCompactList}\small\item\em Create a training session that can be used to begin or resume training. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}\textbf{ Implementing The Training Loop}\par
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ \mbox{\hyperlink{struct_ort_1_1_value}{Value}} $>$ \mbox{\hyperlink{class_ort_1_1_training_session_a9785fb39a9c7194d0015bb2c9eb74ab6}{Train\+Step}} (const std\+::vector$<$ \mbox{\hyperlink{struct_ort_1_1_value}{Value}} $>$ \&input\+\_\+values)
+\begin{DoxyCompactList}\small\item\em Computes the outputs of the training model and the gradients of the trainable parameters for the given inputs. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_ort_1_1_training_session_a6d754a8817f5c71170fafb5feebfb8ee}{Lazy\+Reset\+Grad}} ()
+\begin{DoxyCompactList}\small\item\em Reset the gradients of all trainable parameters to zero lazily. \end{DoxyCompactList}\item 
+std\+::vector$<$ \mbox{\hyperlink{struct_ort_1_1_value}{Value}} $>$ \mbox{\hyperlink{class_ort_1_1_training_session_a1aca68bdee1e26cd5838ec7da9b2d0c8}{Eval\+Step}} (const std\+::vector$<$ \mbox{\hyperlink{struct_ort_1_1_value}{Value}} $>$ \&input\+\_\+values)
+\begin{DoxyCompactList}\small\item\em Computes the outputs for the eval model for the given inputs. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_ort_1_1_training_session_afffbcd32c5c5cd53ee55bd4a463303b7}{Set\+Learning\+Rate}} (float learning\+\_\+rate)
+\begin{DoxyCompactList}\small\item\em Sets the learning rate for this training session. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{class_ort_1_1_training_session_a681e7ea539c9a4cf517bed5ef53e7ab4}{Get\+Learning\+Rate}} () const
+\begin{DoxyCompactList}\small\item\em Gets the current learning rate for this training session. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_ort_1_1_training_session_a116e1770b62abe3d3ef3dc9afebcd6a9}{Register\+Linear\+LRScheduler}} (int64\+\_\+t warmup\+\_\+step\+\_\+count, int64\+\_\+t total\+\_\+step\+\_\+count, float initial\+\_\+lr)
+\begin{DoxyCompactList}\small\item\em Registers a linear learning rate scheduler for the training session. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_ort_1_1_training_session_aecb39113eb291195701aa15f8ad378a8}{Scheduler\+Step}} ()
+\begin{DoxyCompactList}\small\item\em Update the learning rate based on the registered learing rate scheduler. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_ort_1_1_training_session_a065d5a04f04d45af7e2052708c52d21e}{Optimizer\+Step}} ()
+\begin{DoxyCompactList}\small\item\em Performs the weight updates for the trainable parameters using the optimizer model. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}\textbf{ Prepare For Inferencing}\par
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_ort_1_1_training_session_a67df45e244a1ddcca99f430a2c9262e3}{Export\+Model\+For\+Inferencing}} (const std\+::basic\+\_\+string$<$ ORTCHAR\+\_\+T $>$ \&inference\+\_\+model\+\_\+path, const std\+::vector$<$ std\+::string $>$ \&graph\+\_\+output\+\_\+names)
+\begin{DoxyCompactList}\small\item\em Export a model that can be used for inferencing. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}\textbf{ Model IO Information}\par
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{class_ort_1_1_training_session_a333b95516b40c40bffcf868154c11a9b}{Input\+Names}} (const bool training)
+\begin{DoxyCompactList}\small\item\em Retrieves the names of the user inputs for the training and eval models. \end{DoxyCompactList}\item 
+std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{class_ort_1_1_training_session_af03322a503328d875c301367ab89c584}{Output\+Names}} (const bool training)
+\begin{DoxyCompactList}\small\item\em Retrieves the names of the user outputs for the training and eval models. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}\textbf{ Accessing The Training Session State}\par
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_ort_1_1_value}{Value}} \mbox{\hyperlink{class_ort_1_1_training_session_a80f2f71bc5f0889957a5cd5f28f004a8}{To\+Buffer}} (const bool only\+\_\+trainable)
+\begin{DoxyCompactList}\small\item\em Returns a contiguous buffer that holds a copy of all training state parameters. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_ort_1_1_training_session_afed699e00a7e7c60b591774788f8bb23}{From\+Buffer}} (\mbox{\hyperlink{struct_ort_1_1_value}{Value}} \&buffer)
+\begin{DoxyCompactList}\small\item\em Loads the training session model parameters from a contiguous buffer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\end{Indent}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ Ort\+Training\+Session $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+constexpr {\bfseries Base} (contained\+\_\+type \texorpdfstring{$\ast$}{*}p) noexcept
+\item 
+{\bfseries Base} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+{\bfseries Base} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+constexpr {\bfseries operator contained\+\_\+type \texorpdfstring{$\ast$}{*}} () const noexcept
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries release} ()
+\begin{DoxyCompactList}\small\item\em Relinquishes ownership of the contained C object pointer The underlying object is not destroyed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_ort_1_1_training_session_a73e283e82bad7d427e0e7ece97c4d2f0}\label{class_ort_1_1_training_session_a73e283e82bad7d427e0e7ece97c4d2f0} 
+size\+\_\+t {\bfseries training\+\_\+model\+\_\+output\+\_\+count\+\_\+}
+\item 
+\Hypertarget{class_ort_1_1_training_session_a05e55933f218a60587e817f5890f76a7}\label{class_ort_1_1_training_session_a05e55933f218a60587e817f5890f76a7} 
+size\+\_\+t {\bfseries eval\+\_\+model\+\_\+output\+\_\+count\+\_\+}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ Ort\+Training\+Session $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+using {\bfseries contained\+\_\+type}
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ Ort\+Training\+Session $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries p\+\_\+}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Trainer class that provides training, evaluation and optimizer methods for training an ONNX models. 
+
+The training session requires four training artifacts
+\begin{DoxyItemize}
+\item The training onnx model
+\item The evaluation onnx model (optional)
+\item The optimizer onnx model
+\item The checkpoint directory
+\end{DoxyItemize}
+
+These artifacts can be generated using the {\ttfamily onnxruntime-\/training} python \href{https://github.com/microsoft/onnxruntime/blob/main/orttraining/orttraining/python/training/onnxblock/README.md}{\texttt{ utility}}. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_ort_1_1_training_session_afce2cfbc95c88626e5f0802e8b76a5a1}\label{class_ort_1_1_training_session_afce2cfbc95c88626e5f0802e8b76a5a1} 
+\index{Ort::TrainingSession@{Ort::TrainingSession}!TrainingSession@{TrainingSession}}
+\index{TrainingSession@{TrainingSession}!Ort::TrainingSession@{Ort::TrainingSession}}
+\doxysubsubsection{\texorpdfstring{TrainingSession()}{TrainingSession()}}
+{\footnotesize\ttfamily Ort\+::\+Training\+Session\+::\+Training\+Session (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_ort_1_1_env}{Env}} \&}]{env,  }\item[{const \mbox{\hyperlink{struct_ort_1_1_session_options}{Session\+Options}} \&}]{session\+\_\+options,  }\item[{\mbox{\hyperlink{class_ort_1_1_checkpoint_state}{Checkpoint\+State}} \&}]{checkpoint\+\_\+state,  }\item[{const std\+::basic\+\_\+string$<$ ORTCHAR\+\_\+T $>$ \&}]{train\+\_\+model\+\_\+path,  }\item[{const std\+::optional$<$ std\+::basic\+\_\+string$<$ ORTCHAR\+\_\+T $>$ $>$ \&}]{eval\+\_\+model\+\_\+path = {\ttfamily std\+:\+:nullopt},  }\item[{const std\+::optional$<$ std\+::basic\+\_\+string$<$ ORTCHAR\+\_\+T $>$ $>$ \&}]{optimizer\+\_\+model\+\_\+path = {\ttfamily std\+:\+:nullopt} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Create a training session that can be used to begin or resume training. 
+
+This constructor instantiates the training session based on the env and session options provided that can begin or resume training from a given checkpoint state for the given onnx models. The checkpoint state represents the parameters of the training session which will be moved to the device specified by the user through the session options (if necessary).
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em env} & \doxylink{struct_ort_1_1_env}{Env} to be used for the training session. \\
+\hline
+\mbox{\texttt{ in}}  & {\em session\+\_\+options} & \doxylink{struct_ort_1_1_session_options}{Session\+Options} that the user can customize for this training session. \\
+\hline
+\mbox{\texttt{ in}}  & {\em checkpoint\+\_\+state} & Training states that the training session uses as a starting point for training. \\
+\hline
+\mbox{\texttt{ in}}  & {\em train\+\_\+model\+\_\+path} & Model to be used to perform training. \\
+\hline
+\mbox{\texttt{ in}}  & {\em eval\+\_\+model\+\_\+path} & Model to be used to perform evaluation. \\
+\hline
+\mbox{\texttt{ in}}  & {\em optimizer\+\_\+model\+\_\+path} & Model to be used to perform gradient descent. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_ort_1_1_training_session_afce2cfbc95c88626e5f0802e8b76a5a1_cgraph}
+\end{center}
+\end{figure}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_ort_1_1_training_session_a1aca68bdee1e26cd5838ec7da9b2d0c8}\label{class_ort_1_1_training_session_a1aca68bdee1e26cd5838ec7da9b2d0c8} 
+\index{Ort::TrainingSession@{Ort::TrainingSession}!EvalStep@{EvalStep}}
+\index{EvalStep@{EvalStep}!Ort::TrainingSession@{Ort::TrainingSession}}
+\doxysubsubsection{\texorpdfstring{EvalStep()}{EvalStep()}}
+{\footnotesize\ttfamily std\+::vector$<$ \mbox{\hyperlink{struct_ort_1_1_value}{Value}} $>$ Ort\+::\+Training\+Session\+::\+Eval\+Step (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ \mbox{\hyperlink{struct_ort_1_1_value}{Value}} $>$ \&}]{input\+\_\+values }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Computes the outputs for the eval model for the given inputs. 
+
+This function performs an eval step that computes the outputs of the eval model for the given inputs. The eval step is performed based on the eval model that was provided to the training session.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em input\+\_\+values} & The user inputs to the eval model. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A std\+::vector of \doxylink{struct_ort_1_1_value}{Ort\+::\+Value} objects that represents the output of the eval pass. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_ort_1_1_training_session_a1aca68bdee1e26cd5838ec7da9b2d0c8_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=185pt]{class_ort_1_1_training_session_a1aca68bdee1e26cd5838ec7da9b2d0c8_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_ort_1_1_training_session_a67df45e244a1ddcca99f430a2c9262e3}\label{class_ort_1_1_training_session_a67df45e244a1ddcca99f430a2c9262e3} 
+\index{Ort::TrainingSession@{Ort::TrainingSession}!ExportModelForInferencing@{ExportModelForInferencing}}
+\index{ExportModelForInferencing@{ExportModelForInferencing}!Ort::TrainingSession@{Ort::TrainingSession}}
+\doxysubsubsection{\texorpdfstring{ExportModelForInferencing()}{ExportModelForInferencing()}}
+{\footnotesize\ttfamily void Ort\+::\+Training\+Session\+::\+Export\+Model\+For\+Inferencing (\begin{DoxyParamCaption}\item[{const std\+::basic\+\_\+string$<$ ORTCHAR\+\_\+T $>$ \&}]{inference\+\_\+model\+\_\+path,  }\item[{const std\+::vector$<$ std\+::string $>$ \&}]{graph\+\_\+output\+\_\+names }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Export a model that can be used for inferencing. 
+
+If the training session was provided with an eval model, the training session can generate an inference model if it knows the inference graph outputs. The input inference graph outputs are used to prune the eval model so that the inference model\textquotesingle{}s outputs align with the provided outputs. The exported model is saved at the path provided and can be used for inferencing with \doxylink{struct_ort_1_1_session}{Ort\+::\+Session}. \begin{DoxyNote}{Note}
+Note that the function re-\/loads the eval model from the path provided to \doxylink{class_ort_1_1_training_session}{Ort\+::\+Training\+Session} and expects that this path still be valid.
+\end{DoxyNote}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em inference\+\_\+model\+\_\+path} & Path where the inference model should be serialized to. \\
+\hline
+\mbox{\texttt{ in}}  & {\em graph\+\_\+output\+\_\+names} & Names of the outputs that are needed in the inference model. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_ort_1_1_training_session_a67df45e244a1ddcca99f430a2c9262e3_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=218pt]{class_ort_1_1_training_session_a67df45e244a1ddcca99f430a2c9262e3_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_ort_1_1_training_session_afed699e00a7e7c60b591774788f8bb23}\label{class_ort_1_1_training_session_afed699e00a7e7c60b591774788f8bb23} 
+\index{Ort::TrainingSession@{Ort::TrainingSession}!FromBuffer@{FromBuffer}}
+\index{FromBuffer@{FromBuffer}!Ort::TrainingSession@{Ort::TrainingSession}}
+\doxysubsubsection{\texorpdfstring{FromBuffer()}{FromBuffer()}}
+{\footnotesize\ttfamily void Ort\+::\+Training\+Session\+::\+From\+Buffer (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_ort_1_1_value}{Value}} \&}]{buffer }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Loads the training session model parameters from a contiguous buffer. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em buffer} & Contiguous buffer to load the parameters from. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_ort_1_1_training_session_afed699e00a7e7c60b591774788f8bb23_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_ort_1_1_training_session_a681e7ea539c9a4cf517bed5ef53e7ab4}\label{class_ort_1_1_training_session_a681e7ea539c9a4cf517bed5ef53e7ab4} 
+\index{Ort::TrainingSession@{Ort::TrainingSession}!GetLearningRate@{GetLearningRate}}
+\index{GetLearningRate@{GetLearningRate}!Ort::TrainingSession@{Ort::TrainingSession}}
+\doxysubsubsection{\texorpdfstring{GetLearningRate()}{GetLearningRate()}}
+{\footnotesize\ttfamily float Ort\+::\+Training\+Session\+::\+Get\+Learning\+Rate (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets the current learning rate for this training session. 
+
+This function allows users to get the learning rate for the training session. The current learning rate is maintained by the training session, and users can query it for the purpose of implementing their own learning rate schedulers.
+
+\begin{DoxyReturn}{Returns}
+float representing the current learning rate. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_ort_1_1_training_session_a681e7ea539c9a4cf517bed5ef53e7ab4_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=185pt]{class_ort_1_1_training_session_a681e7ea539c9a4cf517bed5ef53e7ab4_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_ort_1_1_training_session_a333b95516b40c40bffcf868154c11a9b}\label{class_ort_1_1_training_session_a333b95516b40c40bffcf868154c11a9b} 
+\index{Ort::TrainingSession@{Ort::TrainingSession}!InputNames@{InputNames}}
+\index{InputNames@{InputNames}!Ort::TrainingSession@{Ort::TrainingSession}}
+\doxysubsubsection{\texorpdfstring{InputNames()}{InputNames()}}
+{\footnotesize\ttfamily std\+::vector$<$ std\+::string $>$ Ort\+::\+Training\+Session\+::\+Input\+Names (\begin{DoxyParamCaption}\item[{const bool}]{training }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Retrieves the names of the user inputs for the training and eval models. 
+
+This function returns the names of inputs of the training or eval model that can be associated with the \doxylink{struct_ort_1_1_value}{Ort\+::\+Value(s)} provided to the \doxylink{class_ort_1_1_training_session_a9785fb39a9c7194d0015bb2c9eb74ab6}{Ort\+::\+Training\+Session\+::\+Train\+Step} or \doxylink{class_ort_1_1_training_session_a1aca68bdee1e26cd5838ec7da9b2d0c8}{Ort\+::\+Training\+Session\+::\+Eval\+Step} function.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em training} & Whether the training model input names are requested or eval model input names. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Graph input names for either the training model or the eval model. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_ort_1_1_training_session_a333b95516b40c40bffcf868154c11a9b_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_ort_1_1_training_session_a6d754a8817f5c71170fafb5feebfb8ee}\label{class_ort_1_1_training_session_a6d754a8817f5c71170fafb5feebfb8ee} 
+\index{Ort::TrainingSession@{Ort::TrainingSession}!LazyResetGrad@{LazyResetGrad}}
+\index{LazyResetGrad@{LazyResetGrad}!Ort::TrainingSession@{Ort::TrainingSession}}
+\doxysubsubsection{\texorpdfstring{LazyResetGrad()}{LazyResetGrad()}}
+{\footnotesize\ttfamily void Ort\+::\+Training\+Session\+::\+Lazy\+Reset\+Grad (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Reset the gradients of all trainable parameters to zero lazily. 
+
+This function sets the internal state of the training session such that the gradients of the trainable parameters in the Ort\+Checkpoint\+State will be scheduled to be reset just before the new gradients are computed on the next invocation of the next \doxylink{class_ort_1_1_training_session_a9785fb39a9c7194d0015bb2c9eb74ab6}{Ort\+::\+Training\+Session\+::\+Train\+Step}. Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_ort_1_1_training_session_a6d754a8817f5c71170fafb5feebfb8ee_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=185pt]{class_ort_1_1_training_session_a6d754a8817f5c71170fafb5feebfb8ee_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_ort_1_1_training_session_a065d5a04f04d45af7e2052708c52d21e}\label{class_ort_1_1_training_session_a065d5a04f04d45af7e2052708c52d21e} 
+\index{Ort::TrainingSession@{Ort::TrainingSession}!OptimizerStep@{OptimizerStep}}
+\index{OptimizerStep@{OptimizerStep}!Ort::TrainingSession@{Ort::TrainingSession}}
+\doxysubsubsection{\texorpdfstring{OptimizerStep()}{OptimizerStep()}}
+{\footnotesize\ttfamily void Ort\+::\+Training\+Session\+::\+Optimizer\+Step (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Performs the weight updates for the trainable parameters using the optimizer model. 
+
+This function performs the weight update step that updates the trainable parameters such that they take a step in the direction of their gradients (gradient descent). The optimizer step is performed based on the optimizer model that was provided to the training session. The updated parameters are stored inside the training state so that they can be used by the next \doxylink{class_ort_1_1_training_session_a9785fb39a9c7194d0015bb2c9eb74ab6}{Ort\+::\+Training\+Session\+::\+Train\+Step} function call. Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_ort_1_1_training_session_a065d5a04f04d45af7e2052708c52d21e_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=185pt]{class_ort_1_1_training_session_a065d5a04f04d45af7e2052708c52d21e_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_ort_1_1_training_session_af03322a503328d875c301367ab89c584}\label{class_ort_1_1_training_session_af03322a503328d875c301367ab89c584} 
+\index{Ort::TrainingSession@{Ort::TrainingSession}!OutputNames@{OutputNames}}
+\index{OutputNames@{OutputNames}!Ort::TrainingSession@{Ort::TrainingSession}}
+\doxysubsubsection{\texorpdfstring{OutputNames()}{OutputNames()}}
+{\footnotesize\ttfamily std\+::vector$<$ std\+::string $>$ Ort\+::\+Training\+Session\+::\+Output\+Names (\begin{DoxyParamCaption}\item[{const bool}]{training }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Retrieves the names of the user outputs for the training and eval models. 
+
+This function returns the names of outputs of the training or eval model that can be associated with the \doxylink{struct_ort_1_1_value}{Ort\+::\+Value(s)} returned by the \doxylink{class_ort_1_1_training_session_a9785fb39a9c7194d0015bb2c9eb74ab6}{Ort\+::\+Training\+Session\+::\+Train\+Step} or \doxylink{class_ort_1_1_training_session_a1aca68bdee1e26cd5838ec7da9b2d0c8}{Ort\+::\+Training\+Session\+::\+Eval\+Step} function.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em training} & Whether the training model output names are requested or eval model output names. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Graph output names for either the training model or the eval model. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_ort_1_1_training_session_af03322a503328d875c301367ab89c584_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_ort_1_1_training_session_a116e1770b62abe3d3ef3dc9afebcd6a9}\label{class_ort_1_1_training_session_a116e1770b62abe3d3ef3dc9afebcd6a9} 
+\index{Ort::TrainingSession@{Ort::TrainingSession}!RegisterLinearLRScheduler@{RegisterLinearLRScheduler}}
+\index{RegisterLinearLRScheduler@{RegisterLinearLRScheduler}!Ort::TrainingSession@{Ort::TrainingSession}}
+\doxysubsubsection{\texorpdfstring{RegisterLinearLRScheduler()}{RegisterLinearLRScheduler()}}
+{\footnotesize\ttfamily void Ort\+::\+Training\+Session\+::\+Register\+Linear\+LRScheduler (\begin{DoxyParamCaption}\item[{int64\+\_\+t}]{warmup\+\_\+step\+\_\+count,  }\item[{int64\+\_\+t}]{total\+\_\+step\+\_\+count,  }\item[{float}]{initial\+\_\+lr }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Registers a linear learning rate scheduler for the training session. 
+
+Register a linear learning rate scheduler that decays the learning rate by linearly updated multiplicative factor from the initial learning rate set on the training session to 0. The decay is performed after the initial warm up phase where the learning rate is linearly incremented from 0 to the initial learning rate provided.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em warmup\+\_\+step\+\_\+count} & Warmup steps for LR warmup. \\
+\hline
+\mbox{\texttt{ in}}  & {\em total\+\_\+step\+\_\+count} & Total step count. \\
+\hline
+\mbox{\texttt{ in}}  & {\em initial\+\_\+lr} & The initial learning rate to be used by the training session. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_ort_1_1_training_session_a116e1770b62abe3d3ef3dc9afebcd6a9_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=220pt]{class_ort_1_1_training_session_a116e1770b62abe3d3ef3dc9afebcd6a9_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_ort_1_1_training_session_aecb39113eb291195701aa15f8ad378a8}\label{class_ort_1_1_training_session_aecb39113eb291195701aa15f8ad378a8} 
+\index{Ort::TrainingSession@{Ort::TrainingSession}!SchedulerStep@{SchedulerStep}}
+\index{SchedulerStep@{SchedulerStep}!Ort::TrainingSession@{Ort::TrainingSession}}
+\doxysubsubsection{\texorpdfstring{SchedulerStep()}{SchedulerStep()}}
+{\footnotesize\ttfamily void Ort\+::\+Training\+Session\+::\+Scheduler\+Step (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Update the learning rate based on the registered learing rate scheduler. 
+
+Takes a scheduler step that updates the learning rate that is being used by the training session. This function should typically be called before invoking the optimizer step for each round, or as determined necessary to update the learning rate being used by the training session. \begin{DoxyNote}{Note}
+Please note that a valid predefined learning rate scheduler must be first registered to invoke this function. 
+\end{DoxyNote}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_ort_1_1_training_session_aecb39113eb291195701aa15f8ad378a8_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=185pt]{class_ort_1_1_training_session_aecb39113eb291195701aa15f8ad378a8_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_ort_1_1_training_session_afffbcd32c5c5cd53ee55bd4a463303b7}\label{class_ort_1_1_training_session_afffbcd32c5c5cd53ee55bd4a463303b7} 
+\index{Ort::TrainingSession@{Ort::TrainingSession}!SetLearningRate@{SetLearningRate}}
+\index{SetLearningRate@{SetLearningRate}!Ort::TrainingSession@{Ort::TrainingSession}}
+\doxysubsubsection{\texorpdfstring{SetLearningRate()}{SetLearningRate()}}
+{\footnotesize\ttfamily void Ort\+::\+Training\+Session\+::\+Set\+Learning\+Rate (\begin{DoxyParamCaption}\item[{float}]{learning\+\_\+rate }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets the learning rate for this training session. 
+
+This function allows users to set the learning rate for the training session. The current learning rate is maintained by the training session and can be overwritten by invoking this function with the desired learning rate. This function should not be used when a valid learning rate scheduler is registered. It should be used either to set the learning rate derived from a custom learning rate scheduler or to set a constant learning rate to be used throughout the training session. \begin{DoxyNote}{Note}
+Please note that this function does not set the initial learning rate that may be needed by the predefined learning rate schedulers. To set the initial learning rate for learning rate schedulers, please look at the function \doxylink{class_ort_1_1_training_session_a116e1770b62abe3d3ef3dc9afebcd6a9}{Ort\+::\+Training\+Session\+::\+Register\+Linear\+LRScheduler}.
+\end{DoxyNote}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em learning\+\_\+rate} & Desired learning rate to be set. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_ort_1_1_training_session_afffbcd32c5c5cd53ee55bd4a463303b7_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=185pt]{class_ort_1_1_training_session_afffbcd32c5c5cd53ee55bd4a463303b7_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_ort_1_1_training_session_a80f2f71bc5f0889957a5cd5f28f004a8}\label{class_ort_1_1_training_session_a80f2f71bc5f0889957a5cd5f28f004a8} 
+\index{Ort::TrainingSession@{Ort::TrainingSession}!ToBuffer@{ToBuffer}}
+\index{ToBuffer@{ToBuffer}!Ort::TrainingSession@{Ort::TrainingSession}}
+\doxysubsubsection{\texorpdfstring{ToBuffer()}{ToBuffer()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_ort_1_1_value}{Value}} Ort\+::\+Training\+Session\+::\+To\+Buffer (\begin{DoxyParamCaption}\item[{const bool}]{only\+\_\+trainable }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns a contiguous buffer that holds a copy of all training state parameters. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em only\+\_\+trainable} & Whether to only copy trainable parameters or to copy all parameters. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Contiguous buffer to the model parameters. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_ort_1_1_training_session_a80f2f71bc5f0889957a5cd5f28f004a8_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_ort_1_1_training_session_a9785fb39a9c7194d0015bb2c9eb74ab6}\label{class_ort_1_1_training_session_a9785fb39a9c7194d0015bb2c9eb74ab6} 
+\index{Ort::TrainingSession@{Ort::TrainingSession}!TrainStep@{TrainStep}}
+\index{TrainStep@{TrainStep}!Ort::TrainingSession@{Ort::TrainingSession}}
+\doxysubsubsection{\texorpdfstring{TrainStep()}{TrainStep()}}
+{\footnotesize\ttfamily std\+::vector$<$ \mbox{\hyperlink{struct_ort_1_1_value}{Value}} $>$ Ort\+::\+Training\+Session\+::\+Train\+Step (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ \mbox{\hyperlink{struct_ort_1_1_value}{Value}} $>$ \&}]{input\+\_\+values }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Computes the outputs of the training model and the gradients of the trainable parameters for the given inputs. 
+
+This function performs a training step that computes the outputs of the training model and the gradients of the trainable parameters for the given inputs. The train step is performed based on the training model that was provided to the training session. The \doxylink{class_ort_1_1_training_session_a9785fb39a9c7194d0015bb2c9eb74ab6}{Ort\+::\+Training\+Session\+::\+Train\+Step} is equivalent of running forward propagation and backward propagation in a single step. The gradients computed are stored inside the training session state so they can be later consumed by the \doxylink{class_ort_1_1_training_session_a065d5a04f04d45af7e2052708c52d21e}{Ort\+::\+Training\+Session\+::\+Optimizer\+Step} function. The gradients can be lazily reset by invoking the \doxylink{class_ort_1_1_training_session_a6d754a8817f5c71170fafb5feebfb8ee}{Ort\+::\+Training\+Session\+::\+Lazy\+Reset\+Grad} function.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em input\+\_\+values} & The user inputs to the training model. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A std\+::vector of \doxylink{struct_ort_1_1_value}{Ort\+::\+Value} objects that represents the output of the forward pass of the training model.
+\end{DoxyReturn}
+Return \doxylink{struct_ort_1_1_value}{Value} Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_ort_1_1_training_session_a9785fb39a9c7194d0015bb2c9eb74ab6_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=185pt]{class_ort_1_1_training_session_a9785fb39a9c7194d0015bb2c9eb74ab6_icgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+training\+\_\+cxx\+\_\+api.\+h\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+training\+\_\+cxx\+\_\+inline.\+h\end{DoxyCompactItemize}
