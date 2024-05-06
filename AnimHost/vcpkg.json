@@ -2,6 +2,7 @@
     "name": "main",
     "version-string": "latest",
     "dependencies":[
+        "assimp",
         "qtbase",
         "zeromq",
         "cppzmq",

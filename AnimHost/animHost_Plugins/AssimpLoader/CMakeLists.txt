@@ -11,21 +11,23 @@ set_target_properties (AssimpLoader PROPERTIES
     FOLDER Plugins/DataInput
 )
 
-target_include_directories(AssimpLoader PUBLIC
-    ${CMAKE_SOURCE_DIR}/../assimp/include
-)
+find_package(assimp CONFIG REQUIRED)
+
+#target_include_directories(AssimpLoader PUBLIC
+#    ${CMAKE_SOURCE_DIR}/../assimp/include
+#)
 
 target_compile_definitions(AssimpLoader PRIVATE
     ASSIMPLOADERPLUGIN_LIBRARY
 )
 
-target_link_directories(${target_name} PUBLIC 
-    ${CMAKE_SOURCE_DIR}/../assimp/lib/Debug
-)
+#target_link_directories(${target_name} PUBLIC 
+#    ${CMAKE_SOURCE_DIR}/../assimp/lib/Debug
+#)
 
 target_link_libraries(AssimpLoader PUBLIC
     PluginNodeInterface
-    assimp-vc143-mtd
+    assimp
 )
 
 
