@@ -34,6 +34,7 @@ build*
 cmake_build*
 cmake*
 !*CMakeLists.txt
+!*CMakePresets.json
 AnimHost/animHost_Plugins/GNNPlugin/DummyData.h
 /python/data
 /python/blendhub-master
