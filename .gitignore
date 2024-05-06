@@ -3,6 +3,8 @@
 
 AnimHost/animHost_Plugins/BasicOnnxPlugin/onnxruntime/
 
+!*onnxruntime.dll
+
 # Mac
 .DS_Store
 iOS
