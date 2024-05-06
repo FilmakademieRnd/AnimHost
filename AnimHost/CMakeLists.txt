@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16...3.22)
-set(CMAKE_TOOLCHAIN_FILE "../vcpkg/scripts/buildsystems/vcpkg.cmake"
-  CACHE STRING "Vcpkg toolchain file")
+#set(CMAKE_TOOLCHAIN_FILE "../vcpkg/scripts/buildsystems/vcpkg.cmake"
+#  CACHE STRING "Vcpkg toolchain file")
 
 project(AnimHost VERSION 1.0.0 LANGUAGES CXX)
 set(target_name AnimHost)
