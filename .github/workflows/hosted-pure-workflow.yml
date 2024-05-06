@@ -89,7 +89,7 @@ jobs:
       # This step also runs vcpkg with Binary Caching leveraging GitHub Action cache to
       # store the built packages artifacts.
       - name: Restore from cache the dependencies and generate project files
-        working-directory: ${{ github.workspace }}
+        working-directory: ${{ github.workspace }}/AnimHost
         run: |
           cmake --preset ninja-multi-vcpkg
 
