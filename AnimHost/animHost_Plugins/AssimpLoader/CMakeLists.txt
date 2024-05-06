@@ -27,7 +27,7 @@ target_compile_definitions(AssimpLoader PRIVATE
 
 target_link_libraries(AssimpLoader PUBLIC
     PluginNodeInterface
-    assimp
+    assimp::assimp
 )
 
 
