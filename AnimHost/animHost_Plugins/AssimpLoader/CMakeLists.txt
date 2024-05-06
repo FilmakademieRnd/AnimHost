@@ -12,7 +12,7 @@ set_target_properties (AssimpLoader PROPERTIES
 )
 
 target_include_directories(AssimpLoader PUBLIC
-    ../../../assimp/include
+    ${CMAKE_SOURCE_DIR}/../assimp/include
 )
 
 target_compile_definitions(AssimpLoader PRIVATE
@@ -20,7 +20,7 @@ target_compile_definitions(AssimpLoader PRIVATE
 )
 
 target_link_directories(${target_name} PUBLIC 
-    ../../../assimp/lib/Debug
+    ${CMAKE_SOURCE_DIR}/../assimp/lib/Debug
 )
 
 target_link_libraries(AssimpLoader PUBLIC
