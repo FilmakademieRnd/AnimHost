@@ -55,6 +55,10 @@ void AssimpLoaderPlugin::load(QJsonObject const& p)
 
 		if (!strDir.isEmpty()) {
 			SourceDirectory = strDir;
+			_folderSelect->SetDirectory(SourceDirectory);
+
+			widget->adjustSize();
+			widget->updateGeometry();
 		}
 	}
 }
@@ -124,9 +128,18 @@ void AssimpLoaderPlugin::run() {
 
 		QString shorty = AnimHostHelper::shortenFilePath(file, 10);
 
-		_label->setText(shorty);
+		/*_label->setText(shorty);
+		_folderSelect->*/
 
 		importAssimpData();
+
+		//Experimental.
+		// If character is our own "survivor" character, we need to adjust the skeleton and animation data
+		if (bIsSurvivorChar)
+		{
+			UseSubSkeleton("hip", { "hand_R", "hand_L" });
+			_animation->getData()->ApplyChangeOfBasis();
+		}
 
 		emitDataUpdate(0);
 		emitDataUpdate(1);
@@ -141,22 +154,20 @@ void AssimpLoaderPlugin::run() {
 
 QWidget* AssimpLoaderPlugin::embeddedWidget()
 {
-	if (!_pushButton) {
-		_pushButton = new QPushButton("Import Animation");
-		_label = new QLabel("Select Animation Path");
-
-		_pushButton->resize(QSize(30, 30));
-		_filePathLayout = new QHBoxLayout();
-
-		_filePathLayout->addWidget(_label);
-		_filePathLayout->addWidget(_pushButton);
-
-		_filePathLayout->setSizeConstraint(QLayout::SetMinimumSize);
+	if (!widget) {
 
 		widget = new QWidget();
 
-		widget->setLayout(_filePathLayout);
-		connect(_pushButton, &QPushButton::released, this, &AssimpLoaderPlugin::onButtonClicked);
+		_folderSelect = new FolderSelectionWidget(widget);
+
+
+		QVBoxLayout* layout = new QVBoxLayout();
+
+		layout->addWidget(_folderSelect);
+		widget->setLayout(layout);
+
+		connect(_folderSelect, &FolderSelectionWidget::directoryChanged, this, &AssimpLoaderPlugin::onFolderSelectionChanged);
+
 	}
 
 	widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
@@ -166,6 +177,17 @@ QWidget* AssimpLoaderPlugin::embeddedWidget()
 	);
 
 	return widget;
+}
+
+void AssimpLoaderPlugin::onFolderSelectionChanged()
+{
+	SourceDirectory = _folderSelect->GetSelectedDirectory() + "/";
+
+	widget->adjustSize();
+	//widget->parentWidget()->adjustSize();
+	widget->updateGeometry();
+
+	Q_EMIT embeddedWidgetSizeUpdated();
 }
 
 void AssimpLoaderPlugin::loadAnimationData(aiAnimation* pASSIMPAnimation, Skeleton* pSkeleton, Animation* pAnimation, aiNode* pNode)
@@ -226,6 +248,88 @@ void AssimpLoaderPlugin::loadAnimationData(aiAnimation* pASSIMPAnimation, Skelet
 	}
 }
 
+
+//takes the loaded skeleton and animation and creates a sub skeleton from the root bone and the leave bones, loaded animation gets updated
+void AssimpLoaderPlugin::UseSubSkeleton(std::string pRootBone, std::vector<std::string> pLeaveBones) {
+
+
+	auto oAnimation = _animation->getData();
+
+	auto subSkel = _skeleton->getData()->CreateSubSkeleton(pRootBone, pLeaveBones);
+
+	//print each bone in skeleton bone_names
+	qDebug() << "Bone Names before Subskeleton: ";
+	for (auto var : _skeleton->getData()->bone_names)
+	{
+		qDebug() << var.first.c_str() << " :: " << var.second;
+	}
+
+	//auto subSkel = skel->CreateSubSkeleton("hip", { "hand_R", "hand_L" });
+	qDebug() << "Bone Names after Subskeleton: ";
+	for (auto var : subSkel.bone_names)
+	{
+		qDebug() << var.first.c_str() << " :: " << var.second;
+	}
+
+
+	std::shared_ptr<Animation> anim = std::make_shared<Animation>();
+
+	anim->mDurationFrames = oAnimation->mDurationFrames;
+	anim->mDuration = oAnimation->mDuration;
+	anim->sequenceID = oAnimation->sequenceID;
+	anim->sourceName = oAnimation->sourceName;
+	anim->dataSetID = oAnimation->dataSetID;
+
+	anim->mBones = std::vector<Bone>(subSkel.mNumBones, Bone());
+
+	int newIdxCounter = 0;
+
+	for (auto idx : subSkel) {
+		anim->mBones[newIdxCounter] = oAnimation->mBones[idx];
+		newIdxCounter++;
+	}
+
+
+
+	//Create copy of SubSkeleton and reset the index of the bones in skeleton
+	Skeleton subSkelCopy = subSkel;
+
+	subSkelCopy.bone_names.clear();
+	subSkelCopy.bone_names_reverse.clear();
+	subSkelCopy.bone_hierarchy.clear();
+
+	subSkelCopy.rootBoneID = 0;
+
+	newIdxCounter = 0;
+
+	for (auto idx : subSkel) {
+		subSkelCopy.bone_names[subSkel.bone_names_reverse[idx]] = newIdxCounter;
+		subSkelCopy.bone_names_reverse[newIdxCounter] = subSkel.bone_names_reverse[idx];
+		newIdxCounter++;
+	}
+
+
+	//update bone hirarchy to match with new bone index
+	for (auto workingBoneIdx : subSkel) {
+		
+		std::string workingBoneName = subSkel.bone_names_reverse[workingBoneIdx];
+		int parendIdx = subSkelCopy.bone_names[workingBoneName];
+
+		subSkelCopy.bone_hierarchy[parendIdx] = std::vector<int>();
+
+		for(auto childIdx : subSkel.bone_hierarchy[workingBoneIdx]) {
+			std::string childName = subSkel.bone_names_reverse[childIdx];
+			subSkelCopy.bone_hierarchy[parendIdx].push_back(subSkelCopy.bone_names[childName]);
+		}
+
+	}
+
+	_animation->setData(anim);
+	_skeleton->setData(std::make_shared<Skeleton>(subSkelCopy));
+
+}
+
+
 void AssimpLoaderPlugin::importAssimpData()
 {
 	Assimp::Importer importer;
@@ -239,7 +343,7 @@ void AssimpLoaderPlugin::importAssimpData()
 	Assimp::DefaultLogger::get()->info("this is my info-call");
 
 
-	const unsigned int severity = Assimp::Logger::Debugging | Assimp::Logger::Info | Assimp::Logger::Err | Assimp::Logger::Warn;
+	const unsigned int severity =  Assimp::Logger::Info | Assimp::Logger::Err | Assimp::Logger::Warn;
 	Assimp::DefaultLogger::get()->attachStream(new AssimpQTStream, severity);
 
 	const  aiScene* scene = importer.ReadFile(SourceFilePath.toStdString(),
@@ -262,32 +366,46 @@ void AssimpLoaderPlugin::importAssimpData()
 		
 		QFileInfo fi(SourceFilePath);
 		_animation->getData()->sourceName = fi.fileName();
+		_animation->getData()->dataSetID = QUuid::createUuid().toString();
+		_animation->getData()->sequenceID = sequenceCounter;
 
-		globalSequenceCounter++;
-		_animation->getData()->dataSetID = globalSequenceCounter;
+		sequenceCounter++;
+		//_animation->getData()->uuId = QUuid::createUuid();
 
 		AssimpHelper::buildSkeletonFormAssimpNode(_skeleton->getData().get(), scene->mRootNode);
+
+		std::shared_ptr<Skeleton> skel = _skeleton->getData();
+
+		//print each bone in skeleton bone_names
+		//qDebug() << "Bone Names before Subskeleton: ";
+		//for (auto var : skel->bone_names)
+		//{
+		//	qDebug() << var.first.c_str() << " :: " << var.second;
+		//}
+
+		//auto subSkel = skel->CreateSubSkeleton("hip", { "hand_R", "hand_L" });
+		//qDebug() << "Bone Names after Subskeleton: ";
+		//for (auto var : subSkel.bone_names)
+		//{
+		//	qDebug() << var.first.c_str() << " :: " << var.second;
+		//}
+
+		////test the skeleton iterator
+		//for(auto it= subSkel.begin(); it != subSkel.end(); ++it)
+		//{
+		//	int bone = *it;
+		//	qDebug() << subSkel.bone_names_reverse[bone] << "::" << bone;
+		//}
+
+		//for(auto it: subSkel){
+		//	qDebug() << subSkel.bone_names_reverse[it] << "::" << it;
+		//}
+
+		//skel->bone_names
+
 		loadAnimationData(scene->mAnimations[0], _skeleton->getData().get(), _animation->getData().get(), scene->mRootNode);
 
 		bDataValid = true;
-	}
-}
-
-
-void AssimpLoaderPlugin::onButtonClicked()
-{
-	qDebug() << "Clicked";
-
-	selectDir();
-}
-
-
-void AssimpLoaderPlugin::selectDir() {
-
-	QString directory = QDir::toNativeSeparators(QFileDialog::getExistingDirectory(nullptr, "Import Animation", "C://"));
-
-	if (!directory.isEmpty()) {
-		SourceDirectory = directory;
 	}
 }
 

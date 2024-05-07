@@ -1,0 +1,5 @@
+<map id="SceneReceiver::requestCharacterData" name="SceneReceiver::requestCharacterData">
+<area shape="rect" id="Node000001" title="Requesting the Character Package list in the TRACER client scene." alt="" coords="241,13,482,40"/>
+<area shape="rect" id="Node000002" href="$class_tracer_scene_receiver_plugin.html#a8cde9236eac8987ee7efbcd17aa5a801" title="Default constructor." alt="" coords="5,5,193,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="225,29,193,29,193,24,225,24"/>
+</map>

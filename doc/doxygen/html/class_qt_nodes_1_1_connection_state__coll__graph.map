@@ -1,0 +1,16 @@
+<map id="QtNodes::ConnectionState" name="QtNodes::ConnectionState">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,81,182,108"/>
+<area shape="rect" id="Node000002" href="$class_qt_nodes_1_1_connection_graphics_object.html" title="Graphic Object for connection. Adds itself to scene." alt="" coords="182,172,379,215"/>
+<area shape="poly" id="edge8_Node000002_Node000001" title=" " alt="" coords="78,122,75,135,79,146,94,157,118,166,181,180,180,185,116,172,91,162,74,150,70,135,73,121"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="238,165,186,134,130,111,132,106,188,130,240,161"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="213,81,334,108"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="270,124,274,171,269,172,265,124"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="286,123,289,171,284,172,281,124"/>
+<area shape="rect" id="Node000004" href="$struct_qt_nodes_1_1_connection_id.html" title=" " alt="" coords="359,81,514,108"/>
+<area shape="poly" id="edge4_Node000002_Node000004" title=" " alt="" coords="404,119,315,174,312,169,401,114"/>
+<area shape="rect" id="Node000005" href="$class_qt_nodes_1_1_abstract_graph_model.html" title=" " alt="" coords="538,81,737,108"/>
+<area shape="poly" id="edge5_Node000002_Node000005" title=" " alt="" coords="585,116,468,151,374,174,372,169,466,145,583,111"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="603,5,672,32"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="631,47,633,81,628,81,626,47"/>
+<area shape="poly" id="edge7_Node000005_Node000006" title=" " alt="" coords="649,47,647,81,642,81,644,47"/>
+</map>

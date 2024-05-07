@@ -1,0 +1,5 @@
+<map id="Ort::detail::SessionOptionsImpl::AppendExecutionProvider_MIGraphX" name="Ort::detail::SessionOptionsImpl::AppendExecutionProvider_MIGraphX">
+<area shape="rect" id="Node000001" title="Wraps OrtApi::SessionOptionsAppendExecutionProvider_CANN." alt="" coords="5,5,207,64"/>
+<area shape="rect" id="Node000002" href="$namespace_ort.html#a296b5958479d9889218b17bdb08c1894" title="This returns a reference to the OrtApi interface in use." alt="" coords="255,21,342,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="207,32,239,32,239,37,207,37"/>
+</map>

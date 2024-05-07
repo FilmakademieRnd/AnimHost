@@ -1,0 +1,5 @@
+<map id="CharacterSelectorPlugin::processInData" name="CharacterSelectorPlugin::processInData">
+<area shape="rect" id="Node000001" title="Given a port index, processes the data of the corresponding IN port." alt="" coords="5,5,167,48"/>
+<area shape="rect" id="Node000002" href="$class_qt_nodes_1_1_node_delegate_model.html#accb64c4388742d365dbf496b40c81265" title="Triggers the propagation of the empty data downstream." alt="" coords="215,5,411,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="167,24,199,24,199,29,167,29"/>
+</map>

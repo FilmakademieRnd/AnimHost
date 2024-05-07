@@ -1,0 +1,66 @@
+\doxysection{C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Tracer\+Update\+Sender\+Plugin/\+Tracer\+Update\+Sender\+Plugin.h File Reference}
+\hypertarget{_tracer_update_sender_plugin_8h}{}\label{_tracer_update_sender_plugin_8h}\index{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost\_Plugins/TracerUpdateSenderPlugin/TracerUpdateSenderPlugin.h@{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost\_Plugins/TracerUpdateSenderPlugin/TracerUpdateSenderPlugin.h}}
+
+
+Plugin allowing the user to send pose updates to TRACER.  
+
+
+{\ttfamily \#include "{}Tracer\+Update\+Sender\+Plugin\+\_\+global.\+h"{}}\newline
+{\ttfamily \#include "{}ZMQMessage\+Handler.\+h"{}}\newline
+{\ttfamily \#include $<$QMeta\+Type$>$}\newline
+{\ttfamily \#include $<$QThread$>$}\newline
+{\ttfamily \#include $<$QTimer$>$}\newline
+{\ttfamily \#include $<$QPush\+Button$>$}\newline
+{\ttfamily \#include $<$QValidator$>$}\newline
+{\ttfamily \#include $<$QCombo\+Box$>$}\newline
+{\ttfamily \#include $<$QCheck\+Box$>$}\newline
+{\ttfamily \#include $<$QHBox\+Layout$>$}\newline
+{\ttfamily \#include $<$pluginnodeinterface.\+h$>$}\newline
+{\ttfamily \#include $<$commondatatypes.\+h$>$}\newline
+{\ttfamily \#include $<$nodedatatypes.\+h$>$}\newline
+{\ttfamily \#include $<$zmq.\+hpp$>$}\newline
+{\ttfamily \#include $<$nzmqt/nzmqt.\+hpp$>$}\newline
+Include dependency graph for Tracer\+Update\+Sender\+Plugin.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_tracer_update_sender_plugin_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_tracer_update_sender_plugin_8h__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_tracer_update_sender_plugin}{Tracer\+Update\+Sender\+Plugin}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Plugin allowing the user to send pose updates to TRACER. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em \+\_\+anim\+In} & The animation data (consisting of one or more poses) \\
+\hline
+\mbox{\texttt{ in}}  & {\em \+\_\+character\+In} & The selected character to which the animation is going to be applied \\
+\hline
+\mbox{\texttt{ in}}  & {\em \+\_\+scene\+Node\+List\+In} & A description of the scene of the TRACER client. Necessary to match animation data to character rig \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+Francesco Andreussi 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+5 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+26.\+01.\+2024 
+\end{DoxyDate}

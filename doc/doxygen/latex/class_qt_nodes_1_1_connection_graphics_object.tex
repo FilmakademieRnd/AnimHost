@@ -1,0 +1,227 @@
+\doxysection{Qt\+Nodes\+::Connection\+Graphics\+Object Class Reference}
+\hypertarget{class_qt_nodes_1_1_connection_graphics_object}{}\label{class_qt_nodes_1_1_connection_graphics_object}\index{QtNodes::ConnectionGraphicsObject@{QtNodes::ConnectionGraphicsObject}}
+
+
+Graphic Object for connection. Adds itself to scene.  
+
+
+
+
+{\ttfamily \#include $<$Connection\+Graphics\+Object.\+hpp$>$}
+
+
+
+Inheritance diagram for Qt\+Nodes\+::Connection\+Graphics\+Object\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=228pt]{class_qt_nodes_1_1_connection_graphics_object__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Qt\+Nodes\+::Connection\+Graphics\+Object\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_qt_nodes_1_1_connection_graphics_object__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a1e1b276b28939c0eb961c436356b68a7}\label{class_qt_nodes_1_1_connection_graphics_object_a1e1b276b28939c0eb961c436356b68a7} 
+enum \{ {\bfseries Type} = User\+Type + 2
+ \}
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_afca7fb216890c315ef2577fb92b3b28e}\label{class_qt_nodes_1_1_connection_graphics_object_afca7fb216890c315ef2577fb92b3b28e} 
+enum \{ {\bfseries Type} = User\+Type + 2
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a0c56f4adbb85c7b93fe8e2d39ec97e58}\label{class_qt_nodes_1_1_connection_graphics_object_a0c56f4adbb85c7b93fe8e2d39ec97e58} 
+int {\bfseries type} () const override
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a2807d4761b6c5e2b42e077249561ddbc}\label{class_qt_nodes_1_1_connection_graphics_object_a2807d4761b6c5e2b42e077249561ddbc} 
+{\bfseries Connection\+Graphics\+Object} (\mbox{\hyperlink{class_qt_nodes_1_1_basic_graphics_scene}{Basic\+Graphics\+Scene}} \&scene, \mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const connection\+Id)
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a955bfb88ec9f17dd2ccad2204e60a5ca}\label{class_qt_nodes_1_1_connection_graphics_object_a955bfb88ec9f17dd2ccad2204e60a5ca} 
+\mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model}{Abstract\+Graph\+Model}} \& {\bfseries graph\+Model} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a9ca33e7d471f07871952c2ffbd045354}\label{class_qt_nodes_1_1_connection_graphics_object_a9ca33e7d471f07871952c2ffbd045354} 
+\mbox{\hyperlink{class_qt_nodes_1_1_basic_graphics_scene}{Basic\+Graphics\+Scene}} \texorpdfstring{$\ast$}{*} {\bfseries node\+Scene} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_af10126cd185975a9b896e72720df5785}\label{class_qt_nodes_1_1_connection_graphics_object_af10126cd185975a9b896e72720df5785} 
+\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \& {\bfseries connection\+Id} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a1dbb1e268b30730e30605f7024310a8e}\label{class_qt_nodes_1_1_connection_graphics_object_a1dbb1e268b30730e30605f7024310a8e} 
+QRectF {\bfseries bounding\+Rect} () const override
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a564de23672af9c1d66aa7419210d9812}\label{class_qt_nodes_1_1_connection_graphics_object_a564de23672af9c1d66aa7419210d9812} 
+QPainter\+Path {\bfseries shape} () const override
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_ab00abc4e24fdbb735cf00b4a4354e9dd}\label{class_qt_nodes_1_1_connection_graphics_object_ab00abc4e24fdbb735cf00b4a4354e9dd} 
+QPointF const \& {\bfseries end\+Point} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} port\+Type) const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_aae3e97a1c49a8312545e6833c4ea1415}\label{class_qt_nodes_1_1_connection_graphics_object_aae3e97a1c49a8312545e6833c4ea1415} 
+QPointF {\bfseries out} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a835d5a004b5872ffd639951ce434ea13}\label{class_qt_nodes_1_1_connection_graphics_object_a835d5a004b5872ffd639951ce434ea13} 
+QPointF {\bfseries in} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a2ee4ecff708369c06ef1873342b7009c}\label{class_qt_nodes_1_1_connection_graphics_object_a2ee4ecff708369c06ef1873342b7009c} 
+std\+::pair$<$ QPointF, QPointF $>$ {\bfseries points\+C1\+C2} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a5f57b0c3306994d1cc09e8b7c1fdda5b}\label{class_qt_nodes_1_1_connection_graphics_object_a5f57b0c3306994d1cc09e8b7c1fdda5b} 
+void {\bfseries set\+End\+Point} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} port\+Type, QPointF const \&point)
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a3f994ad2ffa1b8d51c4786d64e815ef3}\label{class_qt_nodes_1_1_connection_graphics_object_a3f994ad2ffa1b8d51c4786d64e815ef3} 
+void {\bfseries move} ()
+\begin{DoxyCompactList}\small\item\em Updates the position of both ends. \end{DoxyCompactList}\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a46a32b97a81be5c47fb267e92baf8679}\label{class_qt_nodes_1_1_connection_graphics_object_a46a32b97a81be5c47fb267e92baf8679} 
+\mbox{\hyperlink{class_qt_nodes_1_1_connection_state}{Connection\+State}} const \& {\bfseries connection\+State} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a90829c2c56778f8fdb9b5649bd95ae87}\label{class_qt_nodes_1_1_connection_graphics_object_a90829c2c56778f8fdb9b5649bd95ae87} 
+\mbox{\hyperlink{class_qt_nodes_1_1_connection_state}{Connection\+State}} \& {\bfseries connection\+State} ()
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a0c56f4adbb85c7b93fe8e2d39ec97e58}\label{class_qt_nodes_1_1_connection_graphics_object_a0c56f4adbb85c7b93fe8e2d39ec97e58} 
+int {\bfseries type} () const override
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a2807d4761b6c5e2b42e077249561ddbc}\label{class_qt_nodes_1_1_connection_graphics_object_a2807d4761b6c5e2b42e077249561ddbc} 
+{\bfseries Connection\+Graphics\+Object} (\mbox{\hyperlink{class_qt_nodes_1_1_basic_graphics_scene}{Basic\+Graphics\+Scene}} \&scene, \mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const connection\+Id)
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a955bfb88ec9f17dd2ccad2204e60a5ca}\label{class_qt_nodes_1_1_connection_graphics_object_a955bfb88ec9f17dd2ccad2204e60a5ca} 
+\mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model}{Abstract\+Graph\+Model}} \& {\bfseries graph\+Model} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a9ca33e7d471f07871952c2ffbd045354}\label{class_qt_nodes_1_1_connection_graphics_object_a9ca33e7d471f07871952c2ffbd045354} 
+\mbox{\hyperlink{class_qt_nodes_1_1_basic_graphics_scene}{Basic\+Graphics\+Scene}} \texorpdfstring{$\ast$}{*} {\bfseries node\+Scene} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_af10126cd185975a9b896e72720df5785}\label{class_qt_nodes_1_1_connection_graphics_object_af10126cd185975a9b896e72720df5785} 
+\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \& {\bfseries connection\+Id} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a1dbb1e268b30730e30605f7024310a8e}\label{class_qt_nodes_1_1_connection_graphics_object_a1dbb1e268b30730e30605f7024310a8e} 
+QRectF {\bfseries bounding\+Rect} () const override
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a564de23672af9c1d66aa7419210d9812}\label{class_qt_nodes_1_1_connection_graphics_object_a564de23672af9c1d66aa7419210d9812} 
+QPainter\+Path {\bfseries shape} () const override
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_ab00abc4e24fdbb735cf00b4a4354e9dd}\label{class_qt_nodes_1_1_connection_graphics_object_ab00abc4e24fdbb735cf00b4a4354e9dd} 
+QPointF const \& {\bfseries end\+Point} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} port\+Type) const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_aae3e97a1c49a8312545e6833c4ea1415}\label{class_qt_nodes_1_1_connection_graphics_object_aae3e97a1c49a8312545e6833c4ea1415} 
+QPointF {\bfseries out} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a835d5a004b5872ffd639951ce434ea13}\label{class_qt_nodes_1_1_connection_graphics_object_a835d5a004b5872ffd639951ce434ea13} 
+QPointF {\bfseries in} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a2ee4ecff708369c06ef1873342b7009c}\label{class_qt_nodes_1_1_connection_graphics_object_a2ee4ecff708369c06ef1873342b7009c} 
+std\+::pair$<$ QPointF, QPointF $>$ {\bfseries points\+C1\+C2} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a5f57b0c3306994d1cc09e8b7c1fdda5b}\label{class_qt_nodes_1_1_connection_graphics_object_a5f57b0c3306994d1cc09e8b7c1fdda5b} 
+void {\bfseries set\+End\+Point} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} port\+Type, QPointF const \&point)
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a3f994ad2ffa1b8d51c4786d64e815ef3}\label{class_qt_nodes_1_1_connection_graphics_object_a3f994ad2ffa1b8d51c4786d64e815ef3} 
+void {\bfseries move} ()
+\begin{DoxyCompactList}\small\item\em Updates the position of both ends. \end{DoxyCompactList}\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a46a32b97a81be5c47fb267e92baf8679}\label{class_qt_nodes_1_1_connection_graphics_object_a46a32b97a81be5c47fb267e92baf8679} 
+\mbox{\hyperlink{class_qt_nodes_1_1_connection_state}{Connection\+State}} const \& {\bfseries connection\+State} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a90829c2c56778f8fdb9b5649bd95ae87}\label{class_qt_nodes_1_1_connection_graphics_object_a90829c2c56778f8fdb9b5649bd95ae87} 
+\mbox{\hyperlink{class_qt_nodes_1_1_connection_state}{Connection\+State}} \& {\bfseries connection\+State} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a33926688999629b62c482986b6bd00be}\label{class_qt_nodes_1_1_connection_graphics_object_a33926688999629b62c482986b6bd00be} 
+void {\bfseries paint} (QPainter \texorpdfstring{$\ast$}{*}painter, QStyle\+Option\+Graphics\+Item const \texorpdfstring{$\ast$}{*}option, QWidget \texorpdfstring{$\ast$}{*}widget=0) override
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a1f95a90b3b3f9697c78487e3c140925e}\label{class_qt_nodes_1_1_connection_graphics_object_a1f95a90b3b3f9697c78487e3c140925e} 
+void {\bfseries mouse\+Press\+Event} (QGraphics\+Scene\+Mouse\+Event \texorpdfstring{$\ast$}{*}event) override
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_af5dc5735d276cd98b984f26dc14d244f}\label{class_qt_nodes_1_1_connection_graphics_object_af5dc5735d276cd98b984f26dc14d244f} 
+void {\bfseries mouse\+Move\+Event} (QGraphics\+Scene\+Mouse\+Event \texorpdfstring{$\ast$}{*}event) override
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a253de40e9ea75df261e1872818cdf962}\label{class_qt_nodes_1_1_connection_graphics_object_a253de40e9ea75df261e1872818cdf962} 
+void {\bfseries mouse\+Release\+Event} (QGraphics\+Scene\+Mouse\+Event \texorpdfstring{$\ast$}{*}event) override
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_ad8237c2714c6c3a38b7be418ebfb779f}\label{class_qt_nodes_1_1_connection_graphics_object_ad8237c2714c6c3a38b7be418ebfb779f} 
+void {\bfseries hover\+Enter\+Event} (QGraphics\+Scene\+Hover\+Event \texorpdfstring{$\ast$}{*}event) override
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a96ba8c407828cfa8c7d5b7e77e9fe9f1}\label{class_qt_nodes_1_1_connection_graphics_object_a96ba8c407828cfa8c7d5b7e77e9fe9f1} 
+void {\bfseries hover\+Leave\+Event} (QGraphics\+Scene\+Hover\+Event \texorpdfstring{$\ast$}{*}event) override
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a33926688999629b62c482986b6bd00be}\label{class_qt_nodes_1_1_connection_graphics_object_a33926688999629b62c482986b6bd00be} 
+void {\bfseries paint} (QPainter \texorpdfstring{$\ast$}{*}painter, QStyle\+Option\+Graphics\+Item const \texorpdfstring{$\ast$}{*}option, QWidget \texorpdfstring{$\ast$}{*}widget=0) override
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a1f95a90b3b3f9697c78487e3c140925e}\label{class_qt_nodes_1_1_connection_graphics_object_a1f95a90b3b3f9697c78487e3c140925e} 
+void {\bfseries mouse\+Press\+Event} (QGraphics\+Scene\+Mouse\+Event \texorpdfstring{$\ast$}{*}event) override
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_af5dc5735d276cd98b984f26dc14d244f}\label{class_qt_nodes_1_1_connection_graphics_object_af5dc5735d276cd98b984f26dc14d244f} 
+void {\bfseries mouse\+Move\+Event} (QGraphics\+Scene\+Mouse\+Event \texorpdfstring{$\ast$}{*}event) override
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a253de40e9ea75df261e1872818cdf962}\label{class_qt_nodes_1_1_connection_graphics_object_a253de40e9ea75df261e1872818cdf962} 
+void {\bfseries mouse\+Release\+Event} (QGraphics\+Scene\+Mouse\+Event \texorpdfstring{$\ast$}{*}event) override
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_ad8237c2714c6c3a38b7be418ebfb779f}\label{class_qt_nodes_1_1_connection_graphics_object_ad8237c2714c6c3a38b7be418ebfb779f} 
+void {\bfseries hover\+Enter\+Event} (QGraphics\+Scene\+Hover\+Event \texorpdfstring{$\ast$}{*}event) override
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a96ba8c407828cfa8c7d5b7e77e9fe9f1}\label{class_qt_nodes_1_1_connection_graphics_object_a96ba8c407828cfa8c7d5b7e77e9fe9f1} 
+void {\bfseries hover\+Leave\+Event} (QGraphics\+Scene\+Hover\+Event \texorpdfstring{$\ast$}{*}event) override
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_ac225cf730fdb5d6dc4686414cc909b12}\label{class_qt_nodes_1_1_connection_graphics_object_ac225cf730fdb5d6dc4686414cc909b12} 
+void {\bfseries initialize\+Position} ()
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a3e8031badccafb3879cae38512126b1a}\label{class_qt_nodes_1_1_connection_graphics_object_a3e8031badccafb3879cae38512126b1a} 
+void {\bfseries add\+Graphics\+Effect} ()
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a20f012f55401045b0e331be4be0ad533}\label{class_qt_nodes_1_1_connection_graphics_object_a20f012f55401045b0e331be4be0ad533} 
+std\+::pair$<$ QPointF, QPointF $>$ {\bfseries points\+C1\+C2\+Horizontal} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a7e9899ff9f5128c57875350597d853d2}\label{class_qt_nodes_1_1_connection_graphics_object_a7e9899ff9f5128c57875350597d853d2} 
+std\+::pair$<$ QPointF, QPointF $>$ {\bfseries points\+C1\+C2\+Vertical} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_ac225cf730fdb5d6dc4686414cc909b12}\label{class_qt_nodes_1_1_connection_graphics_object_ac225cf730fdb5d6dc4686414cc909b12} 
+void {\bfseries initialize\+Position} ()
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a3e8031badccafb3879cae38512126b1a}\label{class_qt_nodes_1_1_connection_graphics_object_a3e8031badccafb3879cae38512126b1a} 
+void {\bfseries add\+Graphics\+Effect} ()
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a20f012f55401045b0e331be4be0ad533}\label{class_qt_nodes_1_1_connection_graphics_object_a20f012f55401045b0e331be4be0ad533} 
+std\+::pair$<$ QPointF, QPointF $>$ {\bfseries points\+C1\+C2\+Horizontal} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a7e9899ff9f5128c57875350597d853d2}\label{class_qt_nodes_1_1_connection_graphics_object_a7e9899ff9f5128c57875350597d853d2} 
+std\+::pair$<$ QPointF, QPointF $>$ {\bfseries points\+C1\+C2\+Vertical} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_af879e051608e476f861a8511198754a0}\label{class_qt_nodes_1_1_connection_graphics_object_af879e051608e476f861a8511198754a0} 
+\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} {\bfseries \+\_\+connection\+Id}
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_afdd7d65e0b9835fcdcbdac870d447a0a}\label{class_qt_nodes_1_1_connection_graphics_object_afdd7d65e0b9835fcdcbdac870d447a0a} 
+\mbox{\hyperlink{class_qt_nodes_1_1_abstract_graph_model}{Abstract\+Graph\+Model}} \& {\bfseries \+\_\+graph\+Model}
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a0e0cf84ec6ebd90f373d5705f8daea84}\label{class_qt_nodes_1_1_connection_graphics_object_a0e0cf84ec6ebd90f373d5705f8daea84} 
+\mbox{\hyperlink{class_qt_nodes_1_1_connection_state}{Connection\+State}} {\bfseries \+\_\+connection\+State}
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_a9653694e16fa86fdde785d0a6b524c46}\label{class_qt_nodes_1_1_connection_graphics_object_a9653694e16fa86fdde785d0a6b524c46} 
+QPointF {\bfseries \+\_\+out}
+\item 
+\Hypertarget{class_qt_nodes_1_1_connection_graphics_object_aebe163272c0d2b9521b99c4e17e714f1}\label{class_qt_nodes_1_1_connection_graphics_object_aebe163272c0d2b9521b99c4e17e714f1} 
+QPointF {\bfseries \+\_\+in}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Graphic Object for connection. Adds itself to scene. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/core/\+QTNodes/include/\+Qt\+Nodes/internal/Connection\+Graphics\+Object.\+hpp\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/core/\+QTNodes/include/\+Qt\+Nodes/internal/internal/Connection\+Graphics\+Object.\+hpp\end{DoxyCompactItemize}

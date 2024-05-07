@@ -76,23 +76,34 @@ QWidget* BasicOnnxPlugin::embeddedWidget()
         connect(b, &QPushButton::released, this, &BasicOnnxPlugin::onButtonClicked);
         widget->setMinimumHeight(widget->sizeHint().height());
         widget->setMaximumWidth(widget->sizeHint().width());
+
+       
+
+
+
+
 	}
 	return widget;
 }
 
 QString BasicOnnxPlugin::portCaption(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
 {
+
+    int pIdx = portIndex - 1;
+    if (pIdx == -1)
+        return QString("Run");
+
     if (_onnxModel) {
         std::string s;
         if (portType == QtNodes::PortType::In) {
 
-            s = _onnxModel->GetTensorNames()[portIndex]+ " ";
-            s += _onnxModel->GetTensorShapes()[portIndex];
+            s = _onnxModel->GetTensorNames()[pIdx]+ " ";
+            s += _onnxModel->GetTensorShapes()[pIdx];
             return s.c_str();
         }
         else {
-            s = _onnxModel->GetTensorNames(false)[portIndex] + " ";
-            s += _onnxModel->GetTensorShapes(false)[portIndex];
+            s = _onnxModel->GetTensorNames(false)[pIdx] + " ";
+            s += _onnxModel->GetTensorShapes(false)[pIdx];
             return s.c_str();
         }
     }
@@ -163,11 +174,8 @@ void BasicOnnxPlugin::addPort()
         int numIn = _onnxModel->GetNumTensors();
         for (int i = 0; i < numIn; i++) {
             this->portsAboutToBeInserted(QtNodes::PortType::In, i, i);
-            _dataIn.emplace_back(std::weak_ptr<QtNodes::NodeData>());
-
-           
+            _dataIn.emplace_back(std::weak_ptr<QtNodes::NodeData>());  
         }
-
 
         int numOut = _onnxModel->GetNumTensors(false);
         for (int i = 0; i < numOut; i++) {

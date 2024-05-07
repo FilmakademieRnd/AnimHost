@@ -1,0 +1,89 @@
+\doxysection{assimploaderplugin.\+h}
+\hypertarget{assimploaderplugin_8h_source}{}\label{assimploaderplugin_8h_source}\index{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost\_Plugins/AssimpLoader/assimploaderplugin.h@{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost\_Plugins/AssimpLoader/assimploaderplugin.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ ASSIMPLOADERPLUGIN\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ ASSIMPLOADERPLUGIN\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}assimploaderplugin\_global.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <QMetaType>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <QtCore/QObject>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <pluginnodeinterface.h>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <commondatatypes.h>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <nodedatatypes.h>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <QtWidgets>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <assimp/Importer.hpp>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <assimp/scene.h>}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <assimp/postprocess.h>}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{keyword}{class\ }ASSIMPLOADERPLUGINSHARED\_EXPORT\ \mbox{\hyperlink{class_assimp_loader_plugin}{AssimpLoaderPlugin}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_plugin_node_interface}{PluginNodeInterface}}}
+\DoxyCodeLine{00018\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ Q\_OBJECT}
+\DoxyCodeLine{00020\ \ \ \ \ Q\_PLUGIN\_METADATA(IID\ \textcolor{stringliteral}{"{}de.animhost.PluginNodeInterface"{}}\ FILE\ \textcolor{stringliteral}{"{}assimploaderplugin.json"{}})}
+\DoxyCodeLine{00021\ \ \ \ \ Q\_INTERFACES(\mbox{\hyperlink{class_plugin_node_interface}{PluginNodeInterface}})}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00024\ \ \ \ \ std::shared\_ptr<AnimNodeData<Skeleton>>\ \_skeleton;}
+\DoxyCodeLine{00025\ \ \ \ \ std::shared\_ptr<AnimNodeData<Animation>>\ \_animation;}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ QString\ SourceDirectory\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00029\ \ \ \ \ QString\ SourceFilePath\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{bool}\ bDataValid;}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ QWidget*\ widget;}
+\DoxyCodeLine{00034\ \ \ \ \ QPushButton*\ \_pushButton;}
+\DoxyCodeLine{00035\ \ \ \ \ QLabel*\ \_label;}
+\DoxyCodeLine{00036\ \ \ \ \ QHBoxLayout*\ \_filePathLayout;}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{int}\ globalSequenceCounter\ =\ 0;}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00041\ \ \ \ \ \mbox{\hyperlink{class_assimp_loader_plugin}{AssimpLoaderPlugin}}();}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \mbox{\hyperlink{class_assimp_loader_plugin}{AssimpLoaderPlugin}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_assimp_loader_plugin}{AssimpLoaderPlugin}}\&\ o)\ :\ SourceFilePath(o.SourceFilePath)\ \{\ qDebug()\ <<\ \textcolor{stringliteral}{"{}Copied!\ "{}}\ <<\ this-\/>\mbox{\hyperlink{class_plugin_node_interface_a7017ba11069f47b4bc117d676c3d5d2e}{name}}();\ \};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ std::unique\_ptr<NodeDelegateModel>\ Init()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \ std::unique\_ptr<AssimpLoaderPlugin>(\textcolor{keyword}{new}\ \mbox{\hyperlink{class_assimp_loader_plugin}{AssimpLoaderPlugin}}());\ \};}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ QString\ \mbox{\hyperlink{class_assimp_loader_plugin_ae76053d3c25b7e9a23bca1d1c1093012}{caption}}()\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}Animation\ Import"{}};\ \}}
+\DoxyCodeLine{00048\ \ \ \ \ QString\ \mbox{\hyperlink{class_assimp_loader_plugin_a10fae36a52841f95b5b2772340b030f4}{name}}()\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}Animation\ Import"{}};\ \}}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_assimp_loader_plugin_a9a00f5ab1b8833a9011383d5a0196603}{captionVisible}}()\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};\ \}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00052\ \ \ \ \ QJsonObject\ save()\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{void}\ load(QJsonObject\ \textcolor{keyword}{const}\&\ p)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_plugin_node_interface_a2614e702055e634adac2d220445a89af}{nDataPorts}}(\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{QtNodes::PortType}}\ portType)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00057\ \ \ \ \ \mbox{\hyperlink{struct_qt_nodes_1_1_node_data_type}{NodeDataType}}\ \mbox{\hyperlink{class_plugin_node_interface_ab846cdb3b5aa6d61de83a4b484105cb7}{dataPortType}}(\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{QtNodes::PortType}}\ portType,\ \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{QtNodes::PortIndex}}\ portIndex)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ std::shared\_ptr<NodeData>\ processOutData(\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{QtNodes::PortIndex}}\ port)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{void}\ processInData(std::shared\_ptr<QtNodes::NodeData>\ data,\ \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{QtNodes::PortIndex}}\ portIndex)\ \{\};}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{void}\ run()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ QWidget*\ \mbox{\hyperlink{class_plugin_node_interface_a0a1b864019583682fd1c15d3e88af73a}{embeddedWidget}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ QString\ category()\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}Import"{}};\ \};\ }
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{keyword}{private}\ Q\_SLOTS:}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{void}\ onButtonClicked();}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{void}\ loadAnimationData(aiAnimation*\ pASSIMPAnimation,\ \mbox{\hyperlink{class_skeleton}{Skeleton}}*\ pSkeleton,\ \mbox{\hyperlink{class_animation}{Animation}}*\ pAnimation,\ aiNode*\ pNode);}
+\DoxyCodeLine{00074\ \ \ \ \ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{void}\ importAssimpData();}
+\DoxyCodeLine{00076\ \ \ \ \ }
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordtype}{void}\ selectDir();}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ QStringList\ loadFilesFromDir();}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \};}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ EXAMPLEPLUGIN\_H}}
+
+\end{DoxyCode}

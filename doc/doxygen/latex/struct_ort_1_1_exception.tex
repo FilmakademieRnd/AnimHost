@@ -1,0 +1,60 @@
+\doxysection{Ort\+::Exception Struct Reference}
+\hypertarget{struct_ort_1_1_exception}{}\label{struct_ort_1_1_exception}\index{Ort::Exception@{Ort::Exception}}
+
+
+All C++ methods that can fail will throw an exception of this type.  
+
+
+
+
+{\ttfamily \#include $<$onnxruntime\+\_\+cxx\+\_\+api.\+h$>$}
+
+
+
+Inheritance diagram for Ort\+::Exception\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=159pt]{struct_ort_1_1_exception__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Ort\+::Exception\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=159pt]{struct_ort_1_1_exception__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_1_1_exception_afed85f6b183b268ba316a06e00fe313c}\label{struct_ort_1_1_exception_afed85f6b183b268ba316a06e00fe313c} 
+{\bfseries Exception} (std\+::string \&\&string, Ort\+Error\+Code code)
+\item 
+\Hypertarget{struct_ort_1_1_exception_ae6f688af3ca6b3f34a2b8f730cc4432d}\label{struct_ort_1_1_exception_ae6f688af3ca6b3f34a2b8f730cc4432d} 
+Ort\+Error\+Code {\bfseries Get\+Ort\+Error\+Code} () const
+\item 
+\Hypertarget{struct_ort_1_1_exception_a03570d5990b5a35c818e6cca3e7b26e7}\label{struct_ort_1_1_exception_a03570d5990b5a35c818e6cca3e7b26e7} 
+const char \texorpdfstring{$\ast$}{*} {\bfseries what} () const noexcept override
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_1_1_exception_ab08980f7108eb94f45266bfdcea18f11}\label{struct_ort_1_1_exception_ab08980f7108eb94f45266bfdcea18f11} 
+std\+::string {\bfseries message\+\_\+}
+\item 
+\Hypertarget{struct_ort_1_1_exception_ac22ae257c4cb8277c78405be89bba8f4}\label{struct_ort_1_1_exception_ac22ae257c4cb8277c78405be89bba8f4} 
+Ort\+Error\+Code {\bfseries code\+\_\+}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+All C++ methods that can fail will throw an exception of this type. 
+
+If {\ttfamily ORT\+\_\+\+NO\+\_\+\+EXCEPTIONS} is defined, then any error will result in a call to abort() 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+api.\+h\end{DoxyCompactItemize}

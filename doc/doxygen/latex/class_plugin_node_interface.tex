@@ -1,0 +1,415 @@
+\doxysection{Plugin\+Node\+Interface Class Reference}
+\hypertarget{class_plugin_node_interface}{}\label{class_plugin_node_interface}\index{PluginNodeInterface@{PluginNodeInterface}}
+
+
+Interface for plugins for the \doxylink{class_anim_host}{Anim\+Host}.  
+
+
+
+
+{\ttfamily \#include $<$pluginnodeinterface.\+h$>$}
+
+
+
+Inheritance diagram for Plugin\+Node\+Interface\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_plugin_node_interface__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Plugin\+Node\+Interface\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_plugin_node_interface__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_plugin_node_interface_ad2024a14483a07606369fbc4a5fa4cd5}\label{class_plugin_node_interface_ad2024a14483a07606369fbc4a5fa4cd5} 
+{\bfseries Plugin\+Node\+Interface} (const \mbox{\hyperlink{class_plugin_node_interface}{Plugin\+Node\+Interface}} \&p)
+\item 
+virtual std\+::unique\+\_\+ptr$<$ Node\+Delegate\+Model $>$ \mbox{\hyperlink{class_plugin_node_interface_a973f7716bc311d51ed60e535d23a0336}{Init}} ()
+\item 
+QString \mbox{\hyperlink{class_plugin_node_interface_a7017ba11069f47b4bc117d676c3d5d2e}{name}} () const override
+\begin{DoxyCompactList}\small\item\em Name makes this model unique. \end{DoxyCompactList}\item 
+virtual QString \mbox{\hyperlink{class_plugin_node_interface_a4a79fc8187b4aabe2a15aba1e7cbe53d}{category}} ()
+\item 
+QString \mbox{\hyperlink{class_plugin_node_interface_adfeba18e3531e2d354d7de99f12920f0}{caption}} () const override
+\begin{DoxyCompactList}\small\item\em Caption is used in GUI. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_plugin_node_interface_ad47e5fd35446dbf4cd00b300d48ebe97}{caption\+Visible}} () const override
+\begin{DoxyCompactList}\small\item\em It is possible to hide caption in GUI. \end{DoxyCompactList}\item 
+unsigned int \mbox{\hyperlink{class_plugin_node_interface_ace62a2c4c3783210b45667820acb2bc0}{n\+Ports}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Qt\+Nodes\+::\+Port\+Type}} port\+Type) const override
+\item 
+virtual unsigned int \mbox{\hyperlink{class_plugin_node_interface_a2614e702055e634adac2d220445a89af}{n\+Data\+Ports}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Qt\+Nodes\+::\+Port\+Type}} port\+Type) const =0
+\item 
+\Hypertarget{class_plugin_node_interface_a739f988731c2477c23993daf086b6672}\label{class_plugin_node_interface_a739f988731c2477c23993daf086b6672} 
+virtual bool {\bfseries has\+Input\+Run\+Signal} () const
+\item 
+virtual bool \mbox{\hyperlink{class_plugin_node_interface_afe9ce1e94b1fc3ff8d260c15bbf82a0c}{has\+Output\+Run\+Signal}} () const
+\item 
+\mbox{\hyperlink{struct_qt_nodes_1_1_node_data_type}{Node\+Data\+Type}} \mbox{\hyperlink{class_plugin_node_interface_a5cb2d673d82497985e0339b9a864f427}{data\+Type}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Qt\+Nodes\+::\+Port\+Type}} port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port\+Index) const override
+\item 
+virtual \mbox{\hyperlink{struct_qt_nodes_1_1_node_data_type}{Node\+Data\+Type}} \mbox{\hyperlink{class_plugin_node_interface_ab846cdb3b5aa6d61de83a4b484105cb7}{data\+Port\+Type}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Qt\+Nodes\+::\+Port\+Type}} port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port\+Index) const =0
+\begin{DoxyCompactList}\small\item\em Return the data type of data in -\/ or output on given port. \end{DoxyCompactList}\item 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ \mbox{\hyperlink{class_plugin_node_interface_aa5a92703377f0ae78d34c61b0dac86fa}{out\+Data}} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port) override
+\item 
+virtual std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ \mbox{\hyperlink{class_plugin_node_interface_a19e1758f282e0352251f15e1f68796b2}{process\+Out\+Data}} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port)=0
+\item 
+void \mbox{\hyperlink{class_plugin_node_interface_aef4294013cebc2964b85f5fe9011739f}{set\+In\+Data}} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ data, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port\+Index)
+\item 
+virtual void \mbox{\hyperlink{class_plugin_node_interface_ac35822c5852da1eb12c302d3512f1232}{process\+In\+Data}} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ data, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port\+Index)=0
+\item 
+\Hypertarget{class_plugin_node_interface_ae8f52e45710a4f7db26bef40945b0203}\label{class_plugin_node_interface_ae8f52e45710a4f7db26bef40945b0203} 
+void {\bfseries emit\+Data\+Update} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port\+Index)
+\item 
+\Hypertarget{class_plugin_node_interface_a84d02a141b791ce3cf2fdbed3c76c8b3}\label{class_plugin_node_interface_a84d02a141b791ce3cf2fdbed3c76c8b3} 
+void {\bfseries emit\+Run\+Next\+Node} ()
+\item 
+\Hypertarget{class_plugin_node_interface_a160ac0994c6ba64fab5669fc3b196660}\label{class_plugin_node_interface_a160ac0994c6ba64fab5669fc3b196660} 
+void {\bfseries emit\+Data\+Invalidated} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port\+Index)
+\item 
+virtual void \mbox{\hyperlink{class_plugin_node_interface_af52fbf454595bb5f18e1804840a3e3f0}{run}} ()=0
+\item 
+QWidget \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_plugin_node_interface_a0a1b864019583682fd1c15d3e88af73a}{embedded\+Widget}} () override
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual bool \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a960a7fbfc2bf771363937174da2de663}{port\+Caption\+Visible}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\begin{DoxyCompactList}\small\item\em It is possible to hide port caption in GUI. \end{DoxyCompactList}\item 
+virtual QString \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_add0dedb3ab8acf9c4086f72ecbc97504}{port\+Caption}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\begin{DoxyCompactList}\small\item\em Port caption is used in GUI to label individual ports. \end{DoxyCompactList}\item 
+QJson\+Object \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a0b7a061a3f7aa2b4997ced4ffa0c7319}{save}} () const override
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_ae1275eb13f2ca395411e1fda1789257c}{load}} (QJson\+Object const \&) override
+\item 
+virtual \mbox{\hyperlink{_definitions_8hpp_a23527e8a5775fe989d2ef3f595e2d369}{Connection\+Policy}} {\bfseries port\+Connection\+Policy} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\item 
+\mbox{\hyperlink{class_qt_nodes_1_1_node_style}{Node\+Style}} const \& {\bfseries node\+Style} () const
+\item 
+void {\bfseries set\+Node\+Style} (\mbox{\hyperlink{class_qt_nodes_1_1_node_style}{Node\+Style}} const \&style)
+\item 
+virtual bool {\bfseries resizable} () const
+\item 
+virtual bool \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a960a7fbfc2bf771363937174da2de663}{port\+Caption\+Visible}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\begin{DoxyCompactList}\small\item\em It is possible to hide port caption in GUI. \end{DoxyCompactList}\item 
+virtual QString \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_add0dedb3ab8acf9c4086f72ecbc97504}{port\+Caption}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\begin{DoxyCompactList}\small\item\em Port caption is used in GUI to label individual ports. \end{DoxyCompactList}\item 
+QJson\+Object \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a0b7a061a3f7aa2b4997ced4ffa0c7319}{save}} () const override
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_ae1275eb13f2ca395411e1fda1789257c}{load}} (QJson\+Object const \&) override
+\item 
+virtual \mbox{\hyperlink{_definitions_8hpp_a23527e8a5775fe989d2ef3f595e2d369}{Connection\+Policy}} {\bfseries port\+Connection\+Policy} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\item 
+\mbox{\hyperlink{class_qt_nodes_1_1_node_style}{Node\+Style}} const \& {\bfseries node\+Style} () const
+\item 
+void {\bfseries set\+Node\+Style} (\mbox{\hyperlink{class_qt_nodes_1_1_node_style}{Node\+Style}} const \&style)
+\item 
+virtual bool {\bfseries resizable} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_plugin_node_interface_a31effebf10b8ad62c112c8923b4cfdcd}\label{class_plugin_node_interface_a31effebf10b8ad62c112c8923b4cfdcd} 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_anim_node_data}{Anim\+Node\+Data}}$<$ \mbox{\hyperlink{class_run_signal}{Run\+Signal}} $>$ $>$ {\bfseries \+\_\+run\+Signal} = nullptr
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Public Slots inherited from \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual void {\bfseries input\+Connection\+Created} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries input\+Connection\+Deleted} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries output\+Connection\+Created} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries output\+Connection\+Deleted} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries input\+Connection\+Created} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries input\+Connection\+Deleted} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries output\+Connection\+Created} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries output\+Connection\+Deleted} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\end{DoxyCompactItemize}
+\doxysubsection*{Signals inherited from \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}}
+\begin{DoxyCompactItemize}
+\item 
+void {\bfseries data\+Updated} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const index)
+\begin{DoxyCompactList}\small\item\em Triggers the updates in the nodes downstream. \end{DoxyCompactList}\item 
+void {\bfseries data\+Invalidated} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const index)
+\begin{DoxyCompactList}\small\item\em Triggers the propagation of the empty data downstream. \end{DoxyCompactList}\item 
+void {\bfseries computing\+Started} ()
+\item 
+void {\bfseries computing\+Finished} ()
+\item 
+void {\bfseries embedded\+Widget\+Size\+Updated} ()
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a35fb8ad8de15273e604c6b9e6c4c68eb}{ports\+About\+To\+Be\+Deleted}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const first, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const last)
+\begin{DoxyCompactList}\small\item\em Call this function before deleting the data associated with ports. \end{DoxyCompactList}\item 
+void {\bfseries ports\+Deleted} ()
+\begin{DoxyCompactList}\small\item\em Call this function when data and port moditications are finished. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a578fb727bc29f18cc4f9bed6ad8af792}{ports\+About\+To\+Be\+Inserted}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const first, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const last)
+\begin{DoxyCompactList}\small\item\em Call this function before inserting the data associated with ports. \end{DoxyCompactList}\item 
+void {\bfseries ports\+Inserted} ()
+\begin{DoxyCompactList}\small\item\em Call this function when data and port moditications are finished. \end{DoxyCompactList}\item 
+void {\bfseries data\+Updated} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const index)
+\begin{DoxyCompactList}\small\item\em Triggers the updates in the nodes downstream. \end{DoxyCompactList}\item 
+void {\bfseries data\+Invalidated} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const index)
+\begin{DoxyCompactList}\small\item\em Triggers the propagation of the empty data downstream. \end{DoxyCompactList}\item 
+void {\bfseries computing\+Started} ()
+\item 
+void {\bfseries computing\+Finished} ()
+\item 
+void {\bfseries embedded\+Widget\+Size\+Updated} ()
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a35fb8ad8de15273e604c6b9e6c4c68eb}{ports\+About\+To\+Be\+Deleted}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const first, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const last)
+\begin{DoxyCompactList}\small\item\em Call this function before deleting the data associated with ports. \end{DoxyCompactList}\item 
+void {\bfseries ports\+Deleted} ()
+\begin{DoxyCompactList}\small\item\em Call this function when data and port moditications are finished. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a578fb727bc29f18cc4f9bed6ad8af792}{ports\+About\+To\+Be\+Inserted}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const first, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const last)
+\begin{DoxyCompactList}\small\item\em Call this function before inserting the data associated with ports. \end{DoxyCompactList}\item 
+void {\bfseries ports\+Inserted} ()
+\begin{DoxyCompactList}\small\item\em Call this function when data and port moditications are finished. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Interface for plugins for the \doxylink{class_anim_host}{Anim\+Host}. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_plugin_node_interface_adfeba18e3531e2d354d7de99f12920f0}\label{class_plugin_node_interface_adfeba18e3531e2d354d7de99f12920f0} 
+\index{PluginNodeInterface@{PluginNodeInterface}!caption@{caption}}
+\index{caption@{caption}!PluginNodeInterface@{PluginNodeInterface}}
+\doxysubsubsection{\texorpdfstring{caption()}{caption()}}
+{\footnotesize\ttfamily QString Plugin\+Node\+Interface\+::caption (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Caption is used in GUI. 
+
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a77e69adffd694fa448bec34b36bd0f37}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}.
+
+
+
+Reimplemented in \mbox{\hyperlink{class_run_trigger_plugin_a9e421571e486b823ae867ef7f7f9fd54}{Run\+Trigger\+Plugin}}, \mbox{\hyperlink{class_tracer_scene_receiver_plugin_ad4993a2aaa51e16a281511211acd958b}{Tracer\+Scene\+Receiver\+Plugin}}, and \mbox{\hyperlink{class_tracer_update_sender_plugin_a16e2b0d1fb956911e52e9828ed900911}{Tracer\+Update\+Sender\+Plugin}}.
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_plugin_node_interface_adfeba18e3531e2d354d7de99f12920f0_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_plugin_node_interface_ad47e5fd35446dbf4cd00b300d48ebe97}\label{class_plugin_node_interface_ad47e5fd35446dbf4cd00b300d48ebe97} 
+\index{PluginNodeInterface@{PluginNodeInterface}!captionVisible@{captionVisible}}
+\index{captionVisible@{captionVisible}!PluginNodeInterface@{PluginNodeInterface}}
+\doxysubsubsection{\texorpdfstring{captionVisible()}{captionVisible()}}
+{\footnotesize\ttfamily bool Plugin\+Node\+Interface\+::caption\+Visible (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+It is possible to hide caption in GUI. 
+
+
+
+Reimplemented from \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_af6b4510f3f9a945153e7c95a8dc2cdcc}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}.
+
+
+
+Reimplemented in \mbox{\hyperlink{class_run_trigger_plugin_a966637ee24bf15a1512bd7d1554863ba}{Run\+Trigger\+Plugin}}, \mbox{\hyperlink{class_tracer_scene_receiver_plugin_adfebc1222997e6a0744b3b6f24646651}{Tracer\+Scene\+Receiver\+Plugin}}, and \mbox{\hyperlink{class_tracer_update_sender_plugin_aea3b0e044ca95c35baa03a9568b2a246}{Tracer\+Update\+Sender\+Plugin}}.
+
+\Hypertarget{class_plugin_node_interface_a4a79fc8187b4aabe2a15aba1e7cbe53d}\label{class_plugin_node_interface_a4a79fc8187b4aabe2a15aba1e7cbe53d} 
+\index{PluginNodeInterface@{PluginNodeInterface}!category@{category}}
+\index{category@{category}!PluginNodeInterface@{PluginNodeInterface}}
+\doxysubsubsection{\texorpdfstring{category()}{category()}}
+{\footnotesize\ttfamily virtual QString Plugin\+Node\+Interface\+::category (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented in \mbox{\hyperlink{class_tracer_scene_receiver_plugin_abc5942f4941ced8283faf1587514889c}{Tracer\+Scene\+Receiver\+Plugin}}, and \mbox{\hyperlink{class_tracer_update_sender_plugin_a27f4080d8e5795087d2c6e0ea683d2ce}{Tracer\+Update\+Sender\+Plugin}}.
+
+\Hypertarget{class_plugin_node_interface_ab846cdb3b5aa6d61de83a4b484105cb7}\label{class_plugin_node_interface_ab846cdb3b5aa6d61de83a4b484105cb7} 
+\index{PluginNodeInterface@{PluginNodeInterface}!dataPortType@{dataPortType}}
+\index{dataPortType@{dataPortType}!PluginNodeInterface@{PluginNodeInterface}}
+\doxysubsubsection{\texorpdfstring{dataPortType()}{dataPortType()}}
+{\footnotesize\ttfamily virtual \mbox{\hyperlink{struct_qt_nodes_1_1_node_data_type}{Node\+Data\+Type}} Plugin\+Node\+Interface\+::data\+Port\+Type (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Qt\+Nodes\+::\+Port\+Type}}}]{port\+Type,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}}}]{port\+Index }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Return the data type of data in -\/ or output on given port. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em port\+Index} & = 0 is reserved for run signal and handeled before data\+Port\+Type is called. \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \mbox{\hyperlink{class_animation_frame_selector_plugin_af153b334e14f5150ded7e1235711ea13}{Animation\+Frame\+Selector\+Plugin}}, \mbox{\hyperlink{class_assimp_loader_plugin_a5889dc53169f5936eb049716349bd25c}{Assimp\+Loader\+Plugin}}, \mbox{\hyperlink{class_basic_onnx_plugin_a66f202bbab46d37f9ccaed7aef122051}{Basic\+Onnx\+Plugin}}, \mbox{\hyperlink{class_character_selector_plugin_af245c2f9079cce3ec6527b3764189396}{Character\+Selector\+Plugin}}, \mbox{\hyperlink{class_coordinate_converter_plugin_a509d78208c402ac70ca4667a6dfe6c3d}{Coordinate\+Converter\+Plugin}}, \mbox{\hyperlink{class_data_export_plugin_a872c8b4fc6201ad0dbae33f1b0d56964}{Data\+Export\+Plugin}}, \mbox{\hyperlink{class_run_trigger_plugin_acade26f3a0400f5678254612a278e574}{Run\+Trigger\+Plugin}}, \mbox{\hyperlink{class_tracer_scene_receiver_plugin_a2eda3ef705921e1b902c5706b110b204}{Tracer\+Scene\+Receiver\+Plugin}}, and \mbox{\hyperlink{class_tracer_update_sender_plugin_a8855cae049e12b5cf60c83f44edb7478}{Tracer\+Update\+Sender\+Plugin}}.
+
+\Hypertarget{class_plugin_node_interface_a5cb2d673d82497985e0339b9a864f427}\label{class_plugin_node_interface_a5cb2d673d82497985e0339b9a864f427} 
+\index{PluginNodeInterface@{PluginNodeInterface}!dataType@{dataType}}
+\index{dataType@{dataType}!PluginNodeInterface@{PluginNodeInterface}}
+\doxysubsubsection{\texorpdfstring{dataType()}{dataType()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_qt_nodes_1_1_node_data_type}{Node\+Data\+Type}} Plugin\+Node\+Interface\+::data\+Type (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Qt\+Nodes\+::\+Port\+Type}}}]{port\+Type,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}}}]{port\+Index }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}.
+
+\Hypertarget{class_plugin_node_interface_a0a1b864019583682fd1c15d3e88af73a}\label{class_plugin_node_interface_a0a1b864019583682fd1c15d3e88af73a} 
+\index{PluginNodeInterface@{PluginNodeInterface}!embeddedWidget@{embeddedWidget}}
+\index{embeddedWidget@{embeddedWidget}!PluginNodeInterface@{PluginNodeInterface}}
+\doxysubsubsection{\texorpdfstring{embeddedWidget()}{embeddedWidget()}}
+{\footnotesize\ttfamily QWidget \texorpdfstring{$\ast$}{*} Plugin\+Node\+Interface\+::embedded\+Widget (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+It is recommented to preform a lazy initialization for the embedded widget and create it inside this function, not in the constructor of the current model.
+
+Our Model Registry is able to shortly instantiate models in order to call the non-\/static {\ttfamily Model\+::name()}. If the embedded widget is allocated in the constructor but not actually embedded into some QGraphics\+Proxy\+Widget, we\textquotesingle{}ll gonna have a dangling pointer. 
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a964178140634d139431707a3959d85ce}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}.
+
+
+
+Reimplemented in \mbox{\hyperlink{class_run_trigger_plugin_a2f340ff6c66795cbb000b4794f253021}{Run\+Trigger\+Plugin}}, \mbox{\hyperlink{class_tracer_scene_receiver_plugin_af474b99b96dc9acbed3ce9a56b9bd721}{Tracer\+Scene\+Receiver\+Plugin}}, and \mbox{\hyperlink{class_tracer_update_sender_plugin_a3addb9cad91ff62c3d86870df2e56b81}{Tracer\+Update\+Sender\+Plugin}}.
+
+\Hypertarget{class_plugin_node_interface_afe9ce1e94b1fc3ff8d260c15bbf82a0c}\label{class_plugin_node_interface_afe9ce1e94b1fc3ff8d260c15bbf82a0c} 
+\index{PluginNodeInterface@{PluginNodeInterface}!hasOutputRunSignal@{hasOutputRunSignal}}
+\index{hasOutputRunSignal@{hasOutputRunSignal}!PluginNodeInterface@{PluginNodeInterface}}
+\doxysubsubsection{\texorpdfstring{hasOutputRunSignal()}{hasOutputRunSignal()}}
+{\footnotesize\ttfamily virtual bool Plugin\+Node\+Interface\+::has\+Output\+Run\+Signal (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented in \mbox{\hyperlink{class_tracer_update_sender_plugin_affcd9fe2cfd6f5f57614e4016ff5d1cc}{Tracer\+Update\+Sender\+Plugin}}.
+
+\Hypertarget{class_plugin_node_interface_a973f7716bc311d51ed60e535d23a0336}\label{class_plugin_node_interface_a973f7716bc311d51ed60e535d23a0336} 
+\index{PluginNodeInterface@{PluginNodeInterface}!Init@{Init}}
+\index{Init@{Init}!PluginNodeInterface@{PluginNodeInterface}}
+\doxysubsubsection{\texorpdfstring{Init()}{Init()}}
+{\footnotesize\ttfamily virtual std\+::unique\+\_\+ptr$<$ Node\+Delegate\+Model $>$ Plugin\+Node\+Interface\+::\+Init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented in \mbox{\hyperlink{class_character_selector_plugin_adc2fc77f095502f3ae138366c465b7eb}{Character\+Selector\+Plugin}}, \mbox{\hyperlink{class_tracer_scene_receiver_plugin_ad65558fed908a543b0911ce6e01e3570}{Tracer\+Scene\+Receiver\+Plugin}}, and \mbox{\hyperlink{class_tracer_update_sender_plugin_a2848b2dc9d294a397ea2abbc438a3943}{Tracer\+Update\+Sender\+Plugin}}.
+
+\Hypertarget{class_plugin_node_interface_a7017ba11069f47b4bc117d676c3d5d2e}\label{class_plugin_node_interface_a7017ba11069f47b4bc117d676c3d5d2e} 
+\index{PluginNodeInterface@{PluginNodeInterface}!name@{name}}
+\index{name@{name}!PluginNodeInterface@{PluginNodeInterface}}
+\doxysubsubsection{\texorpdfstring{name()}{name()}}
+{\footnotesize\ttfamily QString Plugin\+Node\+Interface\+::name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Name makes this model unique. 
+
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_aaa88199eb94c7291367d7def4dda6354}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}.
+
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_plugin_node_interface_a7017ba11069f47b4bc117d676c3d5d2e_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_plugin_node_interface_a2614e702055e634adac2d220445a89af}\label{class_plugin_node_interface_a2614e702055e634adac2d220445a89af} 
+\index{PluginNodeInterface@{PluginNodeInterface}!nDataPorts@{nDataPorts}}
+\index{nDataPorts@{nDataPorts}!PluginNodeInterface@{PluginNodeInterface}}
+\doxysubsubsection{\texorpdfstring{nDataPorts()}{nDataPorts()}}
+{\footnotesize\ttfamily virtual unsigned int Plugin\+Node\+Interface\+::n\+Data\+Ports (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Qt\+Nodes\+::\+Port\+Type}}}]{port\+Type }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+Return the number of data ports in-\/ and output of the node. By default +1 added for run signal port.
+
+
+\begin{DoxyParams}{Parameters}
+{\em port\+Type} & Selector of in-\/ or output type \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{class_animation_frame_selector_plugin_a067eecec751caa181bb61f2e400a1a87}{Animation\+Frame\+Selector\+Plugin}}, \mbox{\hyperlink{class_assimp_loader_plugin_a93c5c987466db9e1fc95386ccd2a7fab}{Assimp\+Loader\+Plugin}}, \mbox{\hyperlink{class_basic_onnx_plugin_a776ce9fec76f29f04c8157a06a04e08a}{Basic\+Onnx\+Plugin}}, \mbox{\hyperlink{class_character_selector_plugin_a1be6a1105168f911a021700db32518ff}{Character\+Selector\+Plugin}}, \mbox{\hyperlink{class_coordinate_converter_plugin_ae7d3f333c30fcfa535736e275bef9d68}{Coordinate\+Converter\+Plugin}}, \mbox{\hyperlink{class_data_export_plugin_a3156117b6d1068ee8450072df5f84b36}{Data\+Export\+Plugin}}, \mbox{\hyperlink{class_run_trigger_plugin_a080f582ca1688fdde6f2d5143001db2a}{Run\+Trigger\+Plugin}}, \mbox{\hyperlink{class_tracer_scene_receiver_plugin_a580b0038e6d35814a1e1288f5a065d48}{Tracer\+Scene\+Receiver\+Plugin}}, and \mbox{\hyperlink{class_tracer_update_sender_plugin_aeac1b5c33e6936c38bbf1d130426f8b0}{Tracer\+Update\+Sender\+Plugin}}.
+
+\Hypertarget{class_plugin_node_interface_ace62a2c4c3783210b45667820acb2bc0}\label{class_plugin_node_interface_ace62a2c4c3783210b45667820acb2bc0} 
+\index{PluginNodeInterface@{PluginNodeInterface}!nPorts@{nPorts}}
+\index{nPorts@{nPorts}!PluginNodeInterface@{PluginNodeInterface}}
+\doxysubsubsection{\texorpdfstring{nPorts()}{nPorts()}}
+{\footnotesize\ttfamily unsigned int Plugin\+Node\+Interface\+::n\+Ports (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Qt\+Nodes\+::\+Port\+Type}}}]{port\+Type }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}.
+
+\Hypertarget{class_plugin_node_interface_aa5a92703377f0ae78d34c61b0dac86fa}\label{class_plugin_node_interface_aa5a92703377f0ae78d34c61b0dac86fa} 
+\index{PluginNodeInterface@{PluginNodeInterface}!outData@{outData}}
+\index{outData@{outData}!PluginNodeInterface@{PluginNodeInterface}}
+\doxysubsubsection{\texorpdfstring{outData()}{outData()}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ Plugin\+Node\+Interface\+::out\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}}}]{port }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}.
+
+
+
+Reimplemented in \mbox{\hyperlink{class_tracer_update_sender_plugin_ac5529b7349ab80924893a5c413f80184}{Tracer\+Update\+Sender\+Plugin}}.
+
+\Hypertarget{class_plugin_node_interface_ac35822c5852da1eb12c302d3512f1232}\label{class_plugin_node_interface_ac35822c5852da1eb12c302d3512f1232} 
+\index{PluginNodeInterface@{PluginNodeInterface}!processInData@{processInData}}
+\index{processInData@{processInData}!PluginNodeInterface@{PluginNodeInterface}}
+\doxysubsubsection{\texorpdfstring{processInData()}{processInData()}}
+{\footnotesize\ttfamily virtual void Plugin\+Node\+Interface\+::process\+In\+Data (\begin{DoxyParamCaption}\item[{std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$}]{data,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}}}]{port\+Index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_character_selector_plugin_a07fc0d14959664e4b53019622b3a79f3}{Character\+Selector\+Plugin}}, \mbox{\hyperlink{class_tracer_scene_receiver_plugin_ab8de8a38a3a59e768383c43dcc948611}{Tracer\+Scene\+Receiver\+Plugin}}, and \mbox{\hyperlink{class_tracer_update_sender_plugin_ac03aa72f5e16834e52b5b50769caef9c}{Tracer\+Update\+Sender\+Plugin}}.
+
+\Hypertarget{class_plugin_node_interface_a19e1758f282e0352251f15e1f68796b2}\label{class_plugin_node_interface_a19e1758f282e0352251f15e1f68796b2} 
+\index{PluginNodeInterface@{PluginNodeInterface}!processOutData@{processOutData}}
+\index{processOutData@{processOutData}!PluginNodeInterface@{PluginNodeInterface}}
+\doxysubsubsection{\texorpdfstring{processOutData()}{processOutData()}}
+{\footnotesize\ttfamily virtual std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ Plugin\+Node\+Interface\+::process\+Out\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}}}]{port }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_character_selector_plugin_a586a7ae2afa6fa3fe699f3abf6b15248}{Character\+Selector\+Plugin}}, \mbox{\hyperlink{class_tracer_scene_receiver_plugin_a1e429a3d8f2fe369f59548ab3311b93e}{Tracer\+Scene\+Receiver\+Plugin}}, and \mbox{\hyperlink{class_tracer_update_sender_plugin_a282f15e224e5b84a2a3ac76414533ed4}{Tracer\+Update\+Sender\+Plugin}}.
+
+\Hypertarget{class_plugin_node_interface_af52fbf454595bb5f18e1804840a3e3f0}\label{class_plugin_node_interface_af52fbf454595bb5f18e1804840a3e3f0} 
+\index{PluginNodeInterface@{PluginNodeInterface}!run@{run}}
+\index{run@{run}!PluginNodeInterface@{PluginNodeInterface}}
+\doxysubsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily virtual void Plugin\+Node\+Interface\+::run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_character_selector_plugin_a02639a078de88fb9d438493e393ac3b8}{Character\+Selector\+Plugin}}, and \mbox{\hyperlink{class_tracer_scene_receiver_plugin_a5802ec65e6e49a65e15d7a415ee3eeb5}{Tracer\+Scene\+Receiver\+Plugin}}.
+
+\Hypertarget{class_plugin_node_interface_aef4294013cebc2964b85f5fe9011739f}\label{class_plugin_node_interface_aef4294013cebc2964b85f5fe9011739f} 
+\index{PluginNodeInterface@{PluginNodeInterface}!setInData@{setInData}}
+\index{setInData@{setInData}!PluginNodeInterface@{PluginNodeInterface}}
+\doxysubsubsection{\texorpdfstring{setInData()}{setInData()}}
+{\footnotesize\ttfamily void Plugin\+Node\+Interface\+::set\+In\+Data (\begin{DoxyParamCaption}\item[{std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$}]{data,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}}}]{port\+Index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Plugin\+Node\+Interface/pluginnodeinterface.\+h\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Plugin\+Node\+Interface/pluginnodeinterface.\+cpp\end{DoxyCompactItemize}

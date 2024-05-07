@@ -1,0 +1,35 @@
+\doxysection{Joint\+Velocity\+Plugin.\+h}
+\hypertarget{_joint_velocity_plugin_8h_source}{}\label{_joint_velocity_plugin_8h_source}\index{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost\_Plugins/JointVelocityPlugin/JointVelocityPlugin.h@{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost\_Plugins/JointVelocityPlugin/JointVelocityPlugin.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#ifndef\ JOINTVELOCITYPLUGINPLUGIN\_H}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#define\ JOINTVELOCITYPLUGINPLUGIN\_H}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}JointVelocityPlugin\_global.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <QMetaType>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <plugininterface.h>}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{class\ }JOINTVELOCITYPLUGINSHARED\_EXPORT\ \mbox{\hyperlink{class_joint_velocity_plugin}{JointVelocityPlugin}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_plugin_interface}{PluginInterface}}}
+\DoxyCodeLine{00010\ \{}
+\DoxyCodeLine{00011\ \ \ \ \ Q\_OBJECT}
+\DoxyCodeLine{00012\ \ \ \ \ Q\_PLUGIN\_METADATA(IID\ \textcolor{stringliteral}{"{}de.animhost.JointVelocity"{}}\ FILE\ \textcolor{stringliteral}{"{}JointVelocityPlugin.json"{}})}
+\DoxyCodeLine{00013\ \ \ \ \ Q\_INTERFACES(\mbox{\hyperlink{class_plugin_interface}{PluginInterface}})}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00016\ \ \ \ \ \mbox{\hyperlink{class_joint_velocity_plugin}{JointVelocityPlugin}}();}
+\DoxyCodeLine{00017\ \ \ \ \ \mbox{\hyperlink{class_joint_velocity_plugin}{\string~JointVelocityPlugin}}();}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordtype}{void}\ run(QVariantList\ in,\ QVariantList\&\ out)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00019\ \ \ \ \ QObject*\ getObject()\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{this};\ \}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{comment}{//QTNodes}}
+\DoxyCodeLine{00022\ \ \ \ \ QString\ category()\ \textcolor{keyword}{override};\ \ \textcolor{comment}{//\ Returns\ a\ category\ for\ the\ node}}
+\DoxyCodeLine{00023\ \ \ \ \ QList<QMetaType>\ inputTypes()\ \textcolor{keyword}{override};\ \ \textcolor{comment}{//\ Returns\ input\ data\ types}}
+\DoxyCodeLine{00024\ \ \ \ \ QList<QMetaType>\ outputTypes()\ \textcolor{keyword}{override};\ \ \textcolor{comment}{//\ Returns\ output\ data\ types}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ JOINTVELOCITYPLUGINPLUGIN\_H}}
+
+\end{DoxyCode}

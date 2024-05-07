@@ -1,0 +1,20 @@
+\doxysection{QUuid\+Std\+Hash.\+hpp}
+\hypertarget{internal_2_q_uuid_std_hash_8hpp_source}{}\label{internal_2_q_uuid_std_hash_8hpp_source}\index{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/core/QTNodes/include/QtNodes/internal/internal/QUuidStdHash.hpp@{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/core/QTNodes/include/QtNodes/internal/internal/QUuidStdHash.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <functional>}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <QtCore/QUuid>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <QtCore/QVariant>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{keyword}{namespace\ }std\ \{}
+\DoxyCodeLine{00009\ \textcolor{keyword}{template}<>}
+\DoxyCodeLine{00010\ \textcolor{keyword}{struct\ }hash<QUuid>}
+\DoxyCodeLine{00011\ \{}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keyword}{inline}\ std::size\_t\ operator()(QUuid\ \textcolor{keyword}{const}\ \&uid)\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ qHash(uid);\ \}}
+\DoxyCodeLine{00013\ \};}
+\DoxyCodeLine{00014\ \}\ \textcolor{comment}{//\ namespace\ std}}
+
+\end{DoxyCode}

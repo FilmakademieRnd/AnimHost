@@ -1,0 +1,163 @@
+\doxysection{Qt\+Nodes\+::Node\+Delegate\+Model\+Registry Class Reference}
+\hypertarget{class_qt_nodes_1_1_node_delegate_model_registry}{}\label{class_qt_nodes_1_1_node_delegate_model_registry}\index{QtNodes::NodeDelegateModelRegistry@{QtNodes::NodeDelegateModelRegistry}}
+
+
+Class uses map for storing models (name, model)  
+
+
+
+
+{\ttfamily \#include $<$Node\+Delegate\+Model\+Registry.\+hpp$>$}
+
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_qt_nodes_1_1_node_delegate_model_registry_1_1_has_static_method_name}{Has\+Static\+Method\+Name}}
+\item 
+struct \mbox{\hyperlink{struct_qt_nodes_1_1_node_delegate_model_registry_1_1_has_static_method_name_3_01_t_00_01typename6648590f53cb829b6e57098905abe88d}{Has\+Static\+Method\+Name$<$ T, typename std\+::enable\+\_\+if$<$ std\+::is\+\_\+same$<$ decltype(\+T\+::\+Name()), QString $>$\+::value $>$\+::type $>$}}
+\item 
+struct \mbox{\hyperlink{struct_qt_nodes_1_1_node_delegate_model_registry_1_1_unwrap_unique_ptr}{Unwrap\+Unique\+Ptr}}
+\item 
+struct \mbox{\hyperlink{struct_qt_nodes_1_1_node_delegate_model_registry_1_1_unwrap_unique_ptr_3_01std_1_1unique__ptr_3_01_t_01_4_01_4}{Unwrap\+Unique\+Ptr$<$ std\+::unique\+\_\+ptr$<$ T $>$ $>$}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a32a3c8ab785ce7cd992309088498b63b}\label{class_qt_nodes_1_1_node_delegate_model_registry_a32a3c8ab785ce7cd992309088498b63b} 
+using {\bfseries Registry\+Item\+Ptr} = std\+::unique\+\_\+ptr$<$\mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model}{Node\+Delegate\+Model}}$>$
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_afb6421e011b60e6f2ddcb754e9437578}\label{class_qt_nodes_1_1_node_delegate_model_registry_afb6421e011b60e6f2ddcb754e9437578} 
+using {\bfseries Registry\+Item\+Creator} = std\+::function$<$Registry\+Item\+Ptr()$>$
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a4c5138479d95e5242bd57db22f4bdc68}\label{class_qt_nodes_1_1_node_delegate_model_registry_a4c5138479d95e5242bd57db22f4bdc68} 
+using {\bfseries Registered\+Model\+Creators\+Map} = std\+::unordered\+\_\+map$<$QString, Registry\+Item\+Creator$>$
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_ad1358e2c73a862f65466289772aeca74}\label{class_qt_nodes_1_1_node_delegate_model_registry_ad1358e2c73a862f65466289772aeca74} 
+using {\bfseries Registered\+Models\+Category\+Map} = std\+::unordered\+\_\+map$<$QString, QString$>$
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a16a94e99aa34b013501eecf6c7cdbb4c}\label{class_qt_nodes_1_1_node_delegate_model_registry_a16a94e99aa34b013501eecf6c7cdbb4c} 
+using {\bfseries Categories\+Set} = std\+::set$<$QString$>$
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a32a3c8ab785ce7cd992309088498b63b}\label{class_qt_nodes_1_1_node_delegate_model_registry_a32a3c8ab785ce7cd992309088498b63b} 
+using {\bfseries Registry\+Item\+Ptr} = std\+::unique\+\_\+ptr$<$\mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model}{Node\+Delegate\+Model}}$>$
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_afb6421e011b60e6f2ddcb754e9437578}\label{class_qt_nodes_1_1_node_delegate_model_registry_afb6421e011b60e6f2ddcb754e9437578} 
+using {\bfseries Registry\+Item\+Creator} = std\+::function$<$Registry\+Item\+Ptr()$>$
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a4c5138479d95e5242bd57db22f4bdc68}\label{class_qt_nodes_1_1_node_delegate_model_registry_a4c5138479d95e5242bd57db22f4bdc68} 
+using {\bfseries Registered\+Model\+Creators\+Map} = std\+::unordered\+\_\+map$<$QString, Registry\+Item\+Creator$>$
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_ad1358e2c73a862f65466289772aeca74}\label{class_qt_nodes_1_1_node_delegate_model_registry_ad1358e2c73a862f65466289772aeca74} 
+using {\bfseries Registered\+Models\+Category\+Map} = std\+::unordered\+\_\+map$<$QString, QString$>$
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a16a94e99aa34b013501eecf6c7cdbb4c}\label{class_qt_nodes_1_1_node_delegate_model_registry_a16a94e99aa34b013501eecf6c7cdbb4c} 
+using {\bfseries Categories\+Set} = std\+::set$<$QString$>$
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_afb6f66d8d69ebcf0533c4c5ab290a53c}\label{class_qt_nodes_1_1_node_delegate_model_registry_afb6f66d8d69ebcf0533c4c5ab290a53c} 
+{\bfseries Node\+Delegate\+Model\+Registry} (\mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_registry}{Node\+Delegate\+Model\+Registry}} const \&)=delete
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a2d8df5339aaaac90f43bdc16d83495b4}\label{class_qt_nodes_1_1_node_delegate_model_registry_a2d8df5339aaaac90f43bdc16d83495b4} 
+{\bfseries Node\+Delegate\+Model\+Registry} (\mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_registry}{Node\+Delegate\+Model\+Registry}} \&\&)=default
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_aa4cfd904cc30225c55a1d45a4499dbd2}\label{class_qt_nodes_1_1_node_delegate_model_registry_aa4cfd904cc30225c55a1d45a4499dbd2} 
+\mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_registry}{Node\+Delegate\+Model\+Registry}} \& {\bfseries operator=} (\mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_registry}{Node\+Delegate\+Model\+Registry}} const \&)=delete
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a71fe1369604138d9c97d17d3a6a4d637}\label{class_qt_nodes_1_1_node_delegate_model_registry_a71fe1369604138d9c97d17d3a6a4d637} 
+\mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_registry}{Node\+Delegate\+Model\+Registry}} \& {\bfseries operator=} (\mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_registry}{Node\+Delegate\+Model\+Registry}} \&\&)=default
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a06fd8be8f3c6bc516742f90fb4bc2f25}\label{class_qt_nodes_1_1_node_delegate_model_registry_a06fd8be8f3c6bc516742f90fb4bc2f25} 
+{\footnotesize template$<$typename Model\+Type $>$ }\\void {\bfseries register\+Model} (Registry\+Item\+Creator creator, QString const \&category="{}Nodes"{})
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_aef6313b887d2d4c01f01bc26c272c390}\label{class_qt_nodes_1_1_node_delegate_model_registry_aef6313b887d2d4c01f01bc26c272c390} 
+{\footnotesize template$<$typename Model\+Type $>$ }\\void {\bfseries register\+Model} (QString const \&category="{}Nodes"{})
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a9a34717bf70b7e6a2312d05f397044da}\label{class_qt_nodes_1_1_node_delegate_model_registry_a9a34717bf70b7e6a2312d05f397044da} 
+std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model}{Node\+Delegate\+Model}} $>$ {\bfseries create} (QString const \&model\+Name)
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a365e0208c888805fe6fb0606d705a4d4}\label{class_qt_nodes_1_1_node_delegate_model_registry_a365e0208c888805fe6fb0606d705a4d4} 
+Registered\+Model\+Creators\+Map const \& {\bfseries registered\+Model\+Creators} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_acafe34878a6e25ddcb89a5d1908717d2}\label{class_qt_nodes_1_1_node_delegate_model_registry_acafe34878a6e25ddcb89a5d1908717d2} 
+Registered\+Models\+Category\+Map const \& {\bfseries registered\+Models\+Category\+Association} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_ab1787c0220c795c61fc0a75dbc5a9afc}\label{class_qt_nodes_1_1_node_delegate_model_registry_ab1787c0220c795c61fc0a75dbc5a9afc} 
+Categories\+Set const \& {\bfseries categories} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_afb6f66d8d69ebcf0533c4c5ab290a53c}\label{class_qt_nodes_1_1_node_delegate_model_registry_afb6f66d8d69ebcf0533c4c5ab290a53c} 
+{\bfseries Node\+Delegate\+Model\+Registry} (\mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_registry}{Node\+Delegate\+Model\+Registry}} const \&)=delete
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a2d8df5339aaaac90f43bdc16d83495b4}\label{class_qt_nodes_1_1_node_delegate_model_registry_a2d8df5339aaaac90f43bdc16d83495b4} 
+{\bfseries Node\+Delegate\+Model\+Registry} (\mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_registry}{Node\+Delegate\+Model\+Registry}} \&\&)=default
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_aa4cfd904cc30225c55a1d45a4499dbd2}\label{class_qt_nodes_1_1_node_delegate_model_registry_aa4cfd904cc30225c55a1d45a4499dbd2} 
+\mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_registry}{Node\+Delegate\+Model\+Registry}} \& {\bfseries operator=} (\mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_registry}{Node\+Delegate\+Model\+Registry}} const \&)=delete
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a71fe1369604138d9c97d17d3a6a4d637}\label{class_qt_nodes_1_1_node_delegate_model_registry_a71fe1369604138d9c97d17d3a6a4d637} 
+\mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_registry}{Node\+Delegate\+Model\+Registry}} \& {\bfseries operator=} (\mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_registry}{Node\+Delegate\+Model\+Registry}} \&\&)=default
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a06fd8be8f3c6bc516742f90fb4bc2f25}\label{class_qt_nodes_1_1_node_delegate_model_registry_a06fd8be8f3c6bc516742f90fb4bc2f25} 
+{\footnotesize template$<$typename Model\+Type $>$ }\\void {\bfseries register\+Model} (Registry\+Item\+Creator creator, QString const \&category="{}Nodes"{})
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_aef6313b887d2d4c01f01bc26c272c390}\label{class_qt_nodes_1_1_node_delegate_model_registry_aef6313b887d2d4c01f01bc26c272c390} 
+{\footnotesize template$<$typename Model\+Type $>$ }\\void {\bfseries register\+Model} (QString const \&category="{}Nodes"{})
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a9a34717bf70b7e6a2312d05f397044da}\label{class_qt_nodes_1_1_node_delegate_model_registry_a9a34717bf70b7e6a2312d05f397044da} 
+std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model}{Node\+Delegate\+Model}} $>$ {\bfseries create} (QString const \&model\+Name)
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a365e0208c888805fe6fb0606d705a4d4}\label{class_qt_nodes_1_1_node_delegate_model_registry_a365e0208c888805fe6fb0606d705a4d4} 
+Registered\+Model\+Creators\+Map const \& {\bfseries registered\+Model\+Creators} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_acafe34878a6e25ddcb89a5d1908717d2}\label{class_qt_nodes_1_1_node_delegate_model_registry_acafe34878a6e25ddcb89a5d1908717d2} 
+Registered\+Models\+Category\+Map const \& {\bfseries registered\+Models\+Category\+Association} () const
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_ab1787c0220c795c61fc0a75dbc5a9afc}\label{class_qt_nodes_1_1_node_delegate_model_registry_ab1787c0220c795c61fc0a75dbc5a9afc} 
+Categories\+Set const \& {\bfseries categories} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a78e04ebdf5a8548210ffd51ac4a1b4de}\label{class_qt_nodes_1_1_node_delegate_model_registry_a78e04ebdf5a8548210ffd51ac4a1b4de} 
+{\footnotesize template$<$typename Creator\+Result $>$ }\\using {\bfseries compute\+\_\+model\+\_\+type\+\_\+t} = typename \mbox{\hyperlink{struct_qt_nodes_1_1_node_delegate_model_registry_1_1_unwrap_unique_ptr}{Unwrap\+Unique\+Ptr}}$<$Creator\+Result$>$\+::type
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a78e04ebdf5a8548210ffd51ac4a1b4de}\label{class_qt_nodes_1_1_node_delegate_model_registry_a78e04ebdf5a8548210ffd51ac4a1b4de} 
+{\footnotesize template$<$typename Creator\+Result $>$ }\\using {\bfseries compute\+\_\+model\+\_\+type\+\_\+t} = typename \mbox{\hyperlink{struct_qt_nodes_1_1_node_delegate_model_registry_1_1_unwrap_unique_ptr}{Unwrap\+Unique\+Ptr}}$<$Creator\+Result$>$\+::type
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a2fde748e1ba0fc09f479457537a8f918}\label{class_qt_nodes_1_1_node_delegate_model_registry_a2fde748e1ba0fc09f479457537a8f918} 
+{\footnotesize template$<$typename Model\+Type $>$ }\\static QString {\bfseries compute\+Name} (std\+::true\+\_\+type, Registry\+Item\+Creator const \&)
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a3d3f667cd56f508c6be5779e3a319b30}\label{class_qt_nodes_1_1_node_delegate_model_registry_a3d3f667cd56f508c6be5779e3a319b30} 
+{\footnotesize template$<$typename Model\+Type $>$ }\\static QString {\bfseries compute\+Name} (std\+::false\+\_\+type, Registry\+Item\+Creator const \&creator)
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a2fde748e1ba0fc09f479457537a8f918}\label{class_qt_nodes_1_1_node_delegate_model_registry_a2fde748e1ba0fc09f479457537a8f918} 
+{\footnotesize template$<$typename Model\+Type $>$ }\\static QString {\bfseries compute\+Name} (std\+::true\+\_\+type, Registry\+Item\+Creator const \&)
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a3d3f667cd56f508c6be5779e3a319b30}\label{class_qt_nodes_1_1_node_delegate_model_registry_a3d3f667cd56f508c6be5779e3a319b30} 
+{\footnotesize template$<$typename Model\+Type $>$ }\\static QString {\bfseries compute\+Name} (std\+::false\+\_\+type, Registry\+Item\+Creator const \&creator)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_a4fe10d0918b09ff7fc57dc9f2667dea8}\label{class_qt_nodes_1_1_node_delegate_model_registry_a4fe10d0918b09ff7fc57dc9f2667dea8} 
+Registered\+Models\+Category\+Map {\bfseries \+\_\+registered\+Models\+Category}
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_ac77f7ade4dde00a1640e741ced7b9101}\label{class_qt_nodes_1_1_node_delegate_model_registry_ac77f7ade4dde00a1640e741ced7b9101} 
+Categories\+Set {\bfseries \+\_\+categories}
+\item 
+\Hypertarget{class_qt_nodes_1_1_node_delegate_model_registry_aea4fa5a9668975c4cde1d795da63f04f}\label{class_qt_nodes_1_1_node_delegate_model_registry_aea4fa5a9668975c4cde1d795da63f04f} 
+Registered\+Model\+Creators\+Map {\bfseries \+\_\+registered\+Item\+Creators}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class uses map for storing models (name, model) 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/core/\+QTNodes/include/\+Qt\+Nodes/internal/internal/Node\+Delegate\+Model\+Registry.\+hpp\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/core/\+QTNodes/include/\+Qt\+Nodes/internal/Node\+Delegate\+Model\+Registry.\+hpp\end{DoxyCompactItemize}

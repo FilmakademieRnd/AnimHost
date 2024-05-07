@@ -1,0 +1,64 @@
+\doxysection{Onnx\+Model.\+h}
+\hypertarget{_onnx_model_8h_source}{}\label{_onnx_model_8h_source}\index{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost\_Plugins/BasicOnnxPlugin/OnnxModel.h@{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/animHost\_Plugins/BasicOnnxPlugin/OnnxModel.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ ONNXMODEl\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ ONNXMODEl\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <QMetaType>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <onnxruntime\_cxx\_api.h>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_onnx_model}{OnnxModel}}\ \{}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{comment}{//ONNX}}
+\DoxyCodeLine{00012\ \ \ \ \ std::unique\_ptr<Ort::Session>\ session;}
+\DoxyCodeLine{00013\ \ \ \ \ std::unique\_ptr<Ort::Env>\ environment;}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \ \ \ \ std::vector<std::string>\ input\_names;}
+\DoxyCodeLine{00016\ \ \ \ \ std::vector<std::string>\ output\_names;}
+\DoxyCodeLine{00017\ \ \ \ \ std::vector<std::vector<std::int64\_t>>\ input\_shapes;}
+\DoxyCodeLine{00018\ \ \ \ \ std::vector<std::vector<std::int64\_t>>\ output\_shapes;}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \ \ \ \ QString\ OnnxModelFilePath\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{bool}\ bModelValid\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00024\ \ \ \ \ \mbox{\hyperlink{class_onnx_model}{OnnxModel}}();}
+\DoxyCodeLine{00025\ \ \ \ \ \mbox{\hyperlink{class_onnx_model}{\string~OnnxModel}}()\ \{\};}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{void}\ SetupEnvironment();}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{void}\ LoadOnnxModel(QString\ Path);}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keywordtype}{bool}\ IsModelValid()\ \{\ \textcolor{keywordflow}{return}\ bModelValid;\ \};}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ std::vector<std::string>\ GetTensorNames(\textcolor{keywordtype}{bool}\ bGetInput\ =\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00033\ \ \ \ \ std::vector<std::string>\ GetTensorShapes(\textcolor{keywordtype}{bool}\ bGetInput\ =\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ GetNumTensors(\textcolor{keywordtype}{bool}\ bGetInput\ =\ \textcolor{keyword}{true})\ \{}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bModelValid)\ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ bGetInput\ ?\ session-\/>GetInputCount()\ :\ session-\/>GetOutputCount();}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00042\ \ \ \ \ \}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{void}\ RunInference();}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00047\ \ \ \ \ std::string\ shape\_printer(\textcolor{keyword}{const}\ std::vector<int64\_t>\&\ vec)\ \{}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ std::string\ s\ =\ std::accumulate(vec.begin(),\ vec.end(),\ std::string\{\},}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ [](\textcolor{keyword}{const}\ std::string\&\ a,\ \textcolor{keywordtype}{int}\ b)\ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ return\ a.empty()\ ?\ std::to\_string(b)\ :\ a\ +\ \textcolor{stringliteral}{"{},\ "{}}\ +\ std::to\_string(b);}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}["{}}\ +\ s\ +\ \textcolor{stringliteral}{"{}]"{}};}
+\DoxyCodeLine{00054\ \ \ \ \ \}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \};}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#endif\ }}
+
+\end{DoxyCode}

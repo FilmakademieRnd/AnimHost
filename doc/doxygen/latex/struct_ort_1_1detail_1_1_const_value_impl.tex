@@ -1,0 +1,488 @@
+\doxysection{Ort\+::detail\+::Const\+Value\+Impl\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>} Struct Template Reference}
+\hypertarget{struct_ort_1_1detail_1_1_const_value_impl}{}\label{struct_ort_1_1detail_1_1_const_value_impl}\index{Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}}
+
+
+Inheritance diagram for Ort\+::detail\+::Const\+Value\+Impl\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>}\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=336pt]{struct_ort_1_1detail_1_1_const_value_impl__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Ort\+::detail\+::Const\+Value\+Impl\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>}\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=236pt]{struct_ort_1_1detail_1_1_const_value_impl__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_ab80f19abb74be8f5a489ae95eaa13905}\label{struct_ort_1_1detail_1_1_const_value_impl_ab80f19abb74be8f5a489ae95eaa13905} 
+using {\bfseries B} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}$<$T$>$
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+using {\bfseries contained\+\_\+type} = T
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename R $>$ }\\void \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl_ab541b268a2aad607ceec3a3da7be8ba0}{Get\+Opaque\+Data}} (const char \texorpdfstring{$\ast$}{*}domain, const char \texorpdfstring{$\ast$}{*}type\+\_\+name, R \&) const
+\begin{DoxyCompactList}\small\item\em Obtains a pointer to a user defined data for experimental purposes. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_a64c428d4e7a1134f806fcf7b15dc35e7}\label{struct_ort_1_1detail_1_1_const_value_impl_a64c428d4e7a1134f806fcf7b15dc35e7} 
+bool {\bfseries Is\+Tensor} () const
+\begin{DoxyCompactList}\small\item\em Returns true if \doxylink{struct_ort_1_1_value}{Value} is a tensor, false for other types like map/sequence/etc. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_aa2656357fbdb63bcaa3b319191e4e37a}\label{struct_ort_1_1detail_1_1_const_value_impl_aa2656357fbdb63bcaa3b319191e4e37a} 
+bool {\bfseries Has\+Value} () const
+\item 
+\Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_ab0589e1f752d7b18a850699be24c8c84}\label{struct_ort_1_1detail_1_1_const_value_impl_ab0589e1f752d7b18a850699be24c8c84} 
+size\+\_\+t {\bfseries Get\+Count} () const
+\begin{DoxyCompactList}\small\item\em \texorpdfstring{$<$}{<} Return true if Ort\+Value contains data and returns false if the Ort\+Value is a None \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_aafc98d55540fa407b10b06ee4e6a2849}\label{struct_ort_1_1detail_1_1_const_value_impl_aafc98d55540fa407b10b06ee4e6a2849} 
+\mbox{\hyperlink{struct_ort_1_1_value}{Value}} {\bfseries Get\+Value} (int index, \mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}} \texorpdfstring{$\ast$}{*}allocator) const
+\item 
+size\+\_\+t \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl_a2700d2f2a5d9a7922c81419cc9fed664}{Get\+String\+Tensor\+Data\+Length}} () const
+\begin{DoxyCompactList}\small\item\em This API returns a full length of string data contained within either a tensor or a sparse Tensor. For sparse tensor it returns a full length of stored non-\/empty strings (values). The API is useful for allocating necessary memory and calling \doxylink{struct_ort_1_1detail_1_1_const_value_impl_a00830aa9d8da4892472df573b3bb1656}{Get\+String\+Tensor\+Content()}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl_a00830aa9d8da4892472df573b3bb1656}{Get\+String\+Tensor\+Content}} (void \texorpdfstring{$\ast$}{*}buffer, size\+\_\+t buffer\+\_\+length, size\+\_\+t \texorpdfstring{$\ast$}{*}offsets, size\+\_\+t offsets\+\_\+count) const
+\begin{DoxyCompactList}\small\item\em The API copies all of the UTF-\/8 encoded string data contained within a tensor or a sparse tensor into a supplied buffer. Use \doxylink{struct_ort_1_1detail_1_1_const_value_impl_a2700d2f2a5d9a7922c81419cc9fed664}{Get\+String\+Tensor\+Data\+Length()} to find out the length of the buffer to allocate. The user must also allocate offsets buffer with the number of entries equal to that of the contained strings. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename R $>$ }\\const R \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl_aed947feb6d46847d3d6cc0289b377fe6}{Get\+Tensor\+Data}} () const
+\begin{DoxyCompactList}\small\item\em Returns a const typed pointer to the tensor contained data. No type checking is performed, the caller must ensure the type matches the tensor type. \end{DoxyCompactList}\item 
+const void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl_a183c3ebf0e4d24698a782674fb9cced0}{Get\+Tensor\+Raw\+Data}} () const
+\begin{DoxyCompactList}\small\item\em Returns a non-\/typed pointer to a tensor contained data. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1_type_info}{Type\+Info}} \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl_a5ff868faaa0f476137844f1fe6053e42}{Get\+Type\+Info}} () const
+\begin{DoxyCompactList}\small\item\em The API returns type information for data contained in a tensor. For sparse tensors it returns type information for contained non-\/zero values. It returns dense shape for sparse tensors. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1_tensor_type_and_shape_info}{Tensor\+Type\+And\+Shape\+Info}} \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl_a9f945911eac6ee23534ce527488a6d5e}{Get\+Tensor\+Type\+And\+Shape\+Info}} () const
+\begin{DoxyCompactList}\small\item\em The API returns type information for data contained in a tensor. For sparse tensors it returns type information for contained non-\/zero values. It returns dense shape for sparse tensors. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_memory_info_impl}{Const\+Memory\+Info}} \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl_a7342c33f055407202f6b0e4ed209ead0}{Get\+Tensor\+Memory\+Info}} () const
+\begin{DoxyCompactList}\small\item\em This API returns information about the memory allocation used to hold data. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl_a11173caf6ac2fdc03fb1c3981fec9b3d}{Get\+String\+Tensor\+Element}} (size\+\_\+t buffer\+\_\+length, size\+\_\+t element\+\_\+index, void \texorpdfstring{$\ast$}{*}buffer) const
+\begin{DoxyCompactList}\small\item\em The API copies UTF-\/8 encoded bytes for the requested string element contained within a tensor or a sparse tensor into a provided buffer. Use \doxylink{struct_ort_1_1detail_1_1_const_value_impl_a21460daeba8be912b5d21ef9aa6dd717}{Get\+String\+Tensor\+Element\+Length()} to obtain the length of the buffer to allocate. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl_a1e2a3eb2f60e10b5d5832b57d46c611a}{Get\+String\+Tensor\+Element}} (size\+\_\+t element\+\_\+index) const
+\begin{DoxyCompactList}\small\item\em Returns string tensor UTF-\/8 encoded string element. Use of this API is recommended over \doxylink{struct_ort_1_1detail_1_1_const_value_impl_a11173caf6ac2fdc03fb1c3981fec9b3d}{Get\+String\+Tensor\+Element()} that takes void\texorpdfstring{$\ast$}{*} buffer pointer. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl_a21460daeba8be912b5d21ef9aa6dd717}{Get\+String\+Tensor\+Element\+Length}} (size\+\_\+t element\+\_\+index) const
+\begin{DoxyCompactList}\small\item\em The API returns a byte length of UTF-\/8 encoded string element contained in either a tensor or a spare tensor values. \end{DoxyCompactList}\item 
+Ort\+Sparse\+Format \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl_afc36132cb6a308a8beaa5ebaaf1aea58}{Get\+Sparse\+Format}} () const
+\begin{DoxyCompactList}\small\item\em The API returns the sparse data format this Ort\+Value holds in a sparse tensor. If the sparse tensor was not fully constructed, i.\+e. Use\texorpdfstring{$\ast$}{*}() or Fill\texorpdfstring{$\ast$}{*}() API were not used the value returned is ORT\+\_\+\+SPARSE\+\_\+\+UNDEFINED. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1_tensor_type_and_shape_info}{Tensor\+Type\+And\+Shape\+Info}} \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl_ab986f32751dc04d125b310fb91b05ab7}{Get\+Sparse\+Tensor\+Values\+Type\+And\+Shape\+Info}} () const
+\begin{DoxyCompactList}\small\item\em The API returns type and shape information for stored non-\/zero values of the sparse tensor. Use \doxylink{struct_ort_1_1detail_1_1_const_value_impl_a98ed067e5d11dde40386232f0ed33211}{Get\+Sparse\+Tensor\+Values()} to obtain values buffer pointer. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1_tensor_type_and_shape_info}{Tensor\+Type\+And\+Shape\+Info}} \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl_a14f83505e75304b45d70c8e41e65a070}{Get\+Sparse\+Tensor\+Indices\+Type\+Shape\+Info}} (Ort\+Sparse\+Indices\+Format format) const
+\begin{DoxyCompactList}\small\item\em The API returns type and shape information for the specified indices. Each supported indices have their own enum values even if a give format has more than one kind of indices. Use \doxylink{struct_ort_1_1detail_1_1_const_value_impl_a6100cd63b21154bf72baf191c52631cd}{Get\+Sparse\+Tensor\+Indices\+Data()} to obtain pointer to indices buffer. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename R $>$ }\\const R \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl_a6100cd63b21154bf72baf191c52631cd}{Get\+Sparse\+Tensor\+Indices\+Data}} (Ort\+Sparse\+Indices\+Format indices\+\_\+format, size\+\_\+t \&num\+\_\+indices) const
+\begin{DoxyCompactList}\small\item\em The API retrieves a pointer to the internal indices buffer. The API merely performs a convenience data type casting on the return type pointer. Make sure you are requesting the right type, use \doxylink{struct_ort_1_1detail_1_1_const_value_impl_a14f83505e75304b45d70c8e41e65a070}{Get\+Sparse\+Tensor\+Indices\+Type\+Shape\+Info()};. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl_a446256778924195baf3e340711a6ef44}{Is\+Sparse\+Tensor}} () const
+\begin{DoxyCompactList}\small\item\em Returns true if the Ort\+Value contains a sparse tensor. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename R $>$ }\\const R \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl_a98ed067e5d11dde40386232f0ed33211}{Get\+Sparse\+Tensor\+Values}} () const
+\begin{DoxyCompactList}\small\item\em The API returns a pointer to an internal buffer of the sparse tensor containing non-\/zero values. The API merely does casting. Make sure you are requesting the right data type by calling \doxylink{struct_ort_1_1detail_1_1_const_value_impl_ab986f32751dc04d125b310fb91b05ab7}{Get\+Sparse\+Tensor\+Values\+Type\+And\+Shape\+Info()} first. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+constexpr {\bfseries Base} (contained\+\_\+type \texorpdfstring{$\ast$}{*}p) noexcept
+\item 
+{\bfseries Base} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+{\bfseries Base} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+constexpr {\bfseries operator contained\+\_\+type \texorpdfstring{$\ast$}{*}} () const noexcept
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries release} ()
+\begin{DoxyCompactList}\small\item\em Relinquishes ownership of the contained C object pointer The underlying object is not destroyed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries p\+\_\+} \{\}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_ab541b268a2aad607ceec3a3da7be8ba0}\label{struct_ort_1_1detail_1_1_const_value_impl_ab541b268a2aad607ceec3a3da7be8ba0} 
+\index{Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}!GetOpaqueData@{GetOpaqueData}}
+\index{GetOpaqueData@{GetOpaqueData}!Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{GetOpaqueData()}{GetOpaqueData()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+template$<$typename R $>$ \\
+void \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{Ort\+::detail\+::\+Const\+Value\+Impl}}$<$ T $>$\+::\+Get\+Opaque\+Data (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{domain,  }\item[{const char \texorpdfstring{$\ast$}{*}}]{type\+\_\+name,  }\item[{R \&}]{out }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Obtains a pointer to a user defined data for experimental purposes. 
+
+Wraps Ort\+Api\+::\+Get\+Opaque\+Value \Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_afc36132cb6a308a8beaa5ebaaf1aea58}\label{struct_ort_1_1detail_1_1_const_value_impl_afc36132cb6a308a8beaa5ebaaf1aea58} 
+\index{Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}!GetSparseFormat@{GetSparseFormat}}
+\index{GetSparseFormat@{GetSparseFormat}!Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{GetSparseFormat()}{GetSparseFormat()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+Ort\+Sparse\+Format \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{Ort\+::detail\+::\+Const\+Value\+Impl}}$<$ T $>$\+::\+Get\+Sparse\+Format (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The API returns the sparse data format this Ort\+Value holds in a sparse tensor. If the sparse tensor was not fully constructed, i.\+e. Use\texorpdfstring{$\ast$}{*}() or Fill\texorpdfstring{$\ast$}{*}() API were not used the value returned is ORT\+\_\+\+SPARSE\+\_\+\+UNDEFINED. 
+
+\begin{DoxyReturn}{Returns}
+Format enum
+\end{DoxyReturn}
+\Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_a6100cd63b21154bf72baf191c52631cd}\label{struct_ort_1_1detail_1_1_const_value_impl_a6100cd63b21154bf72baf191c52631cd} 
+\index{Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}!GetSparseTensorIndicesData@{GetSparseTensorIndicesData}}
+\index{GetSparseTensorIndicesData@{GetSparseTensorIndicesData}!Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{GetSparseTensorIndicesData()}{GetSparseTensorIndicesData()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+template$<$typename R $>$ \\
+const R \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{Ort\+::detail\+::\+Const\+Value\+Impl}}$<$ T $>$\+::\+Get\+Sparse\+Tensor\+Indices\+Data (\begin{DoxyParamCaption}\item[{Ort\+Sparse\+Indices\+Format}]{indices\+\_\+format,  }\item[{size\+\_\+t \&}]{num\+\_\+indices }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The API retrieves a pointer to the internal indices buffer. The API merely performs a convenience data type casting on the return type pointer. Make sure you are requesting the right type, use \doxylink{struct_ort_1_1detail_1_1_const_value_impl_a14f83505e75304b45d70c8e41e65a070}{Get\+Sparse\+Tensor\+Indices\+Type\+Shape\+Info()};. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & type to cast to\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em indices\+\_\+format} & requested indices kind\\
+\hline
+{\em num\+\_\+indices} & number of indices entries\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pinter to the internal sparse tensor buffer containing indices. Do not free this pointer.
+\end{DoxyReturn}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=330pt]{struct_ort_1_1detail_1_1_const_value_impl_a6100cd63b21154bf72baf191c52631cd_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_a14f83505e75304b45d70c8e41e65a070}\label{struct_ort_1_1detail_1_1_const_value_impl_a14f83505e75304b45d70c8e41e65a070} 
+\index{Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}!GetSparseTensorIndicesTypeShapeInfo@{GetSparseTensorIndicesTypeShapeInfo}}
+\index{GetSparseTensorIndicesTypeShapeInfo@{GetSparseTensorIndicesTypeShapeInfo}!Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{GetSparseTensorIndicesTypeShapeInfo()}{GetSparseTensorIndicesTypeShapeInfo()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{struct_ort_1_1_tensor_type_and_shape_info}{Tensor\+Type\+And\+Shape\+Info}} \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{Ort\+::detail\+::\+Const\+Value\+Impl}}$<$ T $>$\+::\+Get\+Sparse\+Tensor\+Indices\+Type\+Shape\+Info (\begin{DoxyParamCaption}\item[{Ort\+Sparse\+Indices\+Format}]{format }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The API returns type and shape information for the specified indices. Each supported indices have their own enum values even if a give format has more than one kind of indices. Use \doxylink{struct_ort_1_1detail_1_1_const_value_impl_a6100cd63b21154bf72baf191c52631cd}{Get\+Sparse\+Tensor\+Indices\+Data()} to obtain pointer to indices buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em format} & enum requested\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+type and shape information
+\end{DoxyReturn}
+\Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_a98ed067e5d11dde40386232f0ed33211}\label{struct_ort_1_1detail_1_1_const_value_impl_a98ed067e5d11dde40386232f0ed33211} 
+\index{Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}!GetSparseTensorValues@{GetSparseTensorValues}}
+\index{GetSparseTensorValues@{GetSparseTensorValues}!Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{GetSparseTensorValues()}{GetSparseTensorValues()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+template$<$typename R $>$ \\
+const R \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{Ort\+::detail\+::\+Const\+Value\+Impl}}$<$ T $>$\+::\+Get\+Sparse\+Tensor\+Values (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The API returns a pointer to an internal buffer of the sparse tensor containing non-\/zero values. The API merely does casting. Make sure you are requesting the right data type by calling \doxylink{struct_ort_1_1detail_1_1_const_value_impl_ab986f32751dc04d125b310fb91b05ab7}{Get\+Sparse\+Tensor\+Values\+Type\+And\+Shape\+Info()} first. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & numeric data types only. Use Get\+String\+Tensor\texorpdfstring{$\ast$}{*}() to retrieve strings.\\
+\hline
+\end{DoxyTemplParams}
+\begin{DoxyReturn}{Returns}
+a pointer to the internal values buffer. Do not free this pointer.
+\end{DoxyReturn}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=315pt]{struct_ort_1_1detail_1_1_const_value_impl_a98ed067e5d11dde40386232f0ed33211_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_ab986f32751dc04d125b310fb91b05ab7}\label{struct_ort_1_1detail_1_1_const_value_impl_ab986f32751dc04d125b310fb91b05ab7} 
+\index{Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}!GetSparseTensorValuesTypeAndShapeInfo@{GetSparseTensorValuesTypeAndShapeInfo}}
+\index{GetSparseTensorValuesTypeAndShapeInfo@{GetSparseTensorValuesTypeAndShapeInfo}!Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{GetSparseTensorValuesTypeAndShapeInfo()}{GetSparseTensorValuesTypeAndShapeInfo()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{struct_ort_1_1_tensor_type_and_shape_info}{Tensor\+Type\+And\+Shape\+Info}} \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{Ort\+::detail\+::\+Const\+Value\+Impl}}$<$ T $>$\+::\+Get\+Sparse\+Tensor\+Values\+Type\+And\+Shape\+Info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The API returns type and shape information for stored non-\/zero values of the sparse tensor. Use \doxylink{struct_ort_1_1detail_1_1_const_value_impl_a98ed067e5d11dde40386232f0ed33211}{Get\+Sparse\+Tensor\+Values()} to obtain values buffer pointer. 
+
+\begin{DoxyReturn}{Returns}
+\doxylink{struct_ort_1_1_tensor_type_and_shape_info}{Tensor\+Type\+And\+Shape\+Info} values information
+\end{DoxyReturn}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{struct_ort_1_1detail_1_1_const_value_impl_ab986f32751dc04d125b310fb91b05ab7_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_a00830aa9d8da4892472df573b3bb1656}\label{struct_ort_1_1detail_1_1_const_value_impl_a00830aa9d8da4892472df573b3bb1656} 
+\index{Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}!GetStringTensorContent@{GetStringTensorContent}}
+\index{GetStringTensorContent@{GetStringTensorContent}!Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{GetStringTensorContent()}{GetStringTensorContent()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+void \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{Ort\+::detail\+::\+Const\+Value\+Impl}}$<$ T $>$\+::\+Get\+String\+Tensor\+Content (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{buffer,  }\item[{size\+\_\+t}]{buffer\+\_\+length,  }\item[{size\+\_\+t \texorpdfstring{$\ast$}{*}}]{offsets,  }\item[{size\+\_\+t}]{offsets\+\_\+count }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The API copies all of the UTF-\/8 encoded string data contained within a tensor or a sparse tensor into a supplied buffer. Use \doxylink{struct_ort_1_1detail_1_1_const_value_impl_a2700d2f2a5d9a7922c81419cc9fed664}{Get\+String\+Tensor\+Data\+Length()} to find out the length of the buffer to allocate. The user must also allocate offsets buffer with the number of entries equal to that of the contained strings. 
+
+Strings are always assumed to be on CPU, no X-\/device copy.
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & user allocated buffer\\
+\hline
+{\em buffer\+\_\+length} & length in bytes of the allocated buffer\\
+\hline
+{\em offsets} & a pointer to the offsets user allocated buffer\\
+\hline
+{\em offsets\+\_\+count} & count of offsets, must be equal to the number of strings contained. that can be obtained from the shape of the tensor or from \doxylink{struct_ort_1_1detail_1_1_const_value_impl_ab986f32751dc04d125b310fb91b05ab7}{Get\+Sparse\+Tensor\+Values\+Type\+And\+Shape\+Info()} for sparse tensors\\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=315pt]{struct_ort_1_1detail_1_1_const_value_impl_a00830aa9d8da4892472df573b3bb1656_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_a2700d2f2a5d9a7922c81419cc9fed664}\label{struct_ort_1_1detail_1_1_const_value_impl_a2700d2f2a5d9a7922c81419cc9fed664} 
+\index{Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}!GetStringTensorDataLength@{GetStringTensorDataLength}}
+\index{GetStringTensorDataLength@{GetStringTensorDataLength}!Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{GetStringTensorDataLength()}{GetStringTensorDataLength()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+size\+\_\+t \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{Ort\+::detail\+::\+Const\+Value\+Impl}}$<$ T $>$\+::\+Get\+String\+Tensor\+Data\+Length (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This API returns a full length of string data contained within either a tensor or a sparse Tensor. For sparse tensor it returns a full length of stored non-\/empty strings (values). The API is useful for allocating necessary memory and calling \doxylink{struct_ort_1_1detail_1_1_const_value_impl_a00830aa9d8da4892472df573b3bb1656}{Get\+String\+Tensor\+Content()}. 
+
+\begin{DoxyReturn}{Returns}
+total length of UTF-\/8 encoded bytes contained. No zero terminators counted.
+\end{DoxyReturn}
+\Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_a11173caf6ac2fdc03fb1c3981fec9b3d}\label{struct_ort_1_1detail_1_1_const_value_impl_a11173caf6ac2fdc03fb1c3981fec9b3d} 
+\index{Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}!GetStringTensorElement@{GetStringTensorElement}}
+\index{GetStringTensorElement@{GetStringTensorElement}!Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{GetStringTensorElement()}{GetStringTensorElement()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+void \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{Ort\+::detail\+::\+Const\+Value\+Impl}}$<$ T $>$\+::\+Get\+String\+Tensor\+Element (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{buffer\+\_\+length,  }\item[{size\+\_\+t}]{element\+\_\+index,  }\item[{void \texorpdfstring{$\ast$}{*}}]{buffer }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The API copies UTF-\/8 encoded bytes for the requested string element contained within a tensor or a sparse tensor into a provided buffer. Use \doxylink{struct_ort_1_1detail_1_1_const_value_impl_a21460daeba8be912b5d21ef9aa6dd717}{Get\+String\+Tensor\+Element\+Length()} to obtain the length of the buffer to allocate. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer\+\_\+length} & \\
+\hline
+{\em element\+\_\+index} & \\
+\hline
+{\em buffer} & \\
+\hline
+\end{DoxyParams}
+\Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_a1e2a3eb2f60e10b5d5832b57d46c611a}\label{struct_ort_1_1detail_1_1_const_value_impl_a1e2a3eb2f60e10b5d5832b57d46c611a} 
+\index{Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}!GetStringTensorElement@{GetStringTensorElement}}
+\index{GetStringTensorElement@{GetStringTensorElement}!Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{GetStringTensorElement()}{GetStringTensorElement()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+std\+::string \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{Ort\+::detail\+::\+Const\+Value\+Impl}}$<$ T $>$\+::\+Get\+String\+Tensor\+Element (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{element\+\_\+index }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns string tensor UTF-\/8 encoded string element. Use of this API is recommended over \doxylink{struct_ort_1_1detail_1_1_const_value_impl_a11173caf6ac2fdc03fb1c3981fec9b3d}{Get\+String\+Tensor\+Element()} that takes void\texorpdfstring{$\ast$}{*} buffer pointer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em element\+\_\+index} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+std\+::string
+\end{DoxyReturn}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=315pt]{struct_ort_1_1detail_1_1_const_value_impl_a1e2a3eb2f60e10b5d5832b57d46c611a_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_a21460daeba8be912b5d21ef9aa6dd717}\label{struct_ort_1_1detail_1_1_const_value_impl_a21460daeba8be912b5d21ef9aa6dd717} 
+\index{Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}!GetStringTensorElementLength@{GetStringTensorElementLength}}
+\index{GetStringTensorElementLength@{GetStringTensorElementLength}!Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{GetStringTensorElementLength()}{GetStringTensorElementLength()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+size\+\_\+t \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{Ort\+::detail\+::\+Const\+Value\+Impl}}$<$ T $>$\+::\+Get\+String\+Tensor\+Element\+Length (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{element\+\_\+index }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The API returns a byte length of UTF-\/8 encoded string element contained in either a tensor or a spare tensor values. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em element\+\_\+index} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+byte length for the specified string element
+\end{DoxyReturn}
+\Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_aed947feb6d46847d3d6cc0289b377fe6}\label{struct_ort_1_1detail_1_1_const_value_impl_aed947feb6d46847d3d6cc0289b377fe6} 
+\index{Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}!GetTensorData@{GetTensorData}}
+\index{GetTensorData@{GetTensorData}!Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{GetTensorData()}{GetTensorData()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+template$<$typename R $>$ \\
+const R \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{Ort\+::detail\+::\+Const\+Value\+Impl}}$<$ T $>$\+::\+Get\+Tensor\+Data (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns a const typed pointer to the tensor contained data. No type checking is performed, the caller must ensure the type matches the tensor type. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & \\
+\hline
+\end{DoxyTemplParams}
+\begin{DoxyReturn}{Returns}
+const pointer to data, no copies made
+\end{DoxyReturn}
+Wraps Ort\+Api\+::\+Get\+Tensor\+Mutable\+Data /// Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=315pt]{struct_ort_1_1detail_1_1_const_value_impl_aed947feb6d46847d3d6cc0289b377fe6_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_a7342c33f055407202f6b0e4ed209ead0}\label{struct_ort_1_1detail_1_1_const_value_impl_a7342c33f055407202f6b0e4ed209ead0} 
+\index{Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}!GetTensorMemoryInfo@{GetTensorMemoryInfo}}
+\index{GetTensorMemoryInfo@{GetTensorMemoryInfo}!Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{GetTensorMemoryInfo()}{GetTensorMemoryInfo()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_memory_info_impl}{Const\+Memory\+Info}} \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{Ort\+::detail\+::\+Const\+Value\+Impl}}$<$ T $>$\+::\+Get\+Tensor\+Memory\+Info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+This API returns information about the memory allocation used to hold data. 
+
+\begin{DoxyReturn}{Returns}
+Non owning instance of \doxylink{struct_ort_1_1_memory_info}{Memory\+Info}
+\end{DoxyReturn}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=315pt]{struct_ort_1_1detail_1_1_const_value_impl_a7342c33f055407202f6b0e4ed209ead0_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_a183c3ebf0e4d24698a782674fb9cced0}\label{struct_ort_1_1detail_1_1_const_value_impl_a183c3ebf0e4d24698a782674fb9cced0} 
+\index{Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}!GetTensorRawData@{GetTensorRawData}}
+\index{GetTensorRawData@{GetTensorRawData}!Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{GetTensorRawData()}{GetTensorRawData()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+const void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{Ort\+::detail\+::\+Const\+Value\+Impl}}$<$ T $>$\+::\+Get\+Tensor\+Raw\+Data (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns a non-\/typed pointer to a tensor contained data. 
+
+\begin{DoxyReturn}{Returns}
+const pointer to data, no copies made
+\end{DoxyReturn}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=315pt]{struct_ort_1_1detail_1_1_const_value_impl_a183c3ebf0e4d24698a782674fb9cced0_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_a9f945911eac6ee23534ce527488a6d5e}\label{struct_ort_1_1detail_1_1_const_value_impl_a9f945911eac6ee23534ce527488a6d5e} 
+\index{Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}!GetTensorTypeAndShapeInfo@{GetTensorTypeAndShapeInfo}}
+\index{GetTensorTypeAndShapeInfo@{GetTensorTypeAndShapeInfo}!Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{GetTensorTypeAndShapeInfo()}{GetTensorTypeAndShapeInfo()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{struct_ort_1_1_tensor_type_and_shape_info}{Tensor\+Type\+And\+Shape\+Info}} \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{Ort\+::detail\+::\+Const\+Value\+Impl}}$<$ T $>$\+::\+Get\+Tensor\+Type\+And\+Shape\+Info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The API returns type information for data contained in a tensor. For sparse tensors it returns type information for contained non-\/zero values. It returns dense shape for sparse tensors. 
+
+\begin{DoxyReturn}{Returns}
+\doxylink{struct_ort_1_1_tensor_type_and_shape_info}{Tensor\+Type\+And\+Shape\+Info}
+\end{DoxyReturn}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=330pt]{struct_ort_1_1detail_1_1_const_value_impl_a9f945911eac6ee23534ce527488a6d5e_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{struct_ort_1_1detail_1_1_const_value_impl_a9f945911eac6ee23534ce527488a6d5e_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_a5ff868faaa0f476137844f1fe6053e42}\label{struct_ort_1_1detail_1_1_const_value_impl_a5ff868faaa0f476137844f1fe6053e42} 
+\index{Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}!GetTypeInfo@{GetTypeInfo}}
+\index{GetTypeInfo@{GetTypeInfo}!Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{GetTypeInfo()}{GetTypeInfo()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{struct_ort_1_1_type_info}{Type\+Info}} \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{Ort\+::detail\+::\+Const\+Value\+Impl}}$<$ T $>$\+::\+Get\+Type\+Info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The API returns type information for data contained in a tensor. For sparse tensors it returns type information for contained non-\/zero values. It returns dense shape for sparse tensors. 
+
+\begin{DoxyReturn}{Returns}
+\doxylink{struct_ort_1_1_type_info}{Type\+Info}
+\end{DoxyReturn}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=315pt]{struct_ort_1_1detail_1_1_const_value_impl_a5ff868faaa0f476137844f1fe6053e42_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{struct_ort_1_1detail_1_1_const_value_impl_a446256778924195baf3e340711a6ef44}\label{struct_ort_1_1detail_1_1_const_value_impl_a446256778924195baf3e340711a6ef44} 
+\index{Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}!IsSparseTensor@{IsSparseTensor}}
+\index{IsSparseTensor@{IsSparseTensor}!Ort::detail::ConstValueImpl$<$ T $>$@{Ort::detail::ConstValueImpl$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{IsSparseTensor()}{IsSparseTensor()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+bool \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_value_impl}{Ort\+::detail\+::\+Const\+Value\+Impl}}$<$ T $>$\+::\+Is\+Sparse\+Tensor (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns true if the Ort\+Value contains a sparse tensor. 
+
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=315pt]{struct_ort_1_1detail_1_1_const_value_impl_a446256778924195baf3e340711a6ef44_cgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+api.\+h\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+inline.\+h\end{DoxyCompactItemize}

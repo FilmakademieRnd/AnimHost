@@ -1,0 +1,594 @@
+\doxysection{Anim\+Host\+Message\+Sender Class Reference}
+\hypertarget{class_anim_host_message_sender}{}\label{class_anim_host_message_sender}\index{AnimHostMessageSender@{AnimHostMessageSender}}
+
+
+{\ttfamily \#include $<$Anim\+Host\+Message\+Sender.\+h$>$}
+
+
+
+Inheritance diagram for Anim\+Host\+Message\+Sender\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=209pt]{class_anim_host_message_sender__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Anim\+Host\+Message\+Sender\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=209pt]{class_anim_host_message_sender__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Slots}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_anim_host_message_sender_a9b6353a89353c616330203b41df179fe}{run}} ()
+\begin{DoxyCompactList}\small\item\em Main loop, executes all operations. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Slots inherited from \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual void {\bfseries run} ()
+\begin{DoxyCompactList}\small\item\em Main function for executing operations. Called from Qt Application. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Signals}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_anim_host_message_sender_aaff4744c1e592c2af331cfd39243002b}\label{class_anim_host_message_sender_aaff4744c1e592c2af331cfd39243002b} 
+void {\bfseries stopped} ()
+\begin{DoxyCompactList}\small\item\em Signal emitted when process is finished. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Signals inherited from \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}}
+\begin{DoxyCompactItemize}
+\item 
+void {\bfseries stopped} ()
+\begin{DoxyCompactList}\small\item\em Signal emitted when process is finished. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_anim_host_message_sender_ac67e29f3903cf8d044cd7537c184ac06}\label{class_anim_host_message_sender_ac67e29f3903cf8d044cd7537c184ac06} 
+{\bfseries Anim\+Host\+Message\+Sender} ()
+\begin{DoxyCompactList}\small\item\em Default constructor. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_anim_host_message_sender_a5a71ed033f1d147c97d423a905b8c909}{Anim\+Host\+Message\+Sender}} (bool m\+\_\+debug\+State, zmq\+::context\+\_\+t \texorpdfstring{$\ast$}{*}m\+\_\+context)
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
+\Hypertarget{class_anim_host_message_sender_ab55001ddf916880537f8e566474131d5}\label{class_anim_host_message_sender_ab55001ddf916880537f8e566474131d5} 
+{\bfseries \texorpdfstring{$\sim$}{\string~}\+Anim\+Host\+Message\+Sender} ()
+\begin{DoxyCompactList}\small\item\em Default destructor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_anim_host_message_sender_aa32827b94e778e799570f8dad4fd6dea}{request\+Start}} () override
+\begin{DoxyCompactList}\small\item\em Request this process to start working. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_anim_host_message_sender_a966f9da88b6407b0825edd886e128cdd}{request\+Stop}} () override
+\begin{DoxyCompactList}\small\item\em Request this process to stop working. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_anim_host_message_sender_a726b2c693e8d06b909f2197fb12fda58}{set\+Animation\+And\+Scene\+Data}} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_animation}{Animation}} $>$ ad, std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_character_object}{Character\+Object}} $>$ co, std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_scene_node_object_sequence}{Scene\+Node\+Object\+Sequence}} $>$ snl)
+\begin{DoxyCompactList}\small\item\em Setting data necessary to create new TRACER Update Message representing a character pose. \end{DoxyCompactList}\item 
+QByte\+Array \mbox{\hyperlink{class_anim_host_message_sender_a73c677b3b8ab4f23ee52c874381f8f9f}{create\+Message\+Body}} (byte scene\+ID, int object\+ID, int parameter\+ID, \mbox{\hyperlink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::\+Parameter\+Type}} param\+Type, bool payload)
+\begin{DoxyCompactList}\small\item\em Creating a TRACER Update Message Body, given a specific bool to send. \end{DoxyCompactList}\item 
+QByte\+Array \mbox{\hyperlink{class_anim_host_message_sender_a7e8044aa3cdc3fe08fe24a1f6620c71c}{create\+Message\+Body}} (byte scene\+ID, int object\+ID, int parameter\+ID, \mbox{\hyperlink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::\+Parameter\+Type}} param\+Type, std\+::int32\+\_\+t payload)
+\begin{DoxyCompactList}\small\item\em Creating a TRACER Update Message Body, given a specific integer to send. \end{DoxyCompactList}\item 
+QByte\+Array \mbox{\hyperlink{class_anim_host_message_sender_a6c7f4b09a23e9974669a3af233ec3a29}{create\+Message\+Body}} (byte scene\+ID, int object\+ID, int parameter\+ID, \mbox{\hyperlink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::\+Parameter\+Type}} param\+Type, float payload)
+\begin{DoxyCompactList}\small\item\em Creating a TRACER Update Message Body, given a specific float to send. \end{DoxyCompactList}\item 
+QByte\+Array \mbox{\hyperlink{class_anim_host_message_sender_a339e5ba009ecbd38b5dfa3411ee574d9}{create\+Message\+Body}} (byte scene\+ID, int object\+ID, int parameter\+ID, \mbox{\hyperlink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::\+Parameter\+Type}} param\+Type, std\+::string payload)
+\begin{DoxyCompactList}\small\item\em Creating a TRACER Update Message Body, given a specific string to send. \end{DoxyCompactList}\item 
+QByte\+Array \mbox{\hyperlink{class_anim_host_message_sender_a34e4352d9f27a778bc8babb2f1320d2a}{create\+Message\+Body}} (byte scene\+ID, int object\+ID, int parameter\+ID, \mbox{\hyperlink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::\+Parameter\+Type}} param\+Type, std\+::vector$<$ float $>$ payload)
+\begin{DoxyCompactList}\small\item\em Creating a TRACER Update Message Body, given a specific vector of floats to send. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_anim_host_message_sender_acf89649e992be1ed5c5ceb3b360e9240}{Serialize\+Vector}} (byte \texorpdfstring{$\ast$}{*}dest, std\+::vector$<$ float $>$ \+\_\+vector, \mbox{\hyperlink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::\+Parameter\+Type}} type)
+\begin{DoxyCompactList}\small\item\em Converting any vector to a series of bytes added to a larger series of bytes. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_anim_host_message_sender_a3f21ada977b3885844e69c26eaeeff40}{Serialize\+Pose}} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_animation}{Animation}} $>$ \mbox{\hyperlink{class_anim_host_message_sender_a337a37afe3fe6b647888498659a58b8c}{anim\+Data}}, std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_character_object}{Character\+Object}} $>$ character, std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_scene_node_object_sequence}{Scene\+Node\+Object\+Sequence}} $>$ \mbox{\hyperlink{class_anim_host_message_sender_a5784bd07d875db5bcdf6ac97cc43e5d2}{scene\+Node\+List}}, QByte\+Array \texorpdfstring{$\ast$}{*}byte\+Array, int frame=0)
+\begin{DoxyCompactList}\small\item\em Converting an animation frame to a series of bytes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}}
+\begin{DoxyCompactItemize}
+\item 
+{\bfseries ZMQMessage\+Handler} ()
+\begin{DoxyCompactList}\small\item\em Default constructor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_z_m_q_message_handler_a2d113188e4b40b15ad7eb22507bf6433}{set\+Debug\+State}} (bool \+\_\+debug\+State)
+\begin{DoxyCompactList}\small\item\em Sets the debug state. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_z_m_q_message_handler_ad1bc17167c1b398bdff98d8f77810e98}{resume}} ()
+\begin{DoxyCompactList}\small\item\em Resumes main loop execution. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_z_m_q_message_handler_aa98179c6172d631769acbf7fd13c0d84}{pause}} ()
+\begin{DoxyCompactList}\small\item\em Pauses main loop execution. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_z_m_q_message_handler_a58c28c32dfc7e15654c93729db4ea9df}{create\+New\+Message}} (byte time, \mbox{\hyperlink{class_z_m_q_message_handler_a1ae73116559b65a1f9e6c8d0cf3586f7}{ZMQMessage\+Handler\+::\+Message\+Type}} message\+Type, QByte\+Array \texorpdfstring{$\ast$}{*}body)
+\begin{DoxyCompactList}\small\item\em Creates a new 0MQ formatted message. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{class_anim_host_message_sender_a78ebac42c510146e72216258ec7cb64a}{loop}} = false
+\begin{DoxyCompactList}\small\item\em Indicates whether the sent animation will loop or not. \end{DoxyCompactList}\item 
+\Hypertarget{class_anim_host_message_sender_a337a37afe3fe6b647888498659a58b8c}\label{class_anim_host_message_sender_a337a37afe3fe6b647888498659a58b8c} 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_animation}{Animation}} $>$ {\bfseries anim\+Data} = nullptr
+\begin{DoxyCompactList}\small\item\em \doxylink{class_animation}{Animation} data to be serialised and sent. \end{DoxyCompactList}\item 
+\Hypertarget{class_anim_host_message_sender_af89f10d805ce04da3978ebc4416f1c46}\label{class_anim_host_message_sender_af89f10d805ce04da3978ebc4416f1c46} 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_character_object}{Character\+Object}} $>$ {\bfseries char\+Obj} = nullptr
+\begin{DoxyCompactList}\small\item\em Character Object to which the animation will be applied. \end{DoxyCompactList}\item 
+\Hypertarget{class_anim_host_message_sender_a5784bd07d875db5bcdf6ac97cc43e5d2}\label{class_anim_host_message_sender_a5784bd07d875db5bcdf6ac97cc43e5d2} 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_scene_node_object_sequence}{Scene\+Node\+Object\+Sequence}} $>$ {\bfseries scene\+Node\+List} = nullptr
+\begin{DoxyCompactList}\small\item\em Description of the scene to be updated (contains the character that will be animated) \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_anim_host_message_sender_aab4daaca192868899b909c156182249a}\label{class_anim_host_message_sender_aab4daaca192868899b909c156182249a} 
+zmq\+::socket\+\_\+t \texorpdfstring{$\ast$}{*} {\bfseries send\+Socket} = nullptr
+\begin{DoxyCompactList}\small\item\em Zero\+MQ Socket used to send animation data. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{class_z_m_q_message_handler_a1ae73116559b65a1f9e6c8d0cf3586f7}{Message\+Type}} \{ \newline
+{\bfseries PARAMETERUPDATE}
+, {\bfseries LOCK}
+, {\bfseries SYNC}
+, {\bfseries PING}
+, \newline
+{\bfseries RESENDUPDATE}
+, {\bfseries UNDOREDOADD}
+, {\bfseries RESETOBJECT}
+, {\bfseries DATAHUB}
+, \newline
+{\bfseries EMPTY} = 255
+ \}
+\begin{DoxyCompactList}\small\item\em Enumeration of Message Types allowed by TRACER. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{Parameter\+Type}} \+: byte \{ \newline
+{\bfseries NONE}
+, {\bfseries ACTION}
+, {\bfseries BOOL}
+, {\bfseries INT}
+, \newline
+{\bfseries FLOAT}
+, {\bfseries VECTOR2}
+, {\bfseries VECTOR3}
+, {\bfseries VECTOR4}
+, \newline
+{\bfseries QUATERNION}
+, {\bfseries COLOR}
+, {\bfseries STRING}
+, {\bfseries LIST}
+, \newline
+{\bfseries UNKNOWN} = 100
+ \}
+\begin{DoxyCompactList}\small\item\em Enumeration of Message Types allowed by TRACER. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions inherited from \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}}
+\begin{DoxyCompactItemize}
+\item 
+static constexpr byte \mbox{\hyperlink{class_z_m_q_message_handler_a7678908cdea8f0c241004bed717fb108}{get\+Parameter\+Dimension}} (\mbox{\hyperlink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{Parameter\+Type}} parameter\+Type)
+\begin{DoxyCompactList}\small\item\em Returns the size size of each paramter in bytes. \end{DoxyCompactList}\item 
+static QList$<$ QHost\+Address $>$ {\bfseries get\+IPList} ()
+\begin{DoxyCompactList}\small\item\em Gets the list of available IP Addresses. \end{DoxyCompactList}\item 
+static QString \mbox{\hyperlink{class_z_m_q_message_handler_acbe97dc586d15b31e39834bb437beada}{get\+Own\+IP}} ()
+\begin{DoxyCompactList}\small\item\em Returns the currently selected IP Address. \end{DoxyCompactList}\item 
+static byte \mbox{\hyperlink{class_z_m_q_message_handler_a7c09e750f83c94cce01d20e4cd87f5e2}{get\+Own\+ID}} ()
+\begin{DoxyCompactList}\small\item\em Returns the current Client ID of the \doxylink{class_anim_host}{Anim\+Host} Qt Application. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{class_z_m_q_message_handler_a66c59a2eb9f3975521948e5471ce3e37}{set\+Target\+Scene\+ID}} (byte \+\_\+target\+Scene\+ID)
+\begin{DoxyCompactList}\small\item\em Sets the ID of the client that is supposed to receive the update. \end{DoxyCompactList}\item 
+static byte \mbox{\hyperlink{class_z_m_q_message_handler_a2d468a51b575ff891d880b257f454286}{get\+Target\+Scene\+ID}} ()
+\begin{DoxyCompactList}\small\item\em Returns the ID of the client that is supposed to receive the update. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{class_z_m_q_message_handler_a52871d6068f2f3063409618e0a61226d}{set\+IPAddress}} (QString new\+IPAddress)
+\begin{DoxyCompactList}\small\item\em Updates the currently selected IP address. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Attributes inherited from \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}}
+\begin{DoxyCompactItemize}
+\item 
+static const QString {\bfseries ip\+Range\+Regex} = "{}(?\+:\mbox{[}0-\/1\mbox{]}?\mbox{[}0-\/9\mbox{]}?\mbox{[}0-\/9\mbox{]}\texorpdfstring{$\vert$}{|}2\mbox{[}0-\/4\mbox{]}\mbox{[}0-\/9\mbox{]}\texorpdfstring{$\vert$}{|}25\mbox{[}0-\/5\mbox{]})"{}
+\begin{DoxyCompactList}\small\item\em Regex for any integer between 0 and 255 (0/1 followed by two figures 0-\/9, OR 2 followed by a figure 0-\/4 and another 0-\/9, OR 25 and a figure 0-\/5) \end{DoxyCompactList}\item 
+static const QRegular\+Expression \mbox{\hyperlink{class_z_m_q_message_handler_ae111494ef65a8116bf93ae2af5285435}{ip\+Regex}}
+\begin{DoxyCompactList}\small\item\em Regex for an ip address (4 ints between 0-\/255 interleaved by a "{}."{}) \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Slots inherited from \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_z_m_q_message_handler_a31cd54f56e9ae329cc26c43f92be5cf2}{create\+Sync\+Message}} (int time)
+\begin{DoxyCompactList}\small\item\em Populates/overwrites the sync message. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Member Functions inherited from \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}}
+\begin{DoxyCompactItemize}
+\item 
+const short \mbox{\hyperlink{class_z_m_q_message_handler_a694af91721c2057468715f622076fb9b}{Char\+To\+Short}} (const char \texorpdfstring{$\ast$}{*}buf) const
+\begin{DoxyCompactList}\small\item\em Utility function to convert a char value to a short scalar. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{class_z_m_q_message_handler_a2c406585af9bc7a7ac4e28a38c4f7436}{\+\_\+stop}} = true
+\begin{DoxyCompactList}\small\item\em If true, the process gets stopped. \end{DoxyCompactList}\item 
+bool {\bfseries \+\_\+debug} = false
+\begin{DoxyCompactList}\small\item\em Shall debug messages be printed. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_z_m_q_message_handler_a3bea861bc6629bbd8680c2ddb59165cb}{\+\_\+working}} = false
+\begin{DoxyCompactList}\small\item\em If true, the process is running. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_z_m_q_message_handler_accb0c387f1955d84cde07a13563a99ff}{\+\_\+paused}} = false
+\begin{DoxyCompactList}\small\item\em If true, the process is running but paused. \end{DoxyCompactList}\item 
+QMutex \mbox{\hyperlink{class_z_m_q_message_handler_a20eaf1cbbc8cb000a1a5b60dc7feb5cb}{mutex}}
+\begin{DoxyCompactList}\small\item\em Protect access to variables that affect the execution state. \end{DoxyCompactList}\item 
+QWait\+Condition {\bfseries wait\+Condition}
+\begin{DoxyCompactList}\small\item\em Handles pause/resume signals. \end{DoxyCompactList}\item 
+zmq\+::context\+\_\+t \texorpdfstring{$\ast$}{*} {\bfseries context} = nullptr
+\begin{DoxyCompactList}\small\item\em 0MQ context pointer \end{DoxyCompactList}\item 
+QByte\+Array \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_z_m_q_message_handler_a37ac587aa2a8980cb4c15c55a123e067}{message}} = new QByte\+Array()
+\begin{DoxyCompactList}\small\item\em The message of this instance of {\ttfamily \doxylink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}. \end{DoxyCompactList}\item 
+byte \mbox{\hyperlink{class_z_m_q_message_handler_a1c9b5425dd0644b083935bb82dcc907a}{sync\+Message}} \mbox{[}3\mbox{]} = \{ 0, 0, Message\+Type\+::\+EMPTY \}
+\begin{DoxyCompactList}\small\item\em Message used for synchronising different clients. \end{DoxyCompactList}\item 
+QMap$<$ QByte\+Array, QByte\+Array $>$ {\bfseries object\+State\+Map}
+\begin{DoxyCompactList}\small\item\em Map of last states. \end{DoxyCompactList}\item 
+QMap$<$ byte, unsigned int $>$ {\bfseries ping\+Map}
+\begin{DoxyCompactList}\small\item\em Map of ping timings. \end{DoxyCompactList}\item 
+QMulti\+Map$<$ byte, QByte\+Array $>$ {\bfseries lock\+Map}
+\begin{DoxyCompactList}\small\item\em Map of last states. \end{DoxyCompactList}\item 
+unsigned int {\bfseries m\+\_\+time} = 0
+\begin{DoxyCompactList}\small\item\em The local elapsed time in seconds since object has been created. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Protected Attributes inherited from \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}}
+\begin{DoxyCompactItemize}
+\item 
+static QList$<$ QHost\+Address $>$ {\bfseries ip\+List}
+\begin{DoxyCompactList}\small\item\em List of available IP addresses. \end{DoxyCompactList}\item 
+static QString {\bfseries own\+IP} = "{}"{}
+\begin{DoxyCompactList}\small\item\em Client\textquotesingle{}s own IP address. \end{DoxyCompactList}\item 
+static byte {\bfseries target\+Scene\+ID} = 0
+\begin{DoxyCompactList}\small\item\em ID of the TRACER client that is supposed to receive the messages. \end{DoxyCompactList}\item 
+static const unsigned int {\bfseries m\+\_\+ping\+Timeout} = 4
+\begin{DoxyCompactList}\small\item\em Maximum time spent waiting for a ping response. \end{DoxyCompactList}\item 
+static constexpr byte \mbox{\hyperlink{class_z_m_q_message_handler_ae2ec46bbcfc6efbc7083ec5a43c11470}{parameter\+Dimension}} \mbox{[}13\mbox{]}
+\begin{DoxyCompactList}\small\item\em Array storing the size of the various parameter types (in bytes) for ease of access. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\hypertarget{class_anim_host_message_sender_autotoc_md14}{}\doxysubsubsubsection{\texorpdfstring{This class is instanced by the \doxylink{class_tracer_update_sender_plugin}{Tracer\+Update\+Sender\+Plugin} and is run in a subthread.}{This class is instanced by the \doxylink{class_tracer_update_sender_plugin}{Tracer\+Update\+Sender\+Plugin} and is run in a subthread.}}\label{class_anim_host_message_sender_autotoc_md14}
+The class handles the connection to Data\+Hub and the other TRACER clients, it builds a TRACER Update Message given a certain payload, like bool, int, float, vector of floats (vec2, vec3, vec4, quat, colour), or string 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_anim_host_message_sender_a5a71ed033f1d147c97d423a905b8c909}\label{class_anim_host_message_sender_a5a71ed033f1d147c97d423a905b8c909} 
+\index{AnimHostMessageSender@{AnimHostMessageSender}!AnimHostMessageSender@{AnimHostMessageSender}}
+\index{AnimHostMessageSender@{AnimHostMessageSender}!AnimHostMessageSender@{AnimHostMessageSender}}
+\doxysubsubsection{\texorpdfstring{AnimHostMessageSender()}{AnimHostMessageSender()}}
+{\footnotesize\ttfamily Anim\+Host\+Message\+Sender\+::\+Anim\+Host\+Message\+Sender (\begin{DoxyParamCaption}\item[{bool}]{m\+\_\+debug\+State,  }\item[{zmq\+::context\+\_\+t \texorpdfstring{$\ast$}{*}}]{m\+\_\+context }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructor. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em m\+\_\+debug\+State} & boolean inherited from \doxylink{class_z_m_q_message_handler}{ZMQMessage\+Handler} indicating whether to print debug messages \\
+\hline
+\mbox{\texttt{ in}}  & {\em m\+\_\+context} & pointer to ZMQ Context instance \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_anim_host_message_sender_a73c677b3b8ab4f23ee52c874381f8f9f}\label{class_anim_host_message_sender_a73c677b3b8ab4f23ee52c874381f8f9f} 
+\index{AnimHostMessageSender@{AnimHostMessageSender}!createMessageBody@{createMessageBody}}
+\index{createMessageBody@{createMessageBody}!AnimHostMessageSender@{AnimHostMessageSender}}
+\doxysubsubsection{\texorpdfstring{createMessageBody()}{createMessageBody()}\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+{\footnotesize\ttfamily QByte\+Array Anim\+Host\+Message\+Sender\+::create\+Message\+Body (\begin{DoxyParamCaption}\item[{byte}]{scene\+ID,  }\item[{int}]{object\+ID,  }\item[{int}]{parameter\+ID,  }\item[{\mbox{\hyperlink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::\+Parameter\+Type}}}]{param\+Type,  }\item[{bool}]{payload }\end{DoxyParamCaption})}
+
+
+
+Creating a TRACER Update Message Body, given a specific bool to send. 
+
+Creating a TRACER Update Message Body, given a specific parameter to send. When a multiple Object Parameters have to be updated the various message bodies can be concatenated into a larger message, which will be unpacked and processed by the receiver 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em scene\+ID} & 1-\/byte value representing the ID of the TRACER Scene to be addressed \\
+\hline
+\mbox{\texttt{ in}}  & {\em object\+ID} & 2-\/byte value representing the ID of the specific Scene Object to be addressed \\
+\hline
+\mbox{\texttt{ in}}  & {\em parameter\+ID} & 2-\/byte value representing the ID of the specific Object Parameter to be addressed \\
+\hline
+\mbox{\texttt{ in}}  & {\em param\+Type} & The type of the parameter (expressed in "{}\+TRACER terms"{}) \doxylink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::Parameter\+Type} \\
+\hline
+\mbox{\texttt{ in}}  & {\em payload} & The actual values to be included in the Update Message \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\doxylink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::\+Parameter\+Type} 
+\end{DoxySeeAlso}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_anim_host_message_sender_a73c677b3b8ab4f23ee52c874381f8f9f_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_anim_host_message_sender_a73c677b3b8ab4f23ee52c874381f8f9f_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_anim_host_message_sender_a6c7f4b09a23e9974669a3af233ec3a29}\label{class_anim_host_message_sender_a6c7f4b09a23e9974669a3af233ec3a29} 
+\index{AnimHostMessageSender@{AnimHostMessageSender}!createMessageBody@{createMessageBody}}
+\index{createMessageBody@{createMessageBody}!AnimHostMessageSender@{AnimHostMessageSender}}
+\doxysubsubsection{\texorpdfstring{createMessageBody()}{createMessageBody()}\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+{\footnotesize\ttfamily QByte\+Array Anim\+Host\+Message\+Sender\+::create\+Message\+Body (\begin{DoxyParamCaption}\item[{byte}]{scene\+ID,  }\item[{int}]{object\+ID,  }\item[{int}]{parameter\+ID,  }\item[{\mbox{\hyperlink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::\+Parameter\+Type}}}]{param\+Type,  }\item[{float}]{payload }\end{DoxyParamCaption})}
+
+
+
+Creating a TRACER Update Message Body, given a specific float to send. 
+
+Creating a TRACER Update Message Body, given a specific parameter to send. When a multiple Object Parameters have to be updated the various message bodies can be concatenated into a larger message, which will be unpacked and processed by the receiver 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em scene\+ID} & 1-\/byte value representing the ID of the TRACER Scene to be addressed \\
+\hline
+\mbox{\texttt{ in}}  & {\em object\+ID} & 2-\/byte value representing the ID of the specific Scene Object to be addressed \\
+\hline
+\mbox{\texttt{ in}}  & {\em parameter\+ID} & 2-\/byte value representing the ID of the specific Object Parameter to be addressed \\
+\hline
+\mbox{\texttt{ in}}  & {\em param\+Type} & The type of the parameter (expressed in "{}\+TRACER terms"{}) \doxylink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::Parameter\+Type} \\
+\hline
+\mbox{\texttt{ in}}  & {\em payload} & The actual values to be included in the Update Message \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\doxylink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::\+Parameter\+Type} 
+\end{DoxySeeAlso}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_anim_host_message_sender_a6c7f4b09a23e9974669a3af233ec3a29_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_anim_host_message_sender_a7e8044aa3cdc3fe08fe24a1f6620c71c}\label{class_anim_host_message_sender_a7e8044aa3cdc3fe08fe24a1f6620c71c} 
+\index{AnimHostMessageSender@{AnimHostMessageSender}!createMessageBody@{createMessageBody}}
+\index{createMessageBody@{createMessageBody}!AnimHostMessageSender@{AnimHostMessageSender}}
+\doxysubsubsection{\texorpdfstring{createMessageBody()}{createMessageBody()}\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+{\footnotesize\ttfamily QByte\+Array Anim\+Host\+Message\+Sender\+::create\+Message\+Body (\begin{DoxyParamCaption}\item[{byte}]{scene\+ID,  }\item[{int}]{object\+ID,  }\item[{int}]{parameter\+ID,  }\item[{\mbox{\hyperlink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::\+Parameter\+Type}}}]{param\+Type,  }\item[{std\+::int32\+\_\+t}]{payload }\end{DoxyParamCaption})}
+
+
+
+Creating a TRACER Update Message Body, given a specific integer to send. 
+
+Creating a TRACER Update Message Body, given a specific parameter to send. When a multiple Object Parameters have to be updated the various message bodies can be concatenated into a larger message, which will be unpacked and processed by the receiver 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em scene\+ID} & 1-\/byte value representing the ID of the TRACER Scene to be addressed \\
+\hline
+\mbox{\texttt{ in}}  & {\em object\+ID} & 2-\/byte value representing the ID of the specific Scene Object to be addressed \\
+\hline
+\mbox{\texttt{ in}}  & {\em parameter\+ID} & 2-\/byte value representing the ID of the specific Object Parameter to be addressed \\
+\hline
+\mbox{\texttt{ in}}  & {\em param\+Type} & The type of the parameter (expressed in "{}\+TRACER terms"{}) \doxylink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::Parameter\+Type} \\
+\hline
+\mbox{\texttt{ in}}  & {\em payload} & The actual values to be included in the Update Message \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\doxylink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::\+Parameter\+Type} 
+\end{DoxySeeAlso}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_anim_host_message_sender_a7e8044aa3cdc3fe08fe24a1f6620c71c_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_anim_host_message_sender_a339e5ba009ecbd38b5dfa3411ee574d9}\label{class_anim_host_message_sender_a339e5ba009ecbd38b5dfa3411ee574d9} 
+\index{AnimHostMessageSender@{AnimHostMessageSender}!createMessageBody@{createMessageBody}}
+\index{createMessageBody@{createMessageBody}!AnimHostMessageSender@{AnimHostMessageSender}}
+\doxysubsubsection{\texorpdfstring{createMessageBody()}{createMessageBody()}\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+{\footnotesize\ttfamily QByte\+Array Anim\+Host\+Message\+Sender\+::create\+Message\+Body (\begin{DoxyParamCaption}\item[{byte}]{scene\+ID,  }\item[{int}]{object\+ID,  }\item[{int}]{parameter\+ID,  }\item[{\mbox{\hyperlink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::\+Parameter\+Type}}}]{param\+Type,  }\item[{std\+::string}]{payload }\end{DoxyParamCaption})}
+
+
+
+Creating a TRACER Update Message Body, given a specific string to send. 
+
+Creating a TRACER Update Message Body, given a specific parameter to send. When a multiple Object Parameters have to be updated the various message bodies can be concatenated into a larger message, which will be unpacked and processed by the receiver 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em scene\+ID} & 1-\/byte value representing the ID of the TRACER Scene to be addressed \\
+\hline
+\mbox{\texttt{ in}}  & {\em object\+ID} & 2-\/byte value representing the ID of the specific Scene Object to be addressed \\
+\hline
+\mbox{\texttt{ in}}  & {\em parameter\+ID} & 2-\/byte value representing the ID of the specific Object Parameter to be addressed \\
+\hline
+\mbox{\texttt{ in}}  & {\em param\+Type} & The type of the parameter (expressed in "{}\+TRACER terms"{}) \doxylink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::Parameter\+Type} \\
+\hline
+\mbox{\texttt{ in}}  & {\em payload} & The actual values to be included in the Update Message \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\doxylink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::\+Parameter\+Type} 
+\end{DoxySeeAlso}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_anim_host_message_sender_a339e5ba009ecbd38b5dfa3411ee574d9_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_anim_host_message_sender_a34e4352d9f27a778bc8babb2f1320d2a}\label{class_anim_host_message_sender_a34e4352d9f27a778bc8babb2f1320d2a} 
+\index{AnimHostMessageSender@{AnimHostMessageSender}!createMessageBody@{createMessageBody}}
+\index{createMessageBody@{createMessageBody}!AnimHostMessageSender@{AnimHostMessageSender}}
+\doxysubsubsection{\texorpdfstring{createMessageBody()}{createMessageBody()}\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+{\footnotesize\ttfamily QByte\+Array Anim\+Host\+Message\+Sender\+::create\+Message\+Body (\begin{DoxyParamCaption}\item[{byte}]{scene\+ID,  }\item[{int}]{object\+ID,  }\item[{int}]{parameter\+ID,  }\item[{\mbox{\hyperlink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::\+Parameter\+Type}}}]{param\+Type,  }\item[{std\+::vector$<$ float $>$}]{payload }\end{DoxyParamCaption})}
+
+
+
+Creating a TRACER Update Message Body, given a specific vector of floats to send. 
+
+Creating a TRACER Update Message Body, given a specific parameter to send. When a multiple Object Parameters have to be updated the various message bodies can be concatenated into a larger message, which will be unpacked and processed by the receiver 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em scene\+ID} & 1-\/byte value representing the ID of the TRACER Scene to be addressed \\
+\hline
+\mbox{\texttt{ in}}  & {\em object\+ID} & 2-\/byte value representing the ID of the specific Scene Object to be addressed \\
+\hline
+\mbox{\texttt{ in}}  & {\em parameter\+ID} & 2-\/byte value representing the ID of the specific Object Parameter to be addressed \\
+\hline
+\mbox{\texttt{ in}}  & {\em param\+Type} & The type of the parameter (expressed in "{}\+TRACER terms"{}) \doxylink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::Parameter\+Type} \\
+\hline
+\mbox{\texttt{ in}}  & {\em payload} & The actual values to be included in the Update Message \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\doxylink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::\+Parameter\+Type} 
+\end{DoxySeeAlso}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_anim_host_message_sender_a34e4352d9f27a778bc8babb2f1320d2a_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_anim_host_message_sender_aa32827b94e778e799570f8dad4fd6dea}\label{class_anim_host_message_sender_aa32827b94e778e799570f8dad4fd6dea} 
+\index{AnimHostMessageSender@{AnimHostMessageSender}!requestStart@{requestStart}}
+\index{requestStart@{requestStart}!AnimHostMessageSender@{AnimHostMessageSender}}
+\doxysubsubsection{\texorpdfstring{requestStart()}{requestStart()}}
+{\footnotesize\ttfamily void Anim\+Host\+Message\+Sender\+::request\+Start (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Request this process to start working. 
+
+Sets {\ttfamily \+\_\+working} to true, {\ttfamily \+\_\+stopped} and {\ttfamily \+\_\+paused} to false and creates a new publishing {\ttfamily send\+Socket} for message broadcasting 
+
+Implements \mbox{\hyperlink{class_z_m_q_message_handler_ab4cbe858e27d51c548200d761bf00f51}{ZMQMessage\+Handler}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_anim_host_message_sender_aa32827b94e778e799570f8dad4fd6dea_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_anim_host_message_sender_a966f9da88b6407b0825edd886e128cdd}\label{class_anim_host_message_sender_a966f9da88b6407b0825edd886e128cdd} 
+\index{AnimHostMessageSender@{AnimHostMessageSender}!requestStop@{requestStop}}
+\index{requestStop@{requestStop}!AnimHostMessageSender@{AnimHostMessageSender}}
+\doxysubsubsection{\texorpdfstring{requestStop()}{requestStop()}}
+{\footnotesize\ttfamily void Anim\+Host\+Message\+Sender\+::request\+Stop (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Request this process to stop working. 
+
+Sets {\ttfamily \+\_\+stopped} to true and {\ttfamily \+\_\+paused} to false. -\/Should-\/ close {\ttfamily send\+Socket} and cleanup 
+
+Implements \mbox{\hyperlink{class_z_m_q_message_handler_a53f4a1286f022157f1a2394f2edc3ba9}{ZMQMessage\+Handler}}.
+
+\Hypertarget{class_anim_host_message_sender_a9b6353a89353c616330203b41df179fe}\label{class_anim_host_message_sender_a9b6353a89353c616330203b41df179fe} 
+\index{AnimHostMessageSender@{AnimHostMessageSender}!run@{run}}
+\index{run@{run}!AnimHostMessageSender@{AnimHostMessageSender}}
+\doxysubsubsection{\texorpdfstring{run}{run}}
+{\footnotesize\ttfamily void Anim\+Host\+Message\+Sender\+::run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [slot]}}
+
+
+
+Main loop, executes all operations. 
+
+Gets triggered by the Qt Application UI thread, when the "{}\+Send animation"{} button of the Tracer\+Update\+Sender Plugin is clicked. The first time it is called, it opens a socket. Then, for every frame present in the animation, it creates a message given the data coming from the other plugins (animation, character and scene data), and sends the message over the 0MQ connection. Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_anim_host_message_sender_a9b6353a89353c616330203b41df179fe_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_anim_host_message_sender_a9b6353a89353c616330203b41df179fe_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_anim_host_message_sender_a3f21ada977b3885844e69c26eaeeff40}\label{class_anim_host_message_sender_a3f21ada977b3885844e69c26eaeeff40} 
+\index{AnimHostMessageSender@{AnimHostMessageSender}!SerializePose@{SerializePose}}
+\index{SerializePose@{SerializePose}!AnimHostMessageSender@{AnimHostMessageSender}}
+\doxysubsubsection{\texorpdfstring{SerializePose()}{SerializePose()}}
+{\footnotesize\ttfamily void Anim\+Host\+Message\+Sender\+::\+Serialize\+Pose (\begin{DoxyParamCaption}\item[{std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_animation}{Animation}} $>$}]{anim\+Data,  }\item[{std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_character_object}{Character\+Object}} $>$}]{character,  }\item[{std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_scene_node_object_sequence}{Scene\+Node\+Object\+Sequence}} $>$}]{scene\+Node\+List,  }\item[{QByte\+Array \texorpdfstring{$\ast$}{*}}]{byte\+Array,  }\item[{int}]{frame = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Converting an animation frame to a series of bytes. 
+
+Converting an animation frame represented by a list of quaternions \doxylink{class_animation}{Animation} into a series of bytes. It is called by the main loop of the class \doxylink{class_anim_host_message_sender_a9b6353a89353c616330203b41df179fe}{run}. It calls \doxylink{class_anim_host_message_sender_a73c677b3b8ab4f23ee52c874381f8f9f}{create\+Message\+Body}. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em anim\+Data} & The \doxylink{class_animation}{Animation} data as a collection of bone pose sequences \\
+\hline
+\mbox{\texttt{ in}}  & {\em character} & The Character data, coinsisting of names, IDs, and all the mappings related to the character\textquotesingle{}s subcomponents \\
+\hline
+\mbox{\texttt{ in}}  & {\em scene\+Node\+List} & A list of scene nodes that represent the TRACER Scene to address \\
+\hline
+\mbox{\texttt{ out}}  & {\em byte\+Array} & The array of bytes to be modified by appending to the end the newly generated Message Body \\
+\hline
+\mbox{\texttt{ in}}  & {\em frame} & The frame of the animation to be serialised. If not set, the first frame will be used\\
+\hline
+ & {\em anim\+Data} & \\
+\hline
+ & {\em byte\+Array} & \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_anim_host_message_sender_a3f21ada977b3885844e69c26eaeeff40_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_anim_host_message_sender_a3f21ada977b3885844e69c26eaeeff40_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_anim_host_message_sender_acf89649e992be1ed5c5ceb3b360e9240}\label{class_anim_host_message_sender_acf89649e992be1ed5c5ceb3b360e9240} 
+\index{AnimHostMessageSender@{AnimHostMessageSender}!SerializeVector@{SerializeVector}}
+\index{SerializeVector@{SerializeVector}!AnimHostMessageSender@{AnimHostMessageSender}}
+\doxysubsubsection{\texorpdfstring{SerializeVector()}{SerializeVector()}}
+{\footnotesize\ttfamily void Anim\+Host\+Message\+Sender\+::\+Serialize\+Vector (\begin{DoxyParamCaption}\item[{byte \texorpdfstring{$\ast$}{*}}]{dest,  }\item[{std\+::vector$<$ float $>$}]{\+\_\+vector,  }\item[{\mbox{\hyperlink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::\+Parameter\+Type}}}]{type }\end{DoxyParamCaption})}
+
+
+
+Converting any vector to a series of bytes added to a larger series of bytes. 
+
+Function converting any vector representable in TRACER into a series of bytes added to a larger series of bytes. It is called by the \doxylink{class_anim_host_message_sender_a73c677b3b8ab4f23ee52c874381f8f9f}{create\+Message\+Body} function 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ out}}  & {\em dest} & Pointer to byte series, to which the serialised vector will be added \\
+\hline
+\mbox{\texttt{ in}}  & {\em \+\_\+vector} & A vector of floats to be serialised \\
+\hline
+\mbox{\texttt{ in}}  & {\em type} & The type of the parameter in "{}\+TRACER terms"{} \doxylink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ZMQMessage\+Handler\+::Parameter\+Type} necessary to serialise the values correctly \\
+\hline
+\end{DoxyParams}
+Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_anim_host_message_sender_acf89649e992be1ed5c5ceb3b360e9240_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_anim_host_message_sender_a726b2c693e8d06b909f2197fb12fda58}\label{class_anim_host_message_sender_a726b2c693e8d06b909f2197fb12fda58} 
+\index{AnimHostMessageSender@{AnimHostMessageSender}!setAnimationAndSceneData@{setAnimationAndSceneData}}
+\index{setAnimationAndSceneData@{setAnimationAndSceneData}!AnimHostMessageSender@{AnimHostMessageSender}}
+\doxysubsubsection{\texorpdfstring{setAnimationAndSceneData()}{setAnimationAndSceneData()}}
+{\footnotesize\ttfamily void Anim\+Host\+Message\+Sender\+::set\+Animation\+And\+Scene\+Data (\begin{DoxyParamCaption}\item[{std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_animation}{Animation}} $>$}]{ad,  }\item[{std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_character_object}{Character\+Object}} $>$}]{co,  }\item[{std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_scene_node_object_sequence}{Scene\+Node\+Object\+Sequence}} $>$}]{snl }\end{DoxyParamCaption})}
+
+
+
+Setting data necessary to create new TRACER Update Message representing a character pose. 
+
+The character data is needed to get the parameter-\/to-\/bone mapping (which parameter modifies which bone). The bone is represented as the index of a node in the scene description. The node has a name, which can be matched to the name of a bone in the animation data, and from this it is possible to extract the pose of the bone to be sent as a TRACER Parameter Update Message 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em ad} & The animation data\+: collection of Bones, which contains a sequence of poses of a specific skeletal bone \\
+\hline
+\mbox{\texttt{ in}}  & {\em co} & The character data\+: collection of all the data related to a character in a TRACER Application (e.\+g. Unity/\+Unreal/\+Blender VPET) \\
+\hline
+\mbox{\texttt{ in}}  & {\em snl} & The scene description\+: collection of nodes in the Scene listed sequentially (not hierarchically) \\
+\hline
+\end{DoxyParams}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_anim_host_message_sender_a726b2c693e8d06b909f2197fb12fda58_icgraph}
+\end{center}
+\end{figure}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_anim_host_message_sender_a78ebac42c510146e72216258ec7cb64a}\label{class_anim_host_message_sender_a78ebac42c510146e72216258ec7cb64a} 
+\index{AnimHostMessageSender@{AnimHostMessageSender}!loop@{loop}}
+\index{loop@{loop}!AnimHostMessageSender@{AnimHostMessageSender}}
+\doxysubsubsection{\texorpdfstring{loop}{loop}}
+{\footnotesize\ttfamily bool Anim\+Host\+Message\+Sender\+::loop = false}
+
+
+
+Indicates whether the sent animation will loop or not. 
+
+Is modified through the Qt Application UI. Is ignored if the \doxylink{class_animation}{Animation} that has to be sent contains only one pose/frame. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Tracer\+Update\+Sender\+Plugin/\mbox{\hyperlink{_anim_host_message_sender_8h}{Anim\+Host\+Message\+Sender.\+h}}\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Tracer\+Update\+Sender\+Plugin/Anim\+Host\+Message\+Sender.\+cpp\end{DoxyCompactItemize}

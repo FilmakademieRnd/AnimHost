@@ -1,0 +1,10 @@
+{
+    "name": "main",
+    "version-string": "latest",
+    "dependencies":[
+        "assimp",
+        "zeromq",
+        "cppzmq",
+        "qtbase"
+    ]
+}

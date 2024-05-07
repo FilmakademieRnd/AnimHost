@@ -1,0 +1,9 @@
+<map id="AnimHostMessageSender::createMessageBody" name="AnimHostMessageSender::createMessageBody">
+<area shape="rect" id="Node000001" title="Creating a TRACER Update Message Body, given a specific vector of floats to send." alt="" coords="5,72,178,115"/>
+<area shape="rect" id="Node000002" href="$class_z_m_q_message_handler.html#a7678908cdea8f0c241004bed717fb108" title="Returns the size size of each paramter in bytes." alt="" coords="232,5,392,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="163,69,224,50,225,56,165,74"/>
+<area shape="rect" id="Node000003" href="$class_z_m_q_message_handler.html#a2d468a51b575ff891d880b257f454286" title="Returns the ID of the client that is supposed to receive the update." alt="" coords="235,72,389,115"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="178,91,219,91,219,96,178,96"/>
+<area shape="rect" id="Node000004" href="$class_anim_host_message_sender.html#acf89649e992be1ed5c5ceb3b360e9240" title="Converting any vector to a series of bytes added to a larger series of bytes." alt="" coords="226,139,398,181"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="165,113,225,131,224,136,163,118"/>
+</map>

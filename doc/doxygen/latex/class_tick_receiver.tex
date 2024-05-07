@@ -1,0 +1,314 @@
+\doxysection{Tick\+Receiver Class Reference}
+\hypertarget{class_tick_receiver}{}\label{class_tick_receiver}\index{TickReceiver@{TickReceiver}}
+
+
+{\ttfamily \#include $<$Tick\+Receiver.\+h$>$}
+
+
+
+Inheritance diagram for Tick\+Receiver\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=190pt]{class_tick_receiver__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Tick\+Receiver\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_tick_receiver__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Slots}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_tick_receiver_aff9d670258308a6092af5caa63198ff9}{run}} ()
+\begin{DoxyCompactList}\small\item\em Main loop, executes all operations. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Slots inherited from \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual void {\bfseries run} ()
+\begin{DoxyCompactList}\small\item\em Main function for executing operations. Called from Qt Application. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Signals}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_tick_receiver_afef04cf74f83e22045870a8442e08d0f}{tick}} (int sync\+Time)
+\begin{DoxyCompactList}\small\item\em Signal emitted when a SYNC message is received. \end{DoxyCompactList}\item 
+\Hypertarget{class_tick_receiver_a5757f8d4ad8e646adaf41ed8f372c164}\label{class_tick_receiver_a5757f8d4ad8e646adaf41ed8f372c164} 
+void {\bfseries stopped} ()
+\begin{DoxyCompactList}\small\item\em Signal emitted when process is finished. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Signals inherited from \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}}
+\begin{DoxyCompactItemize}
+\item 
+void {\bfseries stopped} ()
+\begin{DoxyCompactList}\small\item\em Signal emitted when process is finished. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_tick_receiver_a585f07aba0e5777344b4aedf50555673}\label{class_tick_receiver_a585f07aba0e5777344b4aedf50555673} 
+{\bfseries Tick\+Receiver} ()
+\begin{DoxyCompactList}\small\item\em Default constructor. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_tick_receiver_abf10df489ea39463db36117d20bf326c}{Tick\+Receiver}} (\mbox{\hyperlink{class_tracer_update_sender_plugin}{Tracer\+Update\+Sender\+Plugin}} \texorpdfstring{$\ast$}{*}m\+\_\+\+TUSPlugin, bool m\+\_\+debug\+State, zmq\+::context\+\_\+t \texorpdfstring{$\ast$}{*}m\+\_\+context)
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_tick_receiver_a6e534e41274539c3e3fc10e6e9cf3159}{Tick\+Receiver}} (bool m\+\_\+debug\+State, zmq\+::context\+\_\+t \texorpdfstring{$\ast$}{*}m\+\_\+context)
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
+\Hypertarget{class_tick_receiver_a26eb9791daa958bb34b550ed81100983}\label{class_tick_receiver_a26eb9791daa958bb34b550ed81100983} 
+{\bfseries \texorpdfstring{$\sim$}{\string~}\+Tick\+Receiver} ()
+\begin{DoxyCompactList}\small\item\em Default destructor, closes connection and cleans up. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_tick_receiver_a4d1e1a1e37ee70c2147f646582cbdb40}{request\+Start}} () override
+\begin{DoxyCompactList}\small\item\em Request this process to start working. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_tick_receiver_acf71767a2e56230a15b36d60ff493061}{request\+Stop}} () override
+\begin{DoxyCompactList}\small\item\em Request this process to stop working. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}}
+\begin{DoxyCompactItemize}
+\item 
+{\bfseries ZMQMessage\+Handler} ()
+\begin{DoxyCompactList}\small\item\em Default constructor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_z_m_q_message_handler_a2d113188e4b40b15ad7eb22507bf6433}{set\+Debug\+State}} (bool \+\_\+debug\+State)
+\begin{DoxyCompactList}\small\item\em Sets the debug state. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_z_m_q_message_handler_ad1bc17167c1b398bdff98d8f77810e98}{resume}} ()
+\begin{DoxyCompactList}\small\item\em Resumes main loop execution. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_z_m_q_message_handler_aa98179c6172d631769acbf7fd13c0d84}{pause}} ()
+\begin{DoxyCompactList}\small\item\em Pauses main loop execution. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_z_m_q_message_handler_a58c28c32dfc7e15654c93729db4ea9df}{create\+New\+Message}} (byte time, \mbox{\hyperlink{class_z_m_q_message_handler_a1ae73116559b65a1f9e6c8d0cf3586f7}{ZMQMessage\+Handler\+::\+Message\+Type}} message\+Type, QByte\+Array \texorpdfstring{$\ast$}{*}body)
+\begin{DoxyCompactList}\small\item\em Creates a new 0MQ formatted message. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_tick_receiver_a664b3a46bdbcb3da07ccb8fd50a3e992}\label{class_tick_receiver_a664b3a46bdbcb3da07ccb8fd50a3e992} 
+zmq\+::socket\+\_\+t \texorpdfstring{$\ast$}{*} {\bfseries receive\+Socket} = nullptr
+\begin{DoxyCompactList}\small\item\em Pointer to the instance of the socket that will listen to the messages. \end{DoxyCompactList}\item 
+\Hypertarget{class_tick_receiver_af9c1070e754e10802a7f7cb94eee528f}\label{class_tick_receiver_af9c1070e754e10802a7f7cb94eee528f} 
+\mbox{\hyperlink{class_tracer_update_sender_plugin}{Tracer\+Update\+Sender\+Plugin}} \texorpdfstring{$\ast$}{*} {\bfseries TUSPlugin} = nullptr
+\begin{DoxyCompactList}\small\item\em Pointer to the instance of \doxylink{class_tracer_update_sender_plugin}{Tracer\+Update\+Sender\+Plugin} that owns this \doxylink{class_tick_receiver}{Tick\+Receiver}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{class_z_m_q_message_handler_a1ae73116559b65a1f9e6c8d0cf3586f7}{Message\+Type}} \{ \newline
+{\bfseries PARAMETERUPDATE}
+, {\bfseries LOCK}
+, {\bfseries SYNC}
+, {\bfseries PING}
+, \newline
+{\bfseries RESENDUPDATE}
+, {\bfseries UNDOREDOADD}
+, {\bfseries RESETOBJECT}
+, {\bfseries DATAHUB}
+, \newline
+{\bfseries EMPTY} = 255
+ \}
+\begin{DoxyCompactList}\small\item\em Enumeration of Message Types allowed by TRACER. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{Parameter\+Type}} \+: byte \{ \newline
+{\bfseries NONE}
+, {\bfseries ACTION}
+, {\bfseries BOOL}
+, {\bfseries INT}
+, \newline
+{\bfseries FLOAT}
+, {\bfseries VECTOR2}
+, {\bfseries VECTOR3}
+, {\bfseries VECTOR4}
+, \newline
+{\bfseries QUATERNION}
+, {\bfseries COLOR}
+, {\bfseries STRING}
+, {\bfseries LIST}
+, \newline
+{\bfseries UNKNOWN} = 100
+ \}
+\begin{DoxyCompactList}\small\item\em Enumeration of Message Types allowed by TRACER. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions inherited from \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}}
+\begin{DoxyCompactItemize}
+\item 
+static constexpr byte \mbox{\hyperlink{class_z_m_q_message_handler_a7678908cdea8f0c241004bed717fb108}{get\+Parameter\+Dimension}} (\mbox{\hyperlink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{Parameter\+Type}} parameter\+Type)
+\begin{DoxyCompactList}\small\item\em Returns the size size of each paramter in bytes. \end{DoxyCompactList}\item 
+static QList$<$ QHost\+Address $>$ {\bfseries get\+IPList} ()
+\begin{DoxyCompactList}\small\item\em Gets the list of available IP Addresses. \end{DoxyCompactList}\item 
+static QString \mbox{\hyperlink{class_z_m_q_message_handler_acbe97dc586d15b31e39834bb437beada}{get\+Own\+IP}} ()
+\begin{DoxyCompactList}\small\item\em Returns the currently selected IP Address. \end{DoxyCompactList}\item 
+static byte \mbox{\hyperlink{class_z_m_q_message_handler_a7c09e750f83c94cce01d20e4cd87f5e2}{get\+Own\+ID}} ()
+\begin{DoxyCompactList}\small\item\em Returns the current Client ID of the \doxylink{class_anim_host}{Anim\+Host} Qt Application. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{class_z_m_q_message_handler_a66c59a2eb9f3975521948e5471ce3e37}{set\+Target\+Scene\+ID}} (byte \+\_\+target\+Scene\+ID)
+\begin{DoxyCompactList}\small\item\em Sets the ID of the client that is supposed to receive the update. \end{DoxyCompactList}\item 
+static byte \mbox{\hyperlink{class_z_m_q_message_handler_a2d468a51b575ff891d880b257f454286}{get\+Target\+Scene\+ID}} ()
+\begin{DoxyCompactList}\small\item\em Returns the ID of the client that is supposed to receive the update. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{class_z_m_q_message_handler_a52871d6068f2f3063409618e0a61226d}{set\+IPAddress}} (QString new\+IPAddress)
+\begin{DoxyCompactList}\small\item\em Updates the currently selected IP address. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Attributes inherited from \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}}
+\begin{DoxyCompactItemize}
+\item 
+static const QString {\bfseries ip\+Range\+Regex} = "{}(?\+:\mbox{[}0-\/1\mbox{]}?\mbox{[}0-\/9\mbox{]}?\mbox{[}0-\/9\mbox{]}\texorpdfstring{$\vert$}{|}2\mbox{[}0-\/4\mbox{]}\mbox{[}0-\/9\mbox{]}\texorpdfstring{$\vert$}{|}25\mbox{[}0-\/5\mbox{]})"{}
+\begin{DoxyCompactList}\small\item\em Regex for any integer between 0 and 255 (0/1 followed by two figures 0-\/9, OR 2 followed by a figure 0-\/4 and another 0-\/9, OR 25 and a figure 0-\/5) \end{DoxyCompactList}\item 
+static const QRegular\+Expression \mbox{\hyperlink{class_z_m_q_message_handler_ae111494ef65a8116bf93ae2af5285435}{ip\+Regex}}
+\begin{DoxyCompactList}\small\item\em Regex for an ip address (4 ints between 0-\/255 interleaved by a "{}."{}) \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Slots inherited from \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_z_m_q_message_handler_a31cd54f56e9ae329cc26c43f92be5cf2}{create\+Sync\+Message}} (int time)
+\begin{DoxyCompactList}\small\item\em Populates/overwrites the sync message. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Member Functions inherited from \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}}
+\begin{DoxyCompactItemize}
+\item 
+const short \mbox{\hyperlink{class_z_m_q_message_handler_a694af91721c2057468715f622076fb9b}{Char\+To\+Short}} (const char \texorpdfstring{$\ast$}{*}buf) const
+\begin{DoxyCompactList}\small\item\em Utility function to convert a char value to a short scalar. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{class_z_m_q_message_handler_a2c406585af9bc7a7ac4e28a38c4f7436}{\+\_\+stop}} = true
+\begin{DoxyCompactList}\small\item\em If true, the process gets stopped. \end{DoxyCompactList}\item 
+bool {\bfseries \+\_\+debug} = false
+\begin{DoxyCompactList}\small\item\em Shall debug messages be printed. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_z_m_q_message_handler_a3bea861bc6629bbd8680c2ddb59165cb}{\+\_\+working}} = false
+\begin{DoxyCompactList}\small\item\em If true, the process is running. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_z_m_q_message_handler_accb0c387f1955d84cde07a13563a99ff}{\+\_\+paused}} = false
+\begin{DoxyCompactList}\small\item\em If true, the process is running but paused. \end{DoxyCompactList}\item 
+QMutex \mbox{\hyperlink{class_z_m_q_message_handler_a20eaf1cbbc8cb000a1a5b60dc7feb5cb}{mutex}}
+\begin{DoxyCompactList}\small\item\em Protect access to variables that affect the execution state. \end{DoxyCompactList}\item 
+QWait\+Condition {\bfseries wait\+Condition}
+\begin{DoxyCompactList}\small\item\em Handles pause/resume signals. \end{DoxyCompactList}\item 
+zmq\+::context\+\_\+t \texorpdfstring{$\ast$}{*} {\bfseries context} = nullptr
+\begin{DoxyCompactList}\small\item\em 0MQ context pointer \end{DoxyCompactList}\item 
+QByte\+Array \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_z_m_q_message_handler_a37ac587aa2a8980cb4c15c55a123e067}{message}} = new QByte\+Array()
+\begin{DoxyCompactList}\small\item\em The message of this instance of {\ttfamily \doxylink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}. \end{DoxyCompactList}\item 
+byte \mbox{\hyperlink{class_z_m_q_message_handler_a1c9b5425dd0644b083935bb82dcc907a}{sync\+Message}} \mbox{[}3\mbox{]} = \{ 0, 0, Message\+Type\+::\+EMPTY \}
+\begin{DoxyCompactList}\small\item\em Message used for synchronising different clients. \end{DoxyCompactList}\item 
+QMap$<$ QByte\+Array, QByte\+Array $>$ {\bfseries object\+State\+Map}
+\begin{DoxyCompactList}\small\item\em Map of last states. \end{DoxyCompactList}\item 
+QMap$<$ byte, unsigned int $>$ {\bfseries ping\+Map}
+\begin{DoxyCompactList}\small\item\em Map of ping timings. \end{DoxyCompactList}\item 
+QMulti\+Map$<$ byte, QByte\+Array $>$ {\bfseries lock\+Map}
+\begin{DoxyCompactList}\small\item\em Map of last states. \end{DoxyCompactList}\item 
+unsigned int {\bfseries m\+\_\+time} = 0
+\begin{DoxyCompactList}\small\item\em The local elapsed time in seconds since object has been created. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Protected Attributes inherited from \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessage\+Handler}}}
+\begin{DoxyCompactItemize}
+\item 
+static QList$<$ QHost\+Address $>$ {\bfseries ip\+List}
+\begin{DoxyCompactList}\small\item\em List of available IP addresses. \end{DoxyCompactList}\item 
+static QString {\bfseries own\+IP} = "{}"{}
+\begin{DoxyCompactList}\small\item\em Client\textquotesingle{}s own IP address. \end{DoxyCompactList}\item 
+static byte {\bfseries target\+Scene\+ID} = 0
+\begin{DoxyCompactList}\small\item\em ID of the TRACER client that is supposed to receive the messages. \end{DoxyCompactList}\item 
+static const unsigned int {\bfseries m\+\_\+ping\+Timeout} = 4
+\begin{DoxyCompactList}\small\item\em Maximum time spent waiting for a ping response. \end{DoxyCompactList}\item 
+static constexpr byte \mbox{\hyperlink{class_z_m_q_message_handler_ae2ec46bbcfc6efbc7083ec5a43c11470}{parameter\+Dimension}} \mbox{[}13\mbox{]}
+\begin{DoxyCompactList}\small\item\em Array storing the size of the various parameter types (in bytes) for ease of access. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\hypertarget{class_tick_receiver_autotoc_md15}{}\doxysubsubsubsection{\texorpdfstring{This class is instanced by the \doxylink{class_tracer_update_sender_plugin}{Tracer\+Update\+Sender\+Plugin} and is run in a subthread.}{This class is instanced by the \doxylink{class_tracer_update_sender_plugin}{Tracer\+Update\+Sender\+Plugin} and is run in a subthread.}}\label{class_tick_receiver_autotoc_md15}
+The class listens to SYNC messages from Data\+Hub and the other TRACER clients, keeps the timestamps in check, and notifies {\ttfamily \doxylink{class_tracer_update_sender_plugin}{Tracer\+Update\+Sender\+Plugin}} of the arrival of the message 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_tick_receiver_abf10df489ea39463db36117d20bf326c}\label{class_tick_receiver_abf10df489ea39463db36117d20bf326c} 
+\index{TickReceiver@{TickReceiver}!TickReceiver@{TickReceiver}}
+\index{TickReceiver@{TickReceiver}!TickReceiver@{TickReceiver}}
+\doxysubsubsection{\texorpdfstring{TickReceiver()}{TickReceiver()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Tick\+Receiver\+::\+Tick\+Receiver (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_tracer_update_sender_plugin}{Tracer\+Update\+Sender\+Plugin}} \texorpdfstring{$\ast$}{*}}]{m\+\_\+\+TUSPlugin,  }\item[{bool}]{m\+\_\+debug\+State,  }\item[{zmq\+::context\+\_\+t \texorpdfstring{$\ast$}{*}}]{m\+\_\+context }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructor. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em m\+\_\+\+TUSPlugin} & The \doxylink{class_tracer_update_sender_plugin}{Tracer\+Update\+Sender\+Plugin} instance that calls the constructor \\
+\hline
+\mbox{\texttt{ in}}  & {\em m\+\_\+debug\+State} & Whether the class should print out debug messages \\
+\hline
+\mbox{\texttt{ in}}  & {\em m\+\_\+context} & A pointer to the 0MQ Context instanciated by {\ttfamily m\+\_\+\+TUSPlugin} \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_tick_receiver_a6e534e41274539c3e3fc10e6e9cf3159}\label{class_tick_receiver_a6e534e41274539c3e3fc10e6e9cf3159} 
+\index{TickReceiver@{TickReceiver}!TickReceiver@{TickReceiver}}
+\index{TickReceiver@{TickReceiver}!TickReceiver@{TickReceiver}}
+\doxysubsubsection{\texorpdfstring{TickReceiver()}{TickReceiver()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Tick\+Receiver\+::\+Tick\+Receiver (\begin{DoxyParamCaption}\item[{bool}]{m\+\_\+debug\+State,  }\item[{zmq\+::context\+\_\+t \texorpdfstring{$\ast$}{*}}]{m\+\_\+context }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructor. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em m\+\_\+debug\+State} & Whether the class should print out debug messages \\
+\hline
+\mbox{\texttt{ in}}  & {\em m\+\_\+context} & A pointer to the 0MQ COntext instanciated by {\ttfamily m\+\_\+\+TUSPlugin} \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_tick_receiver_a4d1e1a1e37ee70c2147f646582cbdb40}\label{class_tick_receiver_a4d1e1a1e37ee70c2147f646582cbdb40} 
+\index{TickReceiver@{TickReceiver}!requestStart@{requestStart}}
+\index{requestStart@{requestStart}!TickReceiver@{TickReceiver}}
+\doxysubsubsection{\texorpdfstring{requestStart()}{requestStart()}}
+{\footnotesize\ttfamily void Tick\+Receiver\+::request\+Start (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Request this process to start working. 
+
+Sets {\ttfamily \+\_\+working} to true, {\ttfamily \+\_\+stopped} and {\ttfamily \+\_\+paused} to false and creates a new publishing {\ttfamily send\+Socket} for message broadcasting 
+
+Implements \mbox{\hyperlink{class_z_m_q_message_handler_ab4cbe858e27d51c548200d761bf00f51}{ZMQMessage\+Handler}}.
+
+\Hypertarget{class_tick_receiver_acf71767a2e56230a15b36d60ff493061}\label{class_tick_receiver_acf71767a2e56230a15b36d60ff493061} 
+\index{TickReceiver@{TickReceiver}!requestStop@{requestStop}}
+\index{requestStop@{requestStop}!TickReceiver@{TickReceiver}}
+\doxysubsubsection{\texorpdfstring{requestStop()}{requestStop()}}
+{\footnotesize\ttfamily void Tick\+Receiver\+::request\+Stop (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Request this process to stop working. 
+
+Sets {\ttfamily \+\_\+stopped} to true and {\ttfamily \+\_\+paused} to false. -\/Should-\/ close {\ttfamily send\+Socket} and cleanup 
+
+Implements \mbox{\hyperlink{class_z_m_q_message_handler_a53f4a1286f022157f1a2394f2edc3ba9}{ZMQMessage\+Handler}}.
+
+\Hypertarget{class_tick_receiver_aff9d670258308a6092af5caa63198ff9}\label{class_tick_receiver_aff9d670258308a6092af5caa63198ff9} 
+\index{TickReceiver@{TickReceiver}!run@{run}}
+\index{run@{run}!TickReceiver@{TickReceiver}}
+\doxysubsubsection{\texorpdfstring{run}{run}}
+{\footnotesize\ttfamily void Tick\+Receiver\+::run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [slot]}}
+
+
+
+Main loop, executes all operations. 
+
+Gets triggered by the Qt Application UI thread, when the Tracer\+Update\+Sender Plugin is initialised. It opens a socket and listens to all the messages coming its way. If a SYNC message is received, it reads it and notifies the UI thread. Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=344pt]{class_tick_receiver_aff9d670258308a6092af5caa63198ff9_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_tick_receiver_afef04cf74f83e22045870a8442e08d0f}\label{class_tick_receiver_afef04cf74f83e22045870a8442e08d0f} 
+\index{TickReceiver@{TickReceiver}!tick@{tick}}
+\index{tick@{tick}!TickReceiver@{TickReceiver}}
+\doxysubsubsection{\texorpdfstring{tick}{tick}}
+{\footnotesize\ttfamily void Tick\+Receiver\+::tick (\begin{DoxyParamCaption}\item[{int}]{sync\+Time }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [signal]}}
+
+
+
+Signal emitted when a SYNC message is received. 
+
+Passes along the received timestamp Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=346pt]{class_tick_receiver_afef04cf74f83e22045870a8442e08d0f_icgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Tracer\+Update\+Sender\+Plugin/\mbox{\hyperlink{_tick_receiver_8h}{Tick\+Receiver.\+h}}\end{DoxyCompactItemize}

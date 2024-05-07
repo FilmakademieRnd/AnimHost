@@ -1,0 +1,61 @@
+\doxysection{Connection\+Id\+Hash.\+hpp}
+\hypertarget{internal_2_connection_id_hash_8hpp_source}{}\label{internal_2_connection_id_hash_8hpp_source}\index{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/core/QTNodes/include/QtNodes/internal/internal/ConnectionIdHash.hpp@{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/core/QTNodes/include/QtNodes/internal/internal/ConnectionIdHash.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <functional>}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{internal_2_definitions_8hpp}{Definitions.hpp}}"{}}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ hash\_combine(std::size\_t\ \&seed)}
+\DoxyCodeLine{00008\ \{}
+\DoxyCodeLine{00009\ \ \ \ \ Q\_UNUSED(seed);}
+\DoxyCodeLine{00010\ \}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{template}<\textcolor{keyword}{typename}\ T,\ \textcolor{keyword}{typename}...\ Rest>}
+\DoxyCodeLine{00013\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ hash\_combine(std::size\_t\ \&seed,\ \textcolor{keyword}{const}\ T\ \&v,\ Rest...\ rest)}
+\DoxyCodeLine{00014\ \{}
+\DoxyCodeLine{00015\ \ \ \ \ std::hash<T>\ hasher;}
+\DoxyCodeLine{00016\ \ \ \ \ seed\ \string^=\ hasher(v)\ +\ 0x9e3779b9\ +\ (seed\ <<\ 6)\ +\ (seed\ >>\ 2);}
+\DoxyCodeLine{00017\ \ \ \ \ hash\_combine(seed,\ rest...);}
+\DoxyCodeLine{00018\ \}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{namespace\ }std\ \{}
+\DoxyCodeLine{00021\ \textcolor{keyword}{template}<>}
+\DoxyCodeLine{00022\ \textcolor{keyword}{struct\ }hash<QtNodes::ConnectionId>}
+\DoxyCodeLine{00023\ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{inline}\ std::size\_t\ operator()(\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{QtNodes::ConnectionId}}\ \textcolor{keyword}{const}\ \&\textcolor{keywordtype}{id})\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00025\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ std::size\_t\ h\ =\ 0;}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ hash\_combine(h,\ \textcolor{keywordtype}{id}.outNodeId,\ \textcolor{keywordtype}{id}.outPortIndex,\ \textcolor{keywordtype}{id}.inNodeId,\ \textcolor{keywordtype}{id}.inPortIndex);}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ h;}
+\DoxyCodeLine{00029\ \ \ \ \ \}}
+\DoxyCodeLine{00030\ \};}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{template}<>}
+\DoxyCodeLine{00033\ \textcolor{keyword}{struct\ }hash<std::pair<QtNodes::NodeId,\ QtNodes::PortIndex>>}
+\DoxyCodeLine{00034\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keyword}{inline}\ std::size\_t\ operator()(std::pair<QtNodes::NodeId,\ QtNodes::PortIndex>\ \textcolor{keyword}{const}\ \&nodePort)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00036\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ std::size\_t\ h\ =\ 0;}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ hash\_combine(h,\ nodePort.first,\ nodePort.second);}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ h;}
+\DoxyCodeLine{00040\ \ \ \ \ \}}
+\DoxyCodeLine{00041\ \};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{template}<>}
+\DoxyCodeLine{00044\ \textcolor{keyword}{struct\ }hash<std::tuple<QtNodes::NodeId,\ QtNodes::PortType,\ QtNodes::PortIndex>>}
+\DoxyCodeLine{00045\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keyword}{using\ }Key\ =\ std::tuple<QtNodes::NodeId,\ QtNodes::PortType,\ QtNodes::PortIndex>;}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keyword}{inline}\ std::size\_t\ operator()(Key\ \textcolor{keyword}{const}\ \&key)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00049\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ std::size\_t\ h\ =\ 0;}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ hash\_combine(h,\ std::get<0>(key),\ std::get<1>(key),\ std::get<2>(key));}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ h;}
+\DoxyCodeLine{00053\ \ \ \ \ \}}
+\DoxyCodeLine{00054\ \};}
+\DoxyCodeLine{00055\ \}\ \textcolor{comment}{//\ namespace\ std}}
+
+\end{DoxyCode}

@@ -1,0 +1,347 @@
+\doxysection{Animation\+Frame\+Selector\+Plugin Class Reference}
+\hypertarget{class_animation_frame_selector_plugin}{}\label{class_animation_frame_selector_plugin}\index{AnimationFrameSelectorPlugin@{AnimationFrameSelectorPlugin}}
+
+
+Inheritance diagram for Animation\+Frame\+Selector\+Plugin\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=260pt]{class_animation_frame_selector_plugin__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Animation\+Frame\+Selector\+Plugin\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_animation_frame_selector_plugin__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\+::unique\+\_\+ptr$<$ Node\+Delegate\+Model $>$ \mbox{\hyperlink{class_animation_frame_selector_plugin_a61bb11b2f8186c5bbf43eefd70210d07}{Init}} () override
+\item 
+QString \mbox{\hyperlink{class_animation_frame_selector_plugin_ac851aa7b3a09cd75914a9d299fd4fc19}{caption}} () const override
+\begin{DoxyCompactList}\small\item\em Caption is used in GUI. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_animation_frame_selector_plugin_a86ae9739040b4f58630a8ddbb59a5ac7}{caption\+Visible}} () const override
+\begin{DoxyCompactList}\small\item\em It is possible to hide caption in GUI. \end{DoxyCompactList}\item 
+unsigned int \mbox{\hyperlink{class_animation_frame_selector_plugin_a067eecec751caa181bb61f2e400a1a87}{n\+Data\+Ports}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Qt\+Nodes\+::\+Port\+Type}} port\+Type) const override
+\item 
+\mbox{\hyperlink{struct_qt_nodes_1_1_node_data_type}{Node\+Data\+Type}} \mbox{\hyperlink{class_animation_frame_selector_plugin_af153b334e14f5150ded7e1235711ea13}{data\+Port\+Type}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Qt\+Nodes\+::\+Port\+Type}} port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port\+Index) const override
+\begin{DoxyCompactList}\small\item\em Return the data type of data in -\/ or output on given port. \end{DoxyCompactList}\item 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ \mbox{\hyperlink{class_animation_frame_selector_plugin_a6b21689a0a9b44525291e1dce8dacf32}{process\+Out\+Data}} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port) override
+\item 
+void \mbox{\hyperlink{class_animation_frame_selector_plugin_a1c8e95cc0ec7c3c03def1f30d32c33ce}{process\+In\+Data}} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ data, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port\+Index) override
+\item 
+void \mbox{\hyperlink{class_animation_frame_selector_plugin_add00db2dcc7e0d5e10d35950e54d4ba6}{run}} () override
+\item 
+QWidget \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_animation_frame_selector_plugin_a748190dc7ada41fc2354ae1461797f5c}{embedded\+Widget}} () override
+\item 
+QString \mbox{\hyperlink{class_animation_frame_selector_plugin_a9103de6a4e653112c6573eb081d8e145}{category}} () override
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_plugin_node_interface}{Plugin\+Node\+Interface}}}
+\begin{DoxyCompactItemize}
+\item 
+{\bfseries Plugin\+Node\+Interface} (const \mbox{\hyperlink{class_plugin_node_interface}{Plugin\+Node\+Interface}} \&p)
+\item 
+QString \mbox{\hyperlink{class_plugin_node_interface_a7017ba11069f47b4bc117d676c3d5d2e}{name}} () const override
+\begin{DoxyCompactList}\small\item\em Name makes this model unique. \end{DoxyCompactList}\item 
+QString \mbox{\hyperlink{class_plugin_node_interface_adfeba18e3531e2d354d7de99f12920f0}{caption}} () const override
+\begin{DoxyCompactList}\small\item\em Caption is used in GUI. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_plugin_node_interface_ad47e5fd35446dbf4cd00b300d48ebe97}{caption\+Visible}} () const override
+\begin{DoxyCompactList}\small\item\em It is possible to hide caption in GUI. \end{DoxyCompactList}\item 
+unsigned int \mbox{\hyperlink{class_plugin_node_interface_ace62a2c4c3783210b45667820acb2bc0}{n\+Ports}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Qt\+Nodes\+::\+Port\+Type}} port\+Type) const override
+\item 
+virtual bool {\bfseries has\+Input\+Run\+Signal} () const
+\item 
+virtual bool \mbox{\hyperlink{class_plugin_node_interface_afe9ce1e94b1fc3ff8d260c15bbf82a0c}{has\+Output\+Run\+Signal}} () const
+\item 
+\mbox{\hyperlink{struct_qt_nodes_1_1_node_data_type}{Node\+Data\+Type}} \mbox{\hyperlink{class_plugin_node_interface_a5cb2d673d82497985e0339b9a864f427}{data\+Type}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Qt\+Nodes\+::\+Port\+Type}} port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port\+Index) const override
+\item 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ \mbox{\hyperlink{class_plugin_node_interface_aa5a92703377f0ae78d34c61b0dac86fa}{out\+Data}} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port) override
+\item 
+void \mbox{\hyperlink{class_plugin_node_interface_aef4294013cebc2964b85f5fe9011739f}{set\+In\+Data}} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ data, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port\+Index)
+\item 
+void {\bfseries emit\+Data\+Update} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port\+Index)
+\item 
+void {\bfseries emit\+Run\+Next\+Node} ()
+\item 
+void {\bfseries emit\+Data\+Invalidated} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}} port\+Index)
+\item 
+QWidget \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_plugin_node_interface_a0a1b864019583682fd1c15d3e88af73a}{embedded\+Widget}} () override
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual bool \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a960a7fbfc2bf771363937174da2de663}{port\+Caption\+Visible}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\begin{DoxyCompactList}\small\item\em It is possible to hide port caption in GUI. \end{DoxyCompactList}\item 
+virtual QString \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_add0dedb3ab8acf9c4086f72ecbc97504}{port\+Caption}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\begin{DoxyCompactList}\small\item\em Port caption is used in GUI to label individual ports. \end{DoxyCompactList}\item 
+QJson\+Object \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a0b7a061a3f7aa2b4997ced4ffa0c7319}{save}} () const override
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_ae1275eb13f2ca395411e1fda1789257c}{load}} (QJson\+Object const \&) override
+\item 
+virtual \mbox{\hyperlink{_definitions_8hpp_a23527e8a5775fe989d2ef3f595e2d369}{Connection\+Policy}} {\bfseries port\+Connection\+Policy} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\item 
+\mbox{\hyperlink{class_qt_nodes_1_1_node_style}{Node\+Style}} const \& {\bfseries node\+Style} () const
+\item 
+void {\bfseries set\+Node\+Style} (\mbox{\hyperlink{class_qt_nodes_1_1_node_style}{Node\+Style}} const \&style)
+\item 
+virtual bool {\bfseries resizable} () const
+\item 
+virtual bool \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a960a7fbfc2bf771363937174da2de663}{port\+Caption\+Visible}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\begin{DoxyCompactList}\small\item\em It is possible to hide port caption in GUI. \end{DoxyCompactList}\item 
+virtual QString \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_add0dedb3ab8acf9c4086f72ecbc97504}{port\+Caption}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\begin{DoxyCompactList}\small\item\em Port caption is used in GUI to label individual ports. \end{DoxyCompactList}\item 
+QJson\+Object \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a0b7a061a3f7aa2b4997ced4ffa0c7319}{save}} () const override
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_ae1275eb13f2ca395411e1fda1789257c}{load}} (QJson\+Object const \&) override
+\item 
+virtual \mbox{\hyperlink{_definitions_8hpp_a23527e8a5775fe989d2ef3f595e2d369}{Connection\+Policy}} {\bfseries port\+Connection\+Policy} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\item 
+\mbox{\hyperlink{class_qt_nodes_1_1_node_style}{Node\+Style}} const \& {\bfseries node\+Style} () const
+\item 
+void {\bfseries set\+Node\+Style} (\mbox{\hyperlink{class_qt_nodes_1_1_node_style}{Node\+Style}} const \&style)
+\item 
+virtual bool {\bfseries resizable} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Slots}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_animation_frame_selector_plugin_a99d34cce10a4feb780eea47dee6e54ac}\label{class_animation_frame_selector_plugin_a99d34cce10a4feb780eea47dee6e54ac} 
+void {\bfseries on\+Frame\+Change} (int value)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_animation_frame_selector_plugin_ab42c17ab8682da580c689de519bd4d1a}\label{class_animation_frame_selector_plugin_ab42c17ab8682da580c689de519bd4d1a} 
+QWidget \texorpdfstring{$\ast$}{*} {\bfseries \+\_\+widget}
+\item 
+\Hypertarget{class_animation_frame_selector_plugin_a44d578b697ea106cd125c41b314f7930}\label{class_animation_frame_selector_plugin_a44d578b697ea106cd125c41b314f7930} 
+QSlider \texorpdfstring{$\ast$}{*} {\bfseries \+\_\+slider}
+\item 
+\Hypertarget{class_animation_frame_selector_plugin_a95de363cd953249a345b087eeaed4dd3}\label{class_animation_frame_selector_plugin_a95de363cd953249a345b087eeaed4dd3} 
+QLabel \texorpdfstring{$\ast$}{*} {\bfseries \+\_\+l1}
+\item 
+\Hypertarget{class_animation_frame_selector_plugin_a6c39e8e454de16c783a29b18edec0f5f}\label{class_animation_frame_selector_plugin_a6c39e8e454de16c783a29b18edec0f5f} 
+QLabel \texorpdfstring{$\ast$}{*} {\bfseries \+\_\+l2}
+\item 
+\Hypertarget{class_animation_frame_selector_plugin_a89e51e4bf438c15702c2ca350dab357b}\label{class_animation_frame_selector_plugin_a89e51e4bf438c15702c2ca350dab357b} 
+QLabel \texorpdfstring{$\ast$}{*} {\bfseries \+\_\+l3}
+\item 
+\Hypertarget{class_animation_frame_selector_plugin_ae79615d1272dc90274d5657843bb3d9b}\label{class_animation_frame_selector_plugin_ae79615d1272dc90274d5657843bb3d9b} 
+QLabel \texorpdfstring{$\ast$}{*} {\bfseries \+\_\+l4}
+\item 
+\Hypertarget{class_animation_frame_selector_plugin_a3fe987c2dace9646394f07b0253c1e5b}\label{class_animation_frame_selector_plugin_a3fe987c2dace9646394f07b0253c1e5b} 
+std\+::weak\+\_\+ptr$<$ \mbox{\hyperlink{class_anim_node_data}{Anim\+Node\+Data}}$<$ \mbox{\hyperlink{class_animation}{Animation}} $>$ $>$ {\bfseries \+\_\+animation\+In}
+\item 
+\Hypertarget{class_animation_frame_selector_plugin_a85f0243494f2f3aadbd3e35c01d2216f}\label{class_animation_frame_selector_plugin_a85f0243494f2f3aadbd3e35c01d2216f} 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_anim_node_data}{Anim\+Node\+Data}}$<$ \mbox{\hyperlink{class_animation}{Animation}} $>$ $>$ {\bfseries \+\_\+animation\+Out}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Public Slots inherited from \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual void {\bfseries input\+Connection\+Created} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries input\+Connection\+Deleted} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries output\+Connection\+Created} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries output\+Connection\+Deleted} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries input\+Connection\+Created} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries input\+Connection\+Deleted} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries output\+Connection\+Created} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries output\+Connection\+Deleted} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\end{DoxyCompactItemize}
+\doxysubsection*{Signals inherited from \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}}
+\begin{DoxyCompactItemize}
+\item 
+void {\bfseries data\+Updated} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const index)
+\begin{DoxyCompactList}\small\item\em Triggers the updates in the nodes downstream. \end{DoxyCompactList}\item 
+void {\bfseries data\+Invalidated} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const index)
+\begin{DoxyCompactList}\small\item\em Triggers the propagation of the empty data downstream. \end{DoxyCompactList}\item 
+void {\bfseries computing\+Started} ()
+\item 
+void {\bfseries computing\+Finished} ()
+\item 
+void {\bfseries embedded\+Widget\+Size\+Updated} ()
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a35fb8ad8de15273e604c6b9e6c4c68eb}{ports\+About\+To\+Be\+Deleted}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const first, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const last)
+\begin{DoxyCompactList}\small\item\em Call this function before deleting the data associated with ports. \end{DoxyCompactList}\item 
+void {\bfseries ports\+Deleted} ()
+\begin{DoxyCompactList}\small\item\em Call this function when data and port moditications are finished. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a578fb727bc29f18cc4f9bed6ad8af792}{ports\+About\+To\+Be\+Inserted}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const first, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const last)
+\begin{DoxyCompactList}\small\item\em Call this function before inserting the data associated with ports. \end{DoxyCompactList}\item 
+void {\bfseries ports\+Inserted} ()
+\begin{DoxyCompactList}\small\item\em Call this function when data and port moditications are finished. \end{DoxyCompactList}\item 
+void {\bfseries data\+Updated} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const index)
+\begin{DoxyCompactList}\small\item\em Triggers the updates in the nodes downstream. \end{DoxyCompactList}\item 
+void {\bfseries data\+Invalidated} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const index)
+\begin{DoxyCompactList}\small\item\em Triggers the propagation of the empty data downstream. \end{DoxyCompactList}\item 
+void {\bfseries computing\+Started} ()
+\item 
+void {\bfseries computing\+Finished} ()
+\item 
+void {\bfseries embedded\+Widget\+Size\+Updated} ()
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a35fb8ad8de15273e604c6b9e6c4c68eb}{ports\+About\+To\+Be\+Deleted}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const first, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const last)
+\begin{DoxyCompactList}\small\item\em Call this function before deleting the data associated with ports. \end{DoxyCompactList}\item 
+void {\bfseries ports\+Deleted} ()
+\begin{DoxyCompactList}\small\item\em Call this function when data and port moditications are finished. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a578fb727bc29f18cc4f9bed6ad8af792}{ports\+About\+To\+Be\+Inserted}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const first, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const last)
+\begin{DoxyCompactList}\small\item\em Call this function before inserting the data associated with ports. \end{DoxyCompactList}\item 
+void {\bfseries ports\+Inserted} ()
+\begin{DoxyCompactList}\small\item\em Call this function when data and port moditications are finished. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_animation_frame_selector_plugin_ac851aa7b3a09cd75914a9d299fd4fc19}\label{class_animation_frame_selector_plugin_ac851aa7b3a09cd75914a9d299fd4fc19} 
+\index{AnimationFrameSelectorPlugin@{AnimationFrameSelectorPlugin}!caption@{caption}}
+\index{caption@{caption}!AnimationFrameSelectorPlugin@{AnimationFrameSelectorPlugin}}
+\doxysubsubsection{\texorpdfstring{caption()}{caption()}}
+{\footnotesize\ttfamily QString Animation\+Frame\+Selector\+Plugin\+::caption (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Caption is used in GUI. 
+
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a77e69adffd694fa448bec34b36bd0f37}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}.
+
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_animation_frame_selector_plugin_ac851aa7b3a09cd75914a9d299fd4fc19_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_animation_frame_selector_plugin_a86ae9739040b4f58630a8ddbb59a5ac7}\label{class_animation_frame_selector_plugin_a86ae9739040b4f58630a8ddbb59a5ac7} 
+\index{AnimationFrameSelectorPlugin@{AnimationFrameSelectorPlugin}!captionVisible@{captionVisible}}
+\index{captionVisible@{captionVisible}!AnimationFrameSelectorPlugin@{AnimationFrameSelectorPlugin}}
+\doxysubsubsection{\texorpdfstring{captionVisible()}{captionVisible()}}
+{\footnotesize\ttfamily bool Animation\+Frame\+Selector\+Plugin\+::caption\+Visible (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+It is possible to hide caption in GUI. 
+
+
+
+Reimplemented from \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_af6b4510f3f9a945153e7c95a8dc2cdcc}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}.
+
+\Hypertarget{class_animation_frame_selector_plugin_a9103de6a4e653112c6573eb081d8e145}\label{class_animation_frame_selector_plugin_a9103de6a4e653112c6573eb081d8e145} 
+\index{AnimationFrameSelectorPlugin@{AnimationFrameSelectorPlugin}!category@{category}}
+\index{category@{category}!AnimationFrameSelectorPlugin@{AnimationFrameSelectorPlugin}}
+\doxysubsubsection{\texorpdfstring{category()}{category()}}
+{\footnotesize\ttfamily QString Animation\+Frame\+Selector\+Plugin\+::category (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_plugin_node_interface}{Plugin\+Node\+Interface}}.
+
+\Hypertarget{class_animation_frame_selector_plugin_af153b334e14f5150ded7e1235711ea13}\label{class_animation_frame_selector_plugin_af153b334e14f5150ded7e1235711ea13} 
+\index{AnimationFrameSelectorPlugin@{AnimationFrameSelectorPlugin}!dataPortType@{dataPortType}}
+\index{dataPortType@{dataPortType}!AnimationFrameSelectorPlugin@{AnimationFrameSelectorPlugin}}
+\doxysubsubsection{\texorpdfstring{dataPortType()}{dataPortType()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_qt_nodes_1_1_node_data_type}{Node\+Data\+Type}} Animation\+Frame\+Selector\+Plugin\+::data\+Port\+Type (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Qt\+Nodes\+::\+Port\+Type}}}]{port\+Type,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}}}]{port\+Index }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Return the data type of data in -\/ or output on given port. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em port\+Index} & = 0 is reserved for run signal and handeled before data\+Port\+Type is called. \\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{class_plugin_node_interface_ab846cdb3b5aa6d61de83a4b484105cb7}{Plugin\+Node\+Interface}}.
+
+\Hypertarget{class_animation_frame_selector_plugin_a748190dc7ada41fc2354ae1461797f5c}\label{class_animation_frame_selector_plugin_a748190dc7ada41fc2354ae1461797f5c} 
+\index{AnimationFrameSelectorPlugin@{AnimationFrameSelectorPlugin}!embeddedWidget@{embeddedWidget}}
+\index{embeddedWidget@{embeddedWidget}!AnimationFrameSelectorPlugin@{AnimationFrameSelectorPlugin}}
+\doxysubsubsection{\texorpdfstring{embeddedWidget()}{embeddedWidget()}}
+{\footnotesize\ttfamily QWidget \texorpdfstring{$\ast$}{*} Animation\+Frame\+Selector\+Plugin\+::embedded\+Widget (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+It is recommented to preform a lazy initialization for the embedded widget and create it inside this function, not in the constructor of the current model.
+
+Our Model Registry is able to shortly instantiate models in order to call the non-\/static {\ttfamily Model\+::name()}. If the embedded widget is allocated in the constructor but not actually embedded into some QGraphics\+Proxy\+Widget, we\textquotesingle{}ll gonna have a dangling pointer. 
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a964178140634d139431707a3959d85ce}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}.
+
+\Hypertarget{class_animation_frame_selector_plugin_a61bb11b2f8186c5bbf43eefd70210d07}\label{class_animation_frame_selector_plugin_a61bb11b2f8186c5bbf43eefd70210d07} 
+\index{AnimationFrameSelectorPlugin@{AnimationFrameSelectorPlugin}!Init@{Init}}
+\index{Init@{Init}!AnimationFrameSelectorPlugin@{AnimationFrameSelectorPlugin}}
+\doxysubsubsection{\texorpdfstring{Init()}{Init()}}
+{\footnotesize\ttfamily std\+::unique\+\_\+ptr$<$ Node\+Delegate\+Model $>$ Animation\+Frame\+Selector\+Plugin\+::\+Init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_plugin_node_interface}{Plugin\+Node\+Interface}}.
+
+\Hypertarget{class_animation_frame_selector_plugin_a067eecec751caa181bb61f2e400a1a87}\label{class_animation_frame_selector_plugin_a067eecec751caa181bb61f2e400a1a87} 
+\index{AnimationFrameSelectorPlugin@{AnimationFrameSelectorPlugin}!nDataPorts@{nDataPorts}}
+\index{nDataPorts@{nDataPorts}!AnimationFrameSelectorPlugin@{AnimationFrameSelectorPlugin}}
+\doxysubsubsection{\texorpdfstring{nDataPorts()}{nDataPorts()}}
+{\footnotesize\ttfamily unsigned int Animation\+Frame\+Selector\+Plugin\+::n\+Data\+Ports (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Qt\+Nodes\+::\+Port\+Type}}}]{port\+Type }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+Return the number of data ports in-\/ and output of the node. By default +1 added for run signal port.
+
+
+\begin{DoxyParams}{Parameters}
+{\em port\+Type} & Selector of in-\/ or output type \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{class_plugin_node_interface_a2614e702055e634adac2d220445a89af}{Plugin\+Node\+Interface}}.
+
+\Hypertarget{class_animation_frame_selector_plugin_a1c8e95cc0ec7c3c03def1f30d32c33ce}\label{class_animation_frame_selector_plugin_a1c8e95cc0ec7c3c03def1f30d32c33ce} 
+\index{AnimationFrameSelectorPlugin@{AnimationFrameSelectorPlugin}!processInData@{processInData}}
+\index{processInData@{processInData}!AnimationFrameSelectorPlugin@{AnimationFrameSelectorPlugin}}
+\doxysubsubsection{\texorpdfstring{processInData()}{processInData()}}
+{\footnotesize\ttfamily void Animation\+Frame\+Selector\+Plugin\+::process\+In\+Data (\begin{DoxyParamCaption}\item[{std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$}]{data,  }\item[{\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}}}]{port\+Index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_plugin_node_interface}{Plugin\+Node\+Interface}}.
+
+\Hypertarget{class_animation_frame_selector_plugin_a6b21689a0a9b44525291e1dce8dacf32}\label{class_animation_frame_selector_plugin_a6b21689a0a9b44525291e1dce8dacf32} 
+\index{AnimationFrameSelectorPlugin@{AnimationFrameSelectorPlugin}!processOutData@{processOutData}}
+\index{processOutData@{processOutData}!AnimationFrameSelectorPlugin@{AnimationFrameSelectorPlugin}}
+\doxysubsubsection{\texorpdfstring{processOutData()}{processOutData()}}
+{\footnotesize\ttfamily std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ Animation\+Frame\+Selector\+Plugin\+::process\+Out\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Qt\+Nodes\+::\+Port\+Index}}}]{port }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_plugin_node_interface}{Plugin\+Node\+Interface}}.
+
+\Hypertarget{class_animation_frame_selector_plugin_add00db2dcc7e0d5e10d35950e54d4ba6}\label{class_animation_frame_selector_plugin_add00db2dcc7e0d5e10d35950e54d4ba6} 
+\index{AnimationFrameSelectorPlugin@{AnimationFrameSelectorPlugin}!run@{run}}
+\index{run@{run}!AnimationFrameSelectorPlugin@{AnimationFrameSelectorPlugin}}
+\doxysubsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily void Animation\+Frame\+Selector\+Plugin\+::run (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_plugin_node_interface}{Plugin\+Node\+Interface}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Animation\+Frame\+Selector\+Plugin/Animation\+Frame\+Selector\+Plugin.\+h\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Animation\+Frame\+Selector\+Plugin/Animation\+Frame\+Selector\+Plugin.\+cpp\end{DoxyCompactItemize}

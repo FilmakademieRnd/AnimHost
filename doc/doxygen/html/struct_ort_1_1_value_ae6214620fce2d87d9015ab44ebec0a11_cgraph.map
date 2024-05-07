@@ -1,0 +1,6 @@
+<map id="Ort::Value::CreateTensor" name="Ort::Value::CreateTensor">
+<area shape="rect" id="Node000001" title="Creates a tensor using a supplied OrtAllocator. Wraps OrtApi::CreateTensorAsOrtValue." alt="" coords="5,29,171,56"/>
+<area shape="rect" id="Node000002" href="$struct_ort_1_1_value.html#a23c32a59c2149a0faf54187af3cc5bb8" title="Creates a tensor with a user supplied buffer. Wraps OrtApi::CreateTensorWithDataAsOrtValue." alt="" coords="219,29,384,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="171,40,203,40,203,45,171,45"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="265,30,259,21,263,11,278,5,301,3,327,5,340,12,338,16,325,10,301,8,279,10,267,15,264,20,270,27"/>
+</map>

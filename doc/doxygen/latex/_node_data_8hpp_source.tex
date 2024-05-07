@@ -1,0 +1,39 @@
+\doxysection{Node\+Data.\+hpp}
+\hypertarget{_node_data_8hpp_source}{}\label{_node_data_8hpp_source}\index{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/core/QTNodes/include/QtNodes/internal/NodeData.hpp@{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/core/QTNodes/include/QtNodes/internal/NodeData.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <QtCore/QObject>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <QtCore/QString>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}Export.hpp"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{namespace\ }QtNodes\ \{}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{struct\ }NODE\_EDITOR\_PUBLIC\ NodeDataType}
+\DoxyCodeLine{00017\ \{}
+\DoxyCodeLine{00018\ \ \ \ \ QString\ id;}
+\DoxyCodeLine{00019\ \ \ \ \ QString\ name;}
+\DoxyCodeLine{00020\ \};}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{class\ }NODE\_EDITOR\_PUBLIC\ NodeData}
+\DoxyCodeLine{00028\ \{}
+\DoxyCodeLine{00029\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keyword}{virtual}\ \string~NodeData()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ sameType(NodeData\ \textcolor{keyword}{const}\ \&nodeData)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00033\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (this-\/>type().\textcolor{keywordtype}{id}\ ==\ nodeData.type().id);}
+\DoxyCodeLine{00035\ \ \ \ \ \}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{struct_qt_nodes_1_1_node_data_type}{NodeDataType}}\ \mbox{\hyperlink{class_qt_nodes_1_1_node_data_aa79c0c6357029beb519f7329ac352369}{type}}()\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{00039\ \};}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \}\ \textcolor{comment}{//\ namespace\ QtNodes}}
+\DoxyCodeLine{00042\ Q\_DECLARE\_METATYPE(\mbox{\hyperlink{struct_qt_nodes_1_1_node_data_type}{QtNodes::NodeDataType}})}
+\DoxyCodeLine{00043\ Q\_DECLARE\_METATYPE(std::shared\_ptr<QtNodes::NodeData>)}
+
+\end{DoxyCode}

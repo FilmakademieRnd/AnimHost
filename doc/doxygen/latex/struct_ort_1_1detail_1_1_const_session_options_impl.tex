@@ -1,0 +1,75 @@
+\doxysection{Ort\+::detail\+::Const\+Session\+Options\+Impl\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>} Struct Template Reference}
+\hypertarget{struct_ort_1_1detail_1_1_const_session_options_impl}{}\label{struct_ort_1_1detail_1_1_const_session_options_impl}\index{Ort::detail::ConstSessionOptionsImpl$<$ T $>$@{Ort::detail::ConstSessionOptionsImpl$<$ T $>$}}
+
+
+Inheritance diagram for Ort\+::detail\+::Const\+Session\+Options\+Impl\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>}\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{struct_ort_1_1detail_1_1_const_session_options_impl__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Ort\+::detail\+::Const\+Session\+Options\+Impl\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>}\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=206pt]{struct_ort_1_1detail_1_1_const_session_options_impl__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_1_1detail_1_1_const_session_options_impl_a3310d3279f426db9a8fa2cc94b1ed650}\label{struct_ort_1_1detail_1_1_const_session_options_impl_a3310d3279f426db9a8fa2cc94b1ed650} 
+using {\bfseries B} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}$<$T$>$
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+using {\bfseries contained\+\_\+type} = T
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_1_1detail_1_1_const_session_options_impl_af7901f4ad39e1ae578f8eb0ef83ec2a6}\label{struct_ort_1_1detail_1_1_const_session_options_impl_af7901f4ad39e1ae578f8eb0ef83ec2a6} 
+\mbox{\hyperlink{struct_ort_1_1_session_options}{Session\+Options}} {\bfseries Clone} () const
+\begin{DoxyCompactList}\small\item\em Creates and returns a copy of this \doxylink{struct_ort_1_1_session_options}{Session\+Options} object. Wraps Ort\+Api\+::\+Clone\+Session\+Options. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1detail_1_1_const_session_options_impl_a2dc3010442b717e17648b09ed7b95e85}\label{struct_ort_1_1detail_1_1_const_session_options_impl_a2dc3010442b717e17648b09ed7b95e85} 
+std\+::string {\bfseries Get\+Config\+Entry} (const char \texorpdfstring{$\ast$}{*}config\+\_\+key) const
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Get\+Session\+Config\+Entry. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1detail_1_1_const_session_options_impl_acc17d6821ec06e6040c5d640553bc912}\label{struct_ort_1_1detail_1_1_const_session_options_impl_acc17d6821ec06e6040c5d640553bc912} 
+bool {\bfseries Has\+Config\+Entry} (const char \texorpdfstring{$\ast$}{*}config\+\_\+key) const
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Has\+Session\+Config\+Entry. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1detail_1_1_const_session_options_impl_a84310957c29d756fc540fc0f15c5907a}\label{struct_ort_1_1detail_1_1_const_session_options_impl_a84310957c29d756fc540fc0f15c5907a} 
+std\+::string {\bfseries Get\+Config\+Entry\+Or\+Default} (const char \texorpdfstring{$\ast$}{*}config\+\_\+key, const std\+::string \&def)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+constexpr {\bfseries Base} (contained\+\_\+type \texorpdfstring{$\ast$}{*}p) noexcept
+\item 
+{\bfseries Base} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+{\bfseries Base} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+constexpr {\bfseries operator contained\+\_\+type \texorpdfstring{$\ast$}{*}} () const noexcept
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries release} ()
+\begin{DoxyCompactList}\small\item\em Relinquishes ownership of the contained C object pointer The underlying object is not destroyed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries p\+\_\+} \{\}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+api.\+h\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+inline.\+h\end{DoxyCompactItemize}

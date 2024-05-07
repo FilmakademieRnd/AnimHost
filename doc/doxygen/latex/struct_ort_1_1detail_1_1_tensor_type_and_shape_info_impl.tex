@@ -1,0 +1,103 @@
+\doxysection{Ort\+::detail\+::Tensor\+Type\+And\+Shape\+Info\+Impl\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>} Struct Template Reference}
+\hypertarget{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl}{}\label{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl}\index{Ort::detail::TensorTypeAndShapeInfoImpl$<$ T $>$@{Ort::detail::TensorTypeAndShapeInfoImpl$<$ T $>$}}
+
+
+Inheritance diagram for Ort\+::detail\+::Tensor\+Type\+And\+Shape\+Info\+Impl\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>}\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=212pt]{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Ort\+::detail\+::Tensor\+Type\+And\+Shape\+Info\+Impl\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>}\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=212pt]{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_a6c9e0ea5743ff56e09334f58dbb2fb3f}\label{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_a6c9e0ea5743ff56e09334f58dbb2fb3f} 
+using {\bfseries B} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}$<$T$>$
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+using {\bfseries contained\+\_\+type} = T
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_ad38e0ee012301ec3fdfb680c3f26f4cf}\label{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_ad38e0ee012301ec3fdfb680c3f26f4cf} 
+\mbox{\hyperlink{group___global_gaec63cdda46c29b8183997f38930ce38e}{ONNXTensor\+Element\+Data\+Type}} {\bfseries Get\+Element\+Type} () const
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Get\+Tensor\+Element\+Type. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_a147b9d073f3f28d5ad4ea4edc3d8d1ca}\label{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_a147b9d073f3f28d5ad4ea4edc3d8d1ca} 
+size\+\_\+t {\bfseries Get\+Element\+Count} () const
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Get\+Tensor\+Shape\+Element\+Count. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_a93e0ba7d39a37a62613c945e6c6ace60}\label{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_a93e0ba7d39a37a62613c945e6c6ace60} 
+size\+\_\+t {\bfseries Get\+Dimensions\+Count} () const
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Get\+Dimensions\+Count. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_a2ee1c58378c53d42ea1c023513ab3a6c}{Get\+Dimensions}} (int64\+\_\+t \texorpdfstring{$\ast$}{*}values, size\+\_\+t values\+\_\+count) const
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Get\+Dimensions. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_a7fbf363e618d614e85b99bb8becf90b1}\label{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_a7fbf363e618d614e85b99bb8becf90b1} 
+void {\bfseries Get\+Symbolic\+Dimensions} (const char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}values, size\+\_\+t values\+\_\+count) const
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Get\+Symbolic\+Dimensions. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_a553b1d07adab289060c143086b1be32d}\label{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_a553b1d07adab289060c143086b1be32d} 
+std\+::vector$<$ int64\+\_\+t $>$ {\bfseries Get\+Shape} () const
+\begin{DoxyCompactList}\small\item\em Uses Get\+Dimensions\+Count \& Get\+Dimensions to return a std\+::vector of the shape. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+constexpr {\bfseries Base} (contained\+\_\+type \texorpdfstring{$\ast$}{*}p) noexcept
+\item 
+{\bfseries Base} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+{\bfseries Base} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+constexpr {\bfseries operator contained\+\_\+type \texorpdfstring{$\ast$}{*}} () const noexcept
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries release} ()
+\begin{DoxyCompactList}\small\item\em Relinquishes ownership of the contained C object pointer The underlying object is not destroyed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries p\+\_\+} \{\}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_a2ee1c58378c53d42ea1c023513ab3a6c}\label{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_a2ee1c58378c53d42ea1c023513ab3a6c} 
+\index{Ort::detail::TensorTypeAndShapeInfoImpl$<$ T $>$@{Ort::detail::TensorTypeAndShapeInfoImpl$<$ T $>$}!GetDimensions@{GetDimensions}}
+\index{GetDimensions@{GetDimensions}!Ort::detail::TensorTypeAndShapeInfoImpl$<$ T $>$@{Ort::detail::TensorTypeAndShapeInfoImpl$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{GetDimensions()}{GetDimensions()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+void \mbox{\hyperlink{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl}{Ort\+::detail\+::\+Tensor\+Type\+And\+Shape\+Info\+Impl}}$<$ T $>$\+::\+Get\+Dimensions (\begin{DoxyParamCaption}\item[{int64\+\_\+t \texorpdfstring{$\ast$}{*}}]{values,  }\item[{size\+\_\+t}]{values\+\_\+count }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Wraps Ort\+Api\+::\+Get\+Dimensions. 
+
+\begin{DoxyRefDesc}{Deprecated}
+\item[\mbox{\hyperlink{deprecated__deprecated000003}{Deprecated}}]use \doxylink{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_a553b1d07adab289060c143086b1be32d}{Get\+Shape()} returning std\+::vector \mbox{[}\mbox{[}deprecated\mbox{]}\mbox{]} This interface is unsafe to use \end{DoxyRefDesc}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=331pt]{struct_ort_1_1detail_1_1_tensor_type_and_shape_info_impl_a2ee1c58378c53d42ea1c023513ab3a6c_cgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+api.\+h\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+inline.\+h\end{DoxyCompactItemize}
