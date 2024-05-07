@@ -42,6 +42,7 @@ QJsonObject AssimpLoaderPlugin::save() const
 	QJsonObject nodeJson = NodeDelegateModel::save();
 
 	nodeJson["dir"] = SourceDirectory;
+	nodeJson["check"] = _subsamplingCheck->isChecked();
 
 	return nodeJson;
 }
@@ -49,6 +50,7 @@ QJsonObject AssimpLoaderPlugin::save() const
 void AssimpLoaderPlugin::load(QJsonObject const& p)
 {
 	QJsonValue v = p["dir"];
+	QJsonValue c = p["check"];
 
 	if (!v.isUndefined()) {
 		QString strDir = v.toString();
@@ -60,6 +62,14 @@ void AssimpLoaderPlugin::load(QJsonObject const& p)
 			widget->adjustSize();
 			widget->updateGeometry();
 		}
+	}
+	if (!c.isUndefined()) {
+		bool check = c.toBool();
+
+		if (check)
+			_subsamplingCheck->setCheckState(Qt::CheckState::Checked);
+		else
+			_subsamplingCheck->setCheckState(Qt::CheckState::Unchecked);
 	}
 }
 
