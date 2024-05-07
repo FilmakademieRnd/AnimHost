@@ -67,7 +67,7 @@ public:
 
     void emitDataInvalidated(QtNodes::PortIndex portIndex);
 
-    //virtual bool isDataAvailable() = 0;
+    virtual bool isDataAvailable() = 0;
 
     virtual void run() = 0;
 
