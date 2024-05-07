@@ -45,8 +45,9 @@ public:
 
     void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
 
-    void run() override;
+    bool isDataAvailable() override;
 
+    void run() override;
 
     QWidget* embeddedWidget() override;
 

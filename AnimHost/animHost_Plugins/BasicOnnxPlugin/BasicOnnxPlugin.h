@@ -54,12 +54,12 @@ public:
     unsigned int nDataPorts(QtNodes::PortType portType) const override;
     NodeDataType dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
 
-
     std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;
-
 
     void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
 
+    bool isDataAvailable() override;
+    
     void run() override;
 
     QWidget* embeddedWidget() override;

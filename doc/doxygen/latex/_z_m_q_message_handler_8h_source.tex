@@ -1,0 +1,210 @@
+\doxysection{ZMQMessage\+Handler.\+h}
+\hypertarget{_z_m_q_message_handler_8h_source}{}\label{_z_m_q_message_handler_8h_source}\index{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/core/ZMQMessageHandler.h@{C:/Users/m5963/Documents/GitHub/AnimHost/AnimHost/core/ZMQMessageHandler.h}}
+\mbox{\hyperlink{_z_m_q_message_handler_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#ifndef\ ZMQMESSAGEHANDLER\_H}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ ZMQMESSAGEHANDLER\_H}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <QtCore/QObject>}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ <QtNetwork/QNetworkInterface>}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ <QtNetwork/QHostAddress>}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}commondatatypes.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <QMutex>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <QObject>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <QMultiMap>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <QElapsedTimer>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <QWaitCondition>}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ <QValidator>}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ <any>}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#include\ <nzmqt/nzmqt.hpp>}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#include\ <zmq.hpp>}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{keyword}{typedef}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ byte;\ }
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{class\ }ANIMHOSTCORESHARED\_EXPORT\ \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessageHandler}}\ :\ \textcolor{keyword}{public}\ QObject\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ }
+\DoxyCodeLine{00042\ \ \ \ \textcolor{comment}{//Q\_OBJECT}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00046\ \ \ \ \ \mbox{\hyperlink{class_z_m_q_message_handler}{ZMQMessageHandler}}();}
+\DoxyCodeLine{00047\ \ \ \ \ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ QString\ ipRangeRegex\ =\ \textcolor{stringliteral}{"{}(?:[0-\/1]?[0-\/9]?[0-\/9]|2[0-\/4][0-\/9]|25[0-\/5])"{}};}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ QRegularExpression\ ipRegex\ =\ QRegularExpression(\textcolor{stringliteral}{"{}\string^"{}}\ +\ ipRangeRegex}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ \textcolor{stringliteral}{"{}(\(\backslash\)\(\backslash\)."{}}\ +\ ipRangeRegex\ +\ \textcolor{stringliteral}{"{})"{}}}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ \textcolor{stringliteral}{"{}(\(\backslash\)\(\backslash\)."{}}\ +\ ipRangeRegex\ +\ \textcolor{stringliteral}{"{})"{}}}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ \textcolor{stringliteral}{"{}(\(\backslash\)\(\backslash\)."{}}\ +\ ipRangeRegex\ +\ \textcolor{stringliteral}{"{})\$"{}});}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{comment}{/*\ \(\backslash\)todo\ To\ be\ implemented\ in\ concrete\ class\ */}}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_z_m_q_message_handler_ab4cbe858e27d51c548200d761bf00f51}{requestStart}}()\ =\ 0;\ }
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{comment}{/*\ \(\backslash\)todo\ To\ be\ implemented\ in\ concrete\ class\ */}}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_z_m_q_message_handler_a53f4a1286f022157f1a2394f2edc3ba9}{requestStop}}()\ =\ 0;}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_z_m_q_message_handler_a2d113188e4b40b15ad7eb22507bf6433}{setDebugState}}(\textcolor{keywordtype}{bool}\ \_debugState)\ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \_debug\ =\ \_debugState;}
+\DoxyCodeLine{00070\ \ \ \ \ \}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{void}\ resume();}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_z_m_q_message_handler_aa98179c6172d631769acbf7fd13c0d84}{pause}}()\ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ mutex.lock();}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \_paused\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ mutex.unlock();}
+\DoxyCodeLine{00086\ \ \ \ \ \}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keyword}{enum}\ \mbox{\hyperlink{class_z_m_q_message_handler_a1ae73116559b65a1f9e6c8d0cf3586f7}{MessageType}}\ \{}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ PARAMETERUPDATE,\ LOCK,\ \textcolor{comment}{//\ node}}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ SYNC,\ PING,\ RESENDUPDATE,\ \textcolor{comment}{//\ sync}}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ UNDOREDOADD,\ RESETOBJECT,\ \textcolor{comment}{//\ undo\ redo}}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ DATAHUB,\ \textcolor{comment}{//\ DataHub}}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ EMPTY\ =\ 255}
+\DoxyCodeLine{00109\ \ \ \ \ \};}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{keyword}{enum}\ \mbox{\hyperlink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ParameterType}}\ :\ \textcolor{keywordtype}{byte}\ \{}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ NONE,\ ACTION,\ BOOL,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Generic}}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ INT,\ FLOAT,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Scalar}}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ VECTOR2,\ VECTOR3,\ VECTOR4,\ QUATERNION,\ \ \textcolor{comment}{//\ Vectors}}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ COLOR,\ STRING,\ LIST,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Other\ Data\ Structures}}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ UNKNOWN\ =\ 100}
+\DoxyCodeLine{00136\ \ \ \ \ \};}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00143\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{byte}\ \mbox{\hyperlink{class_z_m_q_message_handler_a7678908cdea8f0c241004bed717fb108}{getParameterDimension}}(\mbox{\hyperlink{class_z_m_q_message_handler_a70684712dc67dabf75c84284386fac7c}{ParameterType}}\ parameterType)\ \{}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ parameterDimension[parameterType];}
+\DoxyCodeLine{00145\ \ \ \ \ \}}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keyword}{static}\ QList<QHostAddress>\ \mbox{\hyperlink{class_z_m_q_message_handler_a6c603798d6ca03b54a55024c1e32a147}{getIPList}}()\ \{}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_z_m_q_message_handler_a5033cc7f6391e91a7ba197280eefc6a9}{ZMQMessageHandler::ipList}};}
+\DoxyCodeLine{00150\ \ \ \ \ \}}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keyword}{static}\ QString\ \mbox{\hyperlink{class_z_m_q_message_handler_acbe97dc586d15b31e39834bb437beada}{getOwnIP}}()\ \{}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_z_m_q_message_handler_afab155fafd0052667f3defa4818c0805}{ZMQMessageHandler::ownIP}};}
+\DoxyCodeLine{00159\ \ \ \ \ \}}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{byte}\ \mbox{\hyperlink{class_z_m_q_message_handler_a7c09e750f83c94cce01d20e4cd87f5e2}{getOwnID}}()\ \{}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ qsizetype\ lastDotPos\ =\ 0;\ \textcolor{comment}{//\ qsizetype\ =\ int64}}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_z_m_q_message_handler_afab155fafd0052667f3defa4818c0805}{ZMQMessageHandler::ownIP}}.contains(\textcolor{stringliteral}{"{}."{}}))\ \{}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ lastDotPos\ =\ \mbox{\hyperlink{class_z_m_q_message_handler_afab155fafd0052667f3defa4818c0805}{ZMQMessageHandler::ownIP}}.lastIndexOf(\textcolor{stringliteral}{"{}."{}});\ \textcolor{comment}{//\ saving\ the\ index\ of\ the\ last\ occurence\ of\ a\ dot\ in\ the\ string}}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_z_m_q_message_handler_afab155fafd0052667f3defa4818c0805}{ZMQMessageHandler::ownIP}}.sliced(lastDotPos\ +\ 1).toUShort();\ \textcolor{comment}{//\ everyithing\ after\ the\ last\ dot\ is\ considered\ the\ client's\ own\ ID\ (byte\ =\ ushort\ =\ uchar\ =\ uint8)}}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00176\ \ \ \ \ \}}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_z_m_q_message_handler_a66c59a2eb9f3975521948e5471ce3e37}{setTargetSceneID}}(\textcolor{keywordtype}{byte}\ \_targetSceneID)\ \{}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_z_m_q_message_handler_aee628af978b75a0834983782bc0ad3c4}{ZMQMessageHandler::targetSceneID}}\ =\ \_targetSceneID;}
+\DoxyCodeLine{00185\ \ \ \ \ \}}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{byte}\ \mbox{\hyperlink{class_z_m_q_message_handler_a2d468a51b575ff891d880b257f454286}{getTargetSceneID}}()\ \{}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_z_m_q_message_handler_aee628af978b75a0834983782bc0ad3c4}{ZMQMessageHandler::targetSceneID}};}
+\DoxyCodeLine{00194\ \ \ \ \ \}}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_z_m_q_message_handler_a52871d6068f2f3063409618e0a61226d}{setIPAddress}}(QString\ newIPAddress)\ \{}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ipRegex.match(newIPAddress).isValid())\ \{}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_z_m_q_message_handler_afab155fafd0052667f3defa4818c0805}{ZMQMessageHandler::ownIP}}\ =\ newIPAddress;}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ qDebug()\ <<\ \textcolor{stringliteral}{"{}New\ IP\ Address\ set!"{}};}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ qDebug()\ <<\ \textcolor{stringliteral}{"{}Invalid\ IP\ Address"{}}\ <<\ newIPAddress;}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00209\ \ \ \ \ \}}
+\DoxyCodeLine{00210\ }
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00219\ \ \ \ \ \textcolor{keywordtype}{void}\ createNewMessage(\textcolor{keywordtype}{byte}\ time,\ \mbox{\hyperlink{class_z_m_q_message_handler_a1ae73116559b65a1f9e6c8d0cf3586f7}{ZMQMessageHandler::MessageType}}\ messageType,\ QByteArray*\ body);}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00222\ \ \ \ \ }
+\DoxyCodeLine{00224\ \ \ \ \ \textcolor{keyword}{static}\ QList<QHostAddress>\ \mbox{\hyperlink{class_z_m_q_message_handler_a5033cc7f6391e91a7ba197280eefc6a9}{ipList}};}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00227\ \ \ \ \ \textcolor{keyword}{static}\ QString\ \mbox{\hyperlink{class_z_m_q_message_handler_afab155fafd0052667f3defa4818c0805}{ownIP}};}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00230\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{byte}\ \mbox{\hyperlink{class_z_m_q_message_handler_aee628af978b75a0834983782bc0ad3c4}{targetSceneID}};}
+\DoxyCodeLine{00231\ \ \ \ \ }
+\DoxyCodeLine{00233\ }
+\DoxyCodeLine{00236\ \ \ \ \ \textcolor{keywordtype}{bool}\ \_stop\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00237\ }
+\DoxyCodeLine{00239\ \ \ \ \ \textcolor{keywordtype}{bool}\ \_debug\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00240\ }
+\DoxyCodeLine{00242\ }
+\DoxyCodeLine{00245\ \ \ \ \ \textcolor{keywordtype}{bool}\ \_working\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00248\ }
+\DoxyCodeLine{00251\ \ \ \ \ \textcolor{keywordtype}{bool}\ \_paused\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00252\ }
+\DoxyCodeLine{00254\ }
+\DoxyCodeLine{00257\ \ \ \ \ QMutex\ \mbox{\hyperlink{class_z_m_q_message_handler_a20eaf1cbbc8cb000a1a5b60dc7feb5cb}{mutex}};}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00260\ \ \ \ \ QWaitCondition\ \mbox{\hyperlink{class_z_m_q_message_handler_a2d05b8c73111f333095de928f8bb93d3}{waitCondition}};}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00263\ \ \ \ \ zmq::context\_t*\ context\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00264\ }
+\DoxyCodeLine{00266\ }
+\DoxyCodeLine{00269\ \ \ \ \ QByteArray*\ message\ =\ \textcolor{keyword}{new}\ QByteArray();}
+\DoxyCodeLine{00270\ }
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00275\ \ \ \ \ \textcolor{keywordtype}{byte}\ syncMessage[3]\ =\ \{\ 0,\ 0,\ MessageType::EMPTY\ \};}
+\DoxyCodeLine{00276\ }
+\DoxyCodeLine{00278\ \ \ \ \ QMap<QByteArray,\ QByteArray>\ \mbox{\hyperlink{class_z_m_q_message_handler_affb14c4fccded951acc2d0ed51f938d9}{objectStateMap}};}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00281\ \ \ \ \ QMap<byte,\ unsigned\ int>\ \mbox{\hyperlink{class_z_m_q_message_handler_ad0c0c7fc734c7912e02ed5fad86f5cc8}{pingMap}};}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00284\ \ \ \ \ QMultiMap<byte,\ QByteArray>\ \mbox{\hyperlink{class_z_m_q_message_handler_a7088253edab4e76bc86015ab754158d4}{lockMap}};}
+\DoxyCodeLine{00285\ }
+\DoxyCodeLine{00287\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ m\_time\ =\ 0;}
+\DoxyCodeLine{00288\ }
+\DoxyCodeLine{00290\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ m\_pingTimeout\ =\ 4;}
+\DoxyCodeLine{00291\ }
+\DoxyCodeLine{00293\ }
+\DoxyCodeLine{00310\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{byte}\ parameterDimension[13]\ =\ \{}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ 0,\ 1,\ \textcolor{keyword}{sizeof}(std::int32\_t),}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \textcolor{keyword}{sizeof}(std::int32\_t),\ \textcolor{keyword}{sizeof}(float),}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{float})*2,\ \textcolor{keyword}{sizeof}(float)*3,\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{float})*4,\ \textcolor{keyword}{sizeof}(float)*4,}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{float})*4,\ 100,\ 100,\ 100\ \};}
+\DoxyCodeLine{00315\ \ \ \ \ }
+\DoxyCodeLine{00317\ }
+\DoxyCodeLine{00321\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{short}\ \mbox{\hyperlink{class_z_m_q_message_handler_a694af91721c2057468715f622076fb9b}{CharToShort}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ buf)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{short}\ val;}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ std::memcpy(\&val,\ buf,\ 2);}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ val;}
+\DoxyCodeLine{00325\ \ \ \ \ \}}
+\DoxyCodeLine{00326\ }
+\DoxyCodeLine{00327\ \ \ \ \ signals\ :}
+\DoxyCodeLine{00329\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_z_m_q_message_handler_a73684b00d9025074ebeb4117e71d978a}{stopped}}();}
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00331\ \ \ \ \ \textcolor{keyword}{public}\ slots:}
+\DoxyCodeLine{00333\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_z_m_q_message_handler_ad1976a678a926284c75da57569c4247b}{run}}()\ \{\};}
+\DoxyCodeLine{00334\ }
+\DoxyCodeLine{00335\ \ \ \ \ \textcolor{keyword}{protected}\ slots:}
+\DoxyCodeLine{00336\ \ \ \ \ }
+\DoxyCodeLine{00338\ }
+\DoxyCodeLine{00344\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_z_m_q_message_handler_a31cd54f56e9ae329cc26c43f92be5cf2}{createSyncMessage}}(\textcolor{keywordtype}{int}\ time)\ \{}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ syncMessage[0]\ =\ getOwnID();}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ syncMessage[1]\ =\ time;}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ syncMessage[2]\ =\ MessageType::SYNC;}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ increase\ local\ time\ for\ controlling\ client\ timeouts}}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ m\_time++;}
+\DoxyCodeLine{00351\ \ \ \ \ \}}
+\DoxyCodeLine{00352\ \};}
+\DoxyCodeLine{00353\ }
+\DoxyCodeLine{00354\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ ZMQMESSAGEHANDLER\_H}}
+
+\end{DoxyCode}

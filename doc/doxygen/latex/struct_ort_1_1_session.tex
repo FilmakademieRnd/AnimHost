@@ -1,0 +1,138 @@
+\doxysection{Ort\+::Session Struct Reference}
+\hypertarget{struct_ort_1_1_session}{}\label{struct_ort_1_1_session}\index{Ort::Session@{Ort::Session}}
+
+
+Wrapper around \+::\+Ort\+Session.  
+
+
+
+
+{\ttfamily \#include $<$onnxruntime\+\_\+cxx\+\_\+api.\+h$>$}
+
+
+
+Inheritance diagram for Ort\+::Session\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=206pt]{struct_ort_1_1_session__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Ort\+::Session\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=206pt]{struct_ort_1_1_session__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_1_1_session_a333dc25d8897861ed3f0221c21b9b4dc}\label{struct_ort_1_1_session_a333dc25d8897861ed3f0221c21b9b4dc} 
+{\bfseries Session} (std\+::nullptr\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Create an empty \doxylink{struct_ort_1_1_session}{Session} object, must be assigned a valid one to be used. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1_session_aa1d244cb0817e6ce9c59c6552a7b1245}\label{struct_ort_1_1_session_aa1d244cb0817e6ce9c59c6552a7b1245} 
+{\bfseries Session} (const \mbox{\hyperlink{struct_ort_1_1_env}{Env}} \&env, const ORTCHAR\+\_\+T \texorpdfstring{$\ast$}{*}model\+\_\+path, const \mbox{\hyperlink{struct_ort_1_1_session_options}{Session\+Options}} \&options)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Create\+Session. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1_session_aa00fe03af6e9b33399aff3571f5a7d9e}\label{struct_ort_1_1_session_aa00fe03af6e9b33399aff3571f5a7d9e} 
+{\bfseries Session} (const \mbox{\hyperlink{struct_ort_1_1_env}{Env}} \&env, const ORTCHAR\+\_\+T \texorpdfstring{$\ast$}{*}model\+\_\+path, const \mbox{\hyperlink{struct_ort_1_1_session_options}{Session\+Options}} \&options, Ort\+Prepacked\+Weights\+Container \texorpdfstring{$\ast$}{*}prepacked\+\_\+weights\+\_\+container)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Create\+Session\+With\+Prepacked\+Weights\+Container. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1_session_ac657d96c0ea760e0f8712f23a28aaa08}\label{struct_ort_1_1_session_ac657d96c0ea760e0f8712f23a28aaa08} 
+{\bfseries Session} (const \mbox{\hyperlink{struct_ort_1_1_env}{Env}} \&env, const void \texorpdfstring{$\ast$}{*}model\+\_\+data, size\+\_\+t model\+\_\+data\+\_\+length, const \mbox{\hyperlink{struct_ort_1_1_session_options}{Session\+Options}} \&options)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Create\+Session\+From\+Array. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1_session_a8c02ae6e3f70a4e65e86f67c27114a12}\label{struct_ort_1_1_session_a8c02ae6e3f70a4e65e86f67c27114a12} 
+{\bfseries Session} (const \mbox{\hyperlink{struct_ort_1_1_env}{Env}} \&env, const void \texorpdfstring{$\ast$}{*}model\+\_\+data, size\+\_\+t model\+\_\+data\+\_\+length, const \mbox{\hyperlink{struct_ort_1_1_session_options}{Session\+Options}} \&options, Ort\+Prepacked\+Weights\+Container \texorpdfstring{$\ast$}{*}prepacked\+\_\+weights\+\_\+container)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Create\+Session\+From\+Array\+With\+Prepacked\+Weights\+Container. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1_session_abcc905689ca65a47739f181a845f297c}\label{struct_ort_1_1_session_abcc905689ca65a47739f181a845f297c} 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_impl}{Const\+Session}} {\bfseries Get\+Const} () const
+\item 
+\Hypertarget{struct_ort_1_1_session_a6b40a8f155c1d920876b08d716fcfbfa}\label{struct_ort_1_1_session_a6b40a8f155c1d920876b08d716fcfbfa} 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_session_impl}{Unowned\+Session}} {\bfseries Get\+Unowned} () const
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_impl}{Ort\+::detail\+::\+Session\+Impl$<$ Ort\+Session $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ \mbox{\hyperlink{struct_ort_1_1_value}{Value}} $>$ \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_impl_af3f7d273f5e468ef21ef0d56d48c32fd}{Run}} (const \mbox{\hyperlink{struct_ort_1_1_run_options}{Run\+Options}} \&run\+\_\+options, const char \texorpdfstring{$\ast$}{*}const \texorpdfstring{$\ast$}{*}input\+\_\+names, const \mbox{\hyperlink{struct_ort_1_1_value}{Value}} \texorpdfstring{$\ast$}{*}input\+\_\+values, size\+\_\+t input\+\_\+count, const char \texorpdfstring{$\ast$}{*}const \texorpdfstring{$\ast$}{*}output\+\_\+names, size\+\_\+t output\+\_\+count)
+\begin{DoxyCompactList}\small\item\em Run the model returning results in an \doxylink{namespace_ort}{Ort} allocated vector. \end{DoxyCompactList}\item 
+void {\bfseries Run} (const \mbox{\hyperlink{struct_ort_1_1_run_options}{Run\+Options}} \&run\+\_\+options, const char \texorpdfstring{$\ast$}{*}const \texorpdfstring{$\ast$}{*}input\+\_\+names, const \mbox{\hyperlink{struct_ort_1_1_value}{Value}} \texorpdfstring{$\ast$}{*}input\+\_\+values, size\+\_\+t input\+\_\+count, const char \texorpdfstring{$\ast$}{*}const \texorpdfstring{$\ast$}{*}output\+\_\+names, \mbox{\hyperlink{struct_ort_1_1_value}{Value}} \texorpdfstring{$\ast$}{*}output\+\_\+values, size\+\_\+t output\+\_\+count)
+\begin{DoxyCompactList}\small\item\em Run the model returning results in user provided outputs Same as \doxylink{struct_ort_1_1detail_1_1_session_impl_af3f7d273f5e468ef21ef0d56d48c32fd}{Run(const Run\+Options\&, const char\texorpdfstring{$\ast$}{*} const\texorpdfstring{$\ast$}{*}, const Value\texorpdfstring{$\ast$}{*}, size\+\_\+t,const char\texorpdfstring{$\ast$}{*} const\texorpdfstring{$\ast$}{*}, size\+\_\+t)} \end{DoxyCompactList}\item 
+void {\bfseries Run} (const \mbox{\hyperlink{struct_ort_1_1_run_options}{Run\+Options}} \&run\+\_\+options, const \mbox{\hyperlink{struct_ort_1_1_io_binding}{Io\+Binding}} \&)
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Run\+With\+Binding. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{namespace_ort_aad745588fd5aa01b386eebbacd5e7d18}{Allocated\+String\+Ptr}} \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_impl_a562e086b82b3b756a2b60ca8930cf98a}{End\+Profiling\+Allocated}} (\mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}} \texorpdfstring{$\ast$}{*}allocator)
+\begin{DoxyCompactList}\small\item\em End profiling and return a copy of the profiling file name. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_impl}{Ort\+::detail\+::\+Const\+Session\+Impl$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+size\+\_\+t \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_impl_a47dee56e19d6a7682a2be08fc2f60c1b}{Get\+Input\+Count}} () const
+\begin{DoxyCompactList}\small\item\em Returns the number of model inputs. \end{DoxyCompactList}\item 
+size\+\_\+t {\bfseries Get\+Output\+Count} () const
+\begin{DoxyCompactList}\small\item\em Returns the number of model outputs. \end{DoxyCompactList}\item 
+size\+\_\+t {\bfseries Get\+Overridable\+Initializer\+Count} () const
+\begin{DoxyCompactList}\small\item\em Returns the number of inputs that have defaults that can be overridden. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{namespace_ort_aad745588fd5aa01b386eebbacd5e7d18}{Allocated\+String\+Ptr}} \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_impl_aa3b00d8290d25a61506d58635b08b773}{Get\+Input\+Name\+Allocated}} (size\+\_\+t index, \mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}} \texorpdfstring{$\ast$}{*}allocator) const
+\begin{DoxyCompactList}\small\item\em Returns a copy of input name at the specified index. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{namespace_ort_aad745588fd5aa01b386eebbacd5e7d18}{Allocated\+String\+Ptr}} \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_impl_a77cbf0e3613543bb83f5008e326730b7}{Get\+Output\+Name\+Allocated}} (size\+\_\+t index, \mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}} \texorpdfstring{$\ast$}{*}allocator) const
+\begin{DoxyCompactList}\small\item\em Returns a copy of output name at then specified index. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{namespace_ort_aad745588fd5aa01b386eebbacd5e7d18}{Allocated\+String\+Ptr}} \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_impl_a59c701729c91b390e2f9ff8c358d8033}{Get\+Overridable\+Initializer\+Name\+Allocated}} (size\+\_\+t index, \mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}} \texorpdfstring{$\ast$}{*}allocator) const
+\begin{DoxyCompactList}\small\item\em Returns a copy of the overridable initializer name at then specified index. \end{DoxyCompactList}\item 
+uint64\+\_\+t {\bfseries Get\+Profiling\+Start\+Time\+Ns} () const
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Session\+Get\+Profiling\+Start\+Time\+Ns. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1_model_metadata}{Model\+Metadata}} {\bfseries Get\+Model\+Metadata} () const
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Session\+Get\+Model\+Metadata. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1_type_info}{Type\+Info}} {\bfseries Get\+Input\+Type\+Info} (size\+\_\+t index) const
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Session\+Get\+Input\+Type\+Info. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1_type_info}{Type\+Info}} {\bfseries Get\+Output\+Type\+Info} (size\+\_\+t index) const
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Session\+Get\+Output\+Type\+Info. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1_type_info}{Type\+Info}} {\bfseries Get\+Overridable\+Initializer\+Type\+Info} (size\+\_\+t index) const
+\begin{DoxyCompactList}\small\item\em Wraps Ort\+Api\+::\+Session\+Get\+Overridable\+Initializer\+Type\+Info. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+constexpr {\bfseries Base} (contained\+\_\+type \texorpdfstring{$\ast$}{*}p) noexcept
+\item 
+{\bfseries Base} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+{\bfseries Base} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+constexpr {\bfseries operator contained\+\_\+type \texorpdfstring{$\ast$}{*}} () const noexcept
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries release} ()
+\begin{DoxyCompactList}\small\item\em Relinquishes ownership of the contained C object pointer The underlying object is not destroyed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_session_impl}{Ort\+::detail\+::\+Session\+Impl$<$ Ort\+Session $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+using {\bfseries B}
+\item 
+using {\bfseries B}
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_session_impl}{Ort\+::detail\+::\+Const\+Session\+Impl$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+using {\bfseries B} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}$<$T$>$
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+using {\bfseries contained\+\_\+type} = T
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries p\+\_\+} \{\}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Wrapper around \+::\+Ort\+Session. 
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+api.\+h\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+inline.\+h\end{DoxyCompactItemize}

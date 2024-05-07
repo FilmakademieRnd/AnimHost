@@ -1,0 +1,17 @@
+<map id="PluginNodeInterface::name" name="PluginNodeInterface::name">
+<area shape="rect" id="Node000001" title="Name makes this model unique." alt="" coords="254,197,390,240"/>
+<area shape="rect" id="Node000002" href="$class_animation_frame_selector_plugin.html#ac851aa7b3a09cd75914a9d299fd4fc19" title="Caption is used in GUI." alt="" coords="5,5,206,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="301,185,262,122,235,90,204,62,185,51,188,46,207,58,239,86,266,119,306,182"/>
+<area shape="rect" id="Node000003" href="$class_character_selector_plugin.html#a1a5182552903477fe9b6e286fbf6ced4" title="Defines the category of this plugin as Operator for the plugin selection menu of the AnimHost Applica..." alt="" coords="25,72,186,115"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="286,189,248,158,204,129,180,118,183,113,207,124,251,153,289,185"/>
+<area shape="rect" id="Node000004" href="$class_coordinate_converter_plugin.html#ac57c5dd120d97f69cbffcc624f7bfc01" title="Caption is used in GUI." alt="" coords="19,139,192,181"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="238,199,186,185,187,179,239,194"/>
+<area shape="rect" id="Node000005" href="$class_data_export_plugin.html#a17e0405e305422f32e2b9c18433e17da" title="Caption is used in GUI." alt="" coords="19,205,192,232"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="239,221,192,221,192,216,239,216"/>
+<area shape="rect" id="Node000006" href="$class_run_trigger_plugin.html#a9e421571e486b823ae867ef7f7f9fd54" title="Caption is used in GUI." alt="" coords="21,256,190,283"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="239,241,166,258,165,253,238,235"/>
+<area shape="rect" id="Node000007" href="$class_tracer_scene_receiver_plugin.html#ad4993a2aaa51e16a281511211acd958b" title="Returning Plugin name, called by Qt Application." alt="" coords="16,307,195,349"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="281,252,246,275,207,297,180,309,178,304,204,292,243,271,278,247"/>
+<area shape="rect" id="Node000008" href="$class_tracer_update_sender_plugin.html#a16e2b0d1fb956911e52e9828ed900911" title="Returning Plugin name, called by Qt Application." alt="" coords="18,373,193,416"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="303,255,263,310,237,339,207,364,187,375,184,371,204,359,233,335,259,307,299,251"/>
+</map>

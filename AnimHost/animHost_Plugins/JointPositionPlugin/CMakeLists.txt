@@ -1,24 +1,28 @@
-qt_add_library(JointPositionPlugin
+set(target_name JointPositionPlugin)
+
+qt_add_library(${target_name}
     JointPositionPlugin.cpp JointPositionPlugin.h
     JointPositionPlugin_global.h
 )
 
-set_target_properties (JointPositionPlugin PROPERTIES
+set_target_properties (${target_name} PROPERTIES
     FOLDER Plugins/Operator
 )
 
-target_include_directories(JointPositionPlugin PUBLIC
+target_include_directories(${target_name} PUBLIC
     ../PluginInterface
 )
 
 
-target_compile_definitions(JointPositionPlugin PRIVATE
+target_compile_definitions(${target_name} PRIVATE
     JOINTPOSITIONPLUGIN_LIBRARY
 )
 
-target_link_libraries(JointPositionPlugin PUBLIC
+target_link_libraries(${target_name} PUBLIC
     PluginInterface
 )
 
-
-
+install(TARGETS ${target_name}
+    BUNDLE DESTINATION .
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)

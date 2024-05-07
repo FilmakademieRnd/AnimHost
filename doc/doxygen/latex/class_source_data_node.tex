@@ -1,0 +1,223 @@
+\doxysection{Source\+Data\+Node Class Reference}
+\hypertarget{class_source_data_node}{}\label{class_source_data_node}\index{SourceDataNode@{SourceDataNode}}
+
+
+Inheritance diagram for Source\+Data\+Node\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=260pt]{class_source_data_node__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Source\+Data\+Node\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_source_data_node__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+QString \mbox{\hyperlink{class_source_data_node_aa7482a34e60ae40625ada02ff4345ac9}{caption}} () const override
+\begin{DoxyCompactList}\small\item\em Caption is used in GUI. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_source_data_node_ad9ab5014a18397b63f3007dd603359ba}{caption\+Visible}} () const override
+\begin{DoxyCompactList}\small\item\em It is possible to hide caption in GUI. \end{DoxyCompactList}\item 
+QString \mbox{\hyperlink{class_source_data_node_ac741154d79600a1cbe31bca3e1647d8b}{name}} () const override
+\begin{DoxyCompactList}\small\item\em Name makes this model unique. \end{DoxyCompactList}\item 
+\Hypertarget{class_source_data_node_a3955dae419046a020864a48589eba019}\label{class_source_data_node_a3955dae419046a020864a48589eba019} 
+unsigned int {\bfseries n\+Ports} (Port\+Type port\+Type) const override
+\item 
+\Hypertarget{class_source_data_node_ad4eec9353df36f4f2a31da3e4e6ea67a}\label{class_source_data_node_ad4eec9353df36f4f2a31da3e4e6ea67a} 
+\mbox{\hyperlink{struct_qt_nodes_1_1_node_data_type}{Node\+Data\+Type}} {\bfseries data\+Type} (Port\+Type port\+Type, Port\+Index port\+Index) const override
+\item 
+\Hypertarget{class_source_data_node_ac465559157a96969617196cc441a06eb}\label{class_source_data_node_ac465559157a96969617196cc441a06eb} 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ {\bfseries out\+Data} (Port\+Index port) override
+\item 
+\Hypertarget{class_source_data_node_a5eb4f281191b593bebe67552e59f7832}\label{class_source_data_node_a5eb4f281191b593bebe67552e59f7832} 
+void {\bfseries set\+In\+Data} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ data, Port\+Index port\+Index) override
+\item 
+QWidget \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_source_data_node_a361ad2805d58b74110496dd770c75798}{embedded\+Widget}} () override
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual bool \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a960a7fbfc2bf771363937174da2de663}{port\+Caption\+Visible}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\begin{DoxyCompactList}\small\item\em It is possible to hide port caption in GUI. \end{DoxyCompactList}\item 
+virtual QString \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_add0dedb3ab8acf9c4086f72ecbc97504}{port\+Caption}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\begin{DoxyCompactList}\small\item\em Port caption is used in GUI to label individual ports. \end{DoxyCompactList}\item 
+QJson\+Object \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a0b7a061a3f7aa2b4997ced4ffa0c7319}{save}} () const override
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_ae1275eb13f2ca395411e1fda1789257c}{load}} (QJson\+Object const \&) override
+\item 
+virtual unsigned int {\bfseries n\+Ports} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} port\+Type) const =0
+\item 
+virtual \mbox{\hyperlink{struct_qt_nodes_1_1_node_data_type}{Node\+Data\+Type}} {\bfseries data\+Type} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} port\+Index) const =0
+\item 
+virtual \mbox{\hyperlink{_definitions_8hpp_a23527e8a5775fe989d2ef3f595e2d369}{Connection\+Policy}} {\bfseries port\+Connection\+Policy} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\item 
+\mbox{\hyperlink{class_qt_nodes_1_1_node_style}{Node\+Style}} const \& {\bfseries node\+Style} () const
+\item 
+void {\bfseries set\+Node\+Style} (\mbox{\hyperlink{class_qt_nodes_1_1_node_style}{Node\+Style}} const \&style)
+\item 
+virtual void {\bfseries set\+In\+Data} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ node\+Data, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const port\+Index)=0
+\item 
+virtual std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_ac7e53d8fd66ee4ced240bbcea98ae5dc}{out\+Data}} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const port)=0
+\item 
+virtual bool {\bfseries resizable} () const
+\item 
+virtual bool \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a960a7fbfc2bf771363937174da2de663}{port\+Caption\+Visible}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\begin{DoxyCompactList}\small\item\em It is possible to hide port caption in GUI. \end{DoxyCompactList}\item 
+virtual QString \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_add0dedb3ab8acf9c4086f72ecbc97504}{port\+Caption}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\begin{DoxyCompactList}\small\item\em Port caption is used in GUI to label individual ports. \end{DoxyCompactList}\item 
+QJson\+Object \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a0b7a061a3f7aa2b4997ced4ffa0c7319}{save}} () const override
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_ae1275eb13f2ca395411e1fda1789257c}{load}} (QJson\+Object const \&) override
+\item 
+virtual unsigned int {\bfseries n\+Ports} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} port\+Type) const =0
+\item 
+virtual \mbox{\hyperlink{struct_qt_nodes_1_1_node_data_type}{Node\+Data\+Type}} {\bfseries data\+Type} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} port\+Index) const =0
+\item 
+virtual \mbox{\hyperlink{_definitions_8hpp_a23527e8a5775fe989d2ef3f595e2d369}{Connection\+Policy}} {\bfseries port\+Connection\+Policy} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}}, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}}) const
+\item 
+\mbox{\hyperlink{class_qt_nodes_1_1_node_style}{Node\+Style}} const \& {\bfseries node\+Style} () const
+\item 
+void {\bfseries set\+Node\+Style} (\mbox{\hyperlink{class_qt_nodes_1_1_node_style}{Node\+Style}} const \&style)
+\item 
+virtual void {\bfseries set\+In\+Data} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ node\+Data, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const port\+Index)=0
+\item 
+virtual std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_ac7e53d8fd66ee4ced240bbcea98ae5dc}{out\+Data}} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const port)=0
+\item 
+virtual bool {\bfseries resizable} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_source_data_node_a2d1cbea1e4e00fede2c28af8cc9a797d}\label{class_source_data_node_a2d1cbea1e4e00fede2c28af8cc9a797d} 
+std\+::vector$<$ std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_qt_nodes_1_1_node_data}{Node\+Data}} $>$ $>$ {\bfseries \+\_\+data\+Out}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Public Slots inherited from \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual void {\bfseries input\+Connection\+Created} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries input\+Connection\+Deleted} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries output\+Connection\+Created} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries output\+Connection\+Deleted} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries input\+Connection\+Created} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries input\+Connection\+Deleted} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries output\+Connection\+Created} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\item 
+virtual void {\bfseries output\+Connection\+Deleted} (\mbox{\hyperlink{struct_qt_nodes_1_1_connection_id}{Connection\+Id}} const \&)
+\end{DoxyCompactItemize}
+\doxysubsection*{Signals inherited from \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}}
+\begin{DoxyCompactItemize}
+\item 
+void {\bfseries data\+Updated} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const index)
+\begin{DoxyCompactList}\small\item\em Triggers the updates in the nodes downstream. \end{DoxyCompactList}\item 
+void {\bfseries data\+Invalidated} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const index)
+\begin{DoxyCompactList}\small\item\em Triggers the propagation of the empty data downstream. \end{DoxyCompactList}\item 
+void {\bfseries computing\+Started} ()
+\item 
+void {\bfseries computing\+Finished} ()
+\item 
+void {\bfseries embedded\+Widget\+Size\+Updated} ()
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a35fb8ad8de15273e604c6b9e6c4c68eb}{ports\+About\+To\+Be\+Deleted}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const first, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const last)
+\begin{DoxyCompactList}\small\item\em Call this function before deleting the data associated with ports. \end{DoxyCompactList}\item 
+void {\bfseries ports\+Deleted} ()
+\begin{DoxyCompactList}\small\item\em Call this function when data and port moditications are finished. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a578fb727bc29f18cc4f9bed6ad8af792}{ports\+About\+To\+Be\+Inserted}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const first, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const last)
+\begin{DoxyCompactList}\small\item\em Call this function before inserting the data associated with ports. \end{DoxyCompactList}\item 
+void {\bfseries ports\+Inserted} ()
+\begin{DoxyCompactList}\small\item\em Call this function when data and port moditications are finished. \end{DoxyCompactList}\item 
+void {\bfseries data\+Updated} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const index)
+\begin{DoxyCompactList}\small\item\em Triggers the updates in the nodes downstream. \end{DoxyCompactList}\item 
+void {\bfseries data\+Invalidated} (\mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const index)
+\begin{DoxyCompactList}\small\item\em Triggers the propagation of the empty data downstream. \end{DoxyCompactList}\item 
+void {\bfseries computing\+Started} ()
+\item 
+void {\bfseries computing\+Finished} ()
+\item 
+void {\bfseries embedded\+Widget\+Size\+Updated} ()
+\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a35fb8ad8de15273e604c6b9e6c4c68eb}{ports\+About\+To\+Be\+Deleted}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const first, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const last)
+\begin{DoxyCompactList}\small\item\em Call this function before deleting the data associated with ports. \end{DoxyCompactList}\item 
+void {\bfseries ports\+Deleted} ()
+\begin{DoxyCompactList}\small\item\em Call this function when data and port moditications are finished. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a578fb727bc29f18cc4f9bed6ad8af792}{ports\+About\+To\+Be\+Inserted}} (\mbox{\hyperlink{_definitions_8hpp_aff7e048793aeeaab81751ee68740fb2f}{Port\+Type}} const port\+Type, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const first, \mbox{\hyperlink{_definitions_8hpp_aafb370ff4bd2c34323873e8df74f4a4b}{Port\+Index}} const last)
+\begin{DoxyCompactList}\small\item\em Call this function before inserting the data associated with ports. \end{DoxyCompactList}\item 
+void {\bfseries ports\+Inserted} ()
+\begin{DoxyCompactList}\small\item\em Call this function when data and port moditications are finished. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_source_data_node_aa7482a34e60ae40625ada02ff4345ac9}\label{class_source_data_node_aa7482a34e60ae40625ada02ff4345ac9} 
+\index{SourceDataNode@{SourceDataNode}!caption@{caption}}
+\index{caption@{caption}!SourceDataNode@{SourceDataNode}}
+\doxysubsubsection{\texorpdfstring{caption()}{caption()}}
+{\footnotesize\ttfamily QString Source\+Data\+Node\+::caption (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Caption is used in GUI. 
+
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a77e69adffd694fa448bec34b36bd0f37}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}.
+
+\Hypertarget{class_source_data_node_ad9ab5014a18397b63f3007dd603359ba}\label{class_source_data_node_ad9ab5014a18397b63f3007dd603359ba} 
+\index{SourceDataNode@{SourceDataNode}!captionVisible@{captionVisible}}
+\index{captionVisible@{captionVisible}!SourceDataNode@{SourceDataNode}}
+\doxysubsubsection{\texorpdfstring{captionVisible()}{captionVisible()}}
+{\footnotesize\ttfamily bool Source\+Data\+Node\+::caption\+Visible (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+It is possible to hide caption in GUI. 
+
+
+
+Reimplemented from \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_af6b4510f3f9a945153e7c95a8dc2cdcc}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}.
+
+\Hypertarget{class_source_data_node_a361ad2805d58b74110496dd770c75798}\label{class_source_data_node_a361ad2805d58b74110496dd770c75798} 
+\index{SourceDataNode@{SourceDataNode}!embeddedWidget@{embeddedWidget}}
+\index{embeddedWidget@{embeddedWidget}!SourceDataNode@{SourceDataNode}}
+\doxysubsubsection{\texorpdfstring{embeddedWidget()}{embeddedWidget()}}
+{\footnotesize\ttfamily QWidget \texorpdfstring{$\ast$}{*} Source\+Data\+Node\+::embedded\+Widget (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+It is recommented to preform a lazy initialization for the embedded widget and create it inside this function, not in the constructor of the current model.
+
+Our Model Registry is able to shortly instantiate models in order to call the non-\/static {\ttfamily Model\+::name()}. If the embedded widget is allocated in the constructor but not actually embedded into some QGraphics\+Proxy\+Widget, we\textquotesingle{}ll gonna have a dangling pointer. 
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_a964178140634d139431707a3959d85ce}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}.
+
+\Hypertarget{class_source_data_node_ac741154d79600a1cbe31bca3e1647d8b}\label{class_source_data_node_ac741154d79600a1cbe31bca3e1647d8b} 
+\index{SourceDataNode@{SourceDataNode}!name@{name}}
+\index{name@{name}!SourceDataNode@{SourceDataNode}}
+\doxysubsubsection{\texorpdfstring{name()}{name()}}
+{\footnotesize\ttfamily QString Source\+Data\+Node\+::name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Name makes this model unique. 
+
+
+
+Implements \mbox{\hyperlink{class_qt_nodes_1_1_node_delegate_model_aaa88199eb94c7291367d7def4dda6354}{Qt\+Nodes\+::\+Node\+Delegate\+Model}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/core/sourcedatanode.\+h\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/core/sourcedatanode.\+cpp\end{DoxyCompactItemize}

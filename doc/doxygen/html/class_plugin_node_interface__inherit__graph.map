@@ -1,0 +1,29 @@
+<map id="PluginNodeInterface" name="PluginNodeInterface">
+<area shape="rect" id="Node000001" title="Interface for plugins for the AnimHost." alt="" coords="445,208,581,235"/>
+<area shape="rect" id="Node000005" href="$class_animation_frame_selector_plugin.html" title=" " alt="" coords="629,5,830,32"/>
+<area shape="poly" id="edge6_Node000001_Node000005" title=" " alt="" coords="522,193,538,158,561,117,591,76,628,42,649,30,651,35,631,46,595,80,565,120,543,161,527,195"/>
+<area shape="rect" id="Node000006" href="$class_assimp_loader_plugin.html" title=" " alt="" coords="659,56,800,83"/>
+<area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="529,193,570,142,597,115,628,92,658,79,660,84,631,97,601,119,574,145,534,196"/>
+<area shape="rect" id="Node000007" href="$class_basic_onnx_plugin.html" title=" " alt="" coords="669,107,790,133"/>
+<area shape="poly" id="edge8_Node000001_Node000007" title=" " alt="" coords="542,196,581,169,628,143,668,129,669,134,630,148,584,173,545,201"/>
+<area shape="rect" id="Node000008" href="$class_character_selector_plugin.html" title=" " alt="" coords="649,157,810,184"/>
+<area shape="poly" id="edge9_Node000001_Node000008" title=" " alt="" coords="588,201,669,182,670,187,589,206"/>
+<area shape="rect" id="Node000009" href="$class_coordinate_converter_plugin.html" title=" " alt="" coords="643,208,816,235"/>
+<area shape="poly" id="edge10_Node000001_Node000009" title=" " alt="" coords="597,219,643,219,643,224,597,224"/>
+<area shape="rect" id="Node000010" href="$class_data_export_plugin.html" title=" " alt="" coords="668,259,791,285"/>
+<area shape="poly" id="edge11_Node000001_Node000010" title=" " alt="" coords="589,236,670,255,669,261,588,241"/>
+<area shape="rect" id="Node000011" href="$class_run_trigger_plugin.html" title=" " alt="" coords="670,309,789,336"/>
+<area shape="poly" id="edge12_Node000001_Node000011" title=" " alt="" coords="545,242,584,270,630,295,670,309,669,314,628,300,581,274,542,246"/>
+<area shape="rect" id="Node000012" href="$class_tracer_scene_receiver_plugin.html" title=" " alt="" coords="640,360,819,387"/>
+<area shape="poly" id="edge13_Node000001_Node000012" title=" " alt="" coords="534,246,574,298,601,324,631,346,655,357,653,362,628,350,597,328,570,301,529,250"/>
+<area shape="rect" id="Node000013" href="$class_tracer_update_sender_plugin.html" title=" " alt="" coords="642,411,817,437"/>
+<area shape="poly" id="edge14_Node000001_Node000013" title=" " alt="" coords="527,248,543,282,565,323,595,363,631,397,651,408,649,412,628,401,591,366,561,325,538,284,522,250"/>
+<area shape="rect" id="Node000002" href="$class_qt_nodes_1_1_node_delegate_model.html" title=" " alt="" coords="201,208,397,235"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="412,219,445,219,445,224,412,224"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="44,183,114,209"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="130,207,200,216,200,222,129,212"/>
+<area shape="poly" id="edge4_Node000002_Node000003" title=" " alt="" coords="129,191,245,205,244,210,129,197"/>
+<area shape="rect" id="Node000004" href="$class_qt_nodes_1_1_serializable.html" title=" " alt="" coords="5,233,153,260"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="168,243,245,233,245,238,169,248"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="147,228,200,221,201,226,148,233"/>
+</map>

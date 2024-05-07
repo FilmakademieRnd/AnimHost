@@ -1,0 +1,5 @@
+<map id="Ort::detail::ConstValueImpl::GetTensorTypeAndShapeInfo" name="Ort::detail::ConstValueImpl::GetTensorTypeAndShapeInfo">
+<area shape="rect" id="Node000001" title="The API returns type information for data contained in a tensor. For sparse tensors it returns type i..." alt="" coords="193,5,390,48"/>
+<area shape="rect" id="Node000002" href="$class_ort_1_1_training_session.html#afed699e00a7e7c60b591774788f8bb23" title="Loads the training session model parameters from a contiguous buffer." alt="" coords="5,5,145,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="177,29,145,29,145,24,177,24"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="Ort::TrainingSession" name="Ort::TrainingSession">
+<area shape="rect" id="Node000001" title="Trainer class that provides training, evaluation and optimizer methods for training an ONNX models." alt="" coords="9,96,149,123"/>
+<area shape="rect" id="Node000002" href="$struct_ort_1_1detail_1_1_base.html" title=" " alt="" coords="5,5,153,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="82,64,82,95,76,95,76,64"/>
+</map>

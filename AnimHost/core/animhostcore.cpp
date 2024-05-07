@@ -28,13 +28,8 @@ AnimHost::AnimHost()
     qRegisterMetaType<std::shared_ptr<JointVelocity>>("JointVelocity");
     qRegisterMetaType<std::shared_ptr<JointVelocitySequence>>("JointVelocitySequence");
 
-<<<<<<< Updated upstream
-    qRegisterMetaType<std::shared_ptr<SceneObject>>("SceneObject");
-    qRegisterMetaType<std::shared_ptr<SceneObjectSequence>>("SceneObjectSequence");
-=======
     qRegisterMetaType<std::shared_ptr<CharacterObject>>("CharacterObject");
     qRegisterMetaType<std::shared_ptr<CharacterObjectSequence>>("CharacterObjectSequence");
->>>>>>> Stashed changes
  
     qRegisterMetaType<std::shared_ptr<RunSignal>>("RunSignal");
 
@@ -71,6 +66,9 @@ bool AnimHost::loadPlugins()
     const QStringList entries = pluginsDir.entryList(QDir::Files);
     for (const QString &fileName : entries) {
         QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+        
+        qDebug()<< "Try loading as plugin: " << fileName;
+
         QObject *plugin = pluginLoader.instance();
         if (plugin) {
             PluginInterface* pluginInterface = qobject_cast<PluginInterface* >(plugin);

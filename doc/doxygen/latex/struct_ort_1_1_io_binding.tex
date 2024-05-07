@@ -1,0 +1,121 @@
+\doxysection{Ort\+::Io\+Binding Struct Reference}
+\hypertarget{struct_ort_1_1_io_binding}{}\label{struct_ort_1_1_io_binding}\index{Ort::IoBinding@{Ort::IoBinding}}
+
+
+Wrapper around \+::\+Ort\+Io\+Binding.  
+
+
+
+
+{\ttfamily \#include $<$onnxruntime\+\_\+cxx\+\_\+api.\+h$>$}
+
+
+
+Inheritance diagram for Ort\+::Io\+Binding\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=210pt]{struct_ort_1_1_io_binding__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Ort\+::Io\+Binding\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=210pt]{struct_ort_1_1_io_binding__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_1_1_io_binding_af002b4befdc734d992039108ae7013a7}\label{struct_ort_1_1_io_binding_af002b4befdc734d992039108ae7013a7} 
+{\bfseries Io\+Binding} (std\+::nullptr\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Create an empty object for convenience. Sometimes, we want to initialize members later. \end{DoxyCompactList}\item 
+\Hypertarget{struct_ort_1_1_io_binding_aeae142c9f100a5f34c29fbdecde58cf4}\label{struct_ort_1_1_io_binding_aeae142c9f100a5f34c29fbdecde58cf4} 
+{\bfseries Io\+Binding} (\mbox{\hyperlink{struct_ort_1_1_session}{Session}} \&session)
+\item 
+\Hypertarget{struct_ort_1_1_io_binding_ab4bc709150357bf917039d1f9328c06e}\label{struct_ort_1_1_io_binding_ab4bc709150357bf917039d1f9328c06e} 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_const_io_binding_impl}{Const\+Io\+Binding}} {\bfseries Get\+Const} () const
+\item 
+\Hypertarget{struct_ort_1_1_io_binding_a8798f1b0b4f24262ad96016541d8f8a3}\label{struct_ort_1_1_io_binding_a8798f1b0b4f24262ad96016541d8f8a3} 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_io_binding_impl}{Unowned\+Io\+Binding}} {\bfseries Get\+Unowned} () const
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_io_binding_impl}{Ort\+::detail\+::\+Io\+Binding\+Impl$<$ Ort\+Io\+Binding $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+void {\bfseries Bind\+Input} (const char \texorpdfstring{$\ast$}{*}name, const \mbox{\hyperlink{struct_ort_1_1_value}{Value}} \&)
+\item 
+void {\bfseries Bind\+Output} (const char \texorpdfstring{$\ast$}{*}name, const \mbox{\hyperlink{struct_ort_1_1_value}{Value}} \&)
+\item 
+void {\bfseries Bind\+Output} (const char \texorpdfstring{$\ast$}{*}name, const Ort\+Memory\+Info \texorpdfstring{$\ast$}{*})
+\item 
+void {\bfseries Clear\+Bound\+Inputs} ()
+\item 
+void {\bfseries Clear\+Bound\+Outputs} ()
+\item 
+void {\bfseries Synchronize\+Inputs} ()
+\item 
+void {\bfseries Synchronize\+Outputs} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_io_binding_impl}{Ort\+::detail\+::\+Const\+Io\+Binding\+Impl$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ std\+::string $>$ {\bfseries Get\+Output\+Names} () const
+\item 
+std\+::vector$<$ std\+::string $>$ {\bfseries Get\+Output\+Names} (\mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}} \texorpdfstring{$\ast$}{*}) const
+\item 
+std\+::vector$<$ \mbox{\hyperlink{struct_ort_1_1_value}{Value}} $>$ {\bfseries Get\+Output\+Values} () const
+\item 
+std\+::vector$<$ \mbox{\hyperlink{struct_ort_1_1_value}{Value}} $>$ {\bfseries Get\+Output\+Values} (\mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}} \texorpdfstring{$\ast$}{*}) const
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+constexpr {\bfseries Base} (contained\+\_\+type \texorpdfstring{$\ast$}{*}p) noexcept
+\item 
+{\bfseries Base} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+{\bfseries Base} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+constexpr {\bfseries operator contained\+\_\+type \texorpdfstring{$\ast$}{*}} () const noexcept
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries release} ()
+\begin{DoxyCompactList}\small\item\em Relinquishes ownership of the contained C object pointer The underlying object is not destroyed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_io_binding_impl}{Ort\+::detail\+::\+Io\+Binding\+Impl$<$ Ort\+Io\+Binding $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+using {\bfseries B}
+\item 
+using {\bfseries B}
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_const_io_binding_impl}{Ort\+::detail\+::\+Const\+Io\+Binding\+Impl$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+using {\bfseries B} = \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}}$<$T$>$
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+using {\bfseries contained\+\_\+type} = T
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries p\+\_\+} \{\}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Wrapper around \+::\+Ort\+Io\+Binding. 
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+api.\+h\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+inline.\+h\end{DoxyCompactItemize}

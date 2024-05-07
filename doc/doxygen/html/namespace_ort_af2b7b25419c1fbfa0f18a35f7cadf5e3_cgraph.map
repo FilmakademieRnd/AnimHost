@@ -1,0 +1,7 @@
+<map id="Ort::GetTrainingApi" name="Ort::GetTrainingApi">
+<area shape="rect" id="Node000001" title="This function returns the C training api struct with the pointers to the ort training C functions...." alt="" coords="5,31,138,57"/>
+<area shape="rect" id="Node000002" href="$namespace_ort.html#a296b5958479d9889218b17bdb08c1894" title="This returns a reference to the OrtApi interface in use." alt="" coords="218,5,305,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="138,32,202,24,203,29,139,38"/>
+<area shape="rect" id="Node000003" href="$struct_ort_api.html#ac714d93e08c879793e642e7427a86546" title="Gets the Training C Api struct." alt="" coords="186,56,337,83"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="139,50,171,55,170,60,138,56"/>
+</map>

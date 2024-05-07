@@ -1,10 +1,11 @@
 #ifndef ONNXMODEl_H
 #define ONNXMODEl_H
+#include "BasicOnnxPlugin_global.h"
 
 #include <QMetaType>
 #include <onnxruntime_cxx_api.h>
 
-class OnnxModel {
+class BASICONNXPLUGINSHARED_EXPORT OnnxModel {
 
 
 private:
@@ -31,6 +32,8 @@ public:
 
     std::vector<std::string> GetTensorNames(bool bGetInput = true);
     std::vector<std::string> GetTensorShapes(bool bGetInput = true);
+
+    std::vector<float> RunInference(std::vector<float>& inputValue);
 
     unsigned int GetNumTensors(bool bGetInput = true) {
 

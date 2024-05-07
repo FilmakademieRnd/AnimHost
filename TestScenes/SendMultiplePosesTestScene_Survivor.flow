@@ -1,0 +1,105 @@
+{
+    "connections": [
+        {
+            "inPortIndex": 1,
+            "intNodeId": 7,
+            "outNodeId": 6,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 0,
+            "outNodeId": 3,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 7,
+            "outNodeId": 6,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 2,
+            "intNodeId": 1,
+            "outNodeId": 7,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 3,
+            "intNodeId": 1,
+            "outNodeId": 6,
+            "outPortIndex": 2
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 6,
+            "outNodeId": 3,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 1,
+            "outNodeId": 0,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 1,
+            "outNodeId": 0,
+            "outPortIndex": 2
+        }
+    ],
+    "nodes": [
+        {
+            "id": 0,
+            "internal-data": {
+                "dir": "C:\\Users\\m5963\\Documents\\AnimHost_TestData\\Survivor_Sprint/",
+                "model-name": "Animation Import"
+            },
+            "position": {
+                "x": -123.20696392873211,
+                "y": -248.00000000000003
+            }
+        },
+        {
+            "id": 1,
+            "internal-data": {
+                "model-name": "TracerUpdateSenderPlugin"
+            },
+            "position": {
+                "x": 404.90142373366785,
+                "y": -194.63897015550484
+            }
+        },
+        {
+            "id": 3,
+            "internal-data": {
+                "model-name": "RunTriggerPlugin"
+            },
+            "position": {
+                "x": -645.0837279596979,
+                "y": -157.44332493702774
+            }
+        },
+        {
+            "id": 6,
+            "internal-data": {
+                "model-name": "TracerSceneReceiverPlugin"
+            },
+            "position": {
+                "x": -482.2364159999997,
+                "y": -64.198656
+            }
+        },
+        {
+            "id": 7,
+            "internal-data": {
+                "model-name": "CharacterSelectorPlugin"
+            },
+            "position": {
+                "x": 3.258181507397296,
+                "y": 45.55474747128503
+            }
+        }
+    ]
+}

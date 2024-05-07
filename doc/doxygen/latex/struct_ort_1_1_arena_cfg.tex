@@ -1,0 +1,103 @@
+\doxysection{Ort\+::Arena\+Cfg Struct Reference}
+\hypertarget{struct_ort_1_1_arena_cfg}{}\label{struct_ort_1_1_arena_cfg}\index{Ort::ArenaCfg@{Ort::ArenaCfg}}
+
+
+it is a structure that represents the configuration of an arena based allocator  
+
+
+
+
+{\ttfamily \#include $<$onnxruntime\+\_\+cxx\+\_\+api.\+h$>$}
+
+
+
+Inheritance diagram for Ort\+::Arena\+Cfg\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=173pt]{struct_ort_1_1_arena_cfg__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Ort\+::Arena\+Cfg\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=173pt]{struct_ort_1_1_arena_cfg__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_ort_1_1_arena_cfg_a1c6f844ba4da1cbdaf64978c18883390}\label{struct_ort_1_1_arena_cfg_a1c6f844ba4da1cbdaf64978c18883390} 
+{\bfseries Arena\+Cfg} (std\+::nullptr\+\_\+t)
+\begin{DoxyCompactList}\small\item\em Create an empty \doxylink{struct_ort_1_1_arena_cfg}{Arena\+Cfg} object, must be assigned a valid one to be used. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_1_1_arena_cfg_af5984643b2ec4748e45df6e50b9f2720}{Arena\+Cfg}} (size\+\_\+t max\+\_\+mem, int arena\+\_\+extend\+\_\+strategy, int initial\+\_\+chunk\+\_\+size\+\_\+bytes, int max\+\_\+dead\+\_\+bytes\+\_\+per\+\_\+chunk)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ Ort\+Arena\+Cfg $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+constexpr {\bfseries Base} (contained\+\_\+type \texorpdfstring{$\ast$}{*}p) noexcept
+\item 
+{\bfseries Base} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+{\bfseries Base} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (const \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&)=delete
+\item 
+\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \& {\bfseries operator=} (\mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Base}} \&\&v) noexcept
+\item 
+constexpr {\bfseries operator contained\+\_\+type \texorpdfstring{$\ast$}{*}} () const noexcept
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries release} ()
+\begin{DoxyCompactList}\small\item\em Relinquishes ownership of the contained C object pointer The underlying object is not destroyed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ Ort\+Arena\+Cfg $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+using {\bfseries contained\+\_\+type}
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{struct_ort_1_1detail_1_1_base}{Ort\+::detail\+::\+Base$<$ Ort\+Arena\+Cfg $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+contained\+\_\+type \texorpdfstring{$\ast$}{*} {\bfseries p\+\_\+}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+it is a structure that represents the configuration of an arena based allocator 
+
+Please see docs/\+C\+\_\+\+API.\+md for details 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{struct_ort_1_1_arena_cfg_af5984643b2ec4748e45df6e50b9f2720}\label{struct_ort_1_1_arena_cfg_af5984643b2ec4748e45df6e50b9f2720} 
+\index{Ort::ArenaCfg@{Ort::ArenaCfg}!ArenaCfg@{ArenaCfg}}
+\index{ArenaCfg@{ArenaCfg}!Ort::ArenaCfg@{Ort::ArenaCfg}}
+\doxysubsubsection{\texorpdfstring{ArenaCfg()}{ArenaCfg()}}
+{\footnotesize\ttfamily Ort\+::\+Arena\+Cfg\+::\+Arena\+Cfg (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{max\+\_\+mem,  }\item[{int}]{arena\+\_\+extend\+\_\+strategy,  }\item[{int}]{initial\+\_\+chunk\+\_\+size\+\_\+bytes,  }\item[{int}]{max\+\_\+dead\+\_\+bytes\+\_\+per\+\_\+chunk }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Wraps Ort\+Api\+::\+Create\+Arena\+Cfg 
+\begin{DoxyParams}{Parameters}
+{\em max\+\_\+mem} & -\/ use 0 to allow ORT to choose the default \\
+\hline
+{\em arena\+\_\+extend\+\_\+strategy} & -\/ use -\/1 to allow ORT to choose the default, 0 = k\+Next\+Power\+Of\+Two, 1 = k\+Same\+As\+Requested \\
+\hline
+{\em initial\+\_\+chunk\+\_\+size\+\_\+bytes} & -\/ use -\/1 to allow ORT to choose the default \\
+\hline
+{\em max\+\_\+dead\+\_\+bytes\+\_\+per\+\_\+chunk} & -\/ use -\/1 to allow ORT to choose the default See docs/\+C\+\_\+\+API.\+md for details on what the following parameters mean and how to choose these values \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=303pt]{struct_ort_1_1_arena_cfg_af5984643b2ec4748e45df6e50b9f2720_cgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+api.\+h\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+cxx\+\_\+inline.\+h\end{DoxyCompactItemize}

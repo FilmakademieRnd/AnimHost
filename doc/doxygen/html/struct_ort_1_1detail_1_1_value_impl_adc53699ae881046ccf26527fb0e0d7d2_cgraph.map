@@ -1,0 +1,5 @@
+<map id="Ort::detail::ValueImpl::UseCsrIndices" name="Ort::detail::ValueImpl::UseCsrIndices">
+<area shape="rect" id="Node000001" title="Supplies CSR format specific indices and marks the contained sparse tensor as being a CSR format tens..." alt="" coords="5,5,149,48"/>
+<area shape="rect" id="Node000002" href="$namespace_ort.html#a296b5958479d9889218b17bdb08c1894" title="This returns a reference to the OrtApi interface in use." alt="" coords="197,13,284,40"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="149,24,181,24,181,29,149,29"/>
+</map>

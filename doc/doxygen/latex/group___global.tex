@@ -1,0 +1,612 @@
+\doxysection{Global}
+\hypertarget{group___global}{}\label{group___global}\index{Global@{Global}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}}
+\begin{DoxyCompactList}\small\item\em Memory allocation interface. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_c_u_d_a_provider_options}{Ort\+CUDAProvider\+Options}}
+\begin{DoxyCompactList}\small\item\em CUDA Provider Options. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_r_o_c_m_provider_options}{Ort\+ROCMProvider\+Options}}
+\begin{DoxyCompactList}\small\item\em ROCM Provider Options. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_tensor_r_t_provider_options}{Ort\+Tensor\+RTProvider\+Options}}
+\begin{DoxyCompactList}\small\item\em Tensor\+RT Provider Options. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_m_i_graph_x_provider_options}{Ort\+MIGraph\+XProvider\+Options}}
+\begin{DoxyCompactList}\small\item\em MIGraphX Provider Options. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_open_v_i_n_o_provider_options}{Ort\+Open\+VINOProvider\+Options}}
+\begin{DoxyCompactList}\small\item\em Open\+VINO Provider Options. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_api_base}{Ort\+Api\+Base}}
+\begin{DoxyCompactList}\small\item\em The helper interface to get the right version of \doxylink{struct_ort_api}{Ort\+Api}. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_custom_handle_type}{Ort\+Custom\+Handle\+Type}}
+\item 
+struct \mbox{\hyperlink{struct_ort_api}{Ort\+Api}}
+\begin{DoxyCompactList}\small\item\em The C API. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_ort_custom_op}{Ort\+Custom\+Op}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{group___global_gac583aeb4640621ceb588f6300537945d}{ORT\+\_\+\+API\+\_\+\+VERSION}}~15
+\begin{DoxyCompactList}\small\item\em The API version defined in this header. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef enum \mbox{\hyperlink{group___global_gaec63cdda46c29b8183997f38930ce38e}{ONNXTensor\+Element\+Data\+Type}} \mbox{\hyperlink{group___global_ga0d04d16a7a0be0e6539120fad0853e73}{ONNXTensor\+Element\+Data\+Type}}
+\item 
+\Hypertarget{group___global_gaf3a031008cfc3b7b270494f02e86235a}\label{group___global_gaf3a031008cfc3b7b270494f02e86235a} 
+typedef enum ONNXType {\bfseries ONNXType}
+\item 
+\Hypertarget{group___global_gaf93be4413a430eabf7447b33d930c5d4}\label{group___global_gaf93be4413a430eabf7447b33d930c5d4} 
+typedef enum Ort\+Sparse\+Format {\bfseries Ort\+Sparse\+Format}
+\item 
+typedef enum \mbox{\hyperlink{group___global_ga1c0fbcf614dbd0e2c272ae1cc04c629c}{Ort\+Logging\+Level}} \mbox{\hyperlink{group___global_gadd0502cc290086b2873852ad8d28892e}{Ort\+Logging\+Level}}
+\begin{DoxyCompactList}\small\item\em Logging severity levels. \end{DoxyCompactList}\item 
+\Hypertarget{group___global_gad57660a9e105daa2f0700f332991dd35}\label{group___global_gad57660a9e105daa2f0700f332991dd35} 
+typedef enum Ort\+Error\+Code {\bfseries Ort\+Error\+Code}
+\item 
+\Hypertarget{group___global_gadba26b03f8e09b8c7604d3ef9cd9ccb6}\label{group___global_gadba26b03f8e09b8c7604d3ef9cd9ccb6} 
+typedef enum Ort\+Op\+Attr\+Type {\bfseries Ort\+Op\+Attr\+Type}
+\item 
+\Hypertarget{group___global_gab5a74e2d06e6d2c3c071e84d5a5537b9}\label{group___global_gab5a74e2d06e6d2c3c071e84d5a5537b9} 
+typedef Ort\+Status \texorpdfstring{$\ast$}{*} {\bfseries Ort\+Status\+Ptr}
+\item 
+typedef struct Ort\+Allocator \mbox{\hyperlink{group___global_gaaf2f329757284710ba67019b701e3fa4}{Ort\+Allocator}}
+\begin{DoxyCompactList}\small\item\em Memory allocation interface. \end{DoxyCompactList}\item 
+\Hypertarget{group___global_gabf728b4a9460c8eb6e31c2bcc6e1f414}\label{group___global_gabf728b4a9460c8eb6e31c2bcc6e1f414} 
+typedef void(ORT\+\_\+\+API\+\_\+\+CALL \texorpdfstring{$\ast$}{*} {\bfseries Ort\+Logging\+Function}) (void \texorpdfstring{$\ast$}{*}param, \mbox{\hyperlink{group___global_ga1c0fbcf614dbd0e2c272ae1cc04c629c}{Ort\+Logging\+Level}} severity, const char \texorpdfstring{$\ast$}{*}category, const char \texorpdfstring{$\ast$}{*}logid, const char \texorpdfstring{$\ast$}{*}code\+\_\+location, const char \texorpdfstring{$\ast$}{*}message)
+\item 
+typedef enum \mbox{\hyperlink{group___global_gab086a52ca2f3a883cd1f7561eadd8ec9}{Graph\+Optimization\+Level}} \mbox{\hyperlink{group___global_ga22fbae7b35dda59771cd46b99e50bf74}{Graph\+Optimization\+Level}}
+\begin{DoxyCompactList}\small\item\em Graph optimization level. \end{DoxyCompactList}\item 
+\Hypertarget{group___global_ga967b899c2f0f98704689f7a5a8f27a54}\label{group___global_ga967b899c2f0f98704689f7a5a8f27a54} 
+typedef enum Execution\+Mode {\bfseries Execution\+Mode}
+\item 
+\Hypertarget{group___global_gab5d644dee3e2ef757488dfd53c42965d}\label{group___global_gab5d644dee3e2ef757488dfd53c42965d} 
+typedef enum \mbox{\hyperlink{group___global_ga43f32dc7d75b0c13fd64ca5792e63a62}{Ort\+Language\+Projection}} {\bfseries Ort\+Language\+Projection}
+\begin{DoxyCompactList}\small\item\em Language projection identifiers /see Ort\+Api\+::\+Set\+Language\+Projection. \end{DoxyCompactList}\item 
+\Hypertarget{group___global_ga0dc9b747ee56ed963beb424a48ed6b8b}\label{group___global_ga0dc9b747ee56ed963beb424a48ed6b8b} 
+typedef struct Ort\+Kernel\+Info {\bfseries Ort\+Kernel\+Info}
+\item 
+\Hypertarget{group___global_ga757f41782aa4ae79362a25d92a5d4230}\label{group___global_ga757f41782aa4ae79362a25d92a5d4230} 
+typedef struct Ort\+Kernel\+Context {\bfseries Ort\+Kernel\+Context}
+\item 
+\Hypertarget{group___global_ga3ec7f59bfc7a10853ed09ec7b0d206b9}\label{group___global_ga3ec7f59bfc7a10853ed09ec7b0d206b9} 
+typedef struct Ort\+Custom\+Op {\bfseries Ort\+Custom\+Op}
+\item 
+\Hypertarget{group___global_ga90693eeeb47f350af8f9319b6c47947c}\label{group___global_ga90693eeeb47f350af8f9319b6c47947c} 
+typedef enum Ort\+Allocator\+Type {\bfseries Ort\+Allocator\+Type}
+\item 
+\Hypertarget{group___global_ga0582d2cc9e982e1200a09c95a0091b54}\label{group___global_ga0582d2cc9e982e1200a09c95a0091b54} 
+typedef enum \mbox{\hyperlink{group___global_gab7805016f4b26871e899a3cf4114ee0d}{Ort\+Mem\+Type}} {\bfseries Ort\+Mem\+Type}
+\begin{DoxyCompactList}\small\item\em Memory types for allocated memory, execution provider specific types should be extended in each provider. \end{DoxyCompactList}\item 
+\Hypertarget{group___global_gaca40ba79b31eb7b045393729b3e49b36}\label{group___global_gaca40ba79b31eb7b045393729b3e49b36} 
+typedef enum \mbox{\hyperlink{group___global_ga1e39271d4a47f765694d86e5a7d27565}{Ort\+Memory\+Info\+Device\+Type}} {\bfseries Ort\+Memory\+Info\+Device\+Type}
+\begin{DoxyCompactList}\small\item\em This mimics Ort\+Device type constants so they can be returned in the API. \end{DoxyCompactList}\item 
+\Hypertarget{group___global_ga3bba786009db67b66fac8d266f4d964e}\label{group___global_ga3bba786009db67b66fac8d266f4d964e} 
+typedef enum \mbox{\hyperlink{group___global_ga881a44a5c3499f92d7caa4d7707b5807}{Ort\+Cudnn\+Conv\+Algo\+Search}} {\bfseries Ort\+Cudnn\+Conv\+Algo\+Search}
+\begin{DoxyCompactList}\small\item\em Algorithm to use for cu\+DNN Convolution Op. \end{DoxyCompactList}\item 
+typedef struct Ort\+CUDAProvider\+Options \mbox{\hyperlink{group___global_ga92e7b1ca5ba918fe0846597242edc89a}{Ort\+CUDAProvider\+Options}}
+\begin{DoxyCompactList}\small\item\em CUDA Provider Options. \end{DoxyCompactList}\item 
+typedef struct Ort\+ROCMProvider\+Options \mbox{\hyperlink{group___global_gab56e891390d5cf19d0bf5b1a8374c09d}{Ort\+ROCMProvider\+Options}}
+\begin{DoxyCompactList}\small\item\em ROCM Provider Options. \end{DoxyCompactList}\item 
+typedef struct Ort\+Tensor\+RTProvider\+Options \mbox{\hyperlink{group___global_gabc0152b181a6aafc6486dec79a9c81b3}{Ort\+Tensor\+RTProvider\+Options}}
+\begin{DoxyCompactList}\small\item\em Tensor\+RT Provider Options. \end{DoxyCompactList}\item 
+typedef struct Ort\+MIGraph\+XProvider\+Options \mbox{\hyperlink{group___global_ga568e099b9b8773d19888f1056e36e4c3}{Ort\+MIGraph\+XProvider\+Options}}
+\begin{DoxyCompactList}\small\item\em MIGraphX Provider Options. \end{DoxyCompactList}\item 
+typedef struct Ort\+Open\+VINOProvider\+Options \mbox{\hyperlink{group___global_ga27cf2de44686b8a8eef4898283036ba8}{Ort\+Open\+VINOProvider\+Options}}
+\begin{DoxyCompactList}\small\item\em Open\+VINO Provider Options. \end{DoxyCompactList}\item 
+\Hypertarget{group___global_gab17c394b0ccb15261dfcf51704159a2c}\label{group___global_gab17c394b0ccb15261dfcf51704159a2c} 
+typedef struct Ort\+Api {\bfseries Ort\+Api}
+\item 
+\Hypertarget{group___global_gac23a672ac48036d62cbbbb6631e667db}\label{group___global_gac23a672ac48036d62cbbbb6631e667db} 
+typedef struct Ort\+Training\+Api {\bfseries Ort\+Training\+Api}
+\item 
+\Hypertarget{group___global_ga91faffcdc3dbed59dedc043f481cd670}\label{group___global_ga91faffcdc3dbed59dedc043f481cd670} 
+typedef struct Ort\+Api\+Base {\bfseries Ort\+Api\+Base}
+\item 
+typedef void(\texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group___global_ga95488b4658864375588df3c3842ddd2b}{Ort\+Thread\+Worker\+Fn}}) (void \texorpdfstring{$\ast$}{*}ort\+\_\+worker\+\_\+fn\+\_\+param)
+\begin{DoxyCompactList}\small\item\em Thread work loop function. \end{DoxyCompactList}\item 
+\Hypertarget{group___global_ga1dec67f519a79fcc5e7047d05d94ddc3}\label{group___global_ga1dec67f519a79fcc5e7047d05d94ddc3} 
+typedef const struct \mbox{\hyperlink{struct_ort_custom_handle_type}{Ort\+Custom\+Handle\+Type}} \texorpdfstring{$\ast$}{*} {\bfseries Ort\+Custom\+Thread\+Handle}
+\item 
+typedef \mbox{\hyperlink{struct_ort_custom_handle_type}{Ort\+Custom\+Thread\+Handle}}(\texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group___global_gae0957b6ccebab677893b6155dcb744e5}{Ort\+Custom\+Create\+Thread\+Fn}}) (void \texorpdfstring{$\ast$}{*}ort\+\_\+custom\+\_\+thread\+\_\+creation\+\_\+options, \mbox{\hyperlink{group___global_ga95488b4658864375588df3c3842ddd2b}{Ort\+Thread\+Worker\+Fn}} ort\+\_\+thread\+\_\+worker\+\_\+fn, void \texorpdfstring{$\ast$}{*}ort\+\_\+worker\+\_\+fn\+\_\+param)
+\begin{DoxyCompactList}\small\item\em \doxylink{namespace_ort}{Ort} custom thread creation function. \end{DoxyCompactList}\item 
+typedef void(\texorpdfstring{$\ast$}{*} \mbox{\hyperlink{group___global_ga2d123bc5dd929c1cb520e7b872fbfd0e}{Ort\+Custom\+Join\+Thread\+Fn}}) (\mbox{\hyperlink{struct_ort_custom_handle_type}{Ort\+Custom\+Thread\+Handle}} ort\+\_\+custom\+\_\+thread\+\_\+handle)
+\begin{DoxyCompactList}\small\item\em Custom thread join function. \end{DoxyCompactList}\item 
+\Hypertarget{group___global_ga97b4f9bd81e78a5ef40d68f022c3b1e7}\label{group___global_ga97b4f9bd81e78a5ef40d68f022c3b1e7} 
+typedef Ort\+Status \texorpdfstring{$\ast$}{*}(ORT\+\_\+\+API\+\_\+\+CALL \texorpdfstring{$\ast$}{*} {\bfseries Register\+Custom\+Ops\+Fn}) (Ort\+Session\+Options \texorpdfstring{$\ast$}{*}options, const \mbox{\hyperlink{struct_ort_api_base}{Ort\+Api\+Base}} \texorpdfstring{$\ast$}{*}api)
+\item 
+\Hypertarget{group___global_ga1ba6b9b151f6db22c3f3540e2ee40b53}\label{group___global_ga1ba6b9b151f6db22c3f3540e2ee40b53} 
+typedef enum Ort\+Custom\+Op\+Input\+Output\+Characteristic {\bfseries Ort\+Custom\+Op\+Input\+Output\+Characteristic}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{group___global_gaec63cdda46c29b8183997f38930ce38e}{ONNXTensor\+Element\+Data\+Type}} \{ \newline
+{\bfseries ONNX\+\_\+\+TENSOR\+\_\+\+ELEMENT\+\_\+\+DATA\+\_\+\+TYPE\+\_\+\+UNDEFINED}
+, {\bfseries ONNX\+\_\+\+TENSOR\+\_\+\+ELEMENT\+\_\+\+DATA\+\_\+\+TYPE\+\_\+\+FLOAT}
+, {\bfseries ONNX\+\_\+\+TENSOR\+\_\+\+ELEMENT\+\_\+\+DATA\+\_\+\+TYPE\+\_\+\+UINT8}
+, {\bfseries ONNX\+\_\+\+TENSOR\+\_\+\+ELEMENT\+\_\+\+DATA\+\_\+\+TYPE\+\_\+\+INT8}
+, \newline
+{\bfseries ONNX\+\_\+\+TENSOR\+\_\+\+ELEMENT\+\_\+\+DATA\+\_\+\+TYPE\+\_\+\+UINT16}
+, {\bfseries ONNX\+\_\+\+TENSOR\+\_\+\+ELEMENT\+\_\+\+DATA\+\_\+\+TYPE\+\_\+\+INT16}
+, {\bfseries ONNX\+\_\+\+TENSOR\+\_\+\+ELEMENT\+\_\+\+DATA\+\_\+\+TYPE\+\_\+\+INT32}
+, {\bfseries ONNX\+\_\+\+TENSOR\+\_\+\+ELEMENT\+\_\+\+DATA\+\_\+\+TYPE\+\_\+\+INT64}
+, \newline
+{\bfseries ONNX\+\_\+\+TENSOR\+\_\+\+ELEMENT\+\_\+\+DATA\+\_\+\+TYPE\+\_\+\+STRING}
+, {\bfseries ONNX\+\_\+\+TENSOR\+\_\+\+ELEMENT\+\_\+\+DATA\+\_\+\+TYPE\+\_\+\+BOOL}
+, {\bfseries ONNX\+\_\+\+TENSOR\+\_\+\+ELEMENT\+\_\+\+DATA\+\_\+\+TYPE\+\_\+\+FLOAT16}
+, {\bfseries ONNX\+\_\+\+TENSOR\+\_\+\+ELEMENT\+\_\+\+DATA\+\_\+\+TYPE\+\_\+\+DOUBLE}
+, \newline
+{\bfseries ONNX\+\_\+\+TENSOR\+\_\+\+ELEMENT\+\_\+\+DATA\+\_\+\+TYPE\+\_\+\+UINT32}
+, {\bfseries ONNX\+\_\+\+TENSOR\+\_\+\+ELEMENT\+\_\+\+DATA\+\_\+\+TYPE\+\_\+\+UINT64}
+, {\bfseries ONNX\+\_\+\+TENSOR\+\_\+\+ELEMENT\+\_\+\+DATA\+\_\+\+TYPE\+\_\+\+COMPLEX64}
+, {\bfseries ONNX\+\_\+\+TENSOR\+\_\+\+ELEMENT\+\_\+\+DATA\+\_\+\+TYPE\+\_\+\+COMPLEX128}
+, \newline
+{\bfseries ONNX\+\_\+\+TENSOR\+\_\+\+ELEMENT\+\_\+\+DATA\+\_\+\+TYPE\+\_\+\+BFLOAT16}
+ \}
+\item 
+\Hypertarget{group___global_gaba5b3718087699f596432d5649b9a28d}\label{group___global_gaba5b3718087699f596432d5649b9a28d} 
+enum {\bfseries ONNXType} \{ \newline
+{\bfseries ONNX\+\_\+\+TYPE\+\_\+\+UNKNOWN}
+, {\bfseries ONNX\+\_\+\+TYPE\+\_\+\+TENSOR}
+, {\bfseries ONNX\+\_\+\+TYPE\+\_\+\+SEQUENCE}
+, {\bfseries ONNX\+\_\+\+TYPE\+\_\+\+MAP}
+, \newline
+{\bfseries ONNX\+\_\+\+TYPE\+\_\+\+OPAQUE}
+, {\bfseries ONNX\+\_\+\+TYPE\+\_\+\+SPARSETENSOR}
+, {\bfseries ONNX\+\_\+\+TYPE\+\_\+\+OPTIONAL}
+ \}
+\item 
+\Hypertarget{group___global_gaba2697542109e4ab6b24a8fbb847812d}\label{group___global_gaba2697542109e4ab6b24a8fbb847812d} 
+enum {\bfseries Ort\+Sparse\+Format} \{ {\bfseries ORT\+\_\+\+SPARSE\+\_\+\+UNDEFINED} = 0
+, {\bfseries ORT\+\_\+\+SPARSE\+\_\+\+COO} = 0x1
+, {\bfseries ORT\+\_\+\+SPARSE\+\_\+\+CSRC} = 0x2
+, {\bfseries ORT\+\_\+\+SPARSE\+\_\+\+BLOCK\+\_\+\+SPARSE} = 0x4
+ \}
+\item 
+\Hypertarget{group___global_ga497c04502f658b896b265233fc890787}\label{group___global_ga497c04502f658b896b265233fc890787} 
+enum {\bfseries Ort\+Sparse\+Indices\+Format} \{ {\bfseries ORT\+\_\+\+SPARSE\+\_\+\+COO\+\_\+\+INDICES}
+, {\bfseries ORT\+\_\+\+SPARSE\+\_\+\+CSR\+\_\+\+INNER\+\_\+\+INDICES}
+, {\bfseries ORT\+\_\+\+SPARSE\+\_\+\+CSR\+\_\+\+OUTER\+\_\+\+INDICES}
+, {\bfseries ORT\+\_\+\+SPARSE\+\_\+\+BLOCK\+\_\+\+SPARSE\+\_\+\+INDICES}
+ \}
+\item 
+enum \mbox{\hyperlink{group___global_ga1c0fbcf614dbd0e2c272ae1cc04c629c}{Ort\+Logging\+Level}} \{ \newline
+\mbox{\hyperlink{group___global_gga1c0fbcf614dbd0e2c272ae1cc04c629ca19e1337b6f43e56b635bc51ef8ae077c}{ORT\+\_\+\+LOGGING\+\_\+\+LEVEL\+\_\+\+VERBOSE}}
+, \mbox{\hyperlink{group___global_gga1c0fbcf614dbd0e2c272ae1cc04c629ca3ae03acd3802ae7c0dbb8054ed8efe8c}{ORT\+\_\+\+LOGGING\+\_\+\+LEVEL\+\_\+\+INFO}}
+, \mbox{\hyperlink{group___global_gga1c0fbcf614dbd0e2c272ae1cc04c629cab150db726e3f481f0e67ae654307b1c6}{ORT\+\_\+\+LOGGING\+\_\+\+LEVEL\+\_\+\+WARNING}}
+, \mbox{\hyperlink{group___global_gga1c0fbcf614dbd0e2c272ae1cc04c629ca8f4284fd0fb6f7fc8fbfe96d6b1f89fa}{ORT\+\_\+\+LOGGING\+\_\+\+LEVEL\+\_\+\+ERROR}}
+, \newline
+\mbox{\hyperlink{group___global_gga1c0fbcf614dbd0e2c272ae1cc04c629cac825a1e986dcf6b5c0e38cbfb91a1da3}{ORT\+\_\+\+LOGGING\+\_\+\+LEVEL\+\_\+\+FATAL}}
+ \}
+\begin{DoxyCompactList}\small\item\em Logging severity levels. \end{DoxyCompactList}\item 
+\Hypertarget{group___global_gabab5349c294603a9eac437fdafd40a3d}\label{group___global_gabab5349c294603a9eac437fdafd40a3d} 
+enum {\bfseries Ort\+Error\+Code} \{ \newline
+{\bfseries ORT\+\_\+\+OK}
+, {\bfseries ORT\+\_\+\+FAIL}
+, {\bfseries ORT\+\_\+\+INVALID\+\_\+\+ARGUMENT}
+, {\bfseries ORT\+\_\+\+NO\+\_\+\+SUCHFILE}
+, \newline
+{\bfseries ORT\+\_\+\+NO\+\_\+\+MODEL}
+, {\bfseries ORT\+\_\+\+ENGINE\+\_\+\+ERROR}
+, {\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+EXCEPTION}
+, {\bfseries ORT\+\_\+\+INVALID\+\_\+\+PROTOBUF}
+, \newline
+{\bfseries ORT\+\_\+\+MODEL\+\_\+\+LOADED}
+, {\bfseries ORT\+\_\+\+NOT\+\_\+\+IMPLEMENTED}
+, {\bfseries ORT\+\_\+\+INVALID\+\_\+\+GRAPH}
+, {\bfseries ORT\+\_\+\+EP\+\_\+\+FAIL}
+ \}
+\item 
+\Hypertarget{group___global_gad2d78682b8468cfbfbbc20563a2424cc}\label{group___global_gad2d78682b8468cfbfbbc20563a2424cc} 
+enum {\bfseries Ort\+Op\+Attr\+Type} \{ \newline
+{\bfseries ORT\+\_\+\+OP\+\_\+\+ATTR\+\_\+\+UNDEFINED} = 0
+, {\bfseries ORT\+\_\+\+OP\+\_\+\+ATTR\+\_\+\+INT}
+, {\bfseries ORT\+\_\+\+OP\+\_\+\+ATTR\+\_\+\+INTS}
+, {\bfseries ORT\+\_\+\+OP\+\_\+\+ATTR\+\_\+\+FLOAT}
+, \newline
+{\bfseries ORT\+\_\+\+OP\+\_\+\+ATTR\+\_\+\+FLOATS}
+, {\bfseries ORT\+\_\+\+OP\+\_\+\+ATTR\+\_\+\+STRING}
+, {\bfseries ORT\+\_\+\+OP\+\_\+\+ATTR\+\_\+\+STRINGS}
+ \}
+\item 
+enum \mbox{\hyperlink{group___global_gab086a52ca2f3a883cd1f7561eadd8ec9}{Graph\+Optimization\+Level}} \{ {\bfseries ORT\+\_\+\+DISABLE\+\_\+\+ALL} = 0
+, {\bfseries ORT\+\_\+\+ENABLE\+\_\+\+BASIC} = 1
+, {\bfseries ORT\+\_\+\+ENABLE\+\_\+\+EXTENDED} = 2
+, {\bfseries ORT\+\_\+\+ENABLE\+\_\+\+ALL} = 99
+ \}
+\begin{DoxyCompactList}\small\item\em Graph optimization level. \end{DoxyCompactList}\item 
+\Hypertarget{group___global_gad14b0c6d4ed8fcadff6dcf39c5cf17fd}\label{group___global_gad14b0c6d4ed8fcadff6dcf39c5cf17fd} 
+enum {\bfseries Execution\+Mode} \{ {\bfseries ORT\+\_\+\+SEQUENTIAL} = 0
+, {\bfseries ORT\+\_\+\+PARALLEL} = 1
+ \}
+\item 
+\Hypertarget{group___global_ga43f32dc7d75b0c13fd64ca5792e63a62}\label{group___global_ga43f32dc7d75b0c13fd64ca5792e63a62} 
+enum \mbox{\hyperlink{group___global_ga43f32dc7d75b0c13fd64ca5792e63a62}{Ort\+Language\+Projection}} \{ \newline
+{\bfseries ORT\+\_\+\+PROJECTION\+\_\+C} = 0
+, {\bfseries ORT\+\_\+\+PROJECTION\+\_\+\+CPLUSPLUS} = 1
+, {\bfseries ORT\+\_\+\+PROJECTION\+\_\+\+CSHARP} = 2
+, {\bfseries ORT\+\_\+\+PROJECTION\+\_\+\+PYTHON} = 3
+, \newline
+{\bfseries ORT\+\_\+\+PROJECTION\+\_\+\+JAVA} = 4
+, {\bfseries ORT\+\_\+\+PROJECTION\+\_\+\+WINML} = 5
+, {\bfseries ORT\+\_\+\+PROJECTION\+\_\+\+NODEJS} = 6
+ \}
+\begin{DoxyCompactList}\small\item\em Language projection identifiers /see Ort\+Api\+::\+Set\+Language\+Projection. \end{DoxyCompactList}\item 
+\Hypertarget{group___global_ga5b765504a386db304d59e999de9bd1d6}\label{group___global_ga5b765504a386db304d59e999de9bd1d6} 
+enum {\bfseries Ort\+Allocator\+Type} \{ {\bfseries Ort\+Invalid\+Allocator} = -\/1
+, {\bfseries Ort\+Device\+Allocator} = 0
+, {\bfseries Ort\+Arena\+Allocator} = 1
+ \}
+\item 
+enum \mbox{\hyperlink{group___global_gab7805016f4b26871e899a3cf4114ee0d}{Ort\+Mem\+Type}} \{ \mbox{\hyperlink{group___global_ggab7805016f4b26871e899a3cf4114ee0da1029fcb3f1ca7a371dbe8baeb0aa8a28}{Ort\+Mem\+Type\+CPUInput}} = -\/2
+, \mbox{\hyperlink{group___global_ggab7805016f4b26871e899a3cf4114ee0da84d0d4e8e23535cc0e1ceea37bb1869a}{Ort\+Mem\+Type\+CPUOutput}} = -\/1
+, \mbox{\hyperlink{group___global_ggab7805016f4b26871e899a3cf4114ee0da12b2ba21b776131d66b7b21c1fb09961}{Ort\+Mem\+Type\+CPU}} = Ort\+Mem\+Type\+CPUOutput
+, \mbox{\hyperlink{group___global_ggab7805016f4b26871e899a3cf4114ee0da4ecb169ee6f3e0a8d505c8a240070378}{Ort\+Mem\+Type\+Default}} = 0
+ \}
+\begin{DoxyCompactList}\small\item\em Memory types for allocated memory, execution provider specific types should be extended in each provider. \end{DoxyCompactList}\item 
+\Hypertarget{group___global_ga1e39271d4a47f765694d86e5a7d27565}\label{group___global_ga1e39271d4a47f765694d86e5a7d27565} 
+enum \mbox{\hyperlink{group___global_ga1e39271d4a47f765694d86e5a7d27565}{Ort\+Memory\+Info\+Device\+Type}} \{ {\bfseries Ort\+Memory\+Info\+Device\+Type\+\_\+\+CPU} = 0
+, {\bfseries Ort\+Memory\+Info\+Device\+Type\+\_\+\+GPU} = 1
+, {\bfseries Ort\+Memory\+Info\+Device\+Type\+\_\+\+FPGA} = 2
+ \}
+\begin{DoxyCompactList}\small\item\em This mimics Ort\+Device type constants so they can be returned in the API. \end{DoxyCompactList}\item 
+\Hypertarget{group___global_ga881a44a5c3499f92d7caa4d7707b5807}\label{group___global_ga881a44a5c3499f92d7caa4d7707b5807} 
+enum \mbox{\hyperlink{group___global_ga881a44a5c3499f92d7caa4d7707b5807}{Ort\+Cudnn\+Conv\+Algo\+Search}} \{ {\bfseries Ort\+Cudnn\+Conv\+Algo\+Search\+Exhaustive}
+, {\bfseries Ort\+Cudnn\+Conv\+Algo\+Search\+Heuristic}
+, {\bfseries Ort\+Cudnn\+Conv\+Algo\+Search\+Default}
+ \}
+\begin{DoxyCompactList}\small\item\em Algorithm to use for cu\+DNN Convolution Op. \end{DoxyCompactList}\item 
+\Hypertarget{group___global_ga316232eea9d4ddeab0d18752f5084c06}\label{group___global_ga316232eea9d4ddeab0d18752f5084c06} 
+enum {\bfseries Ort\+Custom\+Op\+Input\+Output\+Characteristic} \{ {\bfseries INPUT\+\_\+\+OUTPUT\+\_\+\+REQUIRED} = 0
+, {\bfseries INPUT\+\_\+\+OUTPUT\+\_\+\+OPTIONAL}
+, {\bfseries INPUT\+\_\+\+OUTPUT\+\_\+\+VARIADIC}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{group___global_ga13567d94b06fb93009958293b1157410}\label{group___global_ga13567d94b06fb93009958293b1157410} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Env)
+\item 
+\Hypertarget{group___global_gadcc8d1224e77f74312650d51f51efb98}\label{group___global_gadcc8d1224e77f74312650d51f51efb98} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Status)
+\item 
+\Hypertarget{group___global_gaad416e8448d72c9e5f82964d59676b36}\label{group___global_gaad416e8448d72c9e5f82964d59676b36} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Memory\+Info)
+\item 
+\Hypertarget{group___global_gab327f9212f3d76c2f86431cdc3759e0d}\label{group___global_gab327f9212f3d76c2f86431cdc3759e0d} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Io\+Binding)
+\item 
+\Hypertarget{group___global_gae811cda361b65655dd2d54fa915ce85d}\label{group___global_gae811cda361b65655dd2d54fa915ce85d} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Session)
+\item 
+\Hypertarget{group___global_ga06a789780c1b4e710ec78502254c0c4c}\label{group___global_ga06a789780c1b4e710ec78502254c0c4c} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Value)
+\item 
+\Hypertarget{group___global_ga30b7ae4b3ca54f3a2dab599fcb782186}\label{group___global_ga30b7ae4b3ca54f3a2dab599fcb782186} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Run\+Options)
+\item 
+\Hypertarget{group___global_ga00dc3ccf64e925408ead50fe98f303b6}\label{group___global_ga00dc3ccf64e925408ead50fe98f303b6} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Type\+Info)
+\item 
+\Hypertarget{group___global_gac9c579efbb2f1ee2735774bd8547ade9}\label{group___global_gac9c579efbb2f1ee2735774bd8547ade9} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Tensor\+Type\+And\+Shape\+Info)
+\item 
+\Hypertarget{group___global_ga2c5b2a303dcda8a4bd398bcd885b2cc3}\label{group___global_ga2c5b2a303dcda8a4bd398bcd885b2cc3} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Map\+Type\+Info)
+\item 
+\Hypertarget{group___global_ga858f48821c112415041792ede5881641}\label{group___global_ga858f48821c112415041792ede5881641} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Sequence\+Type\+Info)
+\item 
+\Hypertarget{group___global_ga89adedc9fce0716b7e2224e845a738c7}\label{group___global_ga89adedc9fce0716b7e2224e845a738c7} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Optional\+Type\+Info)
+\item 
+\Hypertarget{group___global_gacf06533c28afd7bd96b932b660e6910f}\label{group___global_gacf06533c28afd7bd96b932b660e6910f} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Session\+Options)
+\item 
+\Hypertarget{group___global_ga8db4e31c1694389b481ca272fac9d9fe}\label{group___global_ga8db4e31c1694389b481ca272fac9d9fe} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Custom\+Op\+Domain)
+\item 
+\Hypertarget{group___global_ga23503818e245fba4c2cde0f51c1af99d}\label{group___global_ga23503818e245fba4c2cde0f51c1af99d} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Model\+Metadata)
+\item 
+\Hypertarget{group___global_ga9cf555e246d8c3f29859309189804e3b}\label{group___global_ga9cf555e246d8c3f29859309189804e3b} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Thread\+Pool\+Params)
+\item 
+\Hypertarget{group___global_ga823a5cc36e5b8f79bc2449aef5e2ea1e}\label{group___global_ga823a5cc36e5b8f79bc2449aef5e2ea1e} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Threading\+Options)
+\item 
+\Hypertarget{group___global_gac6f5eea750600cfe1d1e1a513cc4b2b4}\label{group___global_gac6f5eea750600cfe1d1e1a513cc4b2b4} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Arena\+Cfg)
+\item 
+\Hypertarget{group___global_ga876c04c308568d9c57db8fc3d87e8074}\label{group___global_ga876c04c308568d9c57db8fc3d87e8074} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Prepacked\+Weights\+Container)
+\item 
+\Hypertarget{group___global_ga10ccd6dcea606803fb82cd915323068b}\label{group___global_ga10ccd6dcea606803fb82cd915323068b} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Tensor\+RTProvider\+Options\+V2)
+\item 
+\Hypertarget{group___global_gac71e8faa19bebc0606a70e225618d959}\label{group___global_gac71e8faa19bebc0606a70e225618d959} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (CUDAProvider\+Options\+V2)
+\item 
+\Hypertarget{group___global_gabc1edd31ac9cb0d0f714599e48ba53c0}\label{group___global_gabc1edd31ac9cb0d0f714599e48ba53c0} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (CANNProvider\+Options)
+\item 
+\Hypertarget{group___global_ga8f85f810eba71a854defffeaf7d0aa3e}\label{group___global_ga8f85f810eba71a854defffeaf7d0aa3e} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Dnnl\+Provider\+Options)
+\item 
+\Hypertarget{group___global_ga7d71422c057e25678f50c21bb75f919d}\label{group___global_ga7d71422c057e25678f50c21bb75f919d} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Op)
+\item 
+\Hypertarget{group___global_gac96f94744187ee32d894c7afbeafa443}\label{group___global_gac96f94744187ee32d894c7afbeafa443} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Op\+Attr)
+\item 
+\Hypertarget{group___global_gab837c62bb4960c556ed469cd1abcc400}\label{group___global_gab837c62bb4960c556ed469cd1abcc400} 
+{\bfseries ORT\+\_\+\+RUNTIME\+\_\+\+CLASS} (Logger)
+\item 
+ORT\+\_\+\+EXPORT const \mbox{\hyperlink{struct_ort_api_base}{Ort\+Api\+Base}} \texorpdfstring{$\ast$}{*}ORT\+\_\+\+API\+\_\+\+CALL \mbox{\hyperlink{group___global_gaf542347444820afe571db318ffcc8101}{Ort\+Get\+Api\+Base}} (void) NO\+\_\+\+EXCEPTION
+\begin{DoxyCompactList}\small\item\em The Onnxruntime library\textquotesingle{}s entry point to access the C API. \end{DoxyCompactList}\item 
+\Hypertarget{group___global_ga866d28ca464531bb3b570e3fca70e561}\label{group___global_ga866d28ca464531bb3b570e3fca70e561} 
+{\bfseries ORT\+\_\+\+API\+\_\+\+STATUS} (Ort\+Session\+Options\+Append\+Execution\+Provider\+\_\+\+CUDA, \+\_\+\+In\+\_\+ Ort\+Session\+Options \texorpdfstring{$\ast$}{*}options, int device\+\_\+id)
+\item 
+\Hypertarget{group___global_ga91ab37687355347586884a2ad700cbd1}\label{group___global_ga91ab37687355347586884a2ad700cbd1} 
+{\bfseries ORT\+\_\+\+API\+\_\+\+STATUS} (Ort\+Session\+Options\+Append\+Execution\+Provider\+\_\+\+MIGraphX, \+\_\+\+In\+\_\+ Ort\+Session\+Options \texorpdfstring{$\ast$}{*}options, int device\+\_\+id)
+\item 
+\Hypertarget{group___global_gaf3973c5a7ffd1a4f79c97ff37c90b9db}\label{group___global_gaf3973c5a7ffd1a4f79c97ff37c90b9db} 
+{\bfseries ORT\+\_\+\+API\+\_\+\+STATUS} (Ort\+Session\+Options\+Append\+Execution\+Provider\+\_\+\+Dnnl, \+\_\+\+In\+\_\+ Ort\+Session\+Options \texorpdfstring{$\ast$}{*}options, int use\+\_\+arena)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+ONNX Runtime C API
+
+ONNX Runtime C API
+
+ONNX Runtime C API 
+
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{group___global_gac583aeb4640621ceb588f6300537945d}\label{group___global_gac583aeb4640621ceb588f6300537945d} 
+\index{Global@{Global}!ORT\_API\_VERSION@{ORT\_API\_VERSION}}
+\index{ORT\_API\_VERSION@{ORT\_API\_VERSION}!Global@{Global}}
+\doxysubsubsection{\texorpdfstring{ORT\_API\_VERSION}{ORT\_API\_VERSION}}
+{\footnotesize\ttfamily \#define ORT\+\_\+\+API\+\_\+\+VERSION~15}
+
+
+
+The API version defined in this header. 
+
+This value is used by some API functions to behave as this version of the header expects. 
+
+\doxysubsection{Typedef Documentation}
+\Hypertarget{group___global_ga22fbae7b35dda59771cd46b99e50bf74}\label{group___global_ga22fbae7b35dda59771cd46b99e50bf74} 
+\index{Global@{Global}!GraphOptimizationLevel@{GraphOptimizationLevel}}
+\index{GraphOptimizationLevel@{GraphOptimizationLevel}!Global@{Global}}
+\doxysubsubsection{\texorpdfstring{GraphOptimizationLevel}{GraphOptimizationLevel}}
+{\footnotesize\ttfamily typedef enum \mbox{\hyperlink{group___global_gab086a52ca2f3a883cd1f7561eadd8ec9}{Graph\+Optimization\+Level}} \mbox{\hyperlink{group___global_gab086a52ca2f3a883cd1f7561eadd8ec9}{Graph\+Optimization\+Level}}}
+
+
+
+Graph optimization level. 
+
+Refer to \href{https://www.onnxruntime.ai/docs/performance/graph-optimizations.html\#graph-optimization-levels}{\texttt{ https\+://www.\+onnxruntime.\+ai/docs/performance/graph-\/optimizations.\+html\#graph-\/optimization-\/levels}} for an in-\/depth understanding of the Graph Optimization Levels. \Hypertarget{group___global_ga0d04d16a7a0be0e6539120fad0853e73}\label{group___global_ga0d04d16a7a0be0e6539120fad0853e73} 
+\index{Global@{Global}!ONNXTensorElementDataType@{ONNXTensorElementDataType}}
+\index{ONNXTensorElementDataType@{ONNXTensorElementDataType}!Global@{Global}}
+\doxysubsubsection{\texorpdfstring{ONNXTensorElementDataType}{ONNXTensorElementDataType}}
+{\footnotesize\ttfamily typedef enum \mbox{\hyperlink{group___global_gaec63cdda46c29b8183997f38930ce38e}{ONNXTensor\+Element\+Data\+Type}} \mbox{\hyperlink{group___global_gaec63cdda46c29b8183997f38930ce38e}{ONNXTensor\+Element\+Data\+Type}}}
+
+Copied from Tensor\+Proto\+::\+Data\+Type Currently, \doxylink{namespace_ort}{Ort} doesn\textquotesingle{}t support complex64, complex128 \Hypertarget{group___global_gaaf2f329757284710ba67019b701e3fa4}\label{group___global_gaaf2f329757284710ba67019b701e3fa4} 
+\index{Global@{Global}!OrtAllocator@{OrtAllocator}}
+\index{OrtAllocator@{OrtAllocator}!Global@{Global}}
+\doxysubsubsection{\texorpdfstring{OrtAllocator}{OrtAllocator}}
+{\footnotesize\ttfamily typedef struct Ort\+Allocator Ort\+Allocator}
+
+
+
+Memory allocation interface. 
+
+Structure of function pointers that defines a memory allocator. This can be created and filled in by the user for custom allocators.
+
+When an allocator is passed to any function, be sure that the allocator object is not destroyed until the last allocated object using it is freed. \Hypertarget{group___global_ga92e7b1ca5ba918fe0846597242edc89a}\label{group___global_ga92e7b1ca5ba918fe0846597242edc89a} 
+\index{Global@{Global}!OrtCUDAProviderOptions@{OrtCUDAProviderOptions}}
+\index{OrtCUDAProviderOptions@{OrtCUDAProviderOptions}!Global@{Global}}
+\doxysubsubsection{\texorpdfstring{OrtCUDAProviderOptions}{OrtCUDAProviderOptions}}
+{\footnotesize\ttfamily typedef struct Ort\+CUDAProvider\+Options Ort\+CUDAProvider\+Options}
+
+
+
+CUDA Provider Options. 
+
+\begin{DoxySeeAlso}{See also}
+Ort\+Api\+::\+Session\+Options\+Append\+Execution\+Provider\+\_\+\+CUDA 
+\end{DoxySeeAlso}
+\Hypertarget{group___global_gae0957b6ccebab677893b6155dcb744e5}\label{group___global_gae0957b6ccebab677893b6155dcb744e5} 
+\index{Global@{Global}!OrtCustomCreateThreadFn@{OrtCustomCreateThreadFn}}
+\index{OrtCustomCreateThreadFn@{OrtCustomCreateThreadFn}!Global@{Global}}
+\doxysubsubsection{\texorpdfstring{OrtCustomCreateThreadFn}{OrtCustomCreateThreadFn}}
+{\footnotesize\ttfamily typedef \mbox{\hyperlink{struct_ort_custom_handle_type}{Ort\+Custom\+Thread\+Handle}}(\texorpdfstring{$\ast$}{*} Ort\+Custom\+Create\+Thread\+Fn) (void \texorpdfstring{$\ast$}{*}ort\+\_\+custom\+\_\+thread\+\_\+creation\+\_\+options, \mbox{\hyperlink{group___global_ga95488b4658864375588df3c3842ddd2b}{Ort\+Thread\+Worker\+Fn}} ort\+\_\+thread\+\_\+worker\+\_\+fn, void \texorpdfstring{$\ast$}{*}ort\+\_\+worker\+\_\+fn\+\_\+param)}
+
+
+
+\doxylink{namespace_ort}{Ort} custom thread creation function. 
+
+The function should return a thread handle to be used in onnxruntime thread pools Onnxruntime will throw exception on return value of nullptr or 0, indicating that the function failed to create a thread \Hypertarget{group___global_ga2d123bc5dd929c1cb520e7b872fbfd0e}\label{group___global_ga2d123bc5dd929c1cb520e7b872fbfd0e} 
+\index{Global@{Global}!OrtCustomJoinThreadFn@{OrtCustomJoinThreadFn}}
+\index{OrtCustomJoinThreadFn@{OrtCustomJoinThreadFn}!Global@{Global}}
+\doxysubsubsection{\texorpdfstring{OrtCustomJoinThreadFn}{OrtCustomJoinThreadFn}}
+{\footnotesize\ttfamily typedef void(\texorpdfstring{$\ast$}{*} Ort\+Custom\+Join\+Thread\+Fn) (\mbox{\hyperlink{struct_ort_custom_handle_type}{Ort\+Custom\+Thread\+Handle}} ort\+\_\+custom\+\_\+thread\+\_\+handle)}
+
+
+
+Custom thread join function. 
+
+Onnxruntime thread pool destructor will call the function to join a custom thread. Argument ort\+\_\+custom\+\_\+thread\+\_\+handle is the value returned by Ort\+Custom\+Create\+Thread\+Fn \Hypertarget{group___global_gadd0502cc290086b2873852ad8d28892e}\label{group___global_gadd0502cc290086b2873852ad8d28892e} 
+\index{Global@{Global}!OrtLoggingLevel@{OrtLoggingLevel}}
+\index{OrtLoggingLevel@{OrtLoggingLevel}!Global@{Global}}
+\doxysubsubsection{\texorpdfstring{OrtLoggingLevel}{OrtLoggingLevel}}
+{\footnotesize\ttfamily typedef enum \mbox{\hyperlink{group___global_ga1c0fbcf614dbd0e2c272ae1cc04c629c}{Ort\+Logging\+Level}} \mbox{\hyperlink{group___global_ga1c0fbcf614dbd0e2c272ae1cc04c629c}{Ort\+Logging\+Level}}}
+
+
+
+Logging severity levels. 
+
+In typical API usage, specifying a logging severity level specifies the minimum severity of log messages to show. \Hypertarget{group___global_ga568e099b9b8773d19888f1056e36e4c3}\label{group___global_ga568e099b9b8773d19888f1056e36e4c3} 
+\index{Global@{Global}!OrtMIGraphXProviderOptions@{OrtMIGraphXProviderOptions}}
+\index{OrtMIGraphXProviderOptions@{OrtMIGraphXProviderOptions}!Global@{Global}}
+\doxysubsubsection{\texorpdfstring{OrtMIGraphXProviderOptions}{OrtMIGraphXProviderOptions}}
+{\footnotesize\ttfamily typedef struct Ort\+MIGraph\+XProvider\+Options Ort\+MIGraph\+XProvider\+Options}
+
+
+
+MIGraphX Provider Options. 
+
+\begin{DoxySeeAlso}{See also}
+Ort\+Api\+::\+Session\+Options\+Append\+Execution\+Provider\+\_\+\+MIGraphX 
+\end{DoxySeeAlso}
+\Hypertarget{group___global_ga27cf2de44686b8a8eef4898283036ba8}\label{group___global_ga27cf2de44686b8a8eef4898283036ba8} 
+\index{Global@{Global}!OrtOpenVINOProviderOptions@{OrtOpenVINOProviderOptions}}
+\index{OrtOpenVINOProviderOptions@{OrtOpenVINOProviderOptions}!Global@{Global}}
+\doxysubsubsection{\texorpdfstring{OrtOpenVINOProviderOptions}{OrtOpenVINOProviderOptions}}
+{\footnotesize\ttfamily typedef struct Ort\+Open\+VINOProvider\+Options Ort\+Open\+VINOProvider\+Options}
+
+
+
+Open\+VINO Provider Options. 
+
+\begin{DoxySeeAlso}{See also}
+Ort\+Api\+::\+Session\+Options\+Append\+Execution\+Provider\+\_\+\+Open\+VINO 
+\end{DoxySeeAlso}
+\Hypertarget{group___global_gab56e891390d5cf19d0bf5b1a8374c09d}\label{group___global_gab56e891390d5cf19d0bf5b1a8374c09d} 
+\index{Global@{Global}!OrtROCMProviderOptions@{OrtROCMProviderOptions}}
+\index{OrtROCMProviderOptions@{OrtROCMProviderOptions}!Global@{Global}}
+\doxysubsubsection{\texorpdfstring{OrtROCMProviderOptions}{OrtROCMProviderOptions}}
+{\footnotesize\ttfamily typedef struct Ort\+ROCMProvider\+Options Ort\+ROCMProvider\+Options}
+
+
+
+ROCM Provider Options. 
+
+\begin{DoxySeeAlso}{See also}
+Ort\+Api\+::\+Session\+Options\+Append\+Execution\+Provider\+\_\+\+ROCM 
+\end{DoxySeeAlso}
+\Hypertarget{group___global_gabc0152b181a6aafc6486dec79a9c81b3}\label{group___global_gabc0152b181a6aafc6486dec79a9c81b3} 
+\index{Global@{Global}!OrtTensorRTProviderOptions@{OrtTensorRTProviderOptions}}
+\index{OrtTensorRTProviderOptions@{OrtTensorRTProviderOptions}!Global@{Global}}
+\doxysubsubsection{\texorpdfstring{OrtTensorRTProviderOptions}{OrtTensorRTProviderOptions}}
+{\footnotesize\ttfamily typedef struct Ort\+Tensor\+RTProvider\+Options Ort\+Tensor\+RTProvider\+Options}
+
+
+
+Tensor\+RT Provider Options. 
+
+\begin{DoxySeeAlso}{See also}
+Ort\+Api\+::\+Session\+Options\+Append\+Execution\+Provider\+\_\+\+Tensor\+RT 
+\end{DoxySeeAlso}
+\Hypertarget{group___global_ga95488b4658864375588df3c3842ddd2b}\label{group___global_ga95488b4658864375588df3c3842ddd2b} 
+\index{Global@{Global}!OrtThreadWorkerFn@{OrtThreadWorkerFn}}
+\index{OrtThreadWorkerFn@{OrtThreadWorkerFn}!Global@{Global}}
+\doxysubsubsection{\texorpdfstring{OrtThreadWorkerFn}{OrtThreadWorkerFn}}
+{\footnotesize\ttfamily typedef void(\texorpdfstring{$\ast$}{*} Ort\+Thread\+Worker\+Fn) (void \texorpdfstring{$\ast$}{*}ort\+\_\+worker\+\_\+fn\+\_\+param)}
+
+
+
+Thread work loop function. 
+
+Onnxruntime will provide the working loop on custom thread creation Argument is an onnxruntime built-\/in type which will be provided when thread pool calls Ort\+Custom\+Create\+Thread\+Fn 
+
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{group___global_gab086a52ca2f3a883cd1f7561eadd8ec9}\label{group___global_gab086a52ca2f3a883cd1f7561eadd8ec9} 
+\index{Global@{Global}!GraphOptimizationLevel@{GraphOptimizationLevel}}
+\index{GraphOptimizationLevel@{GraphOptimizationLevel}!Global@{Global}}
+\doxysubsubsection{\texorpdfstring{GraphOptimizationLevel}{GraphOptimizationLevel}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{group___global_gab086a52ca2f3a883cd1f7561eadd8ec9}{Graph\+Optimization\+Level}}}
+
+
+
+Graph optimization level. 
+
+Refer to \href{https://www.onnxruntime.ai/docs/performance/graph-optimizations.html\#graph-optimization-levels}{\texttt{ https\+://www.\+onnxruntime.\+ai/docs/performance/graph-\/optimizations.\+html\#graph-\/optimization-\/levels}} for an in-\/depth understanding of the Graph Optimization Levels. \Hypertarget{group___global_gaec63cdda46c29b8183997f38930ce38e}\label{group___global_gaec63cdda46c29b8183997f38930ce38e} 
+\index{Global@{Global}!ONNXTensorElementDataType@{ONNXTensorElementDataType}}
+\index{ONNXTensorElementDataType@{ONNXTensorElementDataType}!Global@{Global}}
+\doxysubsubsection{\texorpdfstring{ONNXTensorElementDataType}{ONNXTensorElementDataType}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{group___global_gaec63cdda46c29b8183997f38930ce38e}{ONNXTensor\+Element\+Data\+Type}}}
+
+Copied from Tensor\+Proto\+::\+Data\+Type Currently, \doxylink{namespace_ort}{Ort} doesn\textquotesingle{}t support complex64, complex128 \Hypertarget{group___global_ga1c0fbcf614dbd0e2c272ae1cc04c629c}\label{group___global_ga1c0fbcf614dbd0e2c272ae1cc04c629c} 
+\index{Global@{Global}!OrtLoggingLevel@{OrtLoggingLevel}}
+\index{OrtLoggingLevel@{OrtLoggingLevel}!Global@{Global}}
+\doxysubsubsection{\texorpdfstring{OrtLoggingLevel}{OrtLoggingLevel}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{group___global_ga1c0fbcf614dbd0e2c272ae1cc04c629c}{Ort\+Logging\+Level}}}
+
+
+
+Logging severity levels. 
+
+In typical API usage, specifying a logging severity level specifies the minimum severity of log messages to show. \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ORT\_LOGGING\_LEVEL\_VERBOSE@{ORT\_LOGGING\_LEVEL\_VERBOSE}!Global@{Global}}\index{Global@{Global}!ORT\_LOGGING\_LEVEL\_VERBOSE@{ORT\_LOGGING\_LEVEL\_VERBOSE}}}\Hypertarget{group___global_gga1c0fbcf614dbd0e2c272ae1cc04c629ca19e1337b6f43e56b635bc51ef8ae077c}\label{group___global_gga1c0fbcf614dbd0e2c272ae1cc04c629ca19e1337b6f43e56b635bc51ef8ae077c} 
+ORT\+\_\+\+LOGGING\+\_\+\+LEVEL\+\_\+\+VERBOSE&Verbose informational messages (least severe). \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ORT\_LOGGING\_LEVEL\_INFO@{ORT\_LOGGING\_LEVEL\_INFO}!Global@{Global}}\index{Global@{Global}!ORT\_LOGGING\_LEVEL\_INFO@{ORT\_LOGGING\_LEVEL\_INFO}}}\Hypertarget{group___global_gga1c0fbcf614dbd0e2c272ae1cc04c629ca3ae03acd3802ae7c0dbb8054ed8efe8c}\label{group___global_gga1c0fbcf614dbd0e2c272ae1cc04c629ca3ae03acd3802ae7c0dbb8054ed8efe8c} 
+ORT\+\_\+\+LOGGING\+\_\+\+LEVEL\+\_\+\+INFO&Informational messages. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ORT\_LOGGING\_LEVEL\_WARNING@{ORT\_LOGGING\_LEVEL\_WARNING}!Global@{Global}}\index{Global@{Global}!ORT\_LOGGING\_LEVEL\_WARNING@{ORT\_LOGGING\_LEVEL\_WARNING}}}\Hypertarget{group___global_gga1c0fbcf614dbd0e2c272ae1cc04c629cab150db726e3f481f0e67ae654307b1c6}\label{group___global_gga1c0fbcf614dbd0e2c272ae1cc04c629cab150db726e3f481f0e67ae654307b1c6} 
+ORT\+\_\+\+LOGGING\+\_\+\+LEVEL\+\_\+\+WARNING&Warning messages. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ORT\_LOGGING\_LEVEL\_ERROR@{ORT\_LOGGING\_LEVEL\_ERROR}!Global@{Global}}\index{Global@{Global}!ORT\_LOGGING\_LEVEL\_ERROR@{ORT\_LOGGING\_LEVEL\_ERROR}}}\Hypertarget{group___global_gga1c0fbcf614dbd0e2c272ae1cc04c629ca8f4284fd0fb6f7fc8fbfe96d6b1f89fa}\label{group___global_gga1c0fbcf614dbd0e2c272ae1cc04c629ca8f4284fd0fb6f7fc8fbfe96d6b1f89fa} 
+ORT\+\_\+\+LOGGING\+\_\+\+LEVEL\+\_\+\+ERROR&Error messages. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ORT\_LOGGING\_LEVEL\_FATAL@{ORT\_LOGGING\_LEVEL\_FATAL}!Global@{Global}}\index{Global@{Global}!ORT\_LOGGING\_LEVEL\_FATAL@{ORT\_LOGGING\_LEVEL\_FATAL}}}\Hypertarget{group___global_gga1c0fbcf614dbd0e2c272ae1cc04c629cac825a1e986dcf6b5c0e38cbfb91a1da3}\label{group___global_gga1c0fbcf614dbd0e2c272ae1cc04c629cac825a1e986dcf6b5c0e38cbfb91a1da3} 
+ORT\+\_\+\+LOGGING\+\_\+\+LEVEL\+\_\+\+FATAL&Fatal error messages (most severe). \\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{group___global_gab7805016f4b26871e899a3cf4114ee0d}\label{group___global_gab7805016f4b26871e899a3cf4114ee0d} 
+\index{Global@{Global}!OrtMemType@{OrtMemType}}
+\index{OrtMemType@{OrtMemType}!Global@{Global}}
+\doxysubsubsection{\texorpdfstring{OrtMemType}{OrtMemType}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{group___global_gab7805016f4b26871e899a3cf4114ee0d}{Ort\+Mem\+Type}}}
+
+
+
+Memory types for allocated memory, execution provider specific types should be extended in each provider. 
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{OrtMemTypeCPUInput@{OrtMemTypeCPUInput}!Global@{Global}}\index{Global@{Global}!OrtMemTypeCPUInput@{OrtMemTypeCPUInput}}}\Hypertarget{group___global_ggab7805016f4b26871e899a3cf4114ee0da1029fcb3f1ca7a371dbe8baeb0aa8a28}\label{group___global_ggab7805016f4b26871e899a3cf4114ee0da1029fcb3f1ca7a371dbe8baeb0aa8a28} 
+Ort\+Mem\+Type\+CPUInput&Any CPU memory used by non-\/\+CPU execution provider. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{OrtMemTypeCPUOutput@{OrtMemTypeCPUOutput}!Global@{Global}}\index{Global@{Global}!OrtMemTypeCPUOutput@{OrtMemTypeCPUOutput}}}\Hypertarget{group___global_ggab7805016f4b26871e899a3cf4114ee0da84d0d4e8e23535cc0e1ceea37bb1869a}\label{group___global_ggab7805016f4b26871e899a3cf4114ee0da84d0d4e8e23535cc0e1ceea37bb1869a} 
+Ort\+Mem\+Type\+CPUOutput&CPU accessible memory outputted by non-\/\+CPU execution provider, i.\+e. CUDA\+\_\+\+PINNED. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{OrtMemTypeCPU@{OrtMemTypeCPU}!Global@{Global}}\index{Global@{Global}!OrtMemTypeCPU@{OrtMemTypeCPU}}}\Hypertarget{group___global_ggab7805016f4b26871e899a3cf4114ee0da12b2ba21b776131d66b7b21c1fb09961}\label{group___global_ggab7805016f4b26871e899a3cf4114ee0da12b2ba21b776131d66b7b21c1fb09961} 
+Ort\+Mem\+Type\+CPU&Temporary CPU accessible memory allocated by non-\/\+CPU execution provider, i.\+e. CUDA\+\_\+\+PINNED. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{OrtMemTypeDefault@{OrtMemTypeDefault}!Global@{Global}}\index{Global@{Global}!OrtMemTypeDefault@{OrtMemTypeDefault}}}\Hypertarget{group___global_ggab7805016f4b26871e899a3cf4114ee0da4ecb169ee6f3e0a8d505c8a240070378}\label{group___global_ggab7805016f4b26871e899a3cf4114ee0da4ecb169ee6f3e0a8d505c8a240070378} 
+Ort\+Mem\+Type\+Default&The default allocator for execution provider. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{group___global_gaf542347444820afe571db318ffcc8101}\label{group___global_gaf542347444820afe571db318ffcc8101} 
+\index{Global@{Global}!OrtGetApiBase@{OrtGetApiBase}}
+\index{OrtGetApiBase@{OrtGetApiBase}!Global@{Global}}
+\doxysubsubsection{\texorpdfstring{OrtGetApiBase()}{OrtGetApiBase()}}
+{\footnotesize\ttfamily ORT\+\_\+\+EXPORT const \mbox{\hyperlink{struct_ort_api_base}{Ort\+Api\+Base}} \texorpdfstring{$\ast$}{*}ORT\+\_\+\+API\+\_\+\+CALL Ort\+Get\+Api\+Base (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+The Onnxruntime library\textquotesingle{}s entry point to access the C API. 
+
+Call this to get the a pointer to an \doxylink{struct_ort_api_base}{Ort\+Api\+Base} Here is the caller graph for this function\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=308pt]{group___global_gaf542347444820afe571db318ffcc8101_icgraph}
+\end{center}
+\end{figure}

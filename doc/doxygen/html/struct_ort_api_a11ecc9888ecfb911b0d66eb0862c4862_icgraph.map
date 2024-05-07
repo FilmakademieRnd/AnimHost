@@ -1,0 +1,7 @@
+<map id="OrtApi::ORT_API2_STATUS" name="OrtApi::ORT_API2_STATUS">
+<area shape="rect" id="Node000001" title="Create an OrtEnv." alt="" coords="238,31,422,57"/>
+<area shape="rect" id="Node000002" href="$struct_ort_api.html#a020681086ba79d752f5aa0318cdcb8ab" title=": Append execution provider to the session options." alt="" coords="5,5,190,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="222,35,190,31,191,26,222,30"/>
+<area shape="rect" id="Node000003" href="$struct_ort_api.html#a3f3aabee2936b28df8796ec80b241c96" title="Release an OrtCANNProviderOptions." alt="" coords="53,56,142,83"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="222,58,142,67,142,62,222,53"/>
+</map>

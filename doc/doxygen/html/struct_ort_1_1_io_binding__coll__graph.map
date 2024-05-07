@@ -1,0 +1,9 @@
+<map id="Ort::IoBinding" name="Ort::IoBinding">
+<area shape="rect" id="Node000001" title="Wrapper around ::OrtIoBinding." alt="" coords="42,261,142,288"/>
+<area shape="rect" id="Node000002" href="$struct_ort_1_1detail_1_1_io_binding_impl.html" title=" " alt="" coords="10,171,174,213"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="95,229,95,261,89,261,89,229"/>
+<area shape="rect" id="Node000003" href="$struct_ort_1_1detail_1_1_const_io_binding_impl.html" title=" " alt="" coords="5,80,179,123"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="95,138,95,170,89,170,89,138"/>
+<area shape="rect" id="Node000004" href="$struct_ort_1_1detail_1_1_base.html" title="Used internally by the C++ API. C++ wrapper types inherit from this. This is a zero cost abstraction ..." alt="" coords="18,5,166,32"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="95,48,95,80,89,80,89,48"/>
+</map>

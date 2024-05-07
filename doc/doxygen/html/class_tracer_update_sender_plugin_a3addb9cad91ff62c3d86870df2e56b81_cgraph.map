@@ -1,0 +1,22 @@
+<map id="TracerUpdateSenderPlugin::embeddedWidget" name="TracerUpdateSenderPlugin::embeddedWidget">
+<area shape="rect" id="Node000001" title="Initializes the plugin&#39;s UI elements." alt="" coords="5,235,181,277"/>
+<area shape="rect" id="Node000002" href="$class_z_m_q_message_handler.html#a6c603798d6ca03b54a55024c1e32a147" title="Gets the list of available IP Addresses." alt="" coords="471,205,625,248"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="181,248,455,230,456,235,181,253"/>
+<area shape="rect" id="Node000003" href="$class_tracer_update_sender_plugin.html#a935e0cd7f8037df3298387a801323847" title="Slot called when the &quot;Send Animation&quot; button is clicked." alt="" coords="229,105,404,148"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="130,232,263,154,266,158,133,236"/>
+<area shape="rect" id="Node000007" href="$class_tracer_update_sender_plugin.html#aa5ac3e90ba46dc88381c4d183823e7c0" title="Slot called when the drop&#45;down menu selection changes." alt="" coords="229,264,404,307"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="181,265,214,269,213,274,181,270"/>
+<area shape="rect" id="Node000010" href="$class_tracer_update_sender_plugin.html#a4f7113282e57dc6448d6b3c92627270a" title="Slot called when the &quot;Loop&quot; check gets clicked." alt="" coords="229,331,404,373"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="140,276,230,316,244,322,242,327,228,321,138,280"/>
+<area shape="rect" id="Node000004" href="$class_anim_host_message_sender.html#aa32827b94e778e799570f8dad4fd6dea" title="Request this process to start working." alt="" coords="462,139,634,181"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="405,137,447,143,446,148,404,142"/>
+<area shape="rect" id="Node000005" href="$class_z_m_q_message_handler.html#ad1bc17167c1b398bdff98d8f77810e98" title="Resumes main loop execution." alt="" coords="471,5,625,48"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="357,103,451,58,466,52,468,56,453,62,359,107"/>
+<area shape="rect" id="Node000006" href="$class_anim_host_message_sender.html#a726b2c693e8d06b909f2197fb12fda58" title="Setting data necessary to create new TRACER Update Message representing a character pose." alt="" coords="452,72,644,115"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="404,111,436,107,437,112,405,117"/>
+<area shape="poly" id="edge7_Node000007_Node000002" title=" " alt="" coords="402,261,455,247,457,252,404,266"/>
+<area shape="rect" id="Node000008" href="$class_z_m_q_message_handler.html#acbe97dc586d15b31e39834bb437beada" title="Returns the currently selected IP Address." alt="" coords="471,272,625,315"/>
+<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="404,286,455,287,455,293,404,291"/>
+<area shape="rect" id="Node000009" href="$class_z_m_q_message_handler.html#a52871d6068f2f3063409618e0a61226d" title="Updates the currently selected IP address." alt="" coords="471,339,625,381"/>
+<area shape="poly" id="edge9_Node000007_Node000009" title=" " alt="" coords="386,305,466,331,464,336,384,310"/>
+</map>

@@ -1,0 +1,689 @@
+\doxysection{Ort\+Training\+Api Struct Reference}
+\hypertarget{struct_ort_training_api}{}\label{struct_ort_training_api}\index{OrtTrainingApi@{OrtTrainingApi}}
+
+
+The Training C API that holds onnxruntime training function pointers.  
+
+
+
+
+{\ttfamily \#include $<$onnxruntime\+\_\+training\+\_\+c\+\_\+api.\+h$>$}
+
+\doxysubsubsection*{Accessing The Training Session State}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_ort_training_api_a060fcabeb03406232415f5eb8b98268d}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Load\+Checkpoint, \+\_\+\+In\+\_\+ const ORTCHAR\+\_\+T \texorpdfstring{$\ast$}{*}checkpoint\+\_\+path, \+\_\+\+Outptr\+\_\+ Ort\+Checkpoint\+State \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}checkpoint\+\_\+state)
+\begin{DoxyCompactList}\small\item\em Load a checkpoint state from directory on disk into checkpoint\+\_\+state. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_a50e29756d3c160779c12a75b2db098e2}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Save\+Checkpoint, \+\_\+\+In\+\_\+ Ort\+Checkpoint\+State \texorpdfstring{$\ast$}{*}checkpoint\+\_\+state, \+\_\+\+In\+\_\+ const ORTCHAR\+\_\+T \texorpdfstring{$\ast$}{*}checkpoint\+\_\+path, const bool include\+\_\+optimizer\+\_\+state)
+\begin{DoxyCompactList}\small\item\em Save the given state to a checkpoint directory on disk. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_a1c88473d76e27db77ec6f2cdfdd448c5}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Get\+Parameters\+Size, \+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}sess, \+\_\+\+Out\+\_\+ size\+\_\+t \texorpdfstring{$\ast$}{*}out, bool trainable\+\_\+only)
+\begin{DoxyCompactList}\small\item\em Retrieves the size of all the parameters. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_a95bd81bf4dff966bd867a907af725cca}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Copy\+Parameters\+To\+Buffer, \+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}sess, \+\_\+\+Inout\+\_\+ Ort\+Value \texorpdfstring{$\ast$}{*}parameters\+\_\+buffer, bool trainable\+\_\+only)
+\begin{DoxyCompactList}\small\item\em Copy all parameters to a contiguous buffer held by the argument parameters\+\_\+buffer. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_ac5502bb950b73d8b65763bb2a572503d}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Copy\+Buffer\+To\+Parameters, \+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}sess, \+\_\+\+Inout\+\_\+ Ort\+Value \texorpdfstring{$\ast$}{*}parameters\+\_\+buffer, bool trainable\+\_\+only)
+\begin{DoxyCompactList}\small\item\em Copy parameter values from the given contiguous buffer held by parameters\+\_\+buffer to the training state. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_a3dc6905ff73034ad751229487877d16b}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Add\+Property, \+\_\+\+Inout\+\_\+ Ort\+Checkpoint\+State \texorpdfstring{$\ast$}{*}checkpoint\+\_\+state, \+\_\+\+In\+\_\+ const char \texorpdfstring{$\ast$}{*}property\+\_\+name, \+\_\+\+In\+\_\+ enum \mbox{\hyperlink{group___training_c_gaef92e586972c4dfda5fe705cc9c24ebf}{Ort\+Property\+Type}} property\+\_\+type, \+\_\+\+In\+\_\+ void \texorpdfstring{$\ast$}{*}property\+\_\+value)
+\begin{DoxyCompactList}\small\item\em Adds the given property to the checkpoint state. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_a123beb5e10543a4f55bbc20fa466b98c}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Get\+Property, \+\_\+\+In\+\_\+ const Ort\+Checkpoint\+State \texorpdfstring{$\ast$}{*}checkpoint\+\_\+state, \+\_\+\+In\+\_\+ const char \texorpdfstring{$\ast$}{*}property\+\_\+name, \+\_\+\+Inout\+\_\+ \mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}} \texorpdfstring{$\ast$}{*}allocator, \+\_\+\+Out\+\_\+ enum \mbox{\hyperlink{group___training_c_gaef92e586972c4dfda5fe705cc9c24ebf}{Ort\+Property\+Type}} \texorpdfstring{$\ast$}{*}property\+\_\+type, \+\_\+\+Outptr\+\_\+ void \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}property\+\_\+value)
+\begin{DoxyCompactList}\small\item\em Gets the property value associated with the given name from the checkpoint state. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Implementing The Training Loop}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_ort_training_api_a10b3d4d22a103aad3bea520e739e3488}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Create\+Training\+Session, \+\_\+\+In\+\_\+ const Ort\+Env \texorpdfstring{$\ast$}{*}env, \+\_\+\+In\+\_\+ const Ort\+Session\+Options \texorpdfstring{$\ast$}{*}options, \+\_\+\+Inout\+\_\+ Ort\+Checkpoint\+State \texorpdfstring{$\ast$}{*}checkpoint\+\_\+state, \+\_\+\+In\+\_\+ const ORTCHAR\+\_\+T \texorpdfstring{$\ast$}{*}train\+\_\+model\+\_\+path, \+\_\+\+In\+\_\+ const ORTCHAR\+\_\+T \texorpdfstring{$\ast$}{*}eval\+\_\+model\+\_\+path, \+\_\+\+In\+\_\+ const ORTCHAR\+\_\+T \texorpdfstring{$\ast$}{*}optimizer\+\_\+model\+\_\+path, \+\_\+\+Outptr\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}out)
+\begin{DoxyCompactList}\small\item\em Create a training session that can be used to begin or resume training. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_a09fa75fb408c3fdcfaece6c5a7416be5}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Lazy\+Reset\+Grad, \+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}session)
+\begin{DoxyCompactList}\small\item\em Reset the gradients of all trainable parameters to zero lazily. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_ad096622bc0705a203f90c93bf374eeb7}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Train\+Step, \+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}sess, \+\_\+\+In\+\_\+opt\+\_\+ const Ort\+Run\+Options \texorpdfstring{$\ast$}{*}run\+\_\+options, \+\_\+\+In\+\_\+ size\+\_\+t inputs\+\_\+len, \+\_\+\+In\+\_\+reads\+\_\+(inputs\+\_\+len) const Ort\+Value \texorpdfstring{$\ast$}{*}const \texorpdfstring{$\ast$}{*}inputs, \+\_\+\+In\+\_\+ size\+\_\+t outputs\+\_\+len, \+\_\+\+Inout\+\_\+updates\+\_\+all\+\_\+(outputs\+\_\+len) Ort\+Value \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}outputs)
+\begin{DoxyCompactList}\small\item\em Computes the outputs of the training model and the gradients of the trainable parameters for the given inputs. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_a4f5e04c3fb65c733b9b3a15b3733e7f3}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Eval\+Step, \+\_\+\+In\+\_\+ const Ort\+Training\+Session \texorpdfstring{$\ast$}{*}sess, \+\_\+\+In\+\_\+opt\+\_\+ const Ort\+Run\+Options \texorpdfstring{$\ast$}{*}run\+\_\+options, \+\_\+\+In\+\_\+ size\+\_\+t inputs\+\_\+len, \+\_\+\+In\+\_\+reads\+\_\+(inputs\+\_\+len) const Ort\+Value \texorpdfstring{$\ast$}{*}const \texorpdfstring{$\ast$}{*}inputs, \+\_\+\+In\+\_\+ size\+\_\+t outputs\+\_\+len, \+\_\+\+Inout\+\_\+updates\+\_\+all\+\_\+(outputs\+\_\+len) Ort\+Value \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}outputs)
+\begin{DoxyCompactList}\small\item\em Computes the outputs for the eval model for the given inputs. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_a21237c3a1adc0e2d453182ccf601f388}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Set\+Learning\+Rate, \+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}sess, \+\_\+\+In\+\_\+ float learning\+\_\+rate)
+\begin{DoxyCompactList}\small\item\em Sets the learning rate for this training session. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_a2b5afee118c3ba5e3c71880e19ea79ac}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Get\+Learning\+Rate, \+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}sess, \+\_\+\+Out\+\_\+ float \texorpdfstring{$\ast$}{*}learning\+\_\+rate)
+\begin{DoxyCompactList}\small\item\em Gets the current learning rate for this training session. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_a92bdec6ce90c3079c29415b08211529a}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Optimizer\+Step, \+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}sess, \+\_\+\+In\+\_\+opt\+\_\+ const Ort\+Run\+Options \texorpdfstring{$\ast$}{*}run\+\_\+options)
+\begin{DoxyCompactList}\small\item\em Performs the weight updates for the trainable parameters using the optimizer model. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_a09970d9563f915a7e3d9cd9cbb4d68bb}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Register\+Linear\+LRScheduler, \+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}sess, \+\_\+\+In\+\_\+ const int64\+\_\+t warmup\+\_\+step\+\_\+count, \+\_\+\+In\+\_\+ const int64\+\_\+t total\+\_\+step\+\_\+count, \+\_\+\+In\+\_\+ const float initial\+\_\+lr)
+\begin{DoxyCompactList}\small\item\em Registers a linear learning rate scheduler for the training session. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_adf66b8b2bf5948fa741cdb23531a7c48}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Scheduler\+Step, \+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}sess)
+\begin{DoxyCompactList}\small\item\em Update the learning rate based on the registered learing rate scheduler. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Model IO Information}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_ort_training_api_a5183c5164985ddd44930ad209700cab0}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Training\+Session\+Get\+Training\+Model\+Output\+Count, \+\_\+\+In\+\_\+ const Ort\+Training\+Session \texorpdfstring{$\ast$}{*}sess, \+\_\+\+Out\+\_\+ size\+\_\+t \texorpdfstring{$\ast$}{*}out)
+\begin{DoxyCompactList}\small\item\em Retrieves the number of user outputs in the training model. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_a7cfb446c7d75cface9fb1f742a9f2579}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Training\+Session\+Get\+Eval\+Model\+Output\+Count, \+\_\+\+In\+\_\+ const Ort\+Training\+Session \texorpdfstring{$\ast$}{*}sess, \+\_\+\+Out\+\_\+ size\+\_\+t \texorpdfstring{$\ast$}{*}out)
+\begin{DoxyCompactList}\small\item\em Retrieves the number of user outputs in the eval model. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_a26d5620ee552b84c7111b8505fd85306}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Training\+Session\+Get\+Training\+Model\+Output\+Name, \+\_\+\+In\+\_\+ const Ort\+Training\+Session \texorpdfstring{$\ast$}{*}sess, size\+\_\+t index, \+\_\+\+Inout\+\_\+ \mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}} \texorpdfstring{$\ast$}{*}allocator, \+\_\+\+Outptr\+\_\+ char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}output)
+\begin{DoxyCompactList}\small\item\em Retrieves the names of user outputs in the training model. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_a27a6e3b793a9d428f6c57dbb2e8119a0}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Training\+Session\+Get\+Eval\+Model\+Output\+Name, \+\_\+\+In\+\_\+ const Ort\+Training\+Session \texorpdfstring{$\ast$}{*}sess, size\+\_\+t index, \+\_\+\+Inout\+\_\+ \mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}} \texorpdfstring{$\ast$}{*}allocator, \+\_\+\+Outptr\+\_\+ char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}output)
+\begin{DoxyCompactList}\small\item\em Retrieves the names of user outputs in the eval model. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_a7fd5a5b77ff1bf312b1cef75f7591c7f}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Training\+Session\+Get\+Training\+Model\+Input\+Count, \+\_\+\+In\+\_\+ const Ort\+Training\+Session \texorpdfstring{$\ast$}{*}sess, \+\_\+\+Out\+\_\+ size\+\_\+t \texorpdfstring{$\ast$}{*}out)
+\begin{DoxyCompactList}\small\item\em Retrieves the number of user inputs in the training model. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_abb6c3605fa8e2ecebdcf19a3f0f6c361}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Training\+Session\+Get\+Eval\+Model\+Input\+Count, \+\_\+\+In\+\_\+ const Ort\+Training\+Session \texorpdfstring{$\ast$}{*}sess, \+\_\+\+Out\+\_\+ size\+\_\+t \texorpdfstring{$\ast$}{*}out)
+\begin{DoxyCompactList}\small\item\em Retrieves the number of user inputs in the eval model. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_a85c347835afb54ec2dc6357183b999c3}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Training\+Session\+Get\+Training\+Model\+Input\+Name, \+\_\+\+In\+\_\+ const Ort\+Training\+Session \texorpdfstring{$\ast$}{*}sess, size\+\_\+t index, \+\_\+\+In\+\_\+ \mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}} \texorpdfstring{$\ast$}{*}allocator, \+\_\+\+Outptr\+\_\+ char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}output)
+\begin{DoxyCompactList}\small\item\em Retrieves the name of the user input at given index in the training model. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_af987f587fd1db627af71cb0c672db4af}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Training\+Session\+Get\+Eval\+Model\+Input\+Name, \+\_\+\+In\+\_\+ const Ort\+Training\+Session \texorpdfstring{$\ast$}{*}sess, size\+\_\+t index, \+\_\+\+In\+\_\+ \mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}} \texorpdfstring{$\ast$}{*}allocator, \+\_\+\+Outptr\+\_\+ char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}output)
+\begin{DoxyCompactList}\small\item\em Retrieves the name of the user input at given index in the eval model. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Release Training Resources}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_ort_training_api_ad993431ed1e5c6d09615c99e7763912a}{ORT\+\_\+\+CLASS\+\_\+\+RELEASE}} (Training\+Session)
+\begin{DoxyCompactList}\small\item\em Frees up the memory used up by the training session. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_ort_training_api_acb3acb32be8edd039d670d17eadb729b}{ORT\+\_\+\+CLASS\+\_\+\+RELEASE}} (Checkpoint\+State)
+\begin{DoxyCompactList}\small\item\em Frees up the memory used up by the checkpoint state. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Prepare For Inferencing}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_ort_training_api_a72634e9896fd1f6cf15c9b9f601bd3d9}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Export\+Model\+For\+Inferencing, \+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}sess, \+\_\+\+In\+\_\+ const ORTCHAR\+\_\+T \texorpdfstring{$\ast$}{*}inference\+\_\+model\+\_\+path, size\+\_\+t graph\+\_\+outputs\+\_\+len, \+\_\+\+In\+\_\+reads\+\_\+(graph\+\_\+outputs\+\_\+len) const char \texorpdfstring{$\ast$}{*}const \texorpdfstring{$\ast$}{*}graph\+\_\+output\+\_\+names)
+\begin{DoxyCompactList}\small\item\em Export a model that can be used for inferencing. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Training Utilities}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_ort_training_api_a5182f09857b54d38240d62faae0dc4f4}{ORT\+\_\+\+API2\+\_\+\+STATUS}} (Set\+Seed, \+\_\+\+In\+\_\+ const int64\+\_\+t seed)
+\begin{DoxyCompactList}\small\item\em Sets the seed used for random number generation in Onnxruntime. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The Training C API that holds onnxruntime training function pointers. 
+
+All the Training C API functions are defined inside this structure as pointers to functions. Call \doxylink{struct_ort_api_ac714d93e08c879793e642e7427a86546}{Ort\+Api\+::\+Get\+Training\+Api} to get a pointer to this struct. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{struct_ort_training_api_a3dc6905ff73034ad751229487877d16b}\label{struct_ort_training_api_a3dc6905ff73034ad751229487877d16b} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [1/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Add\+Property}]{,  }\item[{\+\_\+\+Inout\+\_\+ Ort\+Checkpoint\+State \texorpdfstring{$\ast$}{*}}]{checkpoint\+\_\+state,  }\item[{\+\_\+\+In\+\_\+ const char \texorpdfstring{$\ast$}{*}}]{property\+\_\+name,  }\item[{\+\_\+\+In\+\_\+ enum \mbox{\hyperlink{group___training_c_gaef92e586972c4dfda5fe705cc9c24ebf}{Ort\+Property\+Type}}}]{property\+\_\+type,  }\item[{\+\_\+\+In\+\_\+ void \texorpdfstring{$\ast$}{*}}]{property\+\_\+value }\end{DoxyParamCaption})}
+
+
+
+Adds the given property to the checkpoint state. 
+
+Runtime properties such as epoch, training step, best score, and others can be added to the checkpoint state by the user if they desire by calling this function with the appropriate property name and value. The given property name must be unique to be able to successfully add the property.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em checkpoint\+\_\+state} & The checkpoint state which should hold the property. \\
+\hline
+\mbox{\texttt{ in}}  & {\em property\+\_\+name} & Unique name of the property being added. \\
+\hline
+\mbox{\texttt{ in}}  & {\em property\+\_\+type} & Type of the property associated with the given name. \\
+\hline
+\mbox{\texttt{ in}}  & {\em property\+\_\+value} & Property value associated with the given name.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_ac5502bb950b73d8b65763bb2a572503d}\label{struct_ort_training_api_ac5502bb950b73d8b65763bb2a572503d} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [2/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Copy\+Buffer\+To\+Parameters}]{,  }\item[{\+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}}]{sess,  }\item[{\+\_\+\+Inout\+\_\+ Ort\+Value \texorpdfstring{$\ast$}{*}}]{parameters\+\_\+buffer,  }\item[{bool}]{trainable\+\_\+only }\end{DoxyParamCaption})}
+
+
+
+Copy parameter values from the given contiguous buffer held by parameters\+\_\+buffer to the training state. 
+
+The parameters\+\_\+buffer argument has to be of the size given by Ort\+Training\+Api\+::\+Get\+Parameters\+Size api call, with matching setting for trainable\+\_\+only argument. All the target parameters must be of the same datatype. This is a complementary function to Ort\+Training\+Api\+::\+Copy\+Buffer\+To\+Parameters and can be used to load updated buffer values onto the training state. Parameter ordering is preserved. User is responsible for allocating and freeing the resources used by the parameters\+\_\+buffer.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em sess} & The {\ttfamily this} pointer to the training session. \\
+\hline
+\mbox{\texttt{ in}}  & {\em trainable\+\_\+only} & Whether to skip non-\/trainable parameters \\
+\hline
+\mbox{\texttt{ out}}  & {\em parameters\+\_\+buffer} & The pre-\/allocated Ort\+Value buffer to copy from.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_a95bd81bf4dff966bd867a907af725cca}\label{struct_ort_training_api_a95bd81bf4dff966bd867a907af725cca} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [3/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Copy\+Parameters\+To\+Buffer}]{,  }\item[{\+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}}]{sess,  }\item[{\+\_\+\+Inout\+\_\+ Ort\+Value \texorpdfstring{$\ast$}{*}}]{parameters\+\_\+buffer,  }\item[{bool}]{trainable\+\_\+only }\end{DoxyParamCaption})}
+
+
+
+Copy all parameters to a contiguous buffer held by the argument parameters\+\_\+buffer. 
+
+The parameters\+\_\+buffer has to be of the size given by Get\+Parameters\+Size api call, with matching setting for the argument trainable\+\_\+only. All the target parameters must be of the same datatype. The Ort\+Value must be pre-\/allocated onto the desired device. This is a complementary function to Ort\+Training\+Api\+::\+Copy\+Buffer\+To\+Parameters. Parameter ordering is preserved. User is responsible for allocating and freeing the resources used by the parameters\+\_\+buffer.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em sess} & The {\ttfamily this} pointer to the training session. \\
+\hline
+\mbox{\texttt{ in}}  & {\em trainable\+\_\+only} & Whether to skip non-\/trainable parameters \\
+\hline
+\mbox{\texttt{ out}}  & {\em parameters\+\_\+buffer} & The pre-\/allocated Ort\+Value buffer to copy onto.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_a10b3d4d22a103aad3bea520e739e3488}\label{struct_ort_training_api_a10b3d4d22a103aad3bea520e739e3488} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [4/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Create\+Training\+Session}]{,  }\item[{\+\_\+\+In\+\_\+ const Ort\+Env \texorpdfstring{$\ast$}{*}}]{env,  }\item[{\+\_\+\+In\+\_\+ const Ort\+Session\+Options \texorpdfstring{$\ast$}{*}}]{options,  }\item[{\+\_\+\+Inout\+\_\+ Ort\+Checkpoint\+State \texorpdfstring{$\ast$}{*}}]{checkpoint\+\_\+state,  }\item[{\+\_\+\+In\+\_\+ const ORTCHAR\+\_\+T \texorpdfstring{$\ast$}{*}}]{train\+\_\+model\+\_\+path,  }\item[{\+\_\+\+In\+\_\+ const ORTCHAR\+\_\+T \texorpdfstring{$\ast$}{*}}]{eval\+\_\+model\+\_\+path,  }\item[{\+\_\+\+In\+\_\+ const ORTCHAR\+\_\+T \texorpdfstring{$\ast$}{*}}]{optimizer\+\_\+model\+\_\+path,  }\item[{\+\_\+\+Outptr\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{out }\end{DoxyParamCaption})}
+
+
+
+Create a training session that can be used to begin or resume training. 
+
+This function creates a training session based on the env and session options provided that can begin or resume training from a given checkpoint state for the given onnx models. The checkpoint state represents the parameters of the training session which will be moved to the device specified by the user through the session options (if necessary). The training session requires four training artifacts
+\begin{DoxyItemize}
+\item The training onnx model
+\item The evaluation onnx model (optional)
+\item The optimizer onnx model
+\item The checkpoint directory
+\end{DoxyItemize}
+
+These artifacts can be generated using the {\ttfamily onnxruntime-\/training} python \href{https://github.com/microsoft/onnxruntime/blob/main/orttraining/orttraining/python/training/onnxblock/README.md}{\texttt{ utility}}.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em env} & Environment to be used for the training session. \\
+\hline
+\mbox{\texttt{ in}}  & {\em options} & Session options that the user can customize for this training session. \\
+\hline
+\mbox{\texttt{ in}}  & {\em checkpoint\+\_\+state} & Training states that the training session uses as a starting point for training. \\
+\hline
+\mbox{\texttt{ in}}  & {\em train\+\_\+model\+\_\+path} & Model to be used to perform training. \\
+\hline
+\mbox{\texttt{ in}}  & {\em eval\+\_\+model\+\_\+path} & Model to be used to perform evaluation. \\
+\hline
+\mbox{\texttt{ in}}  & {\em optimizer\+\_\+model\+\_\+path} & Model to be used to perform gradient descent. \\
+\hline
+\mbox{\texttt{ out}}  & {\em out} & Created training session.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_a4f5e04c3fb65c733b9b3a15b3733e7f3}\label{struct_ort_training_api_a4f5e04c3fb65c733b9b3a15b3733e7f3} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [5/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Eval\+Step}]{,  }\item[{\+\_\+\+In\+\_\+ const Ort\+Training\+Session \texorpdfstring{$\ast$}{*}}]{sess,  }\item[{\+\_\+\+In\+\_\+opt\+\_\+ const Ort\+Run\+Options \texorpdfstring{$\ast$}{*}}]{run\+\_\+options,  }\item[{\+\_\+\+In\+\_\+ size\+\_\+t}]{inputs\+\_\+len,  }\item[{\+\_\+\+In\+\_\+reads\+\_\+(inputs\+\_\+len) const Ort\+Value \texorpdfstring{$\ast$}{*}const \texorpdfstring{$\ast$}{*}}]{inputs,  }\item[{\+\_\+\+In\+\_\+ size\+\_\+t}]{outputs\+\_\+len,  }\item[{\+\_\+\+Inout\+\_\+updates\+\_\+all\+\_\+(outputs\+\_\+len) Ort\+Value \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{outputs }\end{DoxyParamCaption})}
+
+
+
+Computes the outputs for the eval model for the given inputs. 
+
+This function performs an eval step that computes the outputs of the eval model for the given inputs. The eval step is performed based on the eval model that was provided to the training session.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em sess} & The {\ttfamily this} pointer to the training session. \\
+\hline
+\mbox{\texttt{ in}}  & {\em run\+\_\+options} & Run options for this eval step. \\
+\hline
+\mbox{\texttt{ in}}  & {\em inputs\+\_\+len} & Number of user inputs to the eval model. \\
+\hline
+\mbox{\texttt{ in}}  & {\em inputs} & The user inputs to the eval model. \\
+\hline
+\mbox{\texttt{ in}}  & {\em outputs\+\_\+len} & Number of user outputs expected from this eval step. \\
+\hline
+\mbox{\texttt{ out}}  & {\em outputs} & User outputs computed by eval step.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_a72634e9896fd1f6cf15c9b9f601bd3d9}\label{struct_ort_training_api_a72634e9896fd1f6cf15c9b9f601bd3d9} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [6/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Export\+Model\+For\+Inferencing}]{,  }\item[{\+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}}]{sess,  }\item[{\+\_\+\+In\+\_\+ const ORTCHAR\+\_\+T \texorpdfstring{$\ast$}{*}}]{inference\+\_\+model\+\_\+path,  }\item[{size\+\_\+t}]{graph\+\_\+outputs\+\_\+len,  }\item[{\+\_\+\+In\+\_\+reads\+\_\+(graph\+\_\+outputs\+\_\+len) const char \texorpdfstring{$\ast$}{*}const \texorpdfstring{$\ast$}{*}}]{graph\+\_\+output\+\_\+names }\end{DoxyParamCaption})}
+
+
+
+Export a model that can be used for inferencing. 
+
+If the training session was provided with an eval model, the training session can generate an inference model if it knows the inference graph outputs. The input inference graph outputs are used to prune the eval model so that the inference model\textquotesingle{}s outputs align with the provided outputs. The exported model is saved at the path provided and can be used for inferencing with Inference\+Session. \begin{DoxyNote}{Note}
+Note that the function re-\/loads the eval model from the path provided to Ort\+Training\+Api\+::\+Create\+Training\+Session and expects that this path still be valid.
+\end{DoxyNote}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em sess} & The {\ttfamily this} pointer to the training session. \\
+\hline
+\mbox{\texttt{ in}}  & {\em inference\+\_\+model\+\_\+path} & Path where the inference model should be serialized to. \\
+\hline
+\mbox{\texttt{ in}}  & {\em graph\+\_\+outputs\+\_\+len} & Size of the graph output names array. \\
+\hline
+\mbox{\texttt{ in}}  & {\em graph\+\_\+output\+\_\+names} & Names of the outputs that are needed in the inference model.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_a2b5afee118c3ba5e3c71880e19ea79ac}\label{struct_ort_training_api_a2b5afee118c3ba5e3c71880e19ea79ac} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [7/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Get\+Learning\+Rate}]{,  }\item[{\+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}}]{sess,  }\item[{\+\_\+\+Out\+\_\+ float \texorpdfstring{$\ast$}{*}}]{learning\+\_\+rate }\end{DoxyParamCaption})}
+
+
+
+Gets the current learning rate for this training session. 
+
+This function allows users to get the learning rate for the training session. The current learning rate is maintained by the training session, and users can query it for the purpose of implementing their own learning rate schedulers.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em sess} & The {\ttfamily this} pointer to the training session. \\
+\hline
+\mbox{\texttt{ out}}  & {\em learning\+\_\+rate} & Learning rate currently in use by the training session.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_a1c88473d76e27db77ec6f2cdfdd448c5}\label{struct_ort_training_api_a1c88473d76e27db77ec6f2cdfdd448c5} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [8/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Get\+Parameters\+Size}]{,  }\item[{\+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}}]{sess,  }\item[{\+\_\+\+Out\+\_\+ size\+\_\+t \texorpdfstring{$\ast$}{*}}]{out,  }\item[{bool}]{trainable\+\_\+only }\end{DoxyParamCaption})}
+
+
+
+Retrieves the size of all the parameters. 
+
+Calculates the total number of primitive (datatype of the parameters) elements of all the parameters in the training state. When trainable\+\_\+only argument is true, the size is calculated for trainable params only.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em sess} & The {\ttfamily this} pointer to the training session. \\
+\hline
+\mbox{\texttt{ out}}  & {\em out} & Size of all parameter elements. \\
+\hline
+\mbox{\texttt{ in}}  & {\em trainable\+\_\+only} & Whether to skip non-\/trainable parameters\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_a123beb5e10543a4f55bbc20fa466b98c}\label{struct_ort_training_api_a123beb5e10543a4f55bbc20fa466b98c} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [9/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Get\+Property}]{,  }\item[{\+\_\+\+In\+\_\+ const Ort\+Checkpoint\+State \texorpdfstring{$\ast$}{*}}]{checkpoint\+\_\+state,  }\item[{\+\_\+\+In\+\_\+ const char \texorpdfstring{$\ast$}{*}}]{property\+\_\+name,  }\item[{\+\_\+\+Inout\+\_\+ \mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}} \texorpdfstring{$\ast$}{*}}]{allocator,  }\item[{\+\_\+\+Out\+\_\+ enum \mbox{\hyperlink{group___training_c_gaef92e586972c4dfda5fe705cc9c24ebf}{Ort\+Property\+Type}} \texorpdfstring{$\ast$}{*}}]{property\+\_\+type,  }\item[{\+\_\+\+Outptr\+\_\+ void \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{property\+\_\+value }\end{DoxyParamCaption})}
+
+
+
+Gets the property value associated with the given name from the checkpoint state. 
+
+Gets the property value from an existing entry in the checkpoint state. The property must exist in the checkpoint state to be able to retrieve it successfully.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em checkpoint\+\_\+state} & The checkpoint state that is currently holding the property. \\
+\hline
+\mbox{\texttt{ in}}  & {\em property\+\_\+name} & Unique name of the property being retrieved. \\
+\hline
+\mbox{\texttt{ in}}  & {\em allocator} & Allocator used to allocate the memory for the property\+\_\+value. \\
+\hline
+\mbox{\texttt{ out}}  & {\em property\+\_\+type} & Type of the property associated with the given name. \\
+\hline
+\mbox{\texttt{ out}}  & {\em property\+\_\+value} & Property value associated with the given name.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_a09fa75fb408c3fdcfaece6c5a7416be5}\label{struct_ort_training_api_a09fa75fb408c3fdcfaece6c5a7416be5} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [10/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Lazy\+Reset\+Grad}]{,  }\item[{\+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}}]{session }\end{DoxyParamCaption})}
+
+
+
+Reset the gradients of all trainable parameters to zero lazily. 
+
+This function sets the internal state of the training session such that the gradients of the trainable parameters in the Ort\+Checkpoint\+State will be scheduled to be reset just before the new gradients are computed on the next invocation of the next Ort\+Training\+Api\+::\+Train\+Step.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em session} & The {\ttfamily this} pointer to the training session.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_a060fcabeb03406232415f5eb8b98268d}\label{struct_ort_training_api_a060fcabeb03406232415f5eb8b98268d} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [11/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Load\+Checkpoint}]{,  }\item[{\+\_\+\+In\+\_\+ const ORTCHAR\+\_\+T \texorpdfstring{$\ast$}{*}}]{checkpoint\+\_\+path,  }\item[{\+\_\+\+Outptr\+\_\+ Ort\+Checkpoint\+State \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{checkpoint\+\_\+state }\end{DoxyParamCaption})}
+
+
+
+Load a checkpoint state from directory on disk into checkpoint\+\_\+state. 
+
+This function will parse a checkpoint directory, pull relevant files and load the training state into the checkpoint\+\_\+state. This checkpoint state can then be used to create the training session by invoking Ort\+Training\+Api\+::\+Create\+Training\+Session. By doing so, the training session will resume training from the given checkpoint state. \begin{DoxyNote}{Note}
+Note that the training session created with a checkpoint state uses this state to store the entire training state (including model parameters, its gradients, the optimizer states and the properties). As a result, it is required that the checkpoint state outlive the lifetime of the training session.
+\end{DoxyNote}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em checkpoint\+\_\+path} & Path to the checkpoint directory \\
+\hline
+\mbox{\texttt{ out}}  & {\em checkpoint\+\_\+state} & Checkpoint state that contains the states of the training session.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_a92bdec6ce90c3079c29415b08211529a}\label{struct_ort_training_api_a92bdec6ce90c3079c29415b08211529a} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [12/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Optimizer\+Step}]{,  }\item[{\+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}}]{sess,  }\item[{\+\_\+\+In\+\_\+opt\+\_\+ const Ort\+Run\+Options \texorpdfstring{$\ast$}{*}}]{run\+\_\+options }\end{DoxyParamCaption})}
+
+
+
+Performs the weight updates for the trainable parameters using the optimizer model. 
+
+This function performs the weight update step that updates the trainable parameters such that they take a step in the direction of their gradients (gradient descent). The optimizer step is performed based on the optimizer model that was provided to the training session. The updated parameters are stored inside the training state so that they can be used by the next Ort\+Training\+Api\+::\+Train\+Step function call.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em sess} & The {\ttfamily this} pointer to the training session. \\
+\hline
+\mbox{\texttt{ in}}  & {\em run\+\_\+options} & Run options for this optimizer step.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_a09970d9563f915a7e3d9cd9cbb4d68bb}\label{struct_ort_training_api_a09970d9563f915a7e3d9cd9cbb4d68bb} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [13/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Register\+Linear\+LRScheduler}]{,  }\item[{\+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}}]{sess,  }\item[{\+\_\+\+In\+\_\+ const int64\+\_\+t}]{warmup\+\_\+step\+\_\+count,  }\item[{\+\_\+\+In\+\_\+ const int64\+\_\+t}]{total\+\_\+step\+\_\+count,  }\item[{\+\_\+\+In\+\_\+ const float}]{initial\+\_\+lr }\end{DoxyParamCaption})}
+
+
+
+Registers a linear learning rate scheduler for the training session. 
+
+Register a linear learning rate scheduler that decays the learning rate by linearly updated multiplicative factor from the initial learning rate set on the training session to 0. The decay is performed after the initial warm up phase where the learning rate is linearly incremented from 0 to the initial learning rate provided.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em sess} & The {\ttfamily this} pointer to the training session. \\
+\hline
+\mbox{\texttt{ in}}  & {\em warmup\+\_\+step\+\_\+count} & Warmup steps for LR warmup. \\
+\hline
+\mbox{\texttt{ in}}  & {\em total\+\_\+step\+\_\+count} & Total step count. \\
+\hline
+\mbox{\texttt{ in}}  & {\em initial\+\_\+lr} & The initial learning rate to be used by the training session.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_a50e29756d3c160779c12a75b2db098e2}\label{struct_ort_training_api_a50e29756d3c160779c12a75b2db098e2} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [14/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Save\+Checkpoint}]{,  }\item[{\+\_\+\+In\+\_\+ Ort\+Checkpoint\+State \texorpdfstring{$\ast$}{*}}]{checkpoint\+\_\+state,  }\item[{\+\_\+\+In\+\_\+ const ORTCHAR\+\_\+T \texorpdfstring{$\ast$}{*}}]{checkpoint\+\_\+path,  }\item[{const bool}]{include\+\_\+optimizer\+\_\+state }\end{DoxyParamCaption})}
+
+
+
+Save the given state to a checkpoint directory on disk. 
+
+This function serializes the provided checkpoint state to a directory on disk. This checkpoint can later be loaded by invoking Ort\+Training\+Api\+::\+Load\+Checkpoint to resume training from this snapshot of the state.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em checkpoint\+\_\+state} & The checkpoint state to save. \\
+\hline
+\mbox{\texttt{ in}}  & {\em checkpoint\+\_\+path} & Path to the checkpoint directory. \\
+\hline
+\mbox{\texttt{ in}}  & {\em include\+\_\+optimizer\+\_\+state} & Flag to indicate whether to save the optimizer state or not.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_adf66b8b2bf5948fa741cdb23531a7c48}\label{struct_ort_training_api_adf66b8b2bf5948fa741cdb23531a7c48} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [15/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Scheduler\+Step}]{,  }\item[{\+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}}]{sess }\end{DoxyParamCaption})}
+
+
+
+Update the learning rate based on the registered learing rate scheduler. 
+
+Takes a scheduler step that updates the learning rate that is being used by the training session. This function should typically be called before invoking the optimizer step for each round, or as determined necessary to update the learning rate being used by the training session. \begin{DoxyNote}{Note}
+Please note that a valid predefined learning rate scheduler must be first registered to invoke this function.
+\end{DoxyNote}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em sess} & The {\ttfamily this} pointer to the training session.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_a21237c3a1adc0e2d453182ccf601f388}\label{struct_ort_training_api_a21237c3a1adc0e2d453182ccf601f388} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [16/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Set\+Learning\+Rate}]{,  }\item[{\+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}}]{sess,  }\item[{\+\_\+\+In\+\_\+ float}]{learning\+\_\+rate }\end{DoxyParamCaption})}
+
+
+
+Sets the learning rate for this training session. 
+
+This function allows users to set the learning rate for the training session. The current learning rate is maintained by the training session and can be overwritten by invoking this function with the desired learning rate. This function should not be used when a valid learning rate scheduler is registered. It should be used either to set the learning rate derived from a custom learning rate scheduler or to set a constant learning rate to be used throughout the training session. \begin{DoxyNote}{Note}
+Please note that this function does not set the initial learning rate that may be needed by the predefined learning rate schedulers. To set the initial learning rate for learning rate schedulers, please look at the function Ort\+Training\+Api\+::\+Register\+Linear\+LRScheduler.
+\end{DoxyNote}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em sess} & The {\ttfamily this} pointer to the training session. \\
+\hline
+\mbox{\texttt{ in}}  & {\em learning\+\_\+rate} & Desired learning rate to be set.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_a5182f09857b54d38240d62faae0dc4f4}\label{struct_ort_training_api_a5182f09857b54d38240d62faae0dc4f4} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [17/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Set\+Seed}]{,  }\item[{\+\_\+\+In\+\_\+ const int64\+\_\+t}]{seed }\end{DoxyParamCaption})}
+
+
+
+Sets the seed used for random number generation in Onnxruntime. 
+
+Use this function to generate reproducible results. It should be noted that completely reproducible results are not guaranteed.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em seed} & The seed to be set.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_abb6c3605fa8e2ecebdcf19a3f0f6c361}\label{struct_ort_training_api_abb6c3605fa8e2ecebdcf19a3f0f6c361} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [18/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Training\+Session\+Get\+Eval\+Model\+Input\+Count}]{,  }\item[{\+\_\+\+In\+\_\+ const Ort\+Training\+Session \texorpdfstring{$\ast$}{*}}]{sess,  }\item[{\+\_\+\+Out\+\_\+ size\+\_\+t \texorpdfstring{$\ast$}{*}}]{out }\end{DoxyParamCaption})}
+
+
+
+Retrieves the number of user inputs in the eval model. 
+
+This function returns the number of inputs of the eval model so that the user can accordingly allocate the Ort\+Value(s) provided to the Ort\+Training\+Api\+::\+Eval\+Step function.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em sess} & The {\ttfamily this} pointer to the training session. \\
+\hline
+\mbox{\texttt{ out}}  & {\em out} & Number of user inputs in the eval model.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_af987f587fd1db627af71cb0c672db4af}\label{struct_ort_training_api_af987f587fd1db627af71cb0c672db4af} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [19/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Training\+Session\+Get\+Eval\+Model\+Input\+Name}]{,  }\item[{\+\_\+\+In\+\_\+ const Ort\+Training\+Session \texorpdfstring{$\ast$}{*}}]{sess,  }\item[{size\+\_\+t}]{index,  }\item[{\+\_\+\+In\+\_\+ \mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}} \texorpdfstring{$\ast$}{*}}]{allocator,  }\item[{\+\_\+\+Outptr\+\_\+ char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{output }\end{DoxyParamCaption})}
+
+
+
+Retrieves the name of the user input at given index in the eval model. 
+
+This function returns the names of inputs of the eval model that can be associated with the Ort\+Value(s) provided to the Ort\+Training\+Api\+::\+Eval\+Step function.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em sess} & The {\ttfamily this} pointer to the training session. \\
+\hline
+\mbox{\texttt{ in}}  & {\em index} & The index of the eval model input name requested. \\
+\hline
+\mbox{\texttt{ in}}  & {\em allocator} & The allocator to use to allocate the memory for the requested name. \\
+\hline
+\mbox{\texttt{ out}}  & {\em output} & Name of the user input for the eval model at the given index.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_a7cfb446c7d75cface9fb1f742a9f2579}\label{struct_ort_training_api_a7cfb446c7d75cface9fb1f742a9f2579} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [20/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Training\+Session\+Get\+Eval\+Model\+Output\+Count}]{,  }\item[{\+\_\+\+In\+\_\+ const Ort\+Training\+Session \texorpdfstring{$\ast$}{*}}]{sess,  }\item[{\+\_\+\+Out\+\_\+ size\+\_\+t \texorpdfstring{$\ast$}{*}}]{out }\end{DoxyParamCaption})}
+
+
+
+Retrieves the number of user outputs in the eval model. 
+
+This function returns the number of outputs of the eval model so that the user can allocate space for the number of outputs when Ort\+Training\+Api\+::\+Eval\+Step is invoked.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em sess} & The {\ttfamily this} pointer to the training session. \\
+\hline
+\mbox{\texttt{ out}}  & {\em out} & Number of user outputs in the eval model.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_a27a6e3b793a9d428f6c57dbb2e8119a0}\label{struct_ort_training_api_a27a6e3b793a9d428f6c57dbb2e8119a0} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [21/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Training\+Session\+Get\+Eval\+Model\+Output\+Name}]{,  }\item[{\+\_\+\+In\+\_\+ const Ort\+Training\+Session \texorpdfstring{$\ast$}{*}}]{sess,  }\item[{size\+\_\+t}]{index,  }\item[{\+\_\+\+Inout\+\_\+ \mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}} \texorpdfstring{$\ast$}{*}}]{allocator,  }\item[{\+\_\+\+Outptr\+\_\+ char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{output }\end{DoxyParamCaption})}
+
+
+
+Retrieves the names of user outputs in the eval model. 
+
+This function returns the names of outputs of the eval model that can be associated with the Ort\+Value(s) returned by the Ort\+Training\+Api\+::\+Eval\+Step function.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em sess} & The {\ttfamily this} pointer to the training session. \\
+\hline
+\mbox{\texttt{ in}}  & {\em index} & Index of the output name requested. \\
+\hline
+\mbox{\texttt{ in}}  & {\em allocator} & Allocator to use to allocate the memory for the name. \\
+\hline
+\mbox{\texttt{ out}}  & {\em output} & Name of the eval model output at the given index.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_a7fd5a5b77ff1bf312b1cef75f7591c7f}\label{struct_ort_training_api_a7fd5a5b77ff1bf312b1cef75f7591c7f} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [22/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Training\+Session\+Get\+Training\+Model\+Input\+Count}]{,  }\item[{\+\_\+\+In\+\_\+ const Ort\+Training\+Session \texorpdfstring{$\ast$}{*}}]{sess,  }\item[{\+\_\+\+Out\+\_\+ size\+\_\+t \texorpdfstring{$\ast$}{*}}]{out }\end{DoxyParamCaption})}
+
+
+
+Retrieves the number of user inputs in the training model. 
+
+This function returns the number of inputs of the training model so that the user can accordingly allocate the Ort\+Value(s) provided to the Ort\+Training\+Api\+::\+Train\+Step function.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em sess} & The {\ttfamily this} pointer to the training session. \\
+\hline
+\mbox{\texttt{ out}}  & {\em out} & Number of user inputs in the training model.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_a85c347835afb54ec2dc6357183b999c3}\label{struct_ort_training_api_a85c347835afb54ec2dc6357183b999c3} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [23/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Training\+Session\+Get\+Training\+Model\+Input\+Name}]{,  }\item[{\+\_\+\+In\+\_\+ const Ort\+Training\+Session \texorpdfstring{$\ast$}{*}}]{sess,  }\item[{size\+\_\+t}]{index,  }\item[{\+\_\+\+In\+\_\+ \mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}} \texorpdfstring{$\ast$}{*}}]{allocator,  }\item[{\+\_\+\+Outptr\+\_\+ char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{output }\end{DoxyParamCaption})}
+
+
+
+Retrieves the name of the user input at given index in the training model. 
+
+This function returns the names of inputs of the training model that can be associated with the Ort\+Value(s) provided to the Ort\+Training\+Api\+::\+Train\+Step function.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em sess} & The {\ttfamily this} pointer to the training session. \\
+\hline
+\mbox{\texttt{ in}}  & {\em index} & The index of the training model input name requested. \\
+\hline
+\mbox{\texttt{ in}}  & {\em allocator} & The allocator to use to allocate the memory for the requested name. \\
+\hline
+\mbox{\texttt{ out}}  & {\em output} & Name of the user input for the training model at the given index.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_a5183c5164985ddd44930ad209700cab0}\label{struct_ort_training_api_a5183c5164985ddd44930ad209700cab0} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [24/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Training\+Session\+Get\+Training\+Model\+Output\+Count}]{,  }\item[{\+\_\+\+In\+\_\+ const Ort\+Training\+Session \texorpdfstring{$\ast$}{*}}]{sess,  }\item[{\+\_\+\+Out\+\_\+ size\+\_\+t \texorpdfstring{$\ast$}{*}}]{out }\end{DoxyParamCaption})}
+
+
+
+Retrieves the number of user outputs in the training model. 
+
+This function returns the number of outputs of the training model so that the user can allocate space for the number of outputs when Ort\+Training\+Api\+::\+Train\+Step is invoked.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em sess} & The {\ttfamily this} pointer to the training session. \\
+\hline
+\mbox{\texttt{ out}}  & {\em out} & Number of user outputs in the training model.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_a26d5620ee552b84c7111b8505fd85306}\label{struct_ort_training_api_a26d5620ee552b84c7111b8505fd85306} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [25/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Training\+Session\+Get\+Training\+Model\+Output\+Name}]{,  }\item[{\+\_\+\+In\+\_\+ const Ort\+Training\+Session \texorpdfstring{$\ast$}{*}}]{sess,  }\item[{size\+\_\+t}]{index,  }\item[{\+\_\+\+Inout\+\_\+ \mbox{\hyperlink{struct_ort_allocator}{Ort\+Allocator}} \texorpdfstring{$\ast$}{*}}]{allocator,  }\item[{\+\_\+\+Outptr\+\_\+ char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{output }\end{DoxyParamCaption})}
+
+
+
+Retrieves the names of user outputs in the training model. 
+
+This function returns the names of outputs of the training model that can be associated with the Ort\+Value(s) returned by the Ort\+Training\+Api\+::\+Train\+Step function.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em sess} & The {\ttfamily this} pointer to the training session. \\
+\hline
+\mbox{\texttt{ in}}  & {\em index} & Index of the output name requested. \\
+\hline
+\mbox{\texttt{ in}}  & {\em allocator} & Allocator to use to allocate the memory for the name. \\
+\hline
+\mbox{\texttt{ out}}  & {\em output} & Name of the training model output at the given index.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_ad096622bc0705a203f90c93bf374eeb7}\label{struct_ort_training_api_ad096622bc0705a203f90c93bf374eeb7} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_API2\_STATUS@{ORT\_API2\_STATUS}}
+\index{ORT\_API2\_STATUS@{ORT\_API2\_STATUS}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_API2\_STATUS()}{ORT\_API2\_STATUS()}\hspace{0.1cm}{\footnotesize\ttfamily [26/26]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+API2\+\_\+\+STATUS (\begin{DoxyParamCaption}\item[{Train\+Step}]{,  }\item[{\+\_\+\+Inout\+\_\+ Ort\+Training\+Session \texorpdfstring{$\ast$}{*}}]{sess,  }\item[{\+\_\+\+In\+\_\+opt\+\_\+ const Ort\+Run\+Options \texorpdfstring{$\ast$}{*}}]{run\+\_\+options,  }\item[{\+\_\+\+In\+\_\+ size\+\_\+t}]{inputs\+\_\+len,  }\item[{\+\_\+\+In\+\_\+reads\+\_\+(inputs\+\_\+len) const Ort\+Value \texorpdfstring{$\ast$}{*}const \texorpdfstring{$\ast$}{*}}]{inputs,  }\item[{\+\_\+\+In\+\_\+ size\+\_\+t}]{outputs\+\_\+len,  }\item[{\+\_\+\+Inout\+\_\+updates\+\_\+all\+\_\+(outputs\+\_\+len) Ort\+Value \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{outputs }\end{DoxyParamCaption})}
+
+
+
+Computes the outputs of the training model and the gradients of the trainable parameters for the given inputs. 
+
+This function performs a training step that computes the outputs of the training model and the gradients of the trainable parameters for the given inputs. The train step is performed based on the training model that was provided to the training session. The Ort\+Training\+Api\+::\+Train\+Step is equivalent of running forward propagation and backward propagation in a single step. The gradients computed are stored inside the training session state so they can be later consumed by the Ort\+Training\+Api\+::\+Optimizer\+Step function. The gradients can be lazily reset by invoking the Ort\+Training\+Api\+::\+Lazy\+Reset\+Grad function.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em sess} & The {\ttfamily this} pointer to the training session. \\
+\hline
+\mbox{\texttt{ in}}  & {\em run\+\_\+options} & Run options for this training step. \\
+\hline
+\mbox{\texttt{ in}}  & {\em inputs\+\_\+len} & Number of user inputs to the training model. \\
+\hline
+\mbox{\texttt{ in}}  & {\em inputs} & The user inputs to the training model. \\
+\hline
+\mbox{\texttt{ in}}  & {\em outputs\+\_\+len} & Number of user outputs expected from this training step. \\
+\hline
+\mbox{\texttt{ out}}  & {\em outputs} & User outputs computed by train step.\\
+\hline
+\end{DoxyParams}
+Return Value \Hypertarget{struct_ort_training_api_acb3acb32be8edd039d670d17eadb729b}\label{struct_ort_training_api_acb3acb32be8edd039d670d17eadb729b} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_CLASS\_RELEASE@{ORT\_CLASS\_RELEASE}}
+\index{ORT\_CLASS\_RELEASE@{ORT\_CLASS\_RELEASE}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_CLASS\_RELEASE()}{ORT\_CLASS\_RELEASE()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+CLASS\+\_\+\+RELEASE (\begin{DoxyParamCaption}\item[{Checkpoint\+State}]{ }\end{DoxyParamCaption})}
+
+
+
+Frees up the memory used up by the checkpoint state. 
+
+This function frees up any memory that was allocated in the checkpoint state. The checkpoint state can no longer be used after this call. \begin{DoxyNote}{Note}
+Note that the checkpoint state must be released only after the training session has been released. 
+\end{DoxyNote}
+\Hypertarget{struct_ort_training_api_ad993431ed1e5c6d09615c99e7763912a}\label{struct_ort_training_api_ad993431ed1e5c6d09615c99e7763912a} 
+\index{OrtTrainingApi@{OrtTrainingApi}!ORT\_CLASS\_RELEASE@{ORT\_CLASS\_RELEASE}}
+\index{ORT\_CLASS\_RELEASE@{ORT\_CLASS\_RELEASE}!OrtTrainingApi@{OrtTrainingApi}}
+\doxysubsubsection{\texorpdfstring{ORT\_CLASS\_RELEASE()}{ORT\_CLASS\_RELEASE()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Ort\+Training\+Api\+::\+ORT\+\_\+\+CLASS\+\_\+\+RELEASE (\begin{DoxyParamCaption}\item[{Training\+Session}]{ }\end{DoxyParamCaption})}
+
+
+
+Frees up the memory used up by the training session. 
+
+This function frees up any memory that was allocated in the training session. The training session can no longer be used after this call. 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/anim\+Host\+\_\+\+Plugins/\+Basic\+Onnx\+Plugin/onnxruntime/include/onnxruntime\+\_\+training\+\_\+c\+\_\+api.\+h\end{DoxyCompactItemize}

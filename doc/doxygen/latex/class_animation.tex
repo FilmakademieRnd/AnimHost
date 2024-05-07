@@ -1,0 +1,60 @@
+\doxysection{Animation Class Reference}
+\hypertarget{class_animation}{}\label{class_animation}\index{Animation@{Animation}}
+
+
+{\ttfamily \#include $<$commondatatypes.\+h$>$}
+
+
+
+Inheritance diagram for Animation\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=140pt]{class_animation__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Animation\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=140pt]{class_animation__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_animation_a7351528132faf5d7cdf75eafb4c3f547}\label{class_animation_a7351528132faf5d7cdf75eafb4c3f547} 
+{\bfseries Animation} (const \mbox{\hyperlink{class_animation}{Animation}} \&o)
+\item 
+\Hypertarget{class_animation_aca644d34744982159fde3e6168a2890a}\label{class_animation_aca644d34744982159fde3e6168a2890a} 
+{\bfseries Animation} (\mbox{\hyperlink{class_animation}{Animation}} \&\&o) noexcept
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_animation_afd8c566e439e65a79af200f62acf4e6e}\label{class_animation_afd8c566e439e65a79af200f62acf4e6e} 
+float {\bfseries m\+Duration} = 0.\+0
+\item 
+\Hypertarget{class_animation_a8185a483181925d5c0f56099f7749840}\label{class_animation_a8185a483181925d5c0f56099f7749840} 
+int {\bfseries m\+Duration\+Frames} = 0
+\item 
+\Hypertarget{class_animation_af62a3ce6ba726a39efe382341cd53b70}\label{class_animation_af62a3ce6ba726a39efe382341cd53b70} 
+std\+::vector$<$ \mbox{\hyperlink{class_bone}{Bone}} $>$ {\bfseries m\+Bones}
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes inherited from \mbox{\hyperlink{class_sequence}{Sequence}}}
+\begin{DoxyCompactItemize}
+\item 
+QString {\bfseries source\+Name} = "{}"{}
+\item 
+int {\bfseries data\+Set\+ID} = -\/1
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\doxylink{class_animation}{Animation} data structure\+: Duration in seconds and in frames Array of \doxylink{class_bone}{Bone} instances (sorted by ID) -\/\texorpdfstring{$>$}{>} \doxylink{class_bone}{Bone} instances contain sequences of pos/rot/sca of a specific bone (i.\+e. bone motions -\/ see line 54 to 90) 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/m5963/\+Documents/\+Git\+Hub/\+Anim\+Host/\+Anim\+Host/core/commondatatypes.\+h\end{DoxyCompactItemize}

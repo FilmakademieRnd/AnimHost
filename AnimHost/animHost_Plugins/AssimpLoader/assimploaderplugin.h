@@ -8,6 +8,7 @@
 #include <commondatatypes.h>
 #include <nodedatatypes.h>
 #include <QtWidgets>
+#include <UIUtils.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -28,14 +29,19 @@ private:
     QString SourceDirectory = "";
     QString SourceFilePath = "";
 
+    int sequenceCounter = 1;
+
     bool bDataValid;
 
+    //Experimental
+    bool bIsSurvivorChar = true;
+
     QWidget* widget;
+    FolderSelectionWidget* _folderSelect = nullptr;
+    QCheckBox* _subsamplingCheck = nullptr;
     QPushButton* _pushButton;
     QLabel* _label;
     QHBoxLayout* _filePathLayout;
-
-    int globalSequenceCounter = 0;
 
 public:
     AssimpLoaderPlugin();
@@ -60,6 +66,8 @@ public:
 
     void processInData(std::shared_ptr<QtNodes::NodeData> data, QtNodes::PortIndex portIndex) {};
 
+    bool isDataAvailable() override;
+
     void run() override;
 
     QWidget* embeddedWidget() override;
@@ -67,10 +75,22 @@ public:
     QString category() override { return "Import"; }; 
 
 private Q_SLOTS:
-    void onButtonClicked();
+    //void onButtonClicked();
+    void onFolderSelectionChanged();
 
 private:
     void loadAnimationData(aiAnimation* pASSIMPAnimation, Skeleton* pSkeleton, Animation* pAnimation, aiNode* pNode);
+
+
+    /**
+     * This function creates a sub-skeleton from the root bone and the leave bones.
+     * It also updates the loaded animation to match the new sub-skeleton.
+     * Modifies the loaded skeleton and animation!
+     *
+     * @param pRootBone The name of the root bone of the sub-skeleton.
+     * @param pLeaveBones A vector of names of the leave bones of the sub-skeleton.
+     */
+    void UseSubSkeleton(std::string pRootBone, std::vector<std::string> pLeaveBones);
     
     void importAssimpData();
     
