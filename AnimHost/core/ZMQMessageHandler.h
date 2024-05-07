@@ -20,6 +20,7 @@
 #include <QtNetwork/QHostAddress>
 #include "commondatatypes.h"
 #include <QMutex>
+#include <QTimer>
 #include <QObject>
 #include <QMultiMap>
 #include <QElapsedTimer>
@@ -32,7 +33,7 @@
 #include <vector>
 
 
-#include <nzmqt/nzmqt.hpp>
+//#include <nzmqt/nzmqt.hpp>
 #include <zmq.hpp>
 
 typedef unsigned char byte; //!< \typedef unsigned char byte

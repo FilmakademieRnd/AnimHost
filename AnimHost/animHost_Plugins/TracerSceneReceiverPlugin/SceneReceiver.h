@@ -20,7 +20,7 @@
 
 #include <QMutex>
 #include <QThread>
-#include <nzmqt/nzmqt.hpp>
+//#include <nzmqt/nzmqt.hpp>
 
 class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHandler {
 

@@ -13,7 +13,6 @@ GNNController::GNNController(QString networkPath) : NetworkModelPath(networkPath
 {
 	network = std::make_unique<OnnxModel>();	
 	network->LoadOnnxModel(NetworkModelPath);
-
     debugSignal = std::make_shared<DebugSignal>();
 }
 
@@ -35,60 +34,46 @@ void GNNController::prepareInput()
 	}
 
 
-	for (int genIdx = 0; genIdx < ctrlTrajPos.size(); genIdx++) {
+	glm::vec2 updatedRootPos = glm::vec2(0.0, 0.0);
+	glm::quat updatedRootRot = glm::quat(1.0, 0.0, 0.0, 0.0);
+
+	TrajectoryFrameData inferredTrajectoryFrame;
+
+
+
+	for (int genIdx = 1; genIdx < ctrlTrajPos.size(); genIdx++) {
 
 		std::vector<glm::vec2> inTrajPos;
 		std::vector<glm::vec2> inTrajDir;
 		std::vector<glm::vec2> inTrajVel;
 		std::vector<float> inTrajSpeed;
 
-		std::vector<glm::vec3> inJointPos;
-		std::vector<glm::quat> inJointRot;
-		std::vector<glm::vec3> inJointVel;
-
-		std::vector<float> futurePhase;
+		TrajectoryFrameData inTrajFrame;
 
 		//get current root
-		glm::vec2 currentRootPos = ctrlTrajPos[genIdx];
-		glm::quat currentRootRot = ctrlTrajForward[genIdx];
+		
+		glm::vec2 currentRootPos;
+		glm::quat currentRootRot;
+
+		currentRootPos = ctrlTrajPos[genIdx];
+		currentRootRot = ctrlTrajForward[genIdx];
+
+		/*if(genIdx == 1){
+			currentRootPos = ctrlTrajPos[genIdx];
+			currentRootRot = ctrlTrajForward[genIdx];
+		}
+		else{
+			currentRootPos = glm::mix(ctrlTrajPos[genIdx],updatedRootPos,0.5f);
+			currentRootRot = glm::mix(ctrlTrajForward[genIdx], updatedRootRot, 0.5f);
+		}*/
 
 		glm::mat4 trans = glm::translate(glm::mat4(1.0), glm::vec3(currentRootPos.x, 0.0, currentRootPos.y));
 		glm::mat4 root = trans * glm::toMat4(currentRootRot);
 
-		glm::vec3 forward{ 0.0,0.0,1.0 };
+		//glm::vec3 forward{ 0.0,0.0,1.0 };
 
 
-
-		FrameRange frameRange(totalKeys, 60, genIdx, 0);
-
-		//prepare trajectory
-		for (int i : frameRange) {
-
-			int idx = glm::max(i, 0);
-			idx = glm::min(idx, int(controlPath->mControlPath.size() - 1));
-
-			//relative position
-			glm::vec2 pos = MathUtils::PositionTo(ctrlTrajPos[idx], root);
-			inTrajPos.push_back(pos);
-
-			//relative character forward direction
-			auto fwrd = ctrlTrajForward[genIdx] * forward;
-			glm::vec3 dir = MathUtils::DirectionTo(fwrd, root);
-			glm::vec2 dir2d = glm::vec2(dir.x, dir.z);
-
-			inTrajDir.push_back(dir2d);
-
-			//relative velocity
-			glm::vec2 prevPos = ctrlTrajPos[glm::max(0, idx - 1)];
-			glm::vec2 currPos = ctrlTrajPos[idx];
-
-			glm::vec2 vel = (currPos - prevPos) / (1.f / 60.f);
-			glm::vec3 rVelocity = MathUtils::VelocityTo(glm::vec3(vel.x, 0.0, vel.y), root) / 100.f;
-			inTrajVel.push_back({ rVelocity.x,rVelocity.z });
-
-			//Speed
-			inTrajSpeed.push_back(glm::length(rVelocity));
-		}
+		inTrajFrame = BuildTrajectoryFrameData(ctrlTrajPos, ctrlTrajForward, inferredTrajectoryFrame, genIdx, root);
 
 		JointsFrameData inJointFrame;
 
@@ -107,29 +92,30 @@ void GNNController::prepareInput()
 		}
 
 
-		BuildInputTensor(inTrajPos, inTrajDir, inTrajVel, inTrajSpeed,
+		BuildInputTensor(inTrajFrame,
 			inJointFrame);
 
 		//Inference
-		auto outputValues = network->RunInference(input_values);
-
-		std::vector<glm::vec3> outJointPosition;
-		std::vector<glm::quat> outJointRotation;
-		std::vector<glm::vec3> outJointVelocity;
+		auto inferenceOutputValues = network->RunInference(input_values);
 
 		std::vector<std::vector<glm::vec2>> outPhase2D;
 		std::vector<std::vector<float>> outAmplitude;
 		std::vector<std::vector<float>> outFrequency;
 
+
+		TrajectoryFrameData outTrajFrame;
 		JointsFrameData outJointFrame;
 
-		readOutput(outputValues, outJointFrame ,outPhase2D, outAmplitude, outFrequency);
+		glm::vec3 deltaOut = readOutput(inferenceOutputValues, outTrajFrame, outJointFrame ,outPhase2D, outAmplitude, outFrequency);
 
-
+		int outsize = outTrajFrame.pos.size();
+		
 		phaseSequence.IncrementSequence(0, pastKeys);
 		phaseSequence.UpdateSequence(outPhase2D, outFrequency, outAmplitude);
 
-        //pushback frame 10 times
+        
+		
+		//pushback frame 10 times
         for (int i = 0; i < 1; i++) {
             genJointPos.push_back(outJointFrame.jointPos);
             genJointRot.push_back(outJointFrame.jointRot);
@@ -152,11 +138,7 @@ void GNNController::prepareInput()
 			for(auto pos: inTrajPos){
 				debugSignal->currentTrajectoryPosition.push_back({ pos.x,0.0f, pos.y });
 			}
-
 		}
-
-		
-
 	}
 
 	BuildAnimationSequence(genJointRot);
@@ -237,7 +219,55 @@ void GNNController::DebugWriteOutputToFile(const std::vector<float> data, bool o
 	outData.writeRawData((char*)&data[0], data.size() * sizeof(float));
 }
 
-void GNNController::BuildInputTensor(const std::vector<glm::vec2>& pos, const std::vector<glm::vec2>& dir, const std::vector<glm::vec2>& vel, const std::vector<float>& speed, 
+TrajectoryFrameData GNNController::BuildTrajectoryFrameData(const std::vector<glm::vec2> controlTrajectoryPositions, const std::vector<glm::quat>& controlTrajectoryForward, 
+	const TrajectoryFrameData& inferredTrajectoryFrame, int PivotFrame, glm::mat4 Root)
+{
+
+	/* @todo: interpolate between control points and inferred trajectory
+	*/
+
+	TrajectoryFrameData trajFrame;
+
+	glm::vec3 forward{ 0.0,0.0,1.0 };
+
+
+	FrameRange frameRange(totalKeys, 60, PivotFrame, 0);
+
+	//prepare trajectory
+	for (int i : frameRange) {
+
+		int idx = glm::max(i, 0);
+		idx = glm::min(idx, int(controlPath->mControlPath.size() - 1));
+
+		//relative position
+		glm::vec2 pos = MathUtils::PositionTo(ctrlTrajPos[idx], Root);
+		trajFrame.pos.push_back(pos);
+
+		//relative character forward direction
+		auto fwrd = ctrlTrajForward[PivotFrame] * forward;
+		glm::vec3 dir = MathUtils::DirectionTo(fwrd, Root);
+		glm::vec2 dir2d = glm::vec2(dir.x, dir.z);
+
+		trajFrame.dir.push_back(dir2d);
+
+		//relative velocity
+		glm::vec2 prevPos = ctrlTrajPos[glm::max(0, idx - 1)];
+		glm::vec2 currPos = ctrlTrajPos[idx];
+
+		glm::vec2 vel = (currPos - prevPos) / (1.f / 60.f);
+		glm::vec3 rVelocity = MathUtils::VelocityTo(glm::vec3(vel.x, 0.0, vel.y), Root) / 100.f;
+		trajFrame.vel.push_back({ rVelocity.x,rVelocity.z });
+
+		//Speed
+		trajFrame.speed.push_back(glm::length(rVelocity));
+	}
+
+
+
+	return trajFrame;
+}
+
+void GNNController::BuildInputTensor(const TrajectoryFrameData& inTrajFrame,
 	const JointsFrameData& inJointFrame)  {
 
 	std::vector<Rotation6D> jointRot6D = MathUtils::convertQuaternionsTo6DRotations(inJointFrame.jointRot);
@@ -246,17 +276,17 @@ void GNNController::BuildInputTensor(const std::vector<glm::vec2>& pos, const st
 
 	
 
-	for (int i = 0; i < pos.size(); i++) {
-		input_values.push_back(pos[i].x);
-		input_values.push_back(pos[i].y);
+	for (int i = 0; i < inTrajFrame.pos.size(); i++) {
+		input_values.push_back(inTrajFrame.pos[i].x);
+		input_values.push_back(inTrajFrame.pos[i].y);
 
-		input_values.push_back(dir[i].x);
-		input_values.push_back(dir[i].y);
+		input_values.push_back(inTrajFrame.dir[i].x);
+		input_values.push_back(inTrajFrame.dir[i].y);
 
-		input_values.push_back(vel[i].x);
-		input_values.push_back(vel[i].y);
+		input_values.push_back(inTrajFrame.vel[i].x);
+		input_values.push_back(inTrajFrame.vel[i].y);
 
-		input_values.push_back(speed[i]);
+		input_values.push_back(inTrajFrame.speed[i]);
 	}
 
 	for (int i = 0; i < inJointFrame.jointPos.size(); i++) {
@@ -276,40 +306,31 @@ void GNNController::BuildInputTensor(const std::vector<glm::vec2>& pos, const st
 		input_values.push_back(inJointFrame.jointVel[i].z);
 	}
 
-	
-
 	for (auto p : phaseSequence.GetFlattenedPhaseSequence()) {
 		input_values.push_back(p.x);
 		input_values.push_back(p.y);
 	}
 }
 
-void GNNController::readOutput(const std::vector<float>& output_values, JointsFrameData& outJointFrame, 
+glm::vec3 GNNController::readOutput(const std::vector<float>& output_values,TrajectoryFrameData& outTrajectoryFrame, JointsFrameData& outJointFrame,
 	std::vector< std::vector<glm::vec2>>& outPhase2D, 
 	std::vector< std::vector<float>>& outAmplitude, std::vector< std::vector<float>>& outFrequency)
 {
 	int f_idx = 0; //feature index
-	
-	glm::vec2 delta_pos = { output_values[f_idx], output_values[f_idx + 1] };
-	float delta_angle = output_values[f_idx + 2];
+	glm::vec3 delta_out = { output_values[f_idx], output_values[f_idx + 1], output_values[f_idx + 2] };
 
 	f_idx += 3;
 	
-	std::vector<glm::vec2> outTrajPos;
-	std::vector<glm::vec2> outTrajDir;
-	std::vector<glm::vec2> outTrajVel;
-	std::vector<float> outTrajSpeed;
-
 
 	for (int i = pastKeys; i < totalKeys; i++) {
 		
-		outTrajPos.push_back({ output_values[f_idx], output_values[f_idx+1] });
+		outTrajectoryFrame.pos.push_back({ output_values[f_idx], output_values[f_idx+1] });
 
-		outTrajDir.push_back({ output_values[f_idx + 2], output_values[f_idx + 3] });
+		outTrajectoryFrame.dir.push_back({ output_values[f_idx + 2], output_values[f_idx + 3] });
 
-		outTrajVel.push_back({ output_values[f_idx + 4], output_values[f_idx + 5] });
+		outTrajectoryFrame.vel.push_back({ output_values[f_idx + 4], output_values[f_idx + 5] });
 
-		outTrajSpeed.push_back( output_values[f_idx + 6]);
+		outTrajectoryFrame.speed.push_back( output_values[f_idx + 6]);
 
 		f_idx += 7;
 	}
@@ -354,6 +375,8 @@ void GNNController::readOutput(const std::vector<float>& output_values, JointsFr
 	}
 
     outJointFrame.jointRot = MathUtils::convert6DRotationToQuaternions(outJointRot);
+
+	return delta_out;
 
 }
 

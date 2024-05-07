@@ -66,6 +66,9 @@ bool AnimHost::loadPlugins()
     const QStringList entries = pluginsDir.entryList(QDir::Files);
     for (const QString &fileName : entries) {
         QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+        
+        qDebug()<< "Try loading as plugin: " << fileName;
+
         QObject *plugin = pluginLoader.instance();
         if (plugin) {
             PluginInterface* pluginInterface = qobject_cast<PluginInterface* >(plugin);

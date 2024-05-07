@@ -1,7 +1,9 @@
 # Visual Studio cache directory
 .vs/
 
-AnimHost/animHost_Plugins/BasicOnnxPlugin/onnxruntime/
+#AnimHost/animHost_Plugins/BasicOnnxPlugin/onnxruntime/
+
+#onnxruntime.dll
 
 # Mac
 .DS_Store
@@ -34,6 +36,7 @@ build*
 cmake_build*
 cmake*
 !*CMakeLists.txt
+!*CMakePresets.json
 AnimHost/animHost_Plugins/GNNPlugin/DummyData.h
 /python/data
 /python/blendhub-master

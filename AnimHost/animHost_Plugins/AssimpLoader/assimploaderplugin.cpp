@@ -189,7 +189,6 @@ void AssimpLoaderPlugin::onFolderSelectionChanged()
 	SourceDirectory = _folderSelect->GetSelectedDirectory() + "/";
 
 	widget->adjustSize();
-	//widget->parentWidget()->adjustSize();
 	widget->updateGeometry();
 
 	Q_EMIT embeddedWidgetSizeUpdated();
@@ -257,7 +256,6 @@ void AssimpLoaderPlugin::loadAnimationData(aiAnimation* pASSIMPAnimation, Skelet
 //takes the loaded skeleton and animation and creates a sub skeleton from the root bone and the leave bones, loaded animation gets updated
 void AssimpLoaderPlugin::UseSubSkeleton(std::string pRootBone, std::vector<std::string> pLeaveBones) {
 
-
 	auto oAnimation = _animation->getData();
 
 	auto subSkel = _skeleton->getData()->CreateSubSkeleton(pRootBone, pLeaveBones);
@@ -294,8 +292,6 @@ void AssimpLoaderPlugin::UseSubSkeleton(std::string pRootBone, std::vector<std::
 		newIdxCounter++;
 	}
 
-
-
 	//Create copy of SubSkeleton and reset the index of the bones in skeleton
 	Skeleton subSkelCopy = subSkel;
 
@@ -312,7 +308,6 @@ void AssimpLoaderPlugin::UseSubSkeleton(std::string pRootBone, std::vector<std::
 		subSkelCopy.bone_names_reverse[newIdxCounter] = subSkel.bone_names_reverse[idx];
 		newIdxCounter++;
 	}
-
 
 	//update bone hirarchy to match with new bone index
 	for (auto workingBoneIdx : subSkel) {
@@ -375,38 +370,10 @@ void AssimpLoaderPlugin::importAssimpData()
 		_animation->getData()->sequenceID = sequenceCounter;
 
 		sequenceCounter++;
-		//_animation->getData()->uuId = QUuid::createUuid();
 
 		AssimpHelper::buildSkeletonFormAssimpNode(_skeleton->getData().get(), scene->mRootNode);
 
 		std::shared_ptr<Skeleton> skel = _skeleton->getData();
-
-		//print each bone in skeleton bone_names
-		//qDebug() << "Bone Names before Subskeleton: ";
-		//for (auto var : skel->bone_names)
-		//{
-		//	qDebug() << var.first.c_str() << " :: " << var.second;
-		//}
-
-		//auto subSkel = skel->CreateSubSkeleton("hip", { "hand_R", "hand_L" });
-		//qDebug() << "Bone Names after Subskeleton: ";
-		//for (auto var : subSkel.bone_names)
-		//{
-		//	qDebug() << var.first.c_str() << " :: " << var.second;
-		//}
-
-		////test the skeleton iterator
-		//for(auto it= subSkel.begin(); it != subSkel.end(); ++it)
-		//{
-		//	int bone = *it;
-		//	qDebug() << subSkel.bone_names_reverse[bone] << "::" << bone;
-		//}
-
-		//for(auto it: subSkel){
-		//	qDebug() << subSkel.bone_names_reverse[it] << "::" << it;
-		//}
-
-		//skel->bone_names
 
 		loadAnimationData(scene->mAnimations[0], _skeleton->getData().get(), _animation->getData().get(), scene->mRootNode);
 

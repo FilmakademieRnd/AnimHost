@@ -1,5 +1,4 @@
 #include "GNNPlugin_global.h"
-
 #include "HistoryBuffer.h"
 #include "OnnxModel.h"
 #include "PhaseSequence.h"
@@ -28,10 +27,17 @@ struct JointsFrameData
     std::vector<glm::vec3> jointVel;
 };
 
+struct TrajectoryFrameData
+{
+	std::vector<glm::vec2> pos;
+	std::vector<glm::vec2> dir;
+	std::vector<glm::vec2> vel;
+	std::vector<float> speed;
+};
+
 class GNNPLUGINSHARED_EXPORT GNNController
 {
 private:
-
 
     int pastKeys = 6;
     int futureKeys = 6;
@@ -138,6 +144,7 @@ public:
 public:
 
     GNNController(QString networkPath);
+    
     void prepareInput();
 
     void InitDummyData();
@@ -157,12 +164,14 @@ public:
 
 private:
 
+    TrajectoryFrameData BuildTrajectoryFrameData(const std::vector<glm::vec2>controlTrajectoryPositions, const std::vector<glm::quat>& controlTrajectoryForward, 
+        const TrajectoryFrameData& inferredTrajectoryFrame, int PivotFrame, glm::mat4 Root);
     
 
-    void BuildInputTensor(const std::vector<glm::vec2>& pos, const std::vector<glm::vec2>& dir, const std::vector<glm::vec2>& vel, const std::vector<float>& speed,
+    void BuildInputTensor(const TrajectoryFrameData& inTrajFrame,
         const JointsFrameData& inJointFrame);
     
-    void  readOutput(const std::vector<float>& output_values,JointsFrameData& outJointFrame, 
+    glm::vec3  readOutput(const std::vector<float>& output_values, TrajectoryFrameData& outTrajectoryFrame, JointsFrameData& outJointFrame,
         std::vector<std::vector<glm::vec2>>& outPhase2D, std::vector<std::vector<float>>& outAmplitude, 
         std::vector<std::vector<float>>& outFrequency);
 
