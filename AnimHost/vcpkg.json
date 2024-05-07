@@ -3,9 +3,8 @@
     "version-string": "latest",
     "dependencies":[
         "assimp",
-        "qtbase",
         "zeromq",
         "cppzmq",
-        "msgpack"
+        "qtbase"
     ]
 }
