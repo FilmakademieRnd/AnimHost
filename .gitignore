@@ -3,7 +3,8 @@
 
 #AnimHost/animHost_Plugins/BasicOnnxPlugin/onnxruntime/
 
-#onnxruntime.dll
+#Misc
+*.zip
 
 # Mac
 .DS_Store
@@ -30,6 +31,13 @@ ExportedObj/
 #Python
 .ipynb_checkpoints
 
+/python/data
+/python/notebooks/__pycache__
+/python/notebooks/*.txt
+/python/notebooks/*.html
+/python/scripts/__pycache__
+/python/blendhub-master
+
 #Qt
 build*
 *.autosave
@@ -38,8 +46,6 @@ cmake*
 !*CMakeLists.txt
 !*CMakePresets.json
 AnimHost/animHost_Plugins/GNNPlugin/DummyData.h
-/python/data
-/python/blendhub-master
 /AnimHost/bin
 /AnimHost/plugins
 /AnimHost/translations
