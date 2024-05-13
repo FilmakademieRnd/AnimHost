@@ -1,7 +1,0 @@
-<map id="ZMQMessageHandler::setIPAddress" name="ZMQMessageHandler::setIPAddress">
-<area shape="rect" id="Node000001" title="Updates the currently selected IP address." alt="" coords="452,5,606,48"/>
-<area shape="rect" id="Node000002" href="$class_tracer_update_sender_plugin.html#aa5ac3e90ba46dc88381c4d183823e7c0" title="Slot called when the drop&#45;down menu selection changes." alt="" coords="229,5,404,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="436,29,404,29,404,24,436,24"/>
-<area shape="rect" id="Node000003" href="$class_tracer_update_sender_plugin.html#a3addb9cad91ff62c3d86870df2e56b81" title="Initializes the plugin&#39;s UI elements." alt="" coords="5,5,181,48"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="213,29,181,29,181,24,213,24"/>
-</map>

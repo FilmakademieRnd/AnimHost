@@ -1,7 +1,0 @@
-<map id="Ort::SequenceTypeInfo" name="Ort::SequenceTypeInfo">
-<area shape="rect" id="Node000001" title="Wrapper around ::OrtSequenceTypeInfo." alt="" coords="35,171,189,197"/>
-<area shape="rect" id="Node000002" href="$struct_ort_1_1detail_1_1_sequence_type_info_impl.html" title=" " alt="" coords="5,80,219,123"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="115,139,115,170,109,170,109,139"/>
-<area shape="rect" id="Node000003" href="$struct_ort_1_1detail_1_1_base.html" title="Used internally by the C++ API. C++ wrapper types inherit from this. This is a zero cost abstraction ..." alt="" coords="38,5,186,32"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="115,48,115,80,109,80,109,48"/>
-</map>

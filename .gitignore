@@ -3,8 +3,15 @@
 
 #AnimHost/animHost_Plugins/BasicOnnxPlugin/onnxruntime/
 
+# Docs generation
+doc/build/
+doc/generated/
+doc/source/api/
+
 #Misc
 *.zip
+
+
 
 # Mac
 .DS_Store

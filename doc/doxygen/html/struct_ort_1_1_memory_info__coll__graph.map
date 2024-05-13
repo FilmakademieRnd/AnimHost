@@ -1,7 +1,0 @@
-<map id="Ort::MemoryInfo" name="Ort::MemoryInfo">
-<area shape="rect" id="Node000001" title="Wrapper around ::OrtMemoryInfo." alt="" coords="37,171,151,197"/>
-<area shape="rect" id="Node000002" href="$struct_ort_1_1detail_1_1_memory_info_impl.html" title=" " alt="" coords="5,80,183,123"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="97,139,97,170,91,170,91,139"/>
-<area shape="rect" id="Node000003" href="$struct_ort_1_1detail_1_1_base.html" title="Used internally by the C++ API. C++ wrapper types inherit from this. This is a zero cost abstraction ..." alt="" coords="20,5,168,32"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="97,48,97,80,91,80,91,48"/>
-</map>

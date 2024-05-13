@@ -1,5 +1,0 @@
-<map id="Ort::ModelMetadata::GetDomainAllocated" name="Ort::ModelMetadata::GetDomainAllocated">
-<area shape="rect" id="Node000001" title="Returns a copy of the domain name." alt="" coords="5,5,154,48"/>
-<area shape="rect" id="Node000002" href="$namespace_ort.html#a296b5958479d9889218b17bdb08c1894" title="This returns a reference to the OrtApi interface in use." alt="" coords="202,13,289,40"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="154,24,186,24,186,29,154,29"/>
-</map>

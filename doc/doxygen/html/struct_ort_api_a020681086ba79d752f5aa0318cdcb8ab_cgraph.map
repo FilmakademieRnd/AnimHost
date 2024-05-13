@@ -1,5 +1,0 @@
-<map id="OrtApi::ORT_API2_STATUS" name="OrtApi::ORT_API2_STATUS">
-<area shape="rect" id="Node000001" title=": Append execution provider to the session options." alt="" coords="5,5,190,32"/>
-<area shape="rect" id="Node000002" href="$struct_ort_api.html#a11ecc9888ecfb911b0d66eb0862c4862" title="Create an OrtEnv." alt="" coords="238,5,422,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="190,16,222,16,222,21,190,21"/>
-</map>

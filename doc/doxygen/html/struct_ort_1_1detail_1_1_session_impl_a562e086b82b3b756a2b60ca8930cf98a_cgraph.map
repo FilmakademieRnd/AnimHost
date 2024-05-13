@@ -1,5 +1,0 @@
-<map id="Ort::detail::SessionImpl::EndProfilingAllocated" name="Ort::detail::SessionImpl::EndProfilingAllocated">
-<area shape="rect" id="Node000001" title="End profiling and return a copy of the profiling file name." alt="" coords="5,5,163,48"/>
-<area shape="rect" id="Node000002" href="$namespace_ort.html#a296b5958479d9889218b17bdb08c1894" title="This returns a reference to the OrtApi interface in use." alt="" coords="211,13,298,40"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="163,24,195,24,195,29,163,29"/>
-</map>

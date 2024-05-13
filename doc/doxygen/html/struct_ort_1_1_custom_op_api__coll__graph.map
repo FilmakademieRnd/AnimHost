@@ -1,5 +1,0 @@
-<map id="Ort::CustomOpApi" name="Ort::CustomOpApi">
-<area shape="rect" id="Node000001" title="This entire structure is deprecated, but we not marking it as a whole yet since we want to preserve f..." alt="" coords="5,96,134,123"/>
-<area shape="rect" id="Node000002" href="$struct_ort_api.html" title="The C API." alt="" coords="40,5,99,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="72,48,72,95,67,95,67,48"/>
-</map>

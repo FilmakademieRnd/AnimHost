@@ -1,5 +1,0 @@
-<map id="SceneReceiver::requestStart" name="SceneReceiver::requestStart">
-<area shape="rect" id="Node000001" title="Request this process to start working." alt="" coords="259,5,445,32"/>
-<area shape="rect" id="Node000002" href="$class_tracer_scene_receiver_plugin.html#a5802ec65e6e49a65e15d7a415ee3eeb5" title="It&#39;s called when the plugin is started." alt="" coords="5,5,211,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="243,21,211,21,211,16,243,16"/>
-</map>

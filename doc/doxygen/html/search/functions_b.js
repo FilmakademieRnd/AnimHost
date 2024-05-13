@@ -1,9 +1,0 @@
-var searchData=
-[
-  ['makedraftconnection_0',['makeDraftConnection',['../class_qt_nodes_1_1_basic_graphics_scene.html#af5822d7d6249fbf720e36f32662fb095',1,'QtNodes::BasicGraphicsScene::makeDraftConnection(ConnectionId const newConnectionId)'],['../class_qt_nodes_1_1_basic_graphics_scene.html#af5822d7d6249fbf720e36f32662fb095',1,'QtNodes::BasicGraphicsScene::makeDraftConnection(ConnectionId const newConnectionId)']]],
-  ['maptypeinfo_1',['MapTypeInfo',['../struct_ort_1_1_map_type_info.html#ac8b21422b2cfb8bc127aed99082f1602',1,'Ort::MapTypeInfo::MapTypeInfo(std::nullptr_t)'],['../struct_ort_1_1_map_type_info.html#ac3fbee650e27172698ed4ee135b495ca',1,'Ort::MapTypeInfo::MapTypeInfo(OrtMapTypeInfo *p)']]],
-  ['memoryinfo_2',['MemoryInfo',['../struct_ort_1_1_memory_info.html#a4f517caf94801d72a8a0dc306e78747b',1,'Ort::MemoryInfo::MemoryInfo(std::nullptr_t)'],['../struct_ort_1_1_memory_info.html#a64f805cacefdefa63148156e816f1c0d',1,'Ort::MemoryInfo::MemoryInfo(OrtMemoryInfo *p)']]],
-  ['modelmetadata_3',['ModelMetadata',['../struct_ort_1_1_model_metadata.html#a396ffe03318e70e231632c84627ffd37',1,'Ort::ModelMetadata::ModelMetadata(std::nullptr_t)'],['../struct_ort_1_1_model_metadata.html#ae3e92380b90266d5a18e3ca9b3d632a3',1,'Ort::ModelMetadata::ModelMetadata(OrtModelMetadata *p)']]],
-  ['move_4',['move',['../class_qt_nodes_1_1_connection_graphics_object.html#a3f994ad2ffa1b8d51c4786d64e815ef3',1,'QtNodes::ConnectionGraphicsObject::move()'],['../class_qt_nodes_1_1_connection_graphics_object.html#a3f994ad2ffa1b8d51c4786d64e815ef3',1,'QtNodes::ConnectionGraphicsObject::move()']]],
-  ['moveconnections_5',['moveConnections',['../class_qt_nodes_1_1_node_graphics_object.html#a49f19ff9638865cb04abd25ef540a573',1,'QtNodes::NodeGraphicsObject::moveConnections() const'],['../class_qt_nodes_1_1_node_graphics_object.html#a49f19ff9638865cb04abd25ef540a573',1,'QtNodes::NodeGraphicsObject::moveConnections() const']]]
-];

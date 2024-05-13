@@ -1,5 +1,0 @@
-<map id="Ort::detail::ConstValueImpl::GetStringTensorElement" name="Ort::detail::ConstValueImpl::GetStringTensorElement">
-<area shape="rect" id="Node000001" title="Returns string tensor UTF&#45;8 encoded string element. Use of this API is recommended over GetStringTens..." alt="" coords="5,5,183,48"/>
-<area shape="rect" id="Node000002" href="$namespace_ort.html#a296b5958479d9889218b17bdb08c1894" title="This returns a reference to the OrtApi interface in use." alt="" coords="231,13,318,40"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="183,24,215,24,215,29,183,29"/>
-</map>
