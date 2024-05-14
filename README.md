@@ -1,4 +1,4 @@
-# AnimHub
+# AnimHost
 
 ## Setup
 
