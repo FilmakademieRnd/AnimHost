@@ -8,6 +8,44 @@ import math
 import time
 
 
+class FrameRange:
+    def __init__(self, num_samples, fps, reference_frame, start_index):
+        
+        self.fps = fps
+        self.reference_frame = reference_frame
+        self.current_sample_index = start_index
+
+        # Ensure total frames is odd, so the reference frame is always in the middle
+        self.total_frames = 2 * fps + 1
+        
+        self.num_samples = num_samples
+        if num_samples % 2 == 0:
+            self.num_samples += 1
+
+        # Calculate the frame step based on the number of samples
+        intervals = self.num_samples - 1
+        self.frame_step = self.total_frames // intervals
+
+        # Calculate the start frame index so that the reference frame is in the middle
+        self.start_frame_index = self.reference_frame - self.frame_step * (intervals // 2)
+
+    def __iter__(self):
+        return self
+    
+    def __next__(self):
+        if self.current_sample_index >= self.num_samples:
+            raise StopIteration
+        else:
+            frameIndex = self.start_frame_index + self.current_sample_index * self.frame_step
+            self.current_sample_index += 1
+
+            if frameIndex < 0:
+                frameIndex = 0
+
+            return frameIndex
+    
+
+
 def ReadBinary(binaryFile, sampleCount, featureCount):
     bytesPerLine = featureCount * 4
     data = np.empty((sampleCount, featureCount), dtype=np.float32)
@@ -140,6 +178,28 @@ def get_future_window_values(row, phaseValues, selected_columns, window_size=7):
     return window[selected_columns].values.flatten()
 
 
+def get_window_values_(row, phaseValues, selected_columns, num_samples=13, fps=1, start_index=0):
+    seq_id, frame = row.name
+    
+    # Initialize FrameRange with the given parameters
+    frame_range = FrameRange(num_samples=num_samples, fps=60, reference_frame=frame, start_index=start_index)
+    
+    # Generate the frame indices within the specified range
+    frame_indices = list(frame_range)
+    
+    #print(frame_indices)
+    # Create a list of tuples for the multi-index selection
+    index_tuples = [(seq_id, f) for f in frame_indices]
+
+    # Access the rows corresponding to these indices
+    window = phaseValues.loc[index_tuples]
+    
+    if frame % 100 == 0:
+        print(f"Progress: {seq_id}/{frame}", end='\r')
+    
+    return window[selected_columns].values.flatten()
+
+
 
 
 def run_motion_preprocessing(num_phase_channel,dataset_path, phase_param_file, phase_sequence_file):
@@ -233,7 +293,8 @@ class MotionProcessor:
         selected_columns = df_phaseData.columns[df_phaseData.columns.str.startswith('Phase2D_')]
 
         # Apply the get_window_values function
-        phase_window = df_inputData.apply(get_window_values, args=(df_phaseData, selected_columns, 6), axis=1)
+        phase_window  = df_inputData.apply(get_window_values_, args=(df_phaseData, selected_columns, 13, 60), axis=1)
+        #phase_window = df_inputData.apply(get_window_values, args=(df_phaseData, selected_columns, 6), axis=1)
 
         # Merge the dataframes, rename the merged column, and expand the 'PhaseSpace' column into its own dataframe
         df_inputData = df_inputData.merge(phase_window.rename('PhaseSpace').to_frame(), left_index=True, right_index=True)
@@ -275,7 +336,8 @@ class MotionProcessor:
         select_combined = select_phase2d + select_amplitude + select_freq
 
         # Collect Future Phase Values
-        future_phase_values = self.InputData.apply(get_future_window_values, args=(self.PhaseData, select_combined, 7), axis=1)
+        future_phase_values = self.InputData.apply(get_window_values_, args=(self.PhaseData, select_combined, 13, 60, 6), axis=1)
+        #future_phase_values = self.InputData.apply(get_future_window_values, args=(self.PhaseData, select_combined, 7), axis=1)
         
         dfOutDataMrg = pd.merge(df_OutputData, future_phase_values.to_frame(), on=['SeqId','Frame'],how='inner')
         dfOutDataMrg.rename(columns={0: 'PhaseUpdate'}, inplace=True)
@@ -293,7 +355,9 @@ class MotionProcessor:
     
     def export_data(self, folder_path= "../data/"):
         # Export input data
+        print("Exporting data...")
         in_dropped = self.InputData.drop(["Type", "File","SeqUUID"], axis=1)
+        print("Input data shape:", in_dropped.shape)
 
         # Convert DataFrame to a flat float array
         flat_in = array.array('d', in_dropped.to_numpy(dtype=np.float32).flatten())
@@ -318,7 +382,9 @@ class MotionProcessor:
             file.write(" ".join(map(str, IN_std)) + "\n")
 
         # Export output data
+        print("Exporting output data...")
         out_dropped = self.OutputData.drop(["Type", "File","SeqUUID"], axis=1)
+        print("Output data shape:", out_dropped.shape)
 
         flat_out = array.array('d', out_dropped.to_numpy(dtype=np.float32).flatten())
 
@@ -348,4 +414,4 @@ class MotionProcessor:
     def get_raw_output_columns(self):
         return self.OutputData.drop(["Type", "File","SeqUUID"], axis=1).columns
     
-    
+

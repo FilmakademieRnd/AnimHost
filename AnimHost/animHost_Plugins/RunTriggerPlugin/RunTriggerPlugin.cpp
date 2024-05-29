@@ -1,5 +1,6 @@
 
 #include "RunTriggerPlugin.h"
+#include "FrameRange.h"
 #include <QPushButton>
 
 RunTriggerPlugin::RunTriggerPlugin()
@@ -60,7 +61,7 @@ QWidget* RunTriggerPlugin::embeddedWidget()
 
 void RunTriggerPlugin::onButtonClicked()
 {
-	qDebug() << "Example Widget Clicked";
+	qDebug() << "Run Clicked";
 
     emitRunNextNode();
 }

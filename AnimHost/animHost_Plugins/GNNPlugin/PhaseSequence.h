@@ -6,6 +6,7 @@
 #include <QMetaType>
 #include <pluginnodeinterface.h>
 #include "commondatatypes.h"
+#include "FrameRange.h"
 
 #include <glm/gtx/quaternion.hpp>
 #include <glm/ext/quaternion_float.hpp>
@@ -24,27 +25,38 @@
 class GNNPLUGINSHARED_EXPORT PhaseSequence
 {
 	
-	int sequenceLength = 13;
-	int sequencePivot = 6;
+	int sequenceLength = 120 + 1; // 120 frames + 1 pivot frame
+	int sequencePivot = 60; // 60th frame is the pivot frame
 
-	int numChannels = 5;
+	int numChannels = 5; // 5 channels for now, might change depending of complexity of animations
+
+	FrameRange FullFrameWindow;
+	FrameRange FutureFrameWindow;
+
 
 	std::vector<std::vector<float>> phaseSequence;
 	std::vector<std::vector<float>> frequencySequence;
 	std::vector<std::vector<float>> amplitudeSequence;
 	
-
-
-
 public:
 
-	PhaseSequence() {
+	PhaseSequence() : FullFrameWindow(13,60,60), FutureFrameWindow(13,60,60,6) {
+
+		for (int frameIdx : FullFrameWindow) {
+			qDebug() << "Frame Index: " << frameIdx;
+		}
+		
+		for (int frameIdx : FutureFrameWindow) {
+			qDebug() << "Frame Index: " << frameIdx;
+		}
+
 	    phaseSequence = std::vector<std::vector<float>>(sequenceLength, std::vector<float>(numChannels, 0.0f));
 		frequencySequence = std::vector<std::vector<float>>(sequenceLength, std::vector<float>(numChannels, 1.f));
 		amplitudeSequence = std::vector<std::vector<float>>(sequenceLength, std::vector<float>(numChannels, 1.f));
 	};
 
-	void IncrementSequence(int startIdx = 0, int endIdx = 6);
+	void IncrementSequence(int startIdx = 0, int endIdx = 60);
+	void IncrementPastSequence();
 	void UpdateSequence(const std::vector<std::vector<glm::vec2>>& newPhases, const std::vector<std::vector<float>>& newFrequencies,
 		const std::vector<std::vector<float>>& newAmplitudes);	
 	

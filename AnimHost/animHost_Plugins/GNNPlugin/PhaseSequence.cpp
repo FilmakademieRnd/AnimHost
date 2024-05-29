@@ -17,19 +17,21 @@ void PhaseSequence::IncrementSequence(int startIdx, int endIdx)
 	}
 }
 
+void PhaseSequence::IncrementPastSequence() {
+	IncrementSequence(0, sequencePivot);
+}
+
 void PhaseSequence::UpdateSequence(const std::vector<std::vector<glm::vec2>>& newPhases, const std::vector<std::vector<float>>& newFrequencies, const std::vector<std::vector<float>>& newAmplitudes)
 {
 
 	float minAmplitude = 0.01f;
 
-	for(int index = sequencePivot; index < sequenceLength; index++)
+	int inIdx = 0;
+
+	for(int index : FutureFrameWindow)
 	{
-
-		int inIdx = index - sequencePivot;
-
 		for (int channel = 0; channel < numChannels; channel++)
 		{
-
 			float amplitude = glm::abs(newAmplitudes[inIdx][channel]);
 			amplitude = glm::max(amplitude, minAmplitude);
 
@@ -64,12 +66,13 @@ void PhaseSequence::UpdateSequence(const std::vector<std::vector<glm::vec2>>& ne
 				//qDebug() << phaseSequence[index][channel];
 			};
 
-
 			phaseSequence[index][channel] = CalcPhaseValue(mixed);
 			frequencySequence[index][channel] = frequency;
 			amplitudeSequence[index][channel] = amplitude;
 			
 		}
+
+		++inIdx;
 	}
 }
 
@@ -78,11 +81,11 @@ std::vector<glm::vec2> PhaseSequence::GetFlattenedPhaseSequence()
 
 	std::vector<glm::vec2> flattenPhaseSequence;
 
-	for(int i = 0; i < sequenceLength; i++)
+	for(int frame: FullFrameWindow)
 	{
-		for(int j = 0; j< numChannels; j++)
+		for(int channel = 0; channel < numChannels; channel++)
 		{
-			flattenPhaseSequence.push_back(Calculate2dPhase(phaseSequence[i][j], amplitudeSequence[i][j]));
+			flattenPhaseSequence.push_back(Calculate2dPhase(phaseSequence[frame][channel], amplitudeSequence[frame][channel]));
 		}
 	}
 

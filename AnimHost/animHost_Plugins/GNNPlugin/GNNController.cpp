@@ -110,7 +110,7 @@ void GNNController::prepareInput()
 
 		int outsize = outTrajFrame.pos.size();
 		
-		phaseSequence.IncrementSequence(0, pastKeys);
+		phaseSequence.IncrementPastSequence();
 		phaseSequence.UpdateSequence(outPhase2D, outFrequency, outAmplitude);
 
         

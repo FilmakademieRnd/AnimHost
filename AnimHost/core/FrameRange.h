@@ -25,18 +25,19 @@ public:
     FrameIterator(int numSamples, int fps, int referenceFrame, int startIndex = 0)
         : numSamples(numSamples), fps(fps), referenceFrame(referenceFrame), currentSampleIndex(startIndex) {
         // Ensure total frames is odd, so the reference frame is always in the middle
-        totalFrames = 2 * fps + 1;
+        totalFrames = 2 * fps;
 
         if (numSamples % 2 == 0) {
             numSamples++;
         }
 
         // Calculate the frame step based on the number of samples
-        frameStep = round(static_cast<double>(totalFrames) / numSamples);
+        int intervals = numSamples - 1;
+        frameStep = round(static_cast<double>(totalFrames) / intervals);
 
         
         // Calculate the start frame index so that the reference frame is in the middle
-        startFrameIndex = referenceFrame - frameStep * (numSamples / 2);
+        startFrameIndex = referenceFrame - frameStep * (intervals / 2);
     }
 
     /**
@@ -69,11 +70,7 @@ public:
         // Calculate the frame index for the current sample index
         int frameIndex = startFrameIndex + currentSampleIndex * frameStep;
 
-        if (frameIndex < 0) {
-            frameIndex = 0;
-        }
-
-        return frameIndex;
+        return std::max(frameIndex, 0);
     }
 
 
