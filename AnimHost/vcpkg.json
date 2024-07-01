@@ -5,6 +5,7 @@
         "assimp",
         "zeromq",
         "cppzmq",
-        "qtbase"
+        "qtbase",
+        "matplotplusplus"
     ]
 }

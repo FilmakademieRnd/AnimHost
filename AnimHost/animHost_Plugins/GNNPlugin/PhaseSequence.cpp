@@ -37,7 +37,7 @@ void PhaseSequence::UpdateSequence(const std::vector<std::vector<glm::vec2>>& ne
 
 			float frequency = glm::abs(newFrequencies[inIdx][channel]);
 
-			glm::vec2 current = Calculate2dPhase(phaseSequence[index][channel], 1.0);
+			glm::vec2 current = Calculate2dPhase(phaseSequence[index][channel], 1.0f);
 			//glm::vec3 update3d = glm::angleAxis(-frequency * 360.f * (1.f / 60.f), glm::vec3(0.f, 1.f, 0.f)) * glm::vec3(current.x, 0.0f, current.y);
 
 			//rotate current by angle in degrees

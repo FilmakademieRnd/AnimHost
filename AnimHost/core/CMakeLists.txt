@@ -36,6 +36,7 @@ target_link_directories(AnimHostCore PUBLIC
 
 
 find_package(cppzmq CONFIG REQUIRED)
+find_package(Matplot++ REQUIRED)
 
 target_compile_definitions(AnimHostCore PRIVATE
     ANIMHOSTCORE_LIBRARY
@@ -48,6 +49,7 @@ target_link_libraries(AnimHostCore PUBLIC
     Qt6::Network
     cppzmq
     QTNodes
+    Matplot++::matplot
 )
 
 target_include_directories(AnimHostCore INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})

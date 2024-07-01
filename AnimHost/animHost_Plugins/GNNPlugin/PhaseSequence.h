@@ -62,6 +62,17 @@ public:
 	
 	std::vector<glm::vec2> GetFlattenedPhaseSequence();
 
+	std::vector<float> GetFrequencySequence(int channel){
+
+		std::vector<float> freqs;
+		for (int i = 0; i < sequenceLength; i++)
+		{
+			freqs.push_back(frequencySequence[i][channel]);
+		}
+		return freqs;
+
+	}
+
 private:
 	static glm::vec2 Calculate2dPhase(float phaseValue, float amplitude);
 

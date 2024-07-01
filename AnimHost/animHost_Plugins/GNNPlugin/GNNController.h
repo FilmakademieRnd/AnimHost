@@ -3,6 +3,8 @@
 #include "OnnxModel.h"
 #include "PhaseSequence.h"
 
+#include <matplot/matplot.h>
+
 
 /**
  * @struct JointsFrameData
@@ -25,6 +27,13 @@ struct JointsFrameData
     std::vector<glm::vec3> jointPos;
     std::vector<glm::quat> jointRot;
     std::vector<glm::vec3> jointVel;
+
+    void clear()
+    {
+		jointPos.clear();
+		jointRot.clear();
+		jointVel.clear();
+	}
 };
 
 struct TrajectoryFrameData
@@ -33,6 +42,14 @@ struct TrajectoryFrameData
 	std::vector<glm::vec2> dir;
 	std::vector<glm::vec2> vel;
 	std::vector<float> speed;
+
+    void clear()
+    {
+		pos.clear();
+		dir.clear();
+		vel.clear();
+		speed.clear();
+	}
 };
 
 class GNNPLUGINSHARED_EXPORT GNNController
@@ -56,31 +73,17 @@ private:
 
     //desired velocity of character
     std::vector<glm::vec2> ctrlTrajVel;
-
-    /* Initial joint values defining start pose of character animation.
-       Predefined for testing and prototype. */
-
    
 
     /* Phase data */
-    //std::vector<float> Phase;
-    //std::vector<float> Amplitude;
-
-    //std::vector<glm::vec2> phase2D;
-
     PhaseSequence phaseSequence;
 
-    /* Generated  deserialized network output.
-       Cleanup and blending also computet on output. */
   
     //generated positional trajectory of character
-    std::vector<glm::vec2> genTrajPos;
+    std::vector<glm::vec2> genRootPos;
 
     //generated forward facing direction
-    std::vector<glm::vec2> genTrajForward;
-
-    //generated velocity of character
-    std::vector<glm::vec2> genTrajVel;
+    std::vector<glm::quat> genRootForward;
 
     //generated joint positions
     std::vector<std::vector<glm::vec3>> genJointPos;
@@ -91,11 +94,8 @@ private:
     //generated joint velocity
     std::vector<std::vector<glm::vec3>> genJointVel;
 
-
     std::vector<std::vector<glm::vec2>> genPhase2D;
 
-
-    //Skeleton
     std::shared_ptr<Skeleton> skeleton;
 
     std::shared_ptr<ControlPath> controlPath;
@@ -106,24 +106,15 @@ private:
 
     std::shared_ptr<DebugSignal> debugSignal;
 
-
-
-
-    //normalisation
-
-    std::vector<float> stdIn;
-    std::vector<float> meanIn;
-
-    std::vector<float> stdOut;
-    std::vector<float> meanOut;
-
     //in & output tensors
-    std::vector<float> dummyIn;
-    std::vector<float> dummyPhase;
+
     std::vector<float> input_values;
     //std::vector<float> output_values;
 
-    int currentPivot = 0;
+    //Plotting
+
+    matplot::figure_handle figure = nullptr;
+
 
 public:
 
@@ -158,16 +149,21 @@ public:
     std::shared_ptr<Animation> GetAnimationOut();
     std::shared_ptr<DebugSignal> GetDebugSignal(){return debugSignal; }
 
-    void BuildAnimationSequence(const std::vector<std::vector<glm::quat>>& jointRotSequence);
-    
- 
-
 private:
+
+    void InitPlot();
+    void UpdatePlotData(const TrajectoryFrameData& inTrajFrame, const TrajectoryFrameData& outTrajFrame);
+    void DrawPlot();
+
+
+    void clearGeneratedData();
+    void prepareControlTrajectory();
+
+    void BuildAnimationSequence(const std::vector<std::vector<glm::quat>>& jointRotSequence);
 
     TrajectoryFrameData BuildTrajectoryFrameData(const std::vector<glm::vec2>controlTrajectoryPositions, const std::vector<glm::quat>& controlTrajectoryForward, 
         const TrajectoryFrameData& inferredTrajectoryFrame, int PivotFrame, glm::mat4 Root);
     
-
     void BuildInputTensor(const TrajectoryFrameData& inTrajFrame,
         const JointsFrameData& inJointFrame);
     
@@ -177,28 +173,12 @@ private:
 
     std::vector<glm::quat> ConvertRotationsToLocalSpace(const std::vector<glm::quat>& relativeJointRots);
 
-    void DebugWriteOutputToFile(const std::vector<float> data, bool out);
-
-    std::vector<glm::vec3> GetRelativeJointVel(const std::vector<glm::vec3>& globalJointVel, const glm::mat4& root);
-
-    std::vector<glm::vec3>  GetRelativeJointPos(const std::vector<glm::vec3>& globalJointPos, const glm::mat4& root);
-
-    std::vector<glm::quat> GetRelativeJointRot(const std::vector<glm::quat>& globalJointRot, const glm::mat4& root);
-
-    void GetGlobalJointPosition(std::vector<glm::vec3>& globalJointPos, const glm::mat4& root);
-    void GetGlobalJointRotation(std::vector<glm::quat>& globalJointRot, const glm::mat4& root);
-    void GetGlobalJointVelocity(std::vector<glm::vec3>& globalJointVel, const glm::mat4& root);
-
-    int sampleCount() { return pastKeys + futureKeys + 1; }
-
     glm::vec2 Calc2DPhase(float phaseValue, float amplitude);
 
     glm::vec2 Update2DPhase(float amplitude, float frequency, glm::vec2 current, glm::vec2 next, float minAmplitude);
 
     float CalcPhaseValue(glm::vec2 phase);
 
-    glm::mat4 BuildRootTransform(const glm::vec3& pos, const glm::quat& rot);
-
-  
+    glm::mat4 updateRootTranform(const glm::mat4& pos, const glm::vec3& delta, int genIdx);
 
 };

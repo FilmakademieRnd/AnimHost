@@ -185,8 +185,7 @@ void GNNPlugin::run()
                     controller->SetControlPath(controlPath);
 
                     //dummy data
-                    controller->InitDummyData();
-
+           
                     controller->prepareInput();
 
                     auto animOut = controller->GetAnimationOut();

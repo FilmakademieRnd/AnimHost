@@ -166,6 +166,7 @@ void ModeAdaptivePreprocessPlugin::run()
 		sequenceRelativJointRotations.clear();
 		sequenceRelativJointRotations6D.clear();
 
+		Y_SequenceDeltaUpdate.clear();
 		Y_RootSequenceData.clear();
 		Y_SequenceRelativeJointPosition.clear();
 		Y_SequenceRelativeJointVelocities.clear();
@@ -198,55 +199,37 @@ void ModeAdaptivePreprocessPlugin::run()
 void ModeAdaptivePreprocessPlugin::processFrame(int frameCounter, std::shared_ptr<PoseSequence> poseSequenceIn, std::shared_ptr<Animation> animation, std::shared_ptr<JointVelocitySequence> velSeq, std::shared_ptr<Skeleton> skeleton)
 {
 	int referenceFrame = frameCounter;
-	int pastFrameStartIdx = referenceFrame - pastSamples;
 
-	//Get Reference Rotation (converted to matrix)
-	referenceRotation = animation->mBones[rootbone_idx].GetOrientation(referenceFrame);
-	inverseReferenceRotation = glm::inverse(referenceRotation);
-	curretRefPos = poseSequenceIn->GetPositionAtFrame(referenceFrame, rootbone_idx);
-
+	// ==============================
+	// INPUT SECTION
+	// ==============================
 
 	glm::mat4 rootTransform = animation->CalculateRootTransform(referenceFrame, rootbone_idx);
 
 	//Root Trajectory
-
-	std::vector<float> flatTrajectoryData = prepareTrajectoryData(referenceFrame, pastFrameStartIdx, poseSequenceIn, animation, velSeq, curretRefPos, referenceRotation, rootTransform,false);
+	std::vector<float> flatTrajectoryData = prepareTrajectoryData(referenceFrame, animation, rootTransform, false);
 	rootSequenceData.push_back(flatTrajectoryData);
-
 
 	//Current joint positions relative to root position.
 	std::vector<glm::vec3> relativeJointPosition = prepareJointPositions(referenceFrame, poseSequenceIn, rootTransform);
 	sequenceRelativeJointPosition.push_back(relativeJointPosition);
 
-
-	glm::quat referenceJointRotation = animation->mBones[rootbone_idx].GetOrientation(referenceFrame);
-	glm::quat inverseReferenceJointRotation = glm::inverse(referenceJointRotation);
-
 	// Joint Rotations
-	//std::vector<glm::quat> relativeJointRotations = prepareJointRotations(referenceFrame, animation, skeleton, inverseReferenceJointRotation, rootTransform);
-	//convert to 6D rotations
-	//std::vector<Rotation6D> relativeJointRotations6D = MathUtils::convertQuaternionsTo6DRotations(relativeJointRotations);
-	std::vector<Rotation6D> relativeJointRotations6D = prepareJointRotations6D(referenceFrame, animation, skeleton, inverseReferenceJointRotation, rootTransform, false);
-	
-	
+	std::vector<Rotation6D> relativeJointRotations6D = prepareJointRotations6D(referenceFrame, animation, skeleton, rootTransform, false);
 	sequenceRelativJointRotations6D.push_back(relativeJointRotations6D);
 
-	//sequenceRelativJointRotations.push_back(relativeJointRotations);
-
 	// Joint Velocity
-	std::vector<glm::vec3> relativeJointVelocities = prepareJointVelocities(referenceFrame, velSeq, inverseReferenceJointRotation, rootTransform);
-	
-	
+	std::vector<glm::vec3> relativeJointVelocities = prepareJointVelocities(referenceFrame, velSeq, rootTransform);
 	sequenceRelativeJointVelocities.push_back(relativeJointVelocities);
 
-	// For output data
-	glm::vec2 outputRefPos = poseSequenceIn->GetPositionAtFrame(referenceFrame + 1, rootbone_idx);
-	glm::quat outputRefRot = animation->mBones[rootbone_idx].GetOrientation(referenceFrame + 1);
+ 	// ==============================
+	// OUTPUT SECTION
+	// ==============================
 
 	glm::mat4 nextRootTransform = animation->CalculateRootTransform(referenceFrame + 1, rootbone_idx);
-
-
-	std::vector<float> outFlatTrajectoryData = prepareTrajectoryData(referenceFrame, pastFrameStartIdx, poseSequenceIn, animation, velSeq, outputRefPos, outputRefRot, nextRootTransform,true);
+	
+	//Output Root Trajectory
+	std::vector<float> outFlatTrajectoryData = prepareTrajectoryData(referenceFrame, animation, nextRootTransform,true);
 	Y_RootSequenceData.push_back(outFlatTrajectoryData);
 
 	//Output Joint Positions
@@ -254,43 +237,30 @@ void ModeAdaptivePreprocessPlugin::processFrame(int frameCounter, std::shared_pt
 	Y_SequenceRelativeJointPosition.push_back(OutputJointPosition);
 
 	//Output Joint Rotations
-	glm::quat outputRefJointRotation = animation->mBones[rootbone_idx].GetOrientation(referenceFrame + 1);
-	glm::quat invOutputRefJointRotation = glm::inverse(outputRefJointRotation);
-	//std::vector<glm::quat> OutputJointRotations = prepareJointRotations(referenceFrame, animation, skeleton, invOutputRefJointRotation, nextRootTransform, true);
-	////convert to 6D rotations
-	//std::vector<Rotation6D> OutputJointRotations6D = MathUtils::convertQuaternionsTo6DRotations(OutputJointRotations);
-
-	std::vector<Rotation6D> OutputJointRotations6D = prepareJointRotations6D(referenceFrame, animation, skeleton, inverseReferenceJointRotation, nextRootTransform, true);
+	std::vector<Rotation6D> OutputJointRotations6D = prepareJointRotations6D(referenceFrame, animation, skeleton, nextRootTransform, true);
 	Y_SequenceRelativJointRotations6D.push_back(OutputJointRotations6D);
-	//Y_SequenceRelativJointRotations.push_back(OutputJointRotations);
 
 	//Output Joint Velocities
-	std::vector<glm::vec3> OutputJointVelocities = prepareJointVelocities(referenceFrame, velSeq, invOutputRefJointRotation, nextRootTransform);
+	std::vector<glm::vec3> OutputJointVelocities = prepareJointVelocities(referenceFrame, velSeq, nextRootTransform);
 	Y_SequenceRelativeJointVelocities.push_back(OutputJointVelocities);
 
-	//calculate root delta update
-	
-
+	// Calculate root delta update
 	glm::vec2 deltaForward = MathUtils::ForwardTo(nextRootTransform, rootTransform);
 	float angle = glm::orientedAngle({ 0.0, 1.0f }, deltaForward);
-
+	
 	glm::vec2 deltaPos = MathUtils::PositionTo(nextRootTransform, rootTransform);
 
 	glm::vec3 delta = { deltaPos, angle };
 	Y_SequenceDeltaUpdate.push_back(delta);
 }
 
-std::vector<float> ModeAdaptivePreprocessPlugin::prepareTrajectoryData(int referenceFrame, int pastFrameStartIdx, std::shared_ptr<PoseSequence> poseSequenceIn, std::shared_ptr<Animation> animation, std::shared_ptr<JointVelocitySequence> velSeq, glm::vec2 refPos, glm::quat refRot, glm::mat4 Root,bool isOutput)
+std::vector<float> ModeAdaptivePreprocessPlugin::prepareTrajectoryData(int referenceFrame, std::shared_ptr<Animation> animation, glm::mat4 Root,bool isOutput)
 {
-
-
 
 	std::vector<glm::vec2> posTrajectory = std::vector<glm::vec2>(numSamples);
 	std::vector<glm::vec2> forwardTrajectory = std::vector<glm::vec2>(numSamples);
 	std::vector<glm::vec2> velTrajectory = std::vector<glm::vec2>(numSamples);
 	std::vector<float> desSpeedTrajectory = std::vector<float>(numSamples, 0.0f);
-
-	glm::quat invRefRot = glm::inverse(refRot);
 
 	
 	int refIdx = referenceFrame + (isOutput ? 1 : 0);
@@ -360,20 +330,17 @@ std::vector<glm::vec3> ModeAdaptivePreprocessPlugin::prepareJointPositions(int r
 	int frameIdx = referenceFrame + (isOutput ? 1 : 0);
 
 	std::vector<glm::vec3> relativeJointPosition = std::vector<glm::vec3>(poseSequenceIn->mPoseSequence[frameIdx].mPositionData.size());
-	//glm::vec3 referencePosition = poseSequenceIn->mPoseSequence[frameIdx].mPositionData[rootbone_idx];
 
 	for (int i = 0; i < poseSequenceIn->mPoseSequence[frameIdx].mPositionData.size(); i++) {
 		glm::vec3 samplePosition = poseSequenceIn->mPoseSequence[frameIdx].mPositionData[i];
 
-		//TODO skip root / start from specified root
-		//relativeJointPosition[i] = samplePosition - referencePosition;
 		relativeJointPosition[i] = MathUtils::PositionTo(samplePosition, Root);
 	}
 
 	return relativeJointPosition;
 }
 
-std::vector<glm::quat> ModeAdaptivePreprocessPlugin::prepareJointRotations(int referenceFrame, std::shared_ptr<Animation> animation, std::shared_ptr<Skeleton> skeleton, glm::quat inverseReferenceJointRotation, glm::mat4 Root, bool isOutput)
+std::vector<glm::quat> ModeAdaptivePreprocessPlugin::prepareJointRotations(int referenceFrame, std::shared_ptr<Animation> animation, std::shared_ptr<Skeleton> skeleton, glm::mat4 Root, bool isOutput)
 {
 	std::vector<glm::quat> relativeJointRotations = std::vector<glm::quat>(skeleton->mNumBones);
 	std::vector<glm::mat4> transforms;
@@ -400,7 +367,7 @@ std::vector<glm::quat> ModeAdaptivePreprocessPlugin::prepareJointRotations(int r
 	return relativeJointRotations;
 }
 
-std::vector<Rotation6D> ModeAdaptivePreprocessPlugin::prepareJointRotations6D(int referenceFrame, std::shared_ptr<Animation> animation, std::shared_ptr<Skeleton> skeleton, glm::quat inverseReferenceJointRotation, glm::mat4 Root, bool isOutput)
+std::vector<Rotation6D> ModeAdaptivePreprocessPlugin::prepareJointRotations6D(int referenceFrame, std::shared_ptr<Animation> animation, std::shared_ptr<Skeleton> skeleton, glm::mat4 Root, bool isOutput)
 {
 	std::vector<Rotation6D> relativeJointRotations = std::vector<Rotation6D>(skeleton->mNumBones);
 	std::vector<glm::mat4> transforms;
@@ -410,8 +377,6 @@ std::vector<Rotation6D> ModeAdaptivePreprocessPlugin::prepareJointRotations6D(in
 	AnimHostHelper::ForwardKinematics(*skeleton, *animation, transforms, referenceFrame);
 
 	for (int i = 0; i < transforms.size(); i++) {
-
-		//glm::mat4 relativeTransform = MathUtils::RelativeTransform(transforms[i], Root);
 
 		glm::vec3 scale;
 		glm::quat rotation;
@@ -431,14 +396,13 @@ std::vector<Rotation6D> ModeAdaptivePreprocessPlugin::prepareJointRotations6D(in
 
 		Rotation6D rot6D = { coll1.x, coll1.y, coll1.z, coll2.x, coll2.y, coll2.z };
 
-
 		relativeJointRotations[i] = rot6D;
 	}
 
 	return relativeJointRotations;
 }
 
-std::vector<glm::vec3> ModeAdaptivePreprocessPlugin::prepareJointVelocities(int referenceFrame, std::shared_ptr<JointVelocitySequence> velSeq, glm::quat inverseReferenceJointRotation,glm::mat4 Root, bool isOutput)
+std::vector<glm::vec3> ModeAdaptivePreprocessPlugin::prepareJointVelocities(int referenceFrame, std::shared_ptr<JointVelocitySequence> velSeq, glm::mat4 Root, bool isOutput)
 {
 	int frameIdx = referenceFrame + (isOutput ? 1 : 0);
 	// Joint Velocities
@@ -446,7 +410,6 @@ std::vector<glm::vec3> ModeAdaptivePreprocessPlugin::prepareJointVelocities(int 
 
 	for (int i = 0; i < relativeJointVelocities.size(); i++) {
 		relativeJointVelocities[i] = MathUtils::VelocityTo(velSeq->mJointVelocitySequence[frameIdx].mJointVelocity[i], Root);
-		//inverseReferenceJointRotation * velSeq->mJointVelocitySequence[frameIdx].mJointVelocity[i];
 	}
 
 	return relativeJointVelocities;
