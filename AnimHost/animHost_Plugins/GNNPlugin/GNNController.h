@@ -186,10 +186,7 @@ private:
 
     void BuildAnimationSequence(const std::vector<std::vector<glm::quat>>& jointRotSequence, const RootSeries& rootSeries);
 
-    TrajectoryFrameData BuildTrajectoryFrameData(const std::vector<glm::vec2>controlTrajectoryPositions, const std::vector<glm::quat>& controlTrajectoryForward, 
-        const TrajectoryFrameData& inferredTrajectoryFrame, int PivotFrame, glm::mat4 Root);
-
-    TrajectoryFrameData BuildTrajectoryFrameData_NEW(const RootSeries& rootSeries, glm::mat4 Root);
+    TrajectoryFrameData BuildTrajectoryFrameData(const RootSeries& rootSeries, glm::mat4 Root);
 
     
     void BuildInputTensor(const TrajectoryFrameData& inTrajFrame,

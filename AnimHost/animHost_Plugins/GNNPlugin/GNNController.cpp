@@ -154,7 +154,7 @@ void GNNController::prepareInput()
 
 		rootSeries.ApplyControls(futurePath, futureForward, futureVelocity);
 
-		inTrajFrame = BuildTrajectoryFrameData_NEW(rootSeries, root);
+		inTrajFrame = BuildTrajectoryFrameData(rootSeries, root);
 		
 		if (genJointPos.size() <= 0) {
 			// set initial pose for inference to the provided pose
@@ -242,134 +242,7 @@ void GNNController::prepareInput()
 
 } 
 
-
-
-TrajectoryFrameData GNNController::BuildTrajectoryFrameData(const std::vector<glm::vec2> controlTrajectoryPositions, const std::vector<glm::quat>& controlTrajectoryForward, 
-	const TrajectoryFrameData& inferredTrajectoryFrame, int PivotFrame, glm::mat4 Root)
-{
-	TrajectoryFrameData trajFrame;
-
-	glm::vec3 forward{ 0.0,0.0,1.0 };
-
-
-	FrameRange frameRange(totalKeys, 60, PivotFrame, 0);
-
-
-	int count = 0;
-	//prepare trajectory
-	for (int i : frameRange) {
-
-		//qDebug() << "Frame: " << i << "On Pivot: "<< PivotFrame;
-
-		int idx = glm::max(i, 0);
-		idx = glm::min(idx, int(controlPath->mControlPath.size() - 2));
-
-
-		//  relative position
-		glm::vec2 pos;
-		if (idx < PivotFrame) {
-			//use past positions
-			pos = MathUtils::PositionTo(genRootPos[idx], Root);
-		}
-		else {
-			//use future control path positions
-			pos = MathUtils::PositionTo(ctrlTrajPos[idx+1], Root);
-
-			//get infered trajectory
-
-			int myIdx = count - 6;
-			auto inferedPos = inferredTrajectoryFrame.pos[myIdx];
-			//qDebug() << "Infered Pos: " << inferedPos.x << " " << inferedPos.y;
-
-			float blend = 1.f - ((count-6.f) / 7.f) ;
-
-			pos = glm::mix(pos, inferedPos, .5f);
-		}
-
-		trajFrame.pos.push_back(pos);
-
-
-		//relative character forward directio
-		glm::vec3 fwrd;
-		glm::vec3 dir;
-		glm::vec2 dir2d;;
-
-		if (idx < PivotFrame) {
-			fwrd = genRootForward[idx] * forward;
-			dir = MathUtils::DirectionTo(fwrd, Root);
-			dir2d = glm::vec2(dir.x, dir.z);
-		}
-		else {
-			fwrd = ctrlTrajForward[idx+1] * forward;
-			dir = MathUtils::DirectionTo(fwrd, Root);
-			dir2d = glm::vec2(dir.x, dir.z);
-			auto inferedDir = inferredTrajectoryFrame.dir[count - 6];
-
-			float blend = 1.f - ((count - 6.f) / 7.f);
-			dir2d = glm::mix(dir2d, inferedDir, .5f);
-			dir2d = glm::normalize(dir2d);
-		}
-
-		trajFrame.dir.push_back(dir2d);
-
-
-		//relative 
-		glm::vec2 prevPos, currPos;
-		glm::vec3 velocity;
-		if (idx < PivotFrame) {
-			prevPos = genRootPos[glm::max(0, idx - 1)];
-			currPos = genRootPos[idx];
-
-			glm::vec2 vel = (currPos - prevPos) / (1.f / 60.f);
-			velocity = MathUtils::VelocityTo(glm::vec3(vel.x, 0.0, vel.y), Root) / 100.f;
-
-
-			trajFrame.vel.push_back({ velocity.x,velocity.z });
-
-			//Speed
-			trajFrame.speed.push_back(glm::length(velocity));
-
-		}
-		//??? special case required
-		/*else if (idx == PivotFrame+1) {
-			prevPos = genRootPos[idx-1];
-			currPos = ctrlTrajPos[idx];
-
-
-		}*/
-		else {
-			prevPos = ctrlTrajPos[glm::max(0, idx)];
-			currPos = ctrlTrajPos[idx+1];
-
-			glm::vec2 vel = (currPos - prevPos) / (1.f / 60.f);
-			velocity = MathUtils::VelocityTo(glm::vec3(vel.x, 0.0, vel.y), Root) / 100.f;
-
-			auto inferedVel = glm::vec3(inferredTrajectoryFrame.vel[count - 6].x, 0.0f, inferredTrajectoryFrame.vel[count - 6].y);
-
-			float blend = 1.f - ((count - 6.f) / 7.f);
-
-			qDebug () << "Infered Vel: " << inferedVel.x << " " << inferedVel.z;
-			qDebug() << "Current Vel: " << velocity.x << " " << velocity.z;
-			
-			velocity = glm::mix(velocity, inferedVel, 0.5f);
-
-			qDebug() << "Blended Vel: " << velocity.x << " " << velocity.z;
-			qDebug() << "===";
-			trajFrame.vel.push_back({ velocity.x,velocity.z });
-
-			//Speed
-			trajFrame.speed.push_back(glm::length(velocity));
-		}
-
-		
-
-		count++;
-	}
-
-	return trajFrame;
-}
-
-TrajectoryFrameData GNNController::BuildTrajectoryFrameData_NEW(const RootSeries& rootSeries, glm::mat4 Root)
+TrajectoryFrameData GNNController::BuildTrajectoryFrameData(const RootSeries& rootSeries, glm::mat4 Root)
 {
 	TrajectoryFrameData trajFrame;
 	FrameRange frameRange(13, 60, 60);
