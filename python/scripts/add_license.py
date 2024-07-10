@@ -23,7 +23,7 @@ def process_directory(root_dir, exclude_dirs, license_text):
         dirs[:] = [d for d in dirs if os.path.join(subdir, d) not in exclude_dirs]
         
         for file in files:
-            if file.endswith(('.h', '.hpp')):
+            if file.endswith(('.h', '.hpp', '.cpp')):
                 file_path = os.path.join(subdir, file)
                 add_license_to_file(file_path, license_text)
 
