@@ -71,6 +71,26 @@ public:
 		return rotation;
 	}
 
+	static glm::mat4 MixTransform(const glm::mat4& from, const glm::mat4& to, float alphaT, float alphaR, float alphaS) {
+		glm::vec3 scale, skew, translation;
+		glm::vec4 perspective;
+		glm::quat rotation;
+		glm::decompose(from, scale, rotation, translation, skew, perspective);
+		glm::vec3 scale2, skew2, translation2;
+		glm::vec4 perspective2;
+		glm::quat rotation2;
+		glm::decompose(to, scale2, rotation2, translation2, skew2, perspective2);
+		glm::quat mixRot = glm::slerp(rotation, rotation2, alphaR);
+		glm::vec3 mixTrans = glm::mix(translation, translation2, alphaT);
+		glm::vec3 mixScale = glm::mix(scale, scale2, alphaS);
+		glm::mat4 mixMat = glm::translate(glm::mat4(1.0f), mixTrans) * glm::mat4_cast(mixRot) * glm::scale(glm::mat4(1.0f), mixScale);
+		return mixMat;
+	}
+
+	static glm::mat4 MixTransform(const glm::mat4& from, const glm::mat4& to, float alpha) {
+		return MixTransform(from, to, alpha, alpha, alpha);
+	}
+
 	static Rotation6D ConvertRotationTo6D(const glm::quat& rotation) {
 		std::vector<float> result;
 		
@@ -150,8 +170,8 @@ public:
 
 	static glm::vec2 rotateVec2(const glm::vec2& v, float deg) {
 		float rad = glm::radians(deg);
-		glm::mat2 rotMatrix = glm::mat2(glm::cos(rad), -glm::sin(rad),
-			                           glm::sin(rad), glm::cos(rad));
+		glm::mat2 rotMatrix = glm::mat2(glm::cos(rad), glm::sin(rad),
+			                           -glm::sin(rad), glm::cos(rad));
 		return rotMatrix * v;
 	}
 };

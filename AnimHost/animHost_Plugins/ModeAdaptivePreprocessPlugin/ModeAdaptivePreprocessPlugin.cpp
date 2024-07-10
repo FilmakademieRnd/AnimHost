@@ -207,7 +207,7 @@ void ModeAdaptivePreprocessPlugin::processFrame(int frameCounter, std::shared_pt
 	glm::mat4 rootTransform = animation->CalculateRootTransform(referenceFrame, rootbone_idx);
 
 	//Root Trajectory
-	std::vector<float> flatTrajectoryData = prepareTrajectoryData(referenceFrame, animation, rootTransform, false);
+	std::vector<float> flatTrajectoryData = prepareTrajectoryData(referenceFrame + 1, animation, rootTransform, false);
 	rootSequenceData.push_back(flatTrajectoryData);
 
 	//Current joint positions relative to root position.

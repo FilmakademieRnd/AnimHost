@@ -1,6 +1,7 @@
 #include "GNNController.h"
 #include <FileHandler.h>
 #include <FrameRange.h>
+#include "RootSeries.h"
 #include <MathUtils.h>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/ext/quaternion_float.hpp>
@@ -30,10 +31,23 @@ void GNNController::clearGeneratedData() {
 void GNNController::prepareControlTrajectory() {
 	ctrlTrajPos.clear();
 	ctrlTrajForward.clear();
+	int idx = 0;
 
 	for (auto& p : controlPath->mControlPath) {
 		ctrlTrajPos.push_back(glm::vec2(p.position.x, p.position.z) * 100.f);
 		ctrlTrajForward.push_back(p.lookAt);
+
+
+		
+		glm::vec2 prevPos = ctrlTrajPos[glm::max(0, idx - 1)];
+		glm::vec2 currPos = ctrlTrajPos[idx];
+
+		glm::vec2 vel = (currPos - prevPos) / (1.f / 60.f);
+		vel = vel / 100.f;
+
+		ctrlTrajVel.push_back(vel);
+
+		idx++;
 	}
 }
 
@@ -72,24 +86,55 @@ void GNNController::prepareInput()
 
 	JointsFrameData outJointFrame;
 
-	for (int genIdx = 1; genIdx < ctrlTrajPos.size(); genIdx++) {
+
+	RootSeries rootSeries;
+	rootSeries.Setup(glm::translate(glm::vec3(ctrlTrajPos[0].x, 0.0f,ctrlTrajPos[0].y)) * glm::toMat4(ctrlTrajForward[0]));
+
+
+	for (int genIdx = 0; genIdx < ctrlTrajPos.size(); genIdx++) {
 		//get current root
 
-		if(genIdx == 1){
-			currentRootPos = ctrlTrajPos[genIdx];
-			currentRootRot = ctrlTrajForward[genIdx];
-			glm::mat4 trans = glm::translate(glm::mat4(1.0), glm::vec3(currentRootPos.x, 0.0, currentRootPos.y));
-			root = trans * glm::toMat4(currentRootRot);
-		}
-		else{
-			currentRootPos = updatedRootPos;
-			currentRootRot = updatedRootRot;
+		if(genIdx == 0){
+			auto Pos = ctrlTrajPos[genIdx];
+			auto Rot = ctrlTrajForward[genIdx];
+			glm::mat4 trans = glm::translate(glm::mat4(1.0), glm::vec3(Pos.x, 0.0, Pos.y));
+			root = trans * glm::toMat4(Rot);
 		}
 
-		genRootPos.push_back(currentRootPos);
-		genRootForward.push_back(currentRootRot);
+		// ========================================================================================================
+		// Apply Control Path
+		// ========================================================================================================
+		
+		//get control path future positions and forward directions for the next 60 frames
+		std::vector<glm::vec2> futurePath;
+		std::vector<glm::quat> futureForward;
+		std::vector<glm::vec2> futureVelocity;
 
-		inTrajFrame = BuildTrajectoryFrameData(ctrlTrajPos, ctrlTrajForward, outTrajFrame, genIdx, root);
+		int desiredLength = 61;
+		int startIndex = genIdx;
+		int endIndex = std::min(static_cast<int>(ctrlTrajPos.size()), startIndex + desiredLength);
+
+		for (int i = startIndex; i < endIndex; ++i) {
+			futurePath.push_back(ctrlTrajPos[i]);
+			futureForward.push_back(ctrlTrajForward[i]);
+			futureVelocity.push_back(ctrlTrajVel[i]);
+		}
+
+		// If the end is outside of the vector, repeat the last element
+		if (endIndex - startIndex < desiredLength && !ctrlTrajPos.empty()) {
+			glm::vec2 lastPos = futurePath.back();
+			glm::quat lastForward = futureForward.back();
+			glm::vec2 lastVelocity = futureVelocity.back();
+			while (futurePath.size() < desiredLength) {
+				futurePath.push_back(lastPos);
+				futureForward.push_back(lastForward);
+				futureVelocity.push_back(lastVelocity);
+			}
+		}
+
+		rootSeries.ApplyControls(futurePath, futureForward, futureVelocity);
+
+		inTrajFrame = BuildTrajectoryFrameData_NEW(rootSeries, root);
 		
 		if (genJointPos.size() <= 0) {
 			// set initial pose for inference to the provided pose
@@ -114,7 +159,6 @@ void GNNController::prepareInput()
 		std::vector<std::vector<float>> outAmplitude;
 		std::vector<std::vector<float>> outFrequency;
 	
-
 		outTrajFrame.clear();
 		outJointFrame.clear();
 
@@ -131,30 +175,50 @@ void GNNController::prepareInput()
 		// Update Root Transform
 		// ========================================================================================================
 
-		// construct delta/inferred transform
-		glm::quat deltaRot = glm::angleAxis(-deltaOut.z, glm::vec3(0.0, 1.0, 0.0)); // Quat from delta Angle, minus signe required??
-
+		glm::quat deltaRot = glm::angleAxis(-deltaOut.z, glm::vec3(0.0, 1.0, 0.0)); // Quat from delta Angle, minus signe required
 		glm::mat4 deltaTransform = glm::translate(glm::mat4(1.0), glm::vec3(deltaOut.x, 0.0, deltaOut.y)) * glm::toMat4(deltaRot);
 		glm::mat4 inferredRoot = root * deltaTransform;
 
-		glm::vec3 tempPos = root * glm::vec4(0.0, 0.0, 0.0, 1.0);
-		glm::vec2 inferredPos = { tempPos.x,tempPos.z };
-		glm::quat inferredRot = currentRootRot * deltaRot;
+		glm::mat4 nextControlRoot = rootSeries.GetTransform(61);
 
+		root = MathUtils::MixTransform(inferredRoot, nextControlRoot, rootTranslationWeight, rootRotationWeight, 1.f);
 
-		// mix inferred with control path for stability
-		updatedRootPos = glm::mix(ctrlTrajPos[genIdx], inferredPos, 0.2f);
-		updatedRootRot = glm::slerp(ctrlTrajForward[genIdx], inferredRot, 0.7f);
+		rootSeries.UpdateTransform(root, 60);
 
-		//update current root
-		root = glm::translate(glm::mat4(1.0), glm::vec3(updatedRootPos.x, 0.0, updatedRootPos.y)) * glm::toMat4(updatedRootRot);
+		FrameRange frameRange(13, 60, 60, 7); //start at pivot + 1 -> keyindex: 7
+		int tmpIdx = 1; //start at 1 since output still contains the pivot frame
+		
+		for (int i : frameRange) {
 
-		UpdatePlotData(inTrajFrame, outTrajFrame);
-		DrawPlot();
+			auto inferedPos = outTrajFrame.pos[tmpIdx];
+			auto inferedDir = outTrajFrame.dir[tmpIdx];
+			auto inferedVel = outTrajFrame.vel[tmpIdx];
 
+			auto inferedRot = glm::rotation(glm::vec3(0.0, 0.0, 1.0), glm::normalize(glm::vec3(inferedDir.x, 0.0, inferedDir.y)));
+			auto inferedTrans = glm::translate(glm::mat4(1.0), glm::vec3(inferedPos.x, 0.0, inferedPos.y)) * glm::toMat4(inferedRot);
+
+			glm::mat4 newtransform= root * inferedTrans;
+			rootSeries.UpdateTransform(newtransform, i);
+
+			glm::vec3 newvelocity = root * glm::vec4(inferedVel.x, 0.0, inferedVel.y, 0.0);
+			rootSeries.UpdateVelocity(newvelocity, i);
+
+			tmpIdx++;
+		}
+
+		rootSeries.Interpolate(60, 120);
+
+		//History
+		genRootPos.push_back({ root[3][0], root[3][2] });
+		genRootForward.push_back(glm::toQuat(glm::mat4(root)));
+		
+		if (genIdx % 10 == 0) {
+			UpdatePlotData(inTrajFrame, outTrajFrame, rootSeries, futurePath);
+			DrawPlot();
+		}
 	}
 
-	BuildAnimationSequence(genJointRot);
+	BuildAnimationSequence(genJointRot, rootSeries);
 
 } 
 
@@ -175,32 +239,32 @@ TrajectoryFrameData GNNController::BuildTrajectoryFrameData(const std::vector<gl
 	//prepare trajectory
 	for (int i : frameRange) {
 
-		qDebug() << "Frame: " << i << "On Pivot: "<< PivotFrame;
+		//qDebug() << "Frame: " << i << "On Pivot: "<< PivotFrame;
 
 		int idx = glm::max(i, 0);
-		idx = glm::min(idx, int(controlPath->mControlPath.size() - 1));
+		idx = glm::min(idx, int(controlPath->mControlPath.size() - 2));
 
 
 		//  relative position
 		glm::vec2 pos;
-		if (idx <= PivotFrame) {
+		if (idx < PivotFrame) {
 			//use past positions
 			pos = MathUtils::PositionTo(genRootPos[idx], Root);
 		}
 		else {
 			//use future control path positions
-			pos = MathUtils::PositionTo(ctrlTrajPos[idx], Root);
+			pos = MathUtils::PositionTo(ctrlTrajPos[idx+1], Root);
 
 			//get infered trajectory
 
-			auto inferedPos = inferredTrajectoryFrame.pos[count-7];
-			qDebug() << "Infered Pos: " << inferedPos.x << " " << inferedPos.y;
+			int myIdx = count - 6;
+			auto inferedPos = inferredTrajectoryFrame.pos[myIdx];
+			//qDebug() << "Infered Pos: " << inferedPos.x << " " << inferedPos.y;
 
-			float blend = 1.f - ((count-7.f) / 7.f) ;
+			float blend = 1.f - ((count-6.f) / 7.f) ;
 
-			pos = glm::mix(pos, inferedPos, blend);
+			pos = glm::mix(pos, inferedPos, .5f);
 		}
-
 
 		trajFrame.pos.push_back(pos);
 
@@ -210,21 +274,21 @@ TrajectoryFrameData GNNController::BuildTrajectoryFrameData(const std::vector<gl
 		glm::vec3 dir;
 		glm::vec2 dir2d;;
 
-		if (idx <= PivotFrame) {
+		if (idx < PivotFrame) {
 			fwrd = genRootForward[idx] * forward;
 			dir = MathUtils::DirectionTo(fwrd, Root);
 			dir2d = glm::vec2(dir.x, dir.z);
 		}
 		else {
-			fwrd = ctrlTrajForward[idx] * forward;
+			fwrd = ctrlTrajForward[idx+1] * forward;
 			dir = MathUtils::DirectionTo(fwrd, Root);
 			dir2d = glm::vec2(dir.x, dir.z);
-			auto inferedDir = inferredTrajectoryFrame.dir[count - 7];
+			auto inferedDir = inferredTrajectoryFrame.dir[count - 6];
 
-			float blend = 1.f - ((count - 7.f) / 7.f);
-			dir2d = glm::mix(dir2d, inferedDir, blend);
+			float blend = 1.f - ((count - 6.f) / 7.f);
+			dir2d = glm::mix(dir2d, inferedDir, .5f);
+			dir2d = glm::normalize(dir2d);
 		}
-
 
 		trajFrame.dir.push_back(dir2d);
 
@@ -232,7 +296,7 @@ TrajectoryFrameData GNNController::BuildTrajectoryFrameData(const std::vector<gl
 		//relative 
 		glm::vec2 prevPos, currPos;
 		glm::vec3 velocity;
-		if (idx <= PivotFrame) {
+		if (idx < PivotFrame) {
 			prevPos = genRootPos[glm::max(0, idx - 1)];
 			currPos = genRootPos[idx];
 
@@ -254,17 +318,23 @@ TrajectoryFrameData GNNController::BuildTrajectoryFrameData(const std::vector<gl
 
 		}*/
 		else {
-			prevPos = ctrlTrajPos[glm::max(0, idx - 1)];
-			currPos = ctrlTrajPos[idx];
+			prevPos = ctrlTrajPos[glm::max(0, idx)];
+			currPos = ctrlTrajPos[idx+1];
 
 			glm::vec2 vel = (currPos - prevPos) / (1.f / 60.f);
 			velocity = MathUtils::VelocityTo(glm::vec3(vel.x, 0.0, vel.y), Root) / 100.f;
 
-			auto inferedVel = glm::vec3(inferredTrajectoryFrame.vel[count - 7].x, 0.0f, inferredTrajectoryFrame.vel[count - 7].y);
+			auto inferedVel = glm::vec3(inferredTrajectoryFrame.vel[count - 6].x, 0.0f, inferredTrajectoryFrame.vel[count - 6].y);
 
-			float blend = 1.f - ((count - 7.f) / 7.f);
-			velocity = glm::mix(velocity, inferedVel, 0.0f);
+			float blend = 1.f - ((count - 6.f) / 7.f);
 
+			qDebug () << "Infered Vel: " << inferedVel.x << " " << inferedVel.z;
+			qDebug() << "Current Vel: " << velocity.x << " " << velocity.z;
+			
+			velocity = glm::mix(velocity, inferedVel, 0.5f);
+
+			qDebug() << "Blended Vel: " << velocity.x << " " << velocity.z;
+			qDebug() << "===";
 			trajFrame.vel.push_back({ velocity.x,velocity.z });
 
 			//Speed
@@ -274,6 +344,42 @@ TrajectoryFrameData GNNController::BuildTrajectoryFrameData(const std::vector<gl
 		
 
 		count++;
+	}
+
+	return trajFrame;
+}
+
+TrajectoryFrameData GNNController::BuildTrajectoryFrameData_NEW(const RootSeries& rootSeries, glm::mat4 Root)
+{
+	TrajectoryFrameData trajFrame;
+	FrameRange frameRange(13, 60, 60);
+
+	glm::vec3 forward{ 0.0,0.0,1.0 };
+
+	for (int i : frameRange) {
+
+		// Relative Position
+
+		glm::vec3 Pos = MathUtils::PositionTo(rootSeries.GetPosition(i), Root);
+		trajFrame.pos.push_back({ Pos.x, Pos.z });
+
+		// Relative Character Forward Direction
+
+		glm::vec3 charFwrd = rootSeries.GetRotation(i) * forward;
+		charFwrd = MathUtils::DirectionTo(charFwrd, Root);
+		trajFrame.dir.push_back({ charFwrd.x, charFwrd.z });
+
+		// Relative Velocity
+
+		glm::vec3 velocity = rootSeries.GetVelocity(i);
+		velocity = MathUtils::VelocityTo(velocity, Root);
+		trajFrame.vel.push_back({ velocity.x, velocity.z });
+		
+		// Speed
+
+		trajFrame.speed.push_back(glm::length(velocity));
+
+
 	}
 
 	return trajFrame;
@@ -392,7 +498,7 @@ glm::vec3 GNNController::readOutput(const std::vector<float>& output_values,Traj
 
 }
 
-void GNNController::BuildAnimationSequence(const std::vector<std::vector<glm::quat>>& jointRotSequence) {
+void GNNController::BuildAnimationSequence(const std::vector<std::vector<glm::quat>>& jointRotSequence, const RootSeries& rootSeries) {
 
 	int numBones = animationIn->mBones.size();
 
@@ -401,11 +507,11 @@ void GNNController::BuildAnimationSequence(const std::vector<std::vector<glm::qu
 	animationOut->mBones.resize(numBones);
 
 	if (animationIn->mBones.size() != jointRotSequence[0].size()) {
-		qDebug() << "BuildAnimationSequence: Joint Rotations size mismatch";
+		//qDebug() << "BuildAnimationSequence: Joint Rotations size mismatch";
 		return;
 	}
 	else {
-		qDebug() << "BuildAnimationSequence: Init new Animation";
+		//qDebug() << "BuildAnimationSequence: Init new Animation";
 
 		for (int i = 0; i < jointRotSequence[0].size(); i++) {
 			animationOut->mBones[i] = Bone(animationIn->mBones[i], 0);
@@ -425,6 +531,7 @@ void GNNController::BuildAnimationSequence(const std::vector<std::vector<glm::qu
 
 		glm::vec3 pos = genJointPos[frameIdx][0];
 		qDebug() << pos.x << pos.y << pos.z;
+		////get current root
 		animationOut->mBones[0].mPositonKeys.push_back(KeyPosition(frameIdx, glm::vec3(genRootPos[frameIdx].x, pos.y, genRootPos[frameIdx].y)));
 
 	}
@@ -576,7 +683,7 @@ void GNNController::InitPlot() {
 
 }
 
-void GNNController::UpdatePlotData(const TrajectoryFrameData& inTrajFrame, const TrajectoryFrameData& outTrajFrame) {
+void GNNController::UpdatePlotData(const TrajectoryFrameData& inTrajFrame, const TrajectoryFrameData& outTrajFrame, const RootSeries& rootSeries, const std::vector<glm::vec2>& futurePath) {
 
 			std::vector<double> xin(inTrajFrame.pos.size());
 			std::transform(inTrajFrame.pos.begin(), inTrajFrame.pos.end(), xin.begin(), [&](glm::vec2 pos) {return pos.x; });
@@ -596,6 +703,25 @@ void GNNController::UpdatePlotData(const TrajectoryFrameData& inTrajFrame, const
 			matplot::hold(ax, true);
 			ax->scatter(xout, yout);
 			matplot::hold(ax, false);
+
+			auto rootTransforms = rootSeries.GetTransforms();
+			std::vector<double> xRootIn(rootTransforms.size());
+			std::transform(rootTransforms.begin(), rootTransforms.end(), xRootIn.begin(), [&](glm::mat4 t) {return t[3][0]; });
+			std::vector<double> yRootIn(rootTransforms.size());
+			std::transform(rootTransforms.begin(), rootTransforms.end(), yRootIn.begin(), [&](glm::mat4 t) {return t[3][2]; });
+			
+			auto ax1 = matplot::subplot(figure, 2, 2, 1, true);
+
+			ax1->scatter(xRootIn, yRootIn);
+
+			std::vector<double> rootFutureX(futurePath.size());
+			std::transform(futurePath.begin(), futurePath.end(), rootFutureX.begin(), [&](glm::vec2 t) {return t.x; });
+			std::vector<double> rootFutureY(futurePath.size());
+			std::transform(futurePath.begin(), futurePath.end(), rootFutureY.begin(), [&](glm::vec2 t) {return t.y; });
+
+			matplot::hold(ax1, true);
+			ax1->scatter(rootFutureX, rootFutureY);
+			matplot::hold(ax1, false);
 
 
 			std::vector<float> freq = phaseSequence.GetFrequencySequence(0);
@@ -623,6 +749,9 @@ void GNNController::UpdatePlotData(const TrajectoryFrameData& inTrajFrame, const
 			}
 
 			ax3->plot(filteredXphase, filteredYphase);
+			matplot::hold(ax3, true);
+			ax3->scatter({ filteredXphase.back()}, {filteredYphase.back() });
+			matplot::hold(ax3, false);
 
 			filteredXphase.clear();
 			filteredYphase.clear();

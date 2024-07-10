@@ -131,6 +131,12 @@ def write_dataframe_to_cpp_vector_file(dataframe, file_path):
 
     with open(file_path, 'w') as file:
         file.write(cpp_vector)
+
+
+def repeat(t, length):
+    if length == 0:
+        return 0  # Handle the case where length is zero to avoid division by zero.
+    return t % length
     
 
 def calculate_2d_phase_values(row):
@@ -178,9 +184,10 @@ def get_future_window_values(row, phaseValues, selected_columns, window_size=7):
     return window[selected_columns].values.flatten()
 
 
-def get_window_values_(row, phaseValues, selected_columns, num_samples=13, fps=1, start_index=0):
+def get_window_values_(row, phaseValues, selected_columns, num_samples=13, fps=1, start_index=0, is_future=False):
     seq_id, frame = row.name
     
+    frame = frame + 1 if is_future else frame
     # Initialize FrameRange with the given parameters
     frame_range = FrameRange(num_samples=num_samples, fps=60, reference_frame=frame, start_index=start_index)
     
@@ -210,7 +217,7 @@ class MotionProcessor:
         self.num_phase_channel = 5
         self.input_feature_count = 475
         self.output_feature_count = 436
-        self.sample_count = 28349
+        self.sample_count = 56871
 
         self.dataset_path = r"C:\DEV\DATASETS\Survivor_Gen"
         self.trained_phase_param_file = r"C:\DEV\AI4Animation\AI4Animation\SIGGRAPH_2022\PyTorch\PAE\Training\Parameters_30.txt"
@@ -246,7 +253,11 @@ class MotionProcessor:
         [phaseData_header.append(f"PhaseOff{i+1}") for i in range(self.num_phase_channel)]
 
         df_phaseData = pd.DataFrame(phaseData, columns=phaseData_header)
+        cols = [f"PhaseValue{i+1}" for i in range(self.num_phase_channel)]
+        df_phaseData[cols] = df_phaseData[cols].map(lambda t: repeat(t, 1.0))
         df_phaseData = pd.concat([phaseSequence, df_phaseData], axis=1)
+
+        
 
         ## Calculate 2D phase values
         df_phaseValues2D = np.vstack(df_phaseData.apply(lambda row: calculate_2d_phase_values(row), axis=1).to_numpy())
@@ -336,7 +347,7 @@ class MotionProcessor:
         select_combined = select_phase2d + select_amplitude + select_freq
 
         # Collect Future Phase Values
-        future_phase_values = self.InputData.apply(get_window_values_, args=(self.PhaseData, select_combined, 13, 60, 6), axis=1)
+        future_phase_values = self.InputData.apply(get_window_values_, args=(self.PhaseData, select_combined, 13, 60, 6, True), axis=1)
         #future_phase_values = self.InputData.apply(get_future_window_values, args=(self.PhaseData, select_combined, 7), axis=1)
         
         dfOutDataMrg = pd.merge(df_OutputData, future_phase_values.to_frame(), on=['SeqId','Frame'],how='inner')

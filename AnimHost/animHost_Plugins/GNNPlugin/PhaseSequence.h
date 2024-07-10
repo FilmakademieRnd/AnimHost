@@ -51,8 +51,8 @@ public:
 		}
 
 	    phaseSequence = std::vector<std::vector<float>>(sequenceLength, std::vector<float>(numChannels, 0.0f));
-		frequencySequence = std::vector<std::vector<float>>(sequenceLength, std::vector<float>(numChannels, 1.f));
-		amplitudeSequence = std::vector<std::vector<float>>(sequenceLength, std::vector<float>(numChannels, 1.f));
+		frequencySequence = std::vector<std::vector<float>>(sequenceLength, std::vector<float>(numChannels, 0.f));
+		amplitudeSequence = std::vector<std::vector<float>>(sequenceLength, std::vector<float>(numChannels, 0.f));
 	};
 
 	void IncrementSequence(int startIdx = 0, int endIdx = 60);

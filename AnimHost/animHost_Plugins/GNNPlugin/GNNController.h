@@ -2,6 +2,7 @@
 #include "HistoryBuffer.h"
 #include "OnnxModel.h"
 #include "PhaseSequence.h"
+#include "RootSeries.h"
 
 #include <matplot/matplot.h>
 
@@ -62,6 +63,12 @@ private:
     int totalKeys = pastKeys + futureKeys + 1;
 
     int numPhaseChannel = 5;
+
+    /*Mix Weights*/
+    float rootTranslationWeight = 0.5f;
+    float rootRotationWeight = 0.5f;
+    float tau = 1.f;
+
 
     /* Control Trajectory derived from controll signal(offline process) */
     
@@ -138,8 +145,6 @@ public:
     
     void prepareInput();
 
-    void InitDummyData();
-
     void SetSkeleton(std::shared_ptr<Skeleton> skel);
 
     void SetAnimationIn(std::shared_ptr<Animation> anim);
@@ -152,17 +157,20 @@ public:
 private:
 
     void InitPlot();
-    void UpdatePlotData(const TrajectoryFrameData& inTrajFrame, const TrajectoryFrameData& outTrajFrame);
+    void UpdatePlotData(const TrajectoryFrameData& inTrajFrame, const TrajectoryFrameData& outTrajFrame, const RootSeries& rootSeries, const std::vector<glm::vec2>& futurePath);
     void DrawPlot();
 
 
     void clearGeneratedData();
     void prepareControlTrajectory();
 
-    void BuildAnimationSequence(const std::vector<std::vector<glm::quat>>& jointRotSequence);
+    void BuildAnimationSequence(const std::vector<std::vector<glm::quat>>& jointRotSequence, const RootSeries& rootSeries);
 
     TrajectoryFrameData BuildTrajectoryFrameData(const std::vector<glm::vec2>controlTrajectoryPositions, const std::vector<glm::quat>& controlTrajectoryForward, 
         const TrajectoryFrameData& inferredTrajectoryFrame, int PivotFrame, glm::mat4 Root);
+
+    TrajectoryFrameData BuildTrajectoryFrameData_NEW(const RootSeries& rootSeries, glm::mat4 Root);
+
     
     void BuildInputTensor(const TrajectoryFrameData& inTrajFrame,
         const JointsFrameData& inJointFrame);

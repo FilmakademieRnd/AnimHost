@@ -13,6 +13,7 @@ qt_add_library(AnimHostCore SHARED
     FrameRange.h FrameRange.cpp
     MathUtils.h MathUtils.cpp
     animhostcore_global.h
+    TimeSeries.h
 )
 
 
