@@ -59,7 +59,10 @@ private:
     //UI
     QWidget* _widget = nullptr;
     FolderSelectionWidget* _fileSelectionWidget = nullptr;
-   
+    QDoubleSpinBox* _mixRootRotation = nullptr;
+    QDoubleSpinBox* _mixRootTranslation = nullptr;
+    QDoubleSpinBox* _mixControlPath = nullptr;
+
    
 
 public:
@@ -87,7 +90,6 @@ public:
 
 private Q_SLOTS:
     void onFileSelectionChanged();
-
 };
 
 #endif // GNNPLUGINPLUGIN_H

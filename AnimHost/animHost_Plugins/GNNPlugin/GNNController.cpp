@@ -152,7 +152,7 @@ void GNNController::prepareInput()
 			}
 		}
 
-		rootSeries.ApplyControls(futurePath, futureForward, futureVelocity);
+		rootSeries.ApplyControls(futurePath, futureForward, futureVelocity, tau);
 
 		inTrajFrame = BuildTrajectoryFrameData(rootSeries, root);
 		
@@ -423,7 +423,6 @@ void GNNController::BuildAnimationSequence(const std::vector<std::vector<glm::qu
 	for (int frameIdx = 0; frameIdx < genJointPos.size(); frameIdx++) {
 
 		glm::vec3 pos = genJointPos[frameIdx][0];
-		qDebug() << pos.x << pos.y << pos.z;
 		////get current root
 		animationOut->mBones[0].mPositonKeys.push_back(KeyPosition(frameIdx, glm::vec3(genRootPos[frameIdx].x, pos.y, genRootPos[frameIdx].y)));
 

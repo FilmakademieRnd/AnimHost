@@ -203,6 +203,7 @@ void GNNPlugin::run()
                     controller->SetAnimationIn(animation);
                     controller->SetSkeleton(skeleton);
                     controller->SetControlPath(controlPath);
+                    controller->SetMixWeights(_mixRootTranslation->value(), _mixRootRotation->value(), _mixControlPath->value());
 
                     //dummy data
            
@@ -244,14 +245,49 @@ QWidget* GNNPlugin::embeddedWidget()
 {
     if (!_widget) {
        _widget = new QWidget();
+
+
+
        _fileSelectionWidget = new FolderSelectionWidget(_widget, FolderSelectionWidget::File);
 
-       QVBoxLayout* layout = new QVBoxLayout();
 
+       _mixRootRotation = new QDoubleSpinBox(_widget);
+       _mixRootRotation->setRange(0.0, 1.0);
+       _mixRootRotation->setSingleStep(0.01);
+       _mixRootRotation->setValue(0.5);
+
+       _mixRootTranslation = new QDoubleSpinBox(_widget);
+       _mixRootTranslation->setRange(0.0, 1.0);
+       _mixRootTranslation->setSingleStep(0.01);
+       _mixRootTranslation->setValue(0.5);
+
+       _mixControlPath = new QDoubleSpinBox(_widget);
+       _mixControlPath->setRange(0.0, 5.0);
+       _mixControlPath->setSingleStep(0.1);
+       _mixControlPath->setValue(1.0);    
+       
+       QVBoxLayout* layout = new QVBoxLayout();
        layout->addWidget(_fileSelectionWidget);
+
+       QGridLayout* gridLayout = new QGridLayout();
+       gridLayout->addWidget(new QLabel("Mix Root Rotation"), 0, 0);
+       gridLayout->addWidget(_mixRootRotation, 0, 1);
+       gridLayout->addWidget(new QLabel("Mix Root Translation"), 1, 0);
+       gridLayout->addWidget(_mixRootTranslation, 1, 1);
+       gridLayout->addWidget(new QLabel("Mix Control Path"), 2, 0);
+       gridLayout->addWidget(_mixControlPath, 2, 1);
+
+       layout->addLayout(gridLayout);
+
+      
        _widget->setLayout(layout);
 
        connect(_fileSelectionWidget, &FolderSelectionWidget::directoryChanged, this, &GNNPlugin::onFileSelectionChanged);
+
+
+
+
+
 
        _widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
            "QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"
@@ -289,6 +325,7 @@ QWidget* GNNPlugin::embeddedWidget()
     }
     return _widget;
 }
+
 
 void GNNPlugin::onFileSelectionChanged()
 {

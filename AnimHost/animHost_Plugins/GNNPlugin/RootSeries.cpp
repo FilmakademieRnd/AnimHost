@@ -94,8 +94,6 @@ void RootSeries::Interpolate(int startIdx, int endIdx)
 		}
 	
 	};
-
-	qDebug() << "Interpolating";
 }
 
 

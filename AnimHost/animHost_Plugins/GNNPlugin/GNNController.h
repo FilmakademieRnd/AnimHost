@@ -89,7 +89,6 @@ private:
     float rootRotationWeight = 0.5f;
     float tau = 1.f;
 
-
     /* Control Trajectory derived from controll signal(offline process) */
     
     //desired positional trajectory of character
@@ -101,10 +100,8 @@ private:
     //desired velocity of character
     std::vector<glm::vec2> ctrlTrajVel;
    
-
     /* Phase data */
     PhaseSequence phaseSequence;
-
   
     //generated positional trajectory of character
     std::vector<glm::vec2> genRootPos;
@@ -170,6 +167,9 @@ public:
     void SetAnimationIn(std::shared_ptr<Animation> anim);
 
     void SetControlPath(std::shared_ptr<ControlPath> path);
+
+    void SetMixWeights(float translation, float rotation, float controlTau) {
+        rootTranslationWeight = translation; rootRotationWeight = rotation; tau = controlTau; }
 
     std::shared_ptr<Animation> GetAnimationOut();
     std::shared_ptr<DebugSignal> GetDebugSignal(){return debugSignal; }

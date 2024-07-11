@@ -575,7 +575,7 @@ class ANIMHOSTCORESHARED_EXPORT ControlPoint {
     //int styleLabel;
 
     public:
-    ControlPoint() { qDebug() << "ControlPoint()"; };
+    ControlPoint() {};
 
     COMMONDATA(controlPoint, ControlPoint)
 

@@ -473,7 +473,7 @@ void TracerSceneReceiverPlugin::processControlPathByteData(QByteArray* controlPo
 		memcpy(&z, controlPointByteArray->sliced(currentZPos, sizeof(z)), sizeof(z));
 		key.frameTimestamp = frame;
 		key.position = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(x, y, z, 1.0f);
-		qDebug() << "Frame" << frame << "- Pos(" << key.position.x << "," << key.position.y << "," << key.position.z << ")";
+		//qDebug() << "Frame" << frame << "- Pos(" << key.position.x << "," << key.position.y << "," << key.position.z << ")";
 
 
 
@@ -486,7 +486,7 @@ void TracerSceneReceiverPlugin::processControlPathByteData(QByteArray* controlPo
 		glm::vec3 tLookAt = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(x, y, z, 1.0f);
 		key.lookAt = glm::rotation(glm::vec3(0, 0, 1), tLookAt);
 	
-		qDebug() << "Frame" << frame << "- Dir(" << key.lookAt.w << "," << key.lookAt.x << "," << key.lookAt.y << "," << key.lookAt.z << ")";
+		//qDebug() << "Frame" << frame << "- Dir(" << key.lookAt.w << "," << key.lookAt.x << "," << key.lookAt.y << "," << key.lookAt.z << ")";
 		
 		controlPathOut->getData()->mControlPath.push_back(key);
 	}
