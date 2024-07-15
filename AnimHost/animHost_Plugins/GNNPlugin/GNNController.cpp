@@ -333,7 +333,7 @@ glm::vec3 GNNController::readOutput(const std::vector<float>& output_values,Traj
 	f_idx += 3;
 	
 
-	for (int i = pastKeys + 1 i < totalKeys; i++) {
+	for (int i = pastKeys + 1; i < totalKeys; i++) {
 		
 		outTrajectoryFrame.pos.push_back({ output_values[f_idx], output_values[f_idx+1] });
 
