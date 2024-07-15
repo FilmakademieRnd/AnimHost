@@ -206,7 +206,7 @@ void GNNController::prepareInput()
 		rootSeries.UpdateTransform(root, 60);
 
 		FrameRange frameRange(13, 60, 60, 7); //start at pivot + 1 -> keyindex: 7
-		int tmpIdx = 1; //start at 1 since output still contains the pivot frame
+		int tmpIdx = 0; //start at 1 since output still contains the pivot frame
 		
 		for (int i : frameRange) {
 
@@ -333,7 +333,7 @@ glm::vec3 GNNController::readOutput(const std::vector<float>& output_values,Traj
 	f_idx += 3;
 	
 
-	for (int i = pastKeys; i < totalKeys; i++) {
+	for (int i = pastKeys + 1 i < totalKeys; i++) {
 		
 		outTrajectoryFrame.pos.push_back({ output_values[f_idx], output_values[f_idx+1] });
 
@@ -363,7 +363,7 @@ glm::vec3 GNNController::readOutput(const std::vector<float>& output_values,Traj
 		
 	}
 
-	for (int i = 0; i < futureKeys + 1; i++) {
+	for (int i = 0; i < futureKeys + 1 ; i++) {
 
 		outPhase2D.push_back(std::vector<glm::vec2>());
 		outAmplitude.push_back(std::vector<float>());

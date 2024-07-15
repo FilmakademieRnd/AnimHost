@@ -287,7 +287,7 @@ std::vector<float> ModeAdaptivePreprocessPlugin::prepareTrajectoryData(int refer
 
 	// For output data, we only need to calculate the trajectory for the future steps.
 	// 6 is the start index for future steps, including pivot of frame range. Might need to change this if the number of samples changes.
-	int startIdx = isOutput ? 6 : 0;
+	int startIdx = isOutput ? 7 : 0;
 
 	FrameRange frameRange(numSamples, 60, refIdx, startIdx);
 
@@ -598,7 +598,7 @@ void ModeAdaptivePreprocessPlugin::writeMetaData() {
 					featureCount += 3;
 
 					//Root Trajectory. start index at 6 for future steps
-					for (int i = 6; i < numSamples; i++) {
+					for (int i = 7; i < numSamples; i++) {
 						header += ",out_root_pos_x_" + QString::number(i);
 						header += ",out_root_pos_y_" + QString::number(i);
 						header += ",out_root_fwd_x_" + QString::number(i);

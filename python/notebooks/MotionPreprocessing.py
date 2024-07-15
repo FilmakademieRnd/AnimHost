@@ -216,7 +216,7 @@ class MotionProcessor:
     def __init__(self):
         self.num_phase_channel = 5
         self.input_feature_count = 475
-        self.output_feature_count = 436
+        self.output_feature_count = 429
         self.sample_count = 56871
 
         self.dataset_path = r"C:\DEV\DATASETS\Survivor_Gen"
