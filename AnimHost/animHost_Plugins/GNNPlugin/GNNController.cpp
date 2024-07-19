@@ -26,9 +26,10 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/ext/quaternion_float.hpp>
 #include <animhosthelper.h>
-#include <matplot/matplot.h>
+//#include <matplot/matplot.h>
 #include <random>
 #include <algorithm>
+#include <chrono>
 
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtx/vector_angle.hpp>
@@ -96,7 +97,7 @@ void GNNController::prepareInput()
 
 	glm::mat4 root = glm::mat4(1.0);
 
-	InitPlot();
+	//InitPlot();
 
 	glm::vec2 currentRootPos;
 	glm::quat currentRootRot;
@@ -232,10 +233,10 @@ void GNNController::prepareInput()
 		genRootPos.push_back({ root[3][0], root[3][2] });
 		genRootForward.push_back(glm::toQuat(glm::mat4(root)));
 		
-		if (genIdx % 10 == 0) {
-			UpdatePlotData(inTrajFrame, outTrajFrame, rootSeries, futurePath);
-			DrawPlot();
-		}
+		//if (genIdx % 10 == 0) {
+			//UpdatePlotData(inTrajFrame, outTrajFrame, rootSeries, futurePath);
+			//DrawPlot();
+		//}
 	}
 
 	BuildAnimationSequence(genJointRot, rootSeries);
@@ -552,32 +553,32 @@ glm::mat4 GNNController::updateRootTranform(const glm::mat4& pos, const glm::vec
 
 void GNNController::InitPlot() {
 	
-	figure = matplot::figure(true);
-	figure->size(800, 800);
-	
+	//figure = matplot::figure(true);
+	//figure->size(800, 800);
+	//
 
 
-	auto ax = matplot::subplot(figure, 2,2, 0);
-	matplot::xlim(ax, { -600, 600 });
-	matplot::ylim(ax, { -600, 600 });
+	//auto ax = matplot::subplot(figure, 2,2, 0);
+	//matplot::xlim(ax, { -600, 600 });
+	//matplot::ylim(ax, { -600, 600 });
 
 
-	//matplot::show();
-	auto ax2 = matplot::subplot(figure, 2, 2, 1);
-	std::vector<double> c_xin(ctrlTrajPos.size());
-	std::transform(ctrlTrajPos.begin(), ctrlTrajPos.end(), c_xin.begin(), [&](glm::vec2 pos) {return pos.x; });
-	std::vector<double> c_yin(c_xin.size());
-	std::transform(ctrlTrajPos.begin(), ctrlTrajPos.end(), c_yin.begin(), [&](glm::vec2 pos) {return pos.y; });
+	////matplot::show();
+	//auto ax2 = matplot::subplot(figure, 2, 2, 1);
+	//std::vector<double> c_xin(ctrlTrajPos.size());
+	//std::transform(ctrlTrajPos.begin(), ctrlTrajPos.end(), c_xin.begin(), [&](glm::vec2 pos) {return pos.x; });
+	//std::vector<double> c_yin(c_xin.size());
+	//std::transform(ctrlTrajPos.begin(), ctrlTrajPos.end(), c_yin.begin(), [&](glm::vec2 pos) {return pos.y; });
 
-	ax2->scatter(c_xin, c_yin);
-	figure->draw();
+	//ax2->scatter(c_xin, c_yin);
+	//figure->draw();
 
 
 }
 
 void GNNController::UpdatePlotData(const TrajectoryFrameData& inTrajFrame, const TrajectoryFrameData& outTrajFrame, const RootSeries& rootSeries, const std::vector<glm::vec2>& futurePath) {
 
-			std::vector<double> xin(inTrajFrame.pos.size());
+			/*std::vector<double> xin(inTrajFrame.pos.size());
 			std::transform(inTrajFrame.pos.begin(), inTrajFrame.pos.end(), xin.begin(), [&](glm::vec2 pos) {return pos.x; });
 			std::vector<double> yin(xin.size());
 			std::transform(inTrajFrame.pos.begin(), inTrajFrame.pos.end(), yin.begin(), [&](glm::vec2 pos) {return pos.y; });
@@ -658,7 +659,7 @@ void GNNController::UpdatePlotData(const TrajectoryFrameData& inTrajFrame, const
 
 
 
-			figure->draw();
+			figure->draw();*/
 
 }
 

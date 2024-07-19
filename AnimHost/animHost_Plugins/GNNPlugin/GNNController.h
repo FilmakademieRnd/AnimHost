@@ -24,7 +24,7 @@
 #include "PhaseSequence.h"
 #include "RootSeries.h"
 
-#include <matplot/matplot.h>
+//#include <matplot/matplot.h>
 
 
 /**
@@ -136,8 +136,7 @@ private:
     //std::vector<float> output_values;
 
     //Plotting
-
-    matplot::figure_handle figure = nullptr;
+    //matplot::figure_handle figure = nullptr;
 
 
 public:

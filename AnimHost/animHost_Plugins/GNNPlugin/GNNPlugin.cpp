@@ -168,6 +168,7 @@ void GNNPlugin::run()
                 if(auto sp_controlPath = _controlPathIn.lock()) {
 					auto controlPath = sp_controlPath->getData();
 
+                    auto start = std::chrono::high_resolution_clock::now();
 
                     controller = std::make_unique<GNNController>(_NetworkPath);
 
@@ -218,6 +219,15 @@ void GNNPlugin::run()
 
                     _debugSignalOut = std::make_shared<AnimNodeData<DebugSignal>>();
                     _debugSignalOut->setData(controller->GetDebugSignal());
+
+
+                    auto end = std::chrono::high_resolution_clock::now();
+
+                    // Calculate the duration in milliseconds
+                    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+                    // Output the duration
+                   qDebug() << "Generation took " << duration << " milliseconds to execute.";
 
 
 
