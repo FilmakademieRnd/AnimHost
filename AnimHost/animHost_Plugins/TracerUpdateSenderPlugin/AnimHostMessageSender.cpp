@@ -244,7 +244,7 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
     //QByteArray msgRootScl = createMessageBody(targetSceneID, character->sceneObjectID, 2, ZMQMessageHandler::ParameterType::VECTOR3,    rootSclVector);
     //byteArray->append(msgRootScl);
     
-
+    int charRootID = character->characterRootID;
     int nBones = character->skinnedMeshList.at(0).boneMapIDs.size();    // The number of Bones in the targeted character
     for (ushort i = 0; i < nBones; i++) {
         // boneMapIDs contains the parameterID to boneID mapping
@@ -264,28 +264,29 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
                 break;
             }
         }
-        if (animDataBoneID < 0) {
+        
+        // If animation data are applied to a bone, so the bone name has been found in animData at the position animDataBoneID
+        // animDataBoneID is negative when the bone has no animation data associated to its name
+        if (animDataBoneID >= 0) {
             //qDebug() << boneName << "not found in the Animation Data";
-            continue;
+
+            // Getting Bone Object Rotation Quaternion
+            glm::quat boneQuat = animData->mBones.at(animDataBoneID).GetOrientation(frame);
+            glm::vec3 bonePos = animData->mBones.at(animDataBoneID).GetPosition(frame);
+
+            std::vector<float> boneQuatVector = { boneQuat.x, boneQuat.y, boneQuat.z,  boneQuat.w };    // converting glm::quat in vector<float>
+            std::vector<float> bonePosVector = { bonePos.x,  bonePos.y,  bonePos.z };                  // converting glm::vec3 in vector<float>
+
+            //qDebug() << animDataBoneID << boneID << boneName << animData->mBones.at(animDataBoneID).mName << boneQuatVector << bonePosVector;
+
+            QByteArray msgBoneQuat = createMessageBody(targetSceneID, character->sceneObjectID, i + 3,
+                                                       ZMQMessageHandler::ParameterType::QUATERNION, boneQuatVector);
+            QByteArray msgBonePos = createMessageBody(targetSceneID, character->sceneObjectID, i + nBones + 3,
+                                                      ZMQMessageHandler::ParameterType::VECTOR3, bonePosVector);
+
+            byteArray->append(msgBonePos);
+            byteArray->append(msgBoneQuat);
         }
-
-        // Getting Bone Object Rotation Quaternion
-        glm::quat boneQuat = animData->mBones.at(animDataBoneID).GetOrientation(frame);
-        glm::vec3 bonePos  = animData->mBones.at(animDataBoneID).GetPosition(frame);  
-
-        std::vector<float> boneQuatVector = { boneQuat.x, boneQuat.y, boneQuat.z,  boneQuat.w };    // converting glm::quat in vector<float>
-        std::vector<float> bonePosVector  = { bonePos.x,  bonePos.y,  bonePos.z };                  // converting glm::vec3 in vector<float>
-
-        //qDebug() << animDataBoneID << boneID << boneName << animData->mBones.at(animDataBoneID).mName << boneQuatVector << bonePosVector;
-
-        QByteArray msgBoneQuat = createMessageBody(targetSceneID, character->sceneObjectID, i + 3,
-                                                   ZMQMessageHandler::ParameterType::QUATERNION, boneQuatVector);
-        QByteArray msgBonePos  = createMessageBody(targetSceneID, character->sceneObjectID, i + nBones + 3,
-                                                   ZMQMessageHandler::ParameterType::VECTOR3,    bonePosVector);
-        
-        byteArray->append(msgBonePos);
-        byteArray->append(msgBoneQuat);
-        
     }
 }
 
