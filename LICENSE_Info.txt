@@ -1,4 +1,4 @@
-AnimHost - Virtual Production Editing Tools
+AnimHost
  
 Copyright (c) 2024 Filmakademie Baden-Wuerttemberg, Animationsinstitut R&D Labs
 https://research.animationsinstitut.de/animhost
