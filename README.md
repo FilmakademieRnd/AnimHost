@@ -33,7 +33,9 @@ Follow these steps to set up the project on your local machine:
     cmake --build . --config Release
     ```
 ## About
-![AnimHost](/doc/resources/logo_rnd.jpg)
+![](/doc/resources/FA_AI_Logo.png)
+![](/doc/resources/logo_rnd.jpg)
+![](/doc/resources/Max-R_Logo.png)
 
 AnimHost is a development by Filmakademie Baden-Wuerttemberg, Animationsinstitut R&D Labs in the scope of the EU funded project [MAX-R](https://max-r.eu/) (101070072).
 
