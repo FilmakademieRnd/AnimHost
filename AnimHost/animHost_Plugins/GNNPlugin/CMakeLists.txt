@@ -6,6 +6,7 @@ qt_add_library(${target_name}
     GNNPlugin_global.h
     HistoryBuffer.h
     PhaseSequence.h PhaseSequence.cpp
+    RootSeries.h RootSeries.cpp
 )
 target_include_directories(${target_name} PUBLIC
     ../PluginNodeInterface

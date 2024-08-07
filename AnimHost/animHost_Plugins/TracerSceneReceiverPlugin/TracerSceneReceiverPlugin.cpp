@@ -1,3 +1,23 @@
+/*
+ ***************************************************************************************
+
+ *   Copyright (c) 2024 Filmakademie Baden-Wuerttemberg, Animationsinstitut R&D Labs
+ *   https://research.animationsinstitut.de/animhost
+ *   https://github.com/FilmakademieRnd/AnimHost
+ *    
+ *   AnimHost is a development by Filmakademie Baden-Wuerttemberg, Animationsinstitut
+ *   R&D Labs in the scope of the EU funded project MAX-R (101070072).
+ *    
+ *   This program is distributed in the hope that it will be useful, but WITHOUT
+ *   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *   FOR A PARTICULAR PURPOSE. See the MIT License for more details.
+ *   You should have received a copy of the MIT License along with this program; 
+ *   if not go to https://opensource.org/licenses/MIT
+
+ ***************************************************************************************
+ */
+
+ 
 
 #include "TracerSceneReceiverPlugin.h"
 #include "SceneReceiver.h"
@@ -230,7 +250,6 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 	int nodeByteCounter = 0;  // "Bookmark" for reading the scene node byte array and skipping uninteresting sequences of bytes
 	int sceneNodeCounter = 0; // Counting the sceneNodes in order to calculate the objectID
 	int editableSceneNodeCounter = 0; // Counting the sceneNodes that are editable in order to retrieve the sceneObjectID used for the ParameterUpdateMessage
-
 	int characterCounter = 0;
 	CharacterObject* currentChar = new CharacterObject();
 
@@ -358,30 +377,50 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 				break;
 			case GEO:
 				// skip Geometry Node fields
-				// Components: GROUP.size + 1*int + 1*int + 4*float
-				// Size:              112 +     4 +     4 +      16 = 136
+				// Components: 1*int + 1*int + 4*float
+				// Size:           4 +     4 +      16 = 24
 				// Fields
 				// - int geoID
 				// - int  materialID
 				// - vec4 color
-				nodeByteCounter += 136;
+				nodeByteCounter += 24;
+
+				// Create and populate GeometryNodeObject (for now skipping Mesh/Geometry specific fields)
+				sceneNode.sceneObjectID = (editableFlag ? editableSceneNodeCounter : -1); // If this node is editable assign sceneObjectID, otherwise assign -1 (non-editable)
+				sceneNode.characterRootID = -1; // This should/could be changed so that a descendent bone can have a "reference" to the character root
+				sceneNode.objectName = nodeName.toStdString();
+				sceneNode.pos = objPos;
+				sceneNode.rot = objRot;
+				sceneNode.scl = objScale;
+
+				sceneNodeListOut.get()->getData()->mSceneNodeObjectSequence.push_back(sceneNode);
 				break;
 			case LIGHT:
 				// skip Light Node fields
-				// Components: GROUP.size + 1*enum + 3*float + 3*float
-				// Size:              112 +      4 +      12 +      12 = 140
+				// Components: 1*enum + 3*float + 3*float
+				// Size:            4 +      12 +      12 = 28
 				// Fields
 				// - LightType lightType
 				// - float intensity
 				// - float angle
 				// - float range
 				// - vec4 color
-				nodeByteCounter += 140;
+				nodeByteCounter += 28;
+
+				// Create and populate LightNodeObject (for now skipping Light specific fields)
+				sceneNode.sceneObjectID = (editableFlag ? editableSceneNodeCounter : -1); // If this node is editable assign sceneObjectID, otherwise assign -1 (non-editable)
+				sceneNode.characterRootID = -1; // This should/could be changed so that a descendent bone can have a "reference" to the character root
+				sceneNode.objectName = nodeName.toStdString();
+				sceneNode.pos = objPos;
+				sceneNode.rot = objRot;
+				sceneNode.scl = objScale;
+
+				sceneNodeListOut.get()->getData()->mSceneNodeObjectSequence.push_back(sceneNode);
 				break;
 			case CAMERA:
 				// skip Camera Node fields
-				// Components: GROUP.size + 6*float
-				// Size:              112 +      24 = 136
+				// Components: 6*float
+				// Size:            24
 				// Fields
 				// - float fov
 				// - float aspect
@@ -389,7 +428,17 @@ void TracerSceneReceiverPlugin::processSceneNodeByteData(QByteArray* sceneNodeBy
 				// - float far
 				// - float focalDist
 				// - float aperture
-				nodeByteCounter += 136;
+				nodeByteCounter += 24;
+
+				// Create and populate CameraNodeObject (for now skipping Camera specific fields)
+				sceneNode.sceneObjectID = (editableFlag ? editableSceneNodeCounter : -1); // If this node is editable assign sceneObjectID, otherwise assign -1 (non-editable)
+				sceneNode.characterRootID = -1; // This should/could be changed so that a descendent bone can have a "reference" to the character root
+				sceneNode.objectName = nodeName.toStdString();
+				sceneNode.pos = objPos;
+				sceneNode.rot = objRot;
+				sceneNode.scl = objScale;
+
+				sceneNodeListOut.get()->getData()->mSceneNodeObjectSequence.push_back(sceneNode);
 				break;
 			case GROUP:
 				// Create and populate SceneNodeObject
@@ -453,7 +502,7 @@ void TracerSceneReceiverPlugin::processControlPathByteData(QByteArray* controlPo
 		memcpy(&z, controlPointByteArray->sliced(currentZPos, sizeof(z)), sizeof(z));
 		key.frameTimestamp = frame;
 		key.position = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(x, y, z, 1.0f);
-		qDebug() << "Frame" << frame << "- Pos(" << key.position.x << "," << key.position.y << "," << key.position.z << ")";
+		//qDebug() << "Frame" << frame << "- Pos(" << key.position.x << "," << key.position.y << "," << key.position.z << ")";
 
 
 
@@ -466,7 +515,7 @@ void TracerSceneReceiverPlugin::processControlPathByteData(QByteArray* controlPo
 		glm::vec3 tLookAt = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(x, y, z, 1.0f);
 		key.lookAt = glm::rotation(glm::vec3(0, 0, 1), tLookAt);
 	
-		qDebug() << "Frame" << frame << "- Dir(" << key.lookAt.w << "," << key.lookAt.x << "," << key.lookAt.y << "," << key.lookAt.z << ")";
+		//qDebug() << "Frame" << frame << "- Dir(" << key.lookAt.w << "," << key.lookAt.x << "," << key.lookAt.y << "," << key.lookAt.z << ")";
 		
 		controlPathOut->getData()->mControlPath.push_back(key);
 	}

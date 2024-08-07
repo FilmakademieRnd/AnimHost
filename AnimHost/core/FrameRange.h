@@ -1,3 +1,23 @@
+/*
+ ***************************************************************************************
+
+ *   Copyright (c) 2024 Filmakademie Baden-Wuerttemberg, Animationsinstitut R&D Labs
+ *   https://research.animationsinstitut.de/animhost
+ *   https://github.com/FilmakademieRnd/AnimHost
+ *    
+ *   AnimHost is a development by Filmakademie Baden-Wuerttemberg, Animationsinstitut
+ *   R&D Labs in the scope of the EU funded project MAX-R (101070072).
+ *    
+ *   This program is distributed in the hope that it will be useful, but WITHOUT
+ *   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *   FOR A PARTICULAR PURPOSE. See the MIT License for more details.
+ *   You should have received a copy of the MIT License along with this program; 
+ *   if not go to https://opensource.org/licenses/MIT
+
+ ***************************************************************************************
+ */
+
+ 
 #ifndef FRAMERANGE_H
 #define FRAMERANGE_H
 
@@ -25,18 +45,19 @@ public:
     FrameIterator(int numSamples, int fps, int referenceFrame, int startIndex = 0)
         : numSamples(numSamples), fps(fps), referenceFrame(referenceFrame), currentSampleIndex(startIndex) {
         // Ensure total frames is odd, so the reference frame is always in the middle
-        totalFrames = 2 * fps + 1;
+        totalFrames = 2 * fps;
 
         if (numSamples % 2 == 0) {
             numSamples++;
         }
 
         // Calculate the frame step based on the number of samples
-        frameStep = round(static_cast<double>(totalFrames) / numSamples);
+        int intervals = numSamples - 1;
+        frameStep = round(static_cast<double>(totalFrames) / intervals);
 
         
         // Calculate the start frame index so that the reference frame is in the middle
-        startFrameIndex = referenceFrame - frameStep * (numSamples / 2);
+        startFrameIndex = referenceFrame - frameStep * (intervals / 2);
     }
 
     /**
@@ -69,11 +90,7 @@ public:
         // Calculate the frame index for the current sample index
         int frameIndex = startFrameIndex + currentSampleIndex * frameStep;
 
-        if (frameIndex < 0) {
-            frameIndex = 0;
-        }
-
-        return frameIndex;
+        return std::max(frameIndex, 0);
     }
 
 
