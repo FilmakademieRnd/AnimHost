@@ -1,6 +1,10 @@
 # AnimHost
+AnimHost connects animation generators to Digital Content Creation applications, on-set tools like VPET or Game Engines in general. It explores enhanced XR production processes for animated films, utilising machine learning with a “fair use of data” and an “artists in the loop” approach.
+![AnimHost](/doc/resources/AnimHost_Shematic.png)
 
-## Setup
+**AninHost web site:** https://research.animationsinstitut.de/animhost
+
+## Build Instructions
 
 Follow these steps to set up the project on your local machine:
 
@@ -28,3 +32,18 @@ Follow these steps to set up the project on your local machine:
     ```
     cmake --build . --config Release
     ```
+## About
+![](/doc/resources/FA_AI_Logo.png) &nbsp;&nbsp;&nbsp;&nbsp;
+![](/doc/resources/logo_rnd.jpg) &nbsp;&nbsp;&nbsp;&nbsp;
+![](/doc/resources/Max-R_Logo.png)
+
+AnimHost is a development by [Filmakademie Baden-Wuerttemberg](https://filmakademie.de/), [Animationsinstitut R&D Labs](http://research.animationsinstitut.de/) in the scope of the EU funded project [MAX-R](https://max-r.eu/) (101070072).
+
+## Funding
+![Animationsinstitut R&D](/doc/resources/EN_FundedbytheEU_RGB_POS_rs.png)
+
+This project has received funding from the European Union's Horizon Europe Research and Innovation Programme under Grant Agreement No 101070072 MAX-R.
+
+## License
+AnimHost is a open-sorce development by Filmakademie Baden-Wuerttemberg's Animationsinstitut.  
+The framework is licensed under [MIT](LICENSE.txt). See [License info file](LICENSE_Info.txt) for more details.
