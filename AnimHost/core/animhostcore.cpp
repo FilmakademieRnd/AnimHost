@@ -126,7 +126,7 @@ void AnimHost::createNodeFromNodePlugin(std::shared_ptr<PluginNodeInterface> plu
 {
 
     NodeDelegateModelRegistry::RegistryItemCreator creator = [p = plugin]() {  return p->Init(); };
-    nodes->registerModel<NodeDelegateModel>(std::move(creator), plugin->category());
+    nodes->registerModel<PluginNodeInterface>(std::move(creator), plugin->category());
 
 }
 

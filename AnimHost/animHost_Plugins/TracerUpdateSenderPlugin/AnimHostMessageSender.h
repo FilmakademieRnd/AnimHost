@@ -97,20 +97,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMe
     */
     void setAnimationAndSceneData(std::shared_ptr<Animation> ad, std::shared_ptr<CharacterObject> co, std::shared_ptr<SceneNodeObjectSequence> snl);
 
-    //! Creating a TRACER Update Message Body, given a specific bool to send
-    /*! 
-    * Creating a TRACER Update Message Body, given a specific parameter to send. When a multiple Object Parameters have to be updated the various message bodies can be 
-    * concatenated into a larger message, which will be unpacked and processed by the receiver
-    * @param[in]    sceneID     1-byte value representing the ID of the TRACER Scene to be addressed
-    * @param[in]    objectID    2-byte value representing the ID of the specific Scene Object to be addressed
-    * @param[in]    parameterID 2-byte value representing the ID of the specific Object Parameter to be addressed
-    * @param[in]    paramType   The type of the parameter (expressed in "TRACER terms") [ZMQMessageHandler::ParameterType](@ref ZMQMessageHandler::ParameterType)
-    * @param[in]    payload     The actual values to be included in the Update Message
-    * @sa ZMQMessageHandler::ParameterType
-    */
-    QByteArray createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType paramType,
-                                 bool payload);
-    //! Creating a TRACER Update Message Body, given a specific integer to send
+    //! Creating a TRACER Parameter Update Message Body, given a specific vector of floats to send
     /*!
     * Creating a TRACER Update Message Body, given a specific parameter to send. When a multiple Object Parameters have to be updated the various message bodies can be
     * concatenated into a larger message, which will be unpacked and processed by the receiver
@@ -121,57 +108,35 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMe
     * @param[in]    payload     The actual values to be included in the Update Message
     * @sa ZMQMessageHandler::ParameterType
     */
-    QByteArray createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType paramType,
-                                 std::int32_t payload);
-    //! Creating a TRACER Update Message Body, given a specific float to send
-    /*!
-    * Creating a TRACER Update Message Body, given a specific parameter to send. When a multiple Object Parameters have to be updated the various message bodies can be
-    * concatenated into a larger message, which will be unpacked and processed by the receiver
-    * @param[in]    sceneID     1-byte value representing the ID of the TRACER Scene to be addressed
-    * @param[in]    objectID    2-byte value representing the ID of the specific Scene Object to be addressed
-    * @param[in]    parameterID 2-byte value representing the ID of the specific Object Parameter to be addressed
-    * @param[in]    paramType   The type of the parameter (expressed in "TRACER terms") [ZMQMessageHandler::ParameterType](@ref ZMQMessageHandler::ParameterType)
-    * @param[in]    payload     The actual values to be included in the Update Message
-    * @sa ZMQMessageHandler::ParameterType
-    */
-    QByteArray createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType paramType,
-                                 float payload);
-    //! Creating a TRACER Update Message Body, given a specific string to send
-    /*!
-    * Creating a TRACER Update Message Body, given a specific parameter to send. When a multiple Object Parameters have to be updated the various message bodies can be
-    * concatenated into a larger message, which will be unpacked and processed by the receiver
-    * @param[in]    sceneID     1-byte value representing the ID of the TRACER Scene to be addressed
-    * @param[in]    objectID    2-byte value representing the ID of the specific Scene Object to be addressed
-    * @param[in]    parameterID 2-byte value representing the ID of the specific Object Parameter to be addressed
-    * @param[in]    paramType   The type of the parameter (expressed in "TRACER terms") [ZMQMessageHandler::ParameterType](@ref ZMQMessageHandler::ParameterType)
-    * @param[in]    payload     The actual values to be included in the Update Message
-    * @sa ZMQMessageHandler::ParameterType
-    */
-    QByteArray createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType paramType,
-                                 std::string payload);
-    //! Creating a TRACER Update Message Body, given a specific vector of floats to send
-    /*!
-    * Creating a TRACER Update Message Body, given a specific parameter to send. When a multiple Object Parameters have to be updated the various message bodies can be
-    * concatenated into a larger message, which will be unpacked and processed by the receiver
-    * @param[in]    sceneID     1-byte value representing the ID of the TRACER Scene to be addressed
-    * @param[in]    objectID    2-byte value representing the ID of the specific Scene Object to be addressed
-    * @param[in]    parameterID 2-byte value representing the ID of the specific Object Parameter to be addressed
-    * @param[in]    paramType   The type of the parameter (expressed in "TRACER terms") [ZMQMessageHandler::ParameterType](@ref ZMQMessageHandler::ParameterType)
-    * @param[in]    payload     The actual values to be included in the Update Message
-    * @sa ZMQMessageHandler::ParameterType
-    */
-    QByteArray createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType paramType,
-                                 std::vector<float> payload);
+    template<typename T>
+    QByteArray CreateParameterUpdateBody(byte sceneID, uint16_t objectID, uint16_t parameterID, ZMQMessageHandler::ParameterType parameterType, T payload);
+
+    template<>
+    QByteArray CreateParameterUpdateBody<std::string>(byte sceneID, uint16_t objectID, uint16_t parameterID, ZMQMessageHandler::ParameterType parameterType, std::string payload);
+
+    template <typename T>
+    QByteArray createAnimationParameterUpdateBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
+        ZMQMessageHandler::AnimationKeyType keytype, const std::vector < std::pair<float, T>>& Keys, const std::vector < std::pair<float, T>>& tangentKeys, int frame);
     
-    //! Converting any vector to a series of bytes added to a larger series of bytes
-    /*!
-    * Function converting any vector representable in TRACER into a series of bytes added to a larger series of bytes.
-    * It is called by the [createMessageBody](@ref createMessageBody) function
-    * @param[out]   dest    Pointer to byte series, to which the serialised vector will be added
-    * @param[in]    _vector A vector of floats to be serialised
-    * @param[in]    type    The type of the parameter in "TRACER terms" [ZMQMessageHandler::ParameterType](@ref ZMQMessageHandler::ParameterType) necessary to serialise the values correctly
-    */
-    void SerializeVector(byte* dest, std::vector<float> _vector, ZMQMessageHandler::ParameterType type);
+    //! Templated function to convert a single value to a series of bytes
+    template<typename T>
+    void serializeValue(QDataStream& stream, const T& value) {
+        stream.writeRawData(reinterpret_cast<const char*>(&value), sizeof(T));
+    }
+
+    //! Specialization for glm::quat
+    //! TRACER expects quaternions to be sent as 4 floats with the order x,y,z,w
+    //! glm::quat is stored as w,x,y,z
+    template<>
+    void serializeValue<glm::quat>(QDataStream& stream, const glm::quat& value) {
+        stream << value.x << value.y << value.z << value.w; 
+    }
+
+    //! Specialization for std::string
+    template<>
+    void serializeValue<std::string>(QDataStream& stream, const std::string& value) {
+		stream.writeRawData(value.c_str(), value.size());
+	}
 
     //! Converting an animation frame to a series of bytes
     /*!
@@ -185,6 +150,9 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMe
     */
     void SerializePose(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character,
                        std::shared_ptr<SceneNodeObjectSequence> sceneNodeList, QByteArray* byteArray, int frame = 0);
+
+    void SerializeAnimation(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character, 
+                                std::shared_ptr<SceneNodeObjectSequence> sceneNodeList, QByteArray* byteArray, int frame);
 
     //! Indicates whether the sent animation will loop or not
     /*!

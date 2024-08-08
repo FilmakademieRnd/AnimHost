@@ -21,6 +21,7 @@
 #include "pluginnodeinterface.h"
 #include <nodedatatypes.h>
 
+
 unsigned int PluginNodeInterface::nPorts(QtNodes::PortType portType) const
 {
 	if (portType == QtNodes::PortType::In && hasInputRunSignal()) {

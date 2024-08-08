@@ -84,7 +84,7 @@ void CoordinateConverterPlugin::run()
         negW = wButton->isChecked();
         swapYZ = swapYzButton->isChecked();
         
-        /*for(int i = 0; i < animOut->mBones.size(); i++) {
+      /*  for(int i = 0; i < animOut->mBones.size(); i++) {
             int numKeys = animOut->mBones[i].mNumKeysRotation;
             for (int j = 0; j < numKeys; j++) {
                 animOut->mBones[i].mRotationKeys[j].orientation = ConvertToTargetSystem(animOut->mBones[i].mRotationKeys[j].orientation,
@@ -113,31 +113,9 @@ void CoordinateConverterPlugin::run()
         //Apply Transform to Root Bone
         for (int i = 0; i < animOut->mBones[1].mPositonKeys.size(); i++) {
 
-
-             glm::mat4 CoB = glm::mat4(1.0f);
-             CoB[1].y = 0;
-             CoB[1].z = 1;
-
-             CoB[2].y = -1;
-             CoB[2].z = 0;
-             //animOut->mBones[0].mPositonKeys[i].position = CoB  * glm::vec4(animOut->mBones[0].mPositonKeys[i].position, 1.0f) / 100.f;
-
-
-             glm::mat4 mirror = glm::mat4(1.0f);
-             mirror[0].x = -1;
-
-             glm::quat rootRotation = animOut->mBones[0].mRotationKeys[i].orientation * glm::toQuat(AnimHostHelper::GetCoordinateSystemTransformationMatrix());
-             glm::mat4 rootRotationMatrix = CoB * glm::toMat4(rootRotation);
-             //animOut->mBones[0].mRotationKeys[i].orientation = glm::toQuat(rootRotationMatrix);
-
-             CoB= glm::mat4(1.0f);
-             CoB[1].y = 0;
-             CoB[1].z = -1;
-             CoB[2].y = 1;
-             CoB[2].z = 0;
-
-             animOut->mBones[1].mRotationKeys[i].orientation = glm::toQuat(glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix())) * animOut->mBones[0].mRotationKeys[i].orientation * animOut->mBones[1].mRotationKeys[i].orientation;
-             animOut->mBones[1].mPositonKeys[i].position = glm::toQuat(glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix())) * glm::vec3(animOut->mBones[1].mPositonKeys[i].position) ;
+            animOut->mBones[1].mRotationKeys[i].orientation = glm::toQuat(glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix())) * animOut->mBones[0].mRotationKeys[i].orientation * animOut->mBones[1].mRotationKeys[i].orientation;
+            animOut->mBones[1].mPositonKeys[i].position = glm::toQuat(glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix())) * glm::vec3(animOut->mBones[1].mPositonKeys[i].position) ;
+        
         }
 			
         _animationOut->setVariant(QVariant::fromValue(animOut));

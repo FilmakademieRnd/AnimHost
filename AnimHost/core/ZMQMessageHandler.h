@@ -167,6 +167,9 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
         UNKNOWN = 100
     };
 
+    enum AnimationKeyType : byte {
+        STEP, LINEAR, BEZIER
+    };
     //! Returns the size size of each paramter in bytes
     /*!
      * @param[in]   parameterType   The type of parameter
