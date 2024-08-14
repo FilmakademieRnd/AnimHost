@@ -514,8 +514,8 @@ void TracerSceneReceiverPlugin::processControlPathByteData(QByteArray* controlPo
 		memcpy(&z, controlPointByteArray->sliced(currentZDir, sizeof(z)), sizeof(z));
 		glm::vec3 tLookAt = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(x, y, z, 0.0f);
 
-		//key.lookAt = glm::rotation(glm::vec3(0, 0, 1), tLookAt);
-		key.lookAt = glm::angleAxis(z, glm::vec3(0, 1, 0));
+		key.lookAt = glm::rotation(glm::vec3(0, 0, 1), tLookAt);
+		//key.lookAt = glm::angleAxis(z, glm::vec3(0, 1, 0));
 	
 		//qDebug() << "Frame" << frame << "- Dir(" << key.lookAt.w << "," << key.lookAt.x << "," << key.lookAt.y << "," << key.lookAt.z << ")";
 		

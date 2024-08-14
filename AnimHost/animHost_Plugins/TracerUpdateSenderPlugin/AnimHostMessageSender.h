@@ -43,7 +43,7 @@
 #include <QMultiMap>
 #include <QElapsedTimer>
 //#include <nzmqt/nzmqt.hpp>
-#include <zmq.h>
+#include <zmq.hpp>
 
 
 class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMessageHandler {
