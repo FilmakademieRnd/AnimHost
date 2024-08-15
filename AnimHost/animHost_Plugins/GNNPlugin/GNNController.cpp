@@ -451,6 +451,12 @@ void GNNController::BuildAnimationSequence(const std::vector<std::vector<glm::qu
 
 	}
 
+	for (auto& bone : animationOut->mBones) {
+		bone.mNumKeysPosition = bone.mPositonKeys.size();
+		bone.mNumKeysRotation = bone.mRotationKeys.size();
+		bone.mNumKeysScale = 0;
+	}
+
 
 }
 
