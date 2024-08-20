@@ -47,8 +47,6 @@ public:
 
     QString name() const override { return metaObject()->className(); };
 
-    static QString Name() { return "PluginNodeInterface"; };
-
     virtual QString category() { throw; }; 
 
     QString caption() const override { return this->name(); }

@@ -103,18 +103,28 @@ bool AnimHost::loadPlugins()
 
                 registerPlugin(sp_PluginInterface);
                 createNodeFromPlugin(sp_PluginInterface);
+
+                continue;
                 //return true;
             }
-            else
+            
+            PluginNodeInterface* pluginNodeInterface = qobject_cast<PluginNodeInterface*>(plugin);
+            if (pluginNodeInterface)
             {
-                PluginNodeInterface* pluginNodeInterface = qobject_cast<PluginNodeInterface*>(plugin);
-                if (pluginNodeInterface)
-                {
-                    std::shared_ptr<PluginNodeInterface> sp_PluginNodeInterface(pluginNodeInterface);
+                std::shared_ptr<PluginNodeInterface> sp_PluginNodeInterface(pluginNodeInterface);
 
-                    createNodeFromNodePlugin(sp_PluginNodeInterface);
-                }
+                createNodeFromNodePlugin(sp_PluginNodeInterface);
+
+                continue;
             }
+
+            PluginNodeCollectionInterface* pluginNodeCollectionInterface = qobject_cast<PluginNodeCollectionInterface*>(plugin);
+            if(pluginNodeCollectionInterface)
+			{
+				pluginNodeCollectionInterface->PreNodeCollectionRegistration();
+				pluginNodeCollectionInterface->RegisterNodeCollection(*nodes);
+				pluginNodeCollectionInterface->PostNodeCollectionRegistration();
+			}
             //pluginLoader.unload();
         }
     }

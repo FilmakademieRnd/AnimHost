@@ -14,6 +14,8 @@ qt_add_library(AnimHostCore SHARED
     MathUtils.h MathUtils.cpp
     PluginNodeInterface/pluginnodeinterface.h
     PluginNodeInterface/pluginnodeinterface.cpp
+    PluginNodeCollectionInterface/PluginNodeCollectionInterface.h
+    PluginNodeCollectionInterface/PluginNodeCollectionInterface.cpp
     animhostcore_global.h
     TimeSeries.h
 )
@@ -28,6 +30,7 @@ target_include_directories(AnimHostCore PUBLIC
     ./QTNodes/include
     ../animHost_Plugins/PluginInterface
     ./PluginNodeInterface
+    ./PluginNodeCollectionInterface
     ./
 )
 

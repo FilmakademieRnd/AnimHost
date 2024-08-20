@@ -25,6 +25,7 @@
 
 #include <plugininterface.h>
 #include <pluginnodeinterface.h>
+#include <PluginNodeCollectionInterface.h>
 
 #include <QObject>
 #include <QFileInfo>
