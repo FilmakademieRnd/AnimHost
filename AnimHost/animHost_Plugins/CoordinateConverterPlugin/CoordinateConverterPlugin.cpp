@@ -28,6 +28,13 @@
 CoordinateConverterPlugin::CoordinateConverterPlugin()
 {
     _animationOut = std::make_shared<AnimNodeData<Animation>>();
+
+    presets.push_back({"AH<->Blender Default",glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix()), false, false, false, false, false });
+
+    presets.push_back({"No Conversion", glm::mat4(1.0), false, false, false, false, false});
+
+    activePreset = presets[0];
+
     qDebug() << "CoordinateConverterPlugin created";
 }
 
@@ -84,7 +91,16 @@ void CoordinateConverterPlugin::run()
         negW = wButton->isChecked();
         swapYZ = swapYzButton->isChecked();
         
-        /*for(int i = 0; i < animOut->mBones.size(); i++) {
+        
+        //Apply Transform to Root Bone
+        for (int i = 0; i < animOut->mBones[1].mPositonKeys.size(); i++) {
+
+            animOut->mBones[1].mRotationKeys[i].orientation = glm::toQuat(activePreset.transformMatrix) * animOut->mBones[0].mRotationKeys[i].orientation * animOut->mBones[1].mRotationKeys[i].orientation;
+            animOut->mBones[1].mPositonKeys[i].position = glm::toQuat(activePreset.transformMatrix) * glm::vec3(animOut->mBones[1].mPositonKeys[i].position);
+
+        }
+        
+        for(int i = 0; i < animOut->mBones.size(); i++) {
             int numKeys = animOut->mBones[i].mNumKeysRotation;
             for (int j = 0; j < numKeys; j++) {
                 animOut->mBones[i].mRotationKeys[j].orientation = ConvertToTargetSystem(animOut->mBones[i].mRotationKeys[j].orientation,
@@ -108,36 +124,6 @@ void CoordinateConverterPlugin::run()
 
             animOut->mBones[i].mRestingTransform = ConvertToTargetSystem(animOut->mBones[i].mRestingTransform,
                 swapYZ, negX, negY, negZ, negW);
-        }*/
-
-        //Apply Transform to Root Bone
-        for (int i = 0; i < animOut->mBones[1].mPositonKeys.size(); i++) {
-
-
-             glm::mat4 CoB = glm::mat4(1.0f);
-             CoB[1].y = 0;
-             CoB[1].z = 1;
-
-             CoB[2].y = -1;
-             CoB[2].z = 0;
-             //animOut->mBones[0].mPositonKeys[i].position = CoB  * glm::vec4(animOut->mBones[0].mPositonKeys[i].position, 1.0f) / 100.f;
-
-
-             glm::mat4 mirror = glm::mat4(1.0f);
-             mirror[0].x = -1;
-
-             glm::quat rootRotation = animOut->mBones[0].mRotationKeys[i].orientation * glm::toQuat(AnimHostHelper::GetCoordinateSystemTransformationMatrix());
-             glm::mat4 rootRotationMatrix = CoB * glm::toMat4(rootRotation);
-             //animOut->mBones[0].mRotationKeys[i].orientation = glm::toQuat(rootRotationMatrix);
-
-             CoB= glm::mat4(1.0f);
-             CoB[1].y = 0;
-             CoB[1].z = -1;
-             CoB[2].y = 1;
-             CoB[2].z = 0;
-
-             animOut->mBones[1].mRotationKeys[i].orientation = glm::toQuat(glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix())) * animOut->mBones[0].mRotationKeys[i].orientation * animOut->mBones[1].mRotationKeys[i].orientation;
-             animOut->mBones[1].mPositonKeys[i].position = glm::toQuat(glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix())) * glm::vec3(animOut->mBones[1].mPositonKeys[i].position) ;
         }
 			
         _animationOut->setVariant(QVariant::fromValue(animOut));
@@ -160,37 +146,133 @@ std::shared_ptr<NodeData> CoordinateConverterPlugin::processOutData(QtNodes::Por
 QWidget* CoordinateConverterPlugin::embeddedWidget()
 {
 	if (!widget) {
-		
-        xButton = new QCheckBox("- X");
-        yButton = new QCheckBox("- Y");
-        zButton = new QCheckBox("- Z");
-        wButton = new QCheckBox("- W");
-        
-        swapYzButton = new QCheckBox("Swap Y-Z");
+        widget = new QWidget();
+
+        //preset selection
+        presetLayout = new QHBoxLayout();
+        presetLabel = new QLabel("Presets:");
+        presetComboBox = new QComboBox();
+
+        for (auto& preset : presets) {
+			presetComboBox->addItem(preset.name);
+		}
+
+        presetLayout->addWidget(presetLabel);
+        presetLayout->addWidget(presetComboBox);
+
+        debugCheckBox = new QCheckBox("Enable Debug Mode");
 
         _layout = new QVBoxLayout();
 
-        _layout->addWidget(xButton);
-        _layout->addWidget(yButton);
-        _layout->addWidget(zButton);
-        _layout->addWidget(wButton);
-        _layout->addWidget(swapYzButton);
+        _layout->addLayout(presetLayout);
+        _layout->addWidget(debugCheckBox);
 
-        widget = new QWidget();
+        //Debug Widget
+        {
+            debugWidget = new QWidget(widget);
+            debugLayout = new QVBoxLayout();
 
+            // Quat Checkboxes
+            xButton = new QCheckBox("- X");
+            yButton = new QCheckBox("- Y");
+            zButton = new QCheckBox("- Z");
+            wButton = new QCheckBox("- W");
+            swapYzButton = new QCheckBox("Swap Y-Z");
+
+            debugLayout->addWidget(xButton);
+            debugLayout->addWidget(yButton);
+            debugLayout->addWidget(zButton);
+            debugLayout->addWidget(wButton);
+            debugLayout->addWidget(swapYzButton);
+
+            // Matrix Editor
+            matrixLabel = new QLabel("Transformation Matrix:");
+            matrixEditor = new MatrixEditorWidget();
+            matrixEditor->SetMatrix(activePreset.transformMatrix);
+            applyButton = new QPushButton("Apply Matrix");
+
+            debugLayout->addWidget(matrixLabel);
+            debugLayout->addWidget(matrixEditor);
+            debugLayout->addWidget(applyButton);
+
+            debugWidget->setLayout(debugLayout);
+            debugWidget->setVisible(false);
+
+            _layout->addWidget(debugWidget);
+        }
+        
         widget->setLayout(_layout);
+
+        QObject::connect(debugCheckBox, &QCheckBox::toggled, [=](bool checked) {
+			debugWidget->setVisible(checked);
+
+            debugWidget->parentWidget()->adjustSize();
+    
+            Q_EMIT embeddedWidgetSizeUpdated();
+		});
+
+        QObject::connect(presetComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {
+            const QSignalBlocker blocker(xButton);
+            const QSignalBlocker blocker2(yButton);
+            const QSignalBlocker blocker3(zButton);
+            const QSignalBlocker blocker4(wButton);
+            const QSignalBlocker blocker5(swapYzButton);
+            
+            activePreset = presets[index];
+			xButton->setChecked(activePreset.negX);
+			yButton->setChecked(activePreset.negY);
+			zButton->setChecked(activePreset.negZ);
+			wButton->setChecked(activePreset.negW);
+			swapYzButton->setChecked(activePreset.flipYZ);
+            matrixEditor->SetMatrix(activePreset.transformMatrix);
+
+			run();
+		});
 
         QObject::connect(xButton, &QCheckBox::stateChanged, this, &CoordinateConverterPlugin::onChangedCheck);
         QObject::connect(yButton, &QCheckBox::stateChanged, this, &CoordinateConverterPlugin::onChangedCheck);
         QObject::connect(zButton, &QCheckBox::stateChanged, this, &CoordinateConverterPlugin::onChangedCheck);
         QObject::connect(wButton, &QCheckBox::stateChanged, this, &CoordinateConverterPlugin::onChangedCheck);
         QObject::connect(swapYzButton, &QCheckBox::stateChanged, this, &CoordinateConverterPlugin::onChangedCheck);
+
+        QObject::connect(applyButton, &QPushButton::clicked, this, [=]() {
+            glm::mat4 mat = this->matrixEditor->GetMatrix();
+            activePreset.transformMatrix = mat;
+            run();
+        });
 	}
 
     widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
-        "QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"
-        "QPushButton{border: 1px solid white; border-radius: 4px; padding: 5px; background-color:rgb(98, 139, 202);}"
-        "QLabel{background-color:rgb(25, 25, 25); border: 1px; border-color: rgb(60, 60, 60); border-radius: 4px; padding: 5px;}"
+           "QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"
+           "QPushButton{border: 1px solid white; border-radius: 4px; padding: 5px; background-color:rgb(98, 139, 202);}"
+           "QLabel{padding: 0px;}"
+           "QComboBox{background-color:rgb(25, 25, 25); border: 1px; border-color: rgb(60, 60, 60); border-radius: 4px; padding: 5px;}"
+           "QComboBox::drop-down{"
+           "background-color:rgb(98, 139, 202);"
+           "subcontrol-origin: padding;"
+           "subcontrol-position: top right;"
+           "width: 15px;"
+           "border-top-right-radius: 4px;"
+           "border-bottom-right-radius: 4px;}"
+           "QComboBox QAbstractItemView{background-color:rgb(25, 25, 25); border: 1px; border-color: rgb(60, 60, 60); border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; padding: 0px;}"
+           "QScrollBar:vertical {"
+           "border: 1px rgb(25, 25, 25);"
+           "background:rgb(25, 25, 25);"
+           "border-radius: 2px;"
+           "width:6px;"
+           "margin: 2px 0px 2px 1px;}"
+           "QScrollBar::handle:vertical {"
+           "border-radius: 2px;"
+           "min-height: 0px;"
+           "background-color: rgb(25, 25, 25);}"
+           "QScrollBar::add-line:vertical {"
+           "height: 0px;"
+           "subcontrol-position: bottom;"
+           "subcontrol-origin: margin;}"
+           "QScrollBar::sub-line:vertical {"
+           "height: 0px;"
+           "subcontrol-position: top;"
+           "subcontrol-origin: margin;}"
     );
 
 	return widget;

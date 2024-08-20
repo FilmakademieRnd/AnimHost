@@ -47,7 +47,6 @@ public:
     virtual std::unique_ptr<NodeDelegateModel>  Init() { throw; };
 
     QString name() const override { return metaObject()->className(); };
-
     virtual QString category() { throw; }; 
 
     QString caption() const override { return this->name(); }

@@ -134,6 +134,57 @@ void FolderSelectionWidget::SetDirectory(QString dir)
 	}
 }
 
+///!=========================
+/// Matrix Editor Widget
+///!=========================
+
+MatrixEditorWidget::MatrixEditorWidget(QWidget* parent)
+{
+	layout = new QGridLayout();
+
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			lineEdits[i][j] = new QLineEdit();
+			lineEdits[i][j]->setValidator(new QDoubleValidator(this));
+			lineEdits[i][j]->setFixedWidth(50);
+			layout->addWidget(lineEdits[i][j], i, j);
+		}
+	}
+
+	this->setLayout(layout);
+
+	this->SetMatrix(glm::mat4(1.0f));
+
+
+	this->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
+		"QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"
+		"QPushButton{border: 1px solid white; border-radius: 4px; padding: 5px; background-color:rgb(98, 139, 202);}"
+		"QLineEdit{background-color:rgb(25, 25, 25); border: 1px; border-color: rgb(60, 60, 60); border-radius: 4px; padding: 5px;}"
+	);
+}
+
+glm::mat4 MatrixEditorWidget::GetMatrix() const
+{
+	glm::mat4 matrix;
+
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			matrix[i][j] = lineEdits[i][j]->text().toFloat();
+		}
+	}
+
+	return matrix;
+}
+
+void MatrixEditorWidget::SetMatrix(const glm::mat4& matrix)
+{
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			lineEdits[i][j]->setText(QString::number(matrix[i][j]));
+		}
+	}
+}
+
 
 ///!=========================
 /// Plot Widget

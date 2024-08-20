@@ -85,8 +85,33 @@ public:
 Q_SIGNALS:
 	void directoryChanged();
 
+};
+
+class ANIMHOSTCORESHARED_EXPORT MatrixEditorWidget : public QWidget {
+
+	Q_OBJECT
+
+
+
+private:
+
+	QGridLayout* layout = nullptr;
+	QLabel* header = nullptr;
+	QLineEdit* lineEdits[4][4];
+
+public:
+	MatrixEditorWidget(QWidget* parent = nullptr);
+	~MatrixEditorWidget() {};
+
+	glm::mat4 GetMatrix() const;
+
+	void SetMatrix(const glm::mat4& matrix);
+
+
 
 };
+
+
 
 class ANIMHOSTCORESHARED_EXPORT PlotWidget : public QWidget {
 
