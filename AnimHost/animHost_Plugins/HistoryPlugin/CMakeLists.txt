@@ -14,7 +14,7 @@ target_compile_definitions(${target_name} PRIVATE
 )
 
 target_link_libraries(${target_name} PUBLIC
-    PluginNodeInterface
+    PluginInterface
 
 )
 

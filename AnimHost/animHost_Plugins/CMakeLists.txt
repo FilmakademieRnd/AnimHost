@@ -1,5 +1,4 @@
 add_subdirectory(PluginInterface)
-add_subdirectory(PluginNodeInterface)
 add_subdirectory(JointPositionPlugin)
 #add_subdirectory(TestDataSourcePlugin)
 add_subdirectory(AssimpLoader)

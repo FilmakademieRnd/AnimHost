@@ -23,7 +23,7 @@ target_link_directories(AnimHostCore PUBLIC
 )
 
 target_link_libraries(${target_name} PUBLIC
-    PluginNodeInterface
+    PluginInterface
 )
 
 install(TARGETS ${target_name}

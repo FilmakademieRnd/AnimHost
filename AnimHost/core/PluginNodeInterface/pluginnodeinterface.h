@@ -28,12 +28,11 @@
 #include "plugininterface.h"
 #include <QtNodes/NodeDelegateModel>
 #include <nodedatatypes.h>
-#include "pluginnodeinterface_global.h"
 
 //!
 //! \brief Interface for plugins for the AnimHost
 //!
-class PLUGINNODEINTERFACESHARED_EXPORT PluginNodeInterface : public QtNodes::NodeDelegateModel
+class ANIMHOSTCORESHARED_EXPORT PluginNodeInterface : public QtNodes::NodeDelegateModel
 {
 
 private:
@@ -47,6 +46,9 @@ public:
     virtual std::unique_ptr<NodeDelegateModel>  Init() { throw; };
 
     QString name() const override { return metaObject()->className(); };
+
+    static QString Name() { return "PluginNodeInterface"; };
+
     virtual QString category() { throw; }; 
 
     QString caption() const override { return this->name(); }
