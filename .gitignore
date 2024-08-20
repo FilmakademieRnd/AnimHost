@@ -37,9 +37,9 @@ ExportedObj/
 
 #Python
 .ipynb_checkpoints
-
 /python/data
 /python/notebooks/__pycache__
+/python/notebooks/.ipynb_checkpoints
 /python/notebooks/*.txt
 /python/notebooks/*.html
 /python/scripts/__pycache__
