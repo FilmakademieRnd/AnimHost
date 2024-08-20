@@ -24,6 +24,7 @@
 
 #include <QThread>
 #include <QDebug>
+#include <QDataStream>
 #include <iostream>
 
 void AnimHostMessageSender::requestStart() {
@@ -108,7 +109,10 @@ void AnimHostMessageSender::run() {
         //qDebug() << "LocalTimeStamp = " << ZMQMessageHandler::getLocalTimeStamp();
         //qDebug() << "AnimationFrame = " << animFrame;
 
-        SerializePose(animData, charObj, sceneNodeList, msgBodyAnim, (int) animFrame);
+        //SerializePose(animData, charObj, sceneNodeList, msgBodyAnim, (int) animFrame);
+
+        SerializeAnimation(animData, charObj, sceneNodeList, msgBodyAnim, (int) animFrame);
+        //qDebug() << "Body Message size: " << msgBodyAnim->size();
         //qDebug() << "animFrame =" << animFrame;
         // Create ZMQ Message
         // -> implemented in parent class because the message header is the same for all messages emitted from same client (not unique to parameter update messages)
@@ -145,7 +149,7 @@ void AnimHostMessageSender::run() {
 
         if (animFrame >= animDataSize && loop) {    // IF   at the end of the animation AND LOOP is checked
             animFrame = 0;                          // THEN restart streaming the animation
-        } else if (animFrame < animDataSize) {      // IF   the animation has not been fully sent
+        } else if (animFrame < animDataSize-1) {      // IF   the animation has not been fully sent
             animFrame += deltaAnimFrame;            // THEN increase the frame count by the given delta (animFrameRate / playbackFrameRate)
         } else {                                    // ELSE (the animation has been fully sent AND LOOP unchecked)
             _paused = true;                            //      stop the working loop
@@ -209,15 +213,6 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
     // Target Scene ID
     int targetSceneID = ZMQMessageHandler::getTargetSceneID();
 
-    // Character SceneObject for testing
-    //std::int32_t sceneObjID = 3;
-    // Bone orientation IDs for testing
-    //std::int32_t parameterID[28] = { 3, 4, 5, 6, 7, 8, 28, 29, 30, 31, 9, 10, 11, 12, 51, 52, 53, 54, 47, 48, 49, 50 };
-    /*if ((int) animData->mBones.size() != sizeof(parameterID)/sizeof(std::int32_t)) {
-        qDebug() << "ParameterID array mismatch: " << animData->mBones.size() << " elements required, " << sizeof(parameterID)/sizeof(std::int32_t) << " provided";
-        return;
-    }*/
-
     //  ELEMENT 0 IN THE ANIMATION DATA IS EMPTY AT THE MOMENT, SO WE CAN IGNORE THE FOLLOWING SECTION OF THE CODE
     //Bone rootBone = animData->mBones.at(1);                 // The first bone in the animation data should be the root
     
@@ -230,11 +225,6 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
     //std::vector<float> rootPosVector = { rootPos.x, rootPos.y, rootPos.z };             // converting glm::vec3 in vector<float>
     //std::vector<float> rootRotVector = { rootRot.x, rootRot.y, rootRot.z, rootRot.w };  // converting glm::quat in vector<float>
     //std::vector<float> rootSclVector = { rootScl.x, rootScl.y, rootScl.z };             // converting glm::quat in vector<float>
-
-    //qDebug() << 1 << 1 << rootBone.mName <<rootRotVector << rootPosVector;
-
-    // Test for sending root transform
-    //rootPosVector[2] = rootPosVector[2] - (0.01 * frame);
 
     // Create messages for sending out the Character Root TRS and appending them to the byte array that is going to be sent to TRACER applications
     //QByteArray msgRootPos = createMessageBody(targetSceneID, character->sceneObjectID, 0, ZMQMessageHandler::ParameterType::VECTOR3,    rootPosVector);
@@ -274,15 +264,12 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
             glm::quat boneQuat = animData->mBones.at(animDataBoneID).GetOrientation(frame);
             glm::vec3 bonePos = animData->mBones.at(animDataBoneID).GetPosition(frame);
 
-            std::vector<float> boneQuatVector = { boneQuat.x, boneQuat.y, boneQuat.z,  boneQuat.w };    // converting glm::quat in vector<float>
-            std::vector<float> bonePosVector = { bonePos.x,  bonePos.y,  bonePos.z };                  // converting glm::vec3 in vector<float>
 
-            //qDebug() << animDataBoneID << boneID << boneName << animData->mBones.at(animDataBoneID).mName << boneQuatVector << bonePosVector;
-
-            QByteArray msgBoneQuat = createMessageBody(targetSceneID, character->sceneObjectID, i + 3,
-                                                       ZMQMessageHandler::ParameterType::QUATERNION, boneQuatVector);
-            QByteArray msgBonePos = createMessageBody(targetSceneID, character->sceneObjectID, i + nBones + 3,
-                                                      ZMQMessageHandler::ParameterType::VECTOR3, bonePosVector);
+            QByteArray msgBoneQuat = CreateParameterUpdateBody<glm::quat>(targetSceneID, character->sceneObjectID, i + 3,
+                				ZMQMessageHandler::ParameterType::QUATERNION, boneQuat);
+            
+            QByteArray msgBonePos = CreateParameterUpdateBody<glm::vec3>(targetSceneID, character->sceneObjectID, i + nBones + 3,
+                                                      ZMQMessageHandler::ParameterType::VECTOR3, bonePos);
 
             byteArray->append(msgBonePos);
             byteArray->append(msgBoneQuat);
@@ -290,272 +277,225 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
     }
 }
 
-// Creating ZMQ Parameter Update Message Body from bool value
-QByteArray AnimHostMessageSender::createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
-                                                bool payload) {
-    //qDebug() << "Serialize bool: " << payload;
-    byte objID_1 = (byte) (objectID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
-    byte objID_2 = (byte) ((objectID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
-    byte parID_1 = (byte) (parameterID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
-    byte parID_2 = (byte) ((parameterID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
+void AnimHostMessageSender::SerializeAnimation(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character,
+    std::shared_ptr<SceneNodeObjectSequence> sceneNodeList, QByteArray* byteArray, int frame) {
 
+    byteArray->clear();
+
+    // Target Scene ID
+    int targetSceneID = ZMQMessageHandler::getTargetSceneID();
+
+    int nBones = character->skinnedMeshList.at(0).boneMapIDs.size();    // The number of Bones in the targeted character
+
+    for (int i = 0; i < nBones; i++)
+    {
+
+        int boneID = character->skinnedMeshList.at(0).boneMapIDs.at(i);
+        std::string boneName = sceneNodeList->mSceneNodeObjectSequence.at(boneID).objectName;
+
+
+        int animDataBoneID = -1;
+        for (int j = 0; j < animData->mBones.size(); j++) {
+            if (boneName.compare(animData->mBones.at(j).mName) == 0) { //bone names compare equal (case sensitive)
+                animDataBoneID = j;
+                break;
+            }
+        }
+        if (animDataBoneID < 0) {
+            //qDebug() << boneName << "not found in the Animation Data";
+            continue;
+        }
+
+        if (animData->mBones.at(animDataBoneID).mPositonKeys.size() != 0) {
+            std::vector<std::pair<float, glm::vec3>> positionKeyPairs;
+            std::vector<std::pair<float, glm::vec3>> tangentPositionKeyPairs;
+            positionKeyPairs.reserve(animData->mBones.at(animDataBoneID).mPositonKeys.size());
+
+            auto pKeysBegin = animData->mBones.at(animDataBoneID).mPositonKeys.begin();
+            auto pKeysEnd = animData->mBones.at(animDataBoneID).mPositonKeys.end();
+
+            std::transform(pKeysBegin, pKeysEnd, std::back_inserter(positionKeyPairs),
+                [](const KeyPosition& key) {
+                    return std::make_pair(key.timeStamp, key.position);
+                });
+
+            QByteArray msgBonePos = createAnimationParameterUpdateBody<glm::vec3>(targetSceneID, character->sceneObjectID, i + nBones + 3,
+                ZMQMessageHandler::ParameterType::VECTOR3, ZMQMessageHandler::AnimationKeyType::STEP, positionKeyPairs, tangentPositionKeyPairs, frame);
+
+            byteArray->append(msgBonePos);
+        }
+       
+
+        std::vector<std::pair<float, glm::quat>> rotationKeyPairs;
+        std::vector<std::pair<float, glm::quat>> tangentRotationKeyPairs;
+        rotationKeyPairs.reserve(animData->mBones.at(animDataBoneID).mRotationKeys.size());
+
+        auto rKeysBegin = animData->mBones.at(animDataBoneID).mRotationKeys.begin();
+        auto rKeysEnd = animData->mBones.at(animDataBoneID).mRotationKeys.end();
+
+        std::transform(rKeysBegin, rKeysEnd, std::back_inserter(rotationKeyPairs),
+            [](const KeyRotation& key) {
+                return std::make_pair(key.timeStamp, key.orientation);
+            });
+
+        QByteArray msgBoneQuat = createAnimationParameterUpdateBody<glm::quat>(targetSceneID, character->sceneObjectID, i + 3,
+            ZMQMessageHandler::ParameterType::QUATERNION, ZMQMessageHandler::AnimationKeyType::STEP, rotationKeyPairs, tangentRotationKeyPairs, frame);
+
+        byteArray->append(msgBoneQuat);
+
+    }
+
+}
+
+
+// Creating ZMQ Parameter Update Message Body from T value
+template<typename T>
+QByteArray AnimHostMessageSender::CreateParameterUpdateBody(byte sceneID, uint16_t objectID, uint16_t parameterID, ZMQMessageHandler::ParameterType parameterType, T payload) {
+
+    byte targetSceneID;
+
+    targetSceneID = getTargetSceneID();
+
+    if (targetSceneID == -1)
+        qDebug() << "WARNING::Invalid target scene ID -1.";
+
+    uint32_t messageSize = 10 + getParameterDimension(parameterType);
     // Constructing new message
-    QByteArray newMessage((qsizetype) 7, Qt::Uninitialized);
+    QByteArray newMessage(0, Qt::Uninitialized);
+    QDataStream msgStream(&newMessage, QIODevice::WriteOnly);
+    msgStream.setByteOrder(QDataStream::LittleEndian);
+    msgStream.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
-    newMessage[0] = sceneID;                                    // Scene ID
-    newMessage[1] = objID_1;                                    // Object ID byte 1
-    newMessage[2] = objID_2;                                    // Object ID byte 2 
-    newMessage[3] = parID_1;                                    // Parameter ID
-    newMessage[4] = parID_2;                                    // Parameter ID
-    newMessage[5] = parameterType;                              // Parameter Type
-    newMessage[6] = getParameterDimension(parameterType) + 7;   // Parameter Message Dimensionality (in bytes) - i.e. size of the param. HEADER + VALUES (7+1)
+    msgStream << targetSceneID;     // Scene ID - 1 byte
+    msgStream << objectID;          // Object ID - 2 bytes
+    msgStream << parameterID;       // Parameter ID - 2 bytes
+    msgStream << parameterType;		// Parameter Type - 1 byte
 
-    const char* payloadBytes = (char*) malloc(getParameterDimension(parameterType));
-    assert(payloadBytes != NULL);
-    bool val = payload;
-    std::memcpy((byte*) payloadBytes, &val, sizeof(bool));
-    newMessage.append(payloadBytes, (qsizetype) getParameterDimension(parameterType));
+    msgStream << messageSize;		// Message Size - 4 bytes
 
-    std::string debugOut;
-    bool _bool = *(bool*) payloadBytes;
-    debugOut = std::to_string(_bool);
+    //msgStream.writeRawData(reinterpret_cast<const char*>(&payload), getParameterDimension(parameterType));
+    serializeValue<T>(msgStream, payload);
 
     return newMessage;
 }
 
-// Creating ZMQ Parameter Update Message Body from 32-bit int
-QByteArray AnimHostMessageSender::createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
-                                                std::int32_t payload) {
-    //qDebug() << "Serialize int: " << payload;
-    byte objID_1 = (byte) (objectID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
-    byte objID_2 = (byte) ((objectID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
-    byte parID_1 = (byte) (parameterID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
-    byte parID_2 = (byte) ((parameterID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
+template<>
+QByteArray AnimHostMessageSender::CreateParameterUpdateBody<std::string>(byte sceneID, uint16_t objectID, uint16_t parameterID, ZMQMessageHandler::ParameterType parameterType, std::string payload)
+{
+    byte targetSceneID;
 
-    // Constructing new message
-    QByteArray newMessage((qsizetype) 7, Qt::Uninitialized);
+    targetSceneID = getTargetSceneID();
 
-    newMessage[0] = sceneID;                                    // Scene ID
-    newMessage[1] = objID_1;                                    // Object ID byte 1
-    newMessage[2] = objID_2;                                    // Object ID byte 2 
-    newMessage[3] = parID_1;                                    // Parameter ID
-    newMessage[4] = parID_2;                                    // Parameter ID
-    newMessage[5] = parameterType;                              // Parameter Type
-    newMessage[6] = getParameterDimension(parameterType) + 7;   // Parameter Message Dimensionality (in bytes) - i.e. size of the param. HEADER + VALUES (7+4)
-
-    const char* payloadBytes = (char*) malloc(getParameterDimension(parameterType));
-    assert(payloadBytes != NULL);
-    std::int32_t val = payload;
-    std::memcpy((byte*) payloadBytes, &val, getParameterDimension(parameterType));
-    newMessage.append(payloadBytes, (qsizetype) getParameterDimension(parameterType));
-
-    std::string debugOut;
-    std::int32_t _int = *(std::int32_t*) payloadBytes;
-    debugOut = std::to_string(_int);
-    //qDebug() << "Payload data: " + debugOut;
-
-    return newMessage;
-}
-
-// Creating ZMQ Parameter Update Message Body from float value
-QByteArray AnimHostMessageSender::createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
-                                                float payload) {
-    //qDebug() << "Serialize float: " << std::to_string(payload);
-    byte objID_1 = (byte) (objectID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
-    byte objID_2 = (byte) ((objectID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
-    byte parID_1 = (byte) (parameterID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
-    byte parID_2 = (byte) ((parameterID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
-
-    // Constructing new message
-    QByteArray newMessage((qsizetype) 7, Qt::Uninitialized);
-
-    newMessage[0] = sceneID;                                    // Scene ID
-    newMessage[1] = objID_1;                                    // Object ID byte 1
-    newMessage[2] = objID_2;                                    // Object ID byte 2 
-    newMessage[3] = parID_1;                                    // Parameter ID
-    newMessage[4] = parID_2;                                    // Parameter ID
-    newMessage[5] = parameterType;                              // Parameter Type
-    newMessage[6] = getParameterDimension(parameterType) + 7;   // Parameter Message Dimensionality (in bytes) - i.e. size of the param. HEADER + VALUES (7+4)
-
-    const char* payloadBytes = (char*) malloc(getParameterDimension(parameterType));
-    assert(payloadBytes != NULL);
-    float val = payload;
-    std::memcpy((byte*) payloadBytes, &val, getParameterDimension(parameterType));
-    newMessage.append(payloadBytes, (qsizetype) getParameterDimension(parameterType));
-
-    std::string debugOut;
-    float _float = *(float*) payloadBytes;
-    debugOut = std::to_string(_float);
-    qDebug() << "Payload data: " + debugOut;
-
-    return newMessage;
-}
-
-// Creating ZMQ Parameter Update Message Body from string value
-QByteArray AnimHostMessageSender::createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
-                                                std::string payload) {
-    //qDebug() << "Serialize string: " << payload;
-    byte objID_1 = (byte) (objectID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
-    byte objID_2 = (byte) ((objectID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
-    byte parID_1 = (byte) (parameterID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
-    byte parID_2 = (byte) ((parameterID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
-
-    // Constructing new message
-    QByteArray newMessage((qsizetype) 7, Qt::Uninitialized);
-
-    newMessage[0] = sceneID;                                    // Scene ID
-    newMessage[1] = objID_1;                                    // Object ID byte 1
-    newMessage[2] = objID_2;                                    // Object ID byte 2 
-    newMessage[3] = parID_1;                                    // Parameter ID
-    newMessage[4] = parID_2;                                    // Parameter ID
-    newMessage[5] = parameterType;                              // Parameter Type
-    newMessage[6] = getParameterDimension(parameterType) + 7;   // Parameter Message Dimensionality (in bytes) - i.e. size of the param. HEADER + VALUES (7+var)
+    if (targetSceneID == -1)
+        qDebug() << "WARNING::Invalid target scene ID -1.";
 
     payload.shrink_to_fit();
-    const char* payloadBytes = (char*) malloc(payload.size());
-    assert(payloadBytes != NULL);
-    std::memcpy((byte*) payloadBytes, &payload, payload.size());
-    newMessage.append(payloadBytes, (qsizetype) payload.size());
 
-    std::string debugOut = std::any_cast<std::string>(payloadBytes);
-    //qDebug() << "Payload data: " + debugOut;
-
-    return newMessage;
-}
-
-
-// Creating ZMQ Parameter Update Message Body from float vector (VECTOR2-3-4, QUATERNION, COLOR)
-QByteArray AnimHostMessageSender::createMessageBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType,
-                                                std::vector<float> payload) {
-    byte targetSceneID;
-    try {
-        targetSceneID = getTargetSceneID();
-        if (targetSceneID == -1)
-            throw (targetSceneID);
-    } catch (int targetSceneID) {
-        qDebug() << "Invalid target scene ID";
-    }
-    //qDebug() << "Serialize float vector: " << std::to_string(payload);
-    byte objID_1 = (byte) (objectID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
-    byte objID_2 = (byte) ((objectID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
-    byte parID_1 = (byte) (parameterID & 0xFF);          // Masking 8 highest bits -> extracting lowest 8 bits
-    byte parID_2 = (byte) ((parameterID >> 8) & 0xFF);   // Shifting 8 bits to the right -> extracting highest 8 bits
-
+    uint32_t messageSize = 10 + payload.length();
     // Constructing new message
-    QByteArray newMessage((qsizetype) 7, Qt::Uninitialized);
+    QByteArray newMessage(0, Qt::Uninitialized);
+    QDataStream msgStream(&newMessage, QIODevice::WriteOnly);
+    msgStream.setByteOrder(QDataStream::LittleEndian);
+    msgStream.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
-    newMessage[0] = targetSceneID;                              // Scene ID
-    newMessage[1] = objID_1;                                    // Object ID byte 1
-    newMessage[2] = objID_2;                                    // Object ID byte 2 
-    newMessage[3] = parID_1;                                    // Parameter ID
-    newMessage[4] = parID_2;                                    // Parameter ID
-    newMessage[5] = parameterType;                              // Parameter Type
-    newMessage[6] = getParameterDimension(parameterType) + 7;   // Parameter Message Dimensionality (in bytes) - i.e. size of the param. HEADER + VALUES (7+8/12/16)
+    msgStream << targetSceneID;     // Scene ID - 1 byte
+    msgStream << objectID;          // Object ID - 2 bytes
+    msgStream << parameterID;       // Parameter ID - 2 bytes
+    msgStream << parameterType;		// Parameter Type - 1 byte
 
-    const char* payloadBytes = (char*) malloc(getParameterDimension(parameterType));
-    assert(payloadBytes != NULL);
-    SerializeVector((byte*) payloadBytes, payload, parameterType);
-    newMessage.append(payloadBytes, (qsizetype) getParameterDimension(parameterType));
 
-    std::string debugOut;
-    for (int i = 0; i < 3; i++) {
-        int index = sizeof(float) * i;
+    msgStream << messageSize;		// Message Size - 4 bytes
 
-        float _float = *(float*) (payloadBytes + index);
-
-        debugOut = debugOut + std::to_string(_float) + " ";
-    }
-    //qDebug() << "Payload data: " + debugOut;
+    //msgStream.writeRawData(reinterpret_cast<const char*>(&payload), getParameterDimension(parameterType));
+    serializeValue<std::string>(msgStream, payload);
 
     return newMessage;
 }
 
-void AnimHostMessageSender::SerializeVector(byte* dest, std::vector<float> _vector, ZMQMessageHandler::ParameterType type) {
-    //qDebug() << "Serialize vector " << type;
+template<typename T>
+QByteArray AnimHostMessageSender::createAnimationParameterUpdateBody(byte sceneID, int objectID, int parameterID, ZMQMessageHandler::ParameterType parameterType, 
+    ZMQMessageHandler::AnimationKeyType keytype,
+    const std::vector<std::pair<float, T>>& Keys, 
+    const std::vector < std::pair<float, T>>& tangentKeys, int frame) {
 
-    switch (type) {
-        case ZMQMessageHandler::VECTOR2: {
-            //qDebug() << "Vector2";
-            std::vector<float> vec2 = std::any_cast<std::vector<float>>(_vector);
-            float x = vec2[0];
-            float y = vec2[1];
+    bool useTangentKeys = true;
 
-            //qDebug() << "[" + std::to_string(x) + ", " + std::to_string(y) + "]";
+    byte targetSceneID;
+   
+    targetSceneID = getTargetSceneID();
+    
+    if (targetSceneID == -1)
+        qDebug() << "WARNING::Invalid target scene ID -1.";
 
-            byte offset = 0;
-            std::memcpy(dest + offset, &x, sizeof(float)); offset += sizeof(float);
-            std::memcpy(dest + offset, &y, sizeof(float));
-            break;
+    //Check if the size of the keys and tangentKeys are the same
+    if (Keys.size() != tangentKeys.size()) {
+		//qDebug() << "WARNING::Keys and TangentKeys are not the same size.";
+        useTangentKeys = false;
+	}
+  
+    //qDebug() << "Parameter Size:" << getParameterDimension(parameterType);
+    uint32_t payloadSize = Keys.size();
+    uint32_t payloadSizeBytes = payloadSize * (1 + 2 * sizeof(float) + 2 *  getParameterDimension(parameterType)); // number of frames * (keytype + (key and tangent time) + (key and tangent data))
+    uint32_t messageSize = 10 + getParameterDimension(parameterType) + sizeof(short) + payloadSizeBytes; // HEADER + PARAMETER_Data + NUMBER OF KEYS + Animation Payload
+    // Constructing new message
+    QByteArray newMessage(0, Qt::Uninitialized);
+    QDataStream msgStream(&newMessage, QIODevice::WriteOnly);
+    msgStream.setByteOrder(QDataStream::LittleEndian);
+    msgStream.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+    int debugSize = 0;
+
+    debugSize = newMessage.size();
+
+    msgStream << targetSceneID;                         // Scene ID - 1 byte
+    msgStream << static_cast<uint16_t>(objectID);       // Object ID - 2 bytes
+    msgStream << static_cast<uint16_t>(parameterID);    // Parameter ID - 2 bytes
+    msgStream << parameterType;						    // Parameter Type - 1 byte
+
+    //qDebug() << "Calc Message size: " << messageSize;
+    msgStream << messageSize;						   // Message Size - 4 bytes
+
+    debugSize = newMessage.size();
+
+    //msgStream.writeRawData(reinterpret_cast<const char*>(&Keys[frame].second), getParameterDimension(parameterType)); 
+
+    serializeValue<T>(msgStream, Keys[frame].second);
+
+    debugSize = newMessage.size();
+
+    short numKeys = static_cast<uint16_t>(Keys.size());
+    msgStream << numKeys; // NUMBER OF KEYS - 2 bytes
+
+    // TODO:  add quaternions from payload
+    for (int i = 0; i < Keys.size(); i++) {
+        // to do: key type
+        msgStream << keytype;
+
+        msgStream << Keys[i].first; // KEY TIME
+
+        if (useTangentKeys) {
+            msgStream << tangentKeys[i].first;// TANGENT TIME
         }
-        case ZMQMessageHandler::VECTOR3: {
-            //qDebug() << "Vector3";
-            std::vector<float> vec3 = std::any_cast<std::vector<float>>(_vector);
-            float x = vec3[0];
-            float y = vec3[1];
-            float z = vec3[2];
-
-            //qDebug() << "[" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + "]";
-
-            byte offset = 0;
-            std::memcpy(dest + offset, &x, sizeof(float)); offset += sizeof(float);
-            std::memcpy(dest + offset, &y, sizeof(float)); offset += sizeof(float);
-            std::memcpy(dest + offset, &z, sizeof(float));
-
-            break;
+        else {
+            float defaultTime = -1.0f;
+            msgStream << defaultTime;
         }
-        case ZMQMessageHandler::VECTOR4: {
-            //qDebug() << "Vector4";
-            std::vector<float> vec4 = std::any_cast<std::vector<float>>(_vector);
-            float x = vec4[0];
-            float y = vec4[1];
-            float z = vec4[2];
-            float w = vec4[3];
+            
 
-            //qDebug() << "[" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ", " + std::to_string(w) + "]";
+        // KEY DATA
+        serializeValue<T>(msgStream, Keys[i].second);
 
-            byte offset = 0;
-            std::memcpy(dest + offset, &x, sizeof(float)); offset += sizeof(float);
-            std::memcpy(dest + offset, &y, sizeof(float)); offset += sizeof(float);
-            std::memcpy(dest + offset, &z, sizeof(float)); offset += sizeof(float);
-            std::memcpy(dest + offset, &w, sizeof(float));
-
-            break;
+        // TANGENT DATA
+        if (useTangentKeys) {
+            serializeValue<T>(msgStream, tangentKeys[i].second);
         }
-        case ZMQMessageHandler::QUATERNION: {
-            //qDebug() << "Quaternion";
-            std::vector<float> quat = std::any_cast<std::vector<float>>(_vector);
-            float x = quat[0];
-            float y = quat[1];
-            float z = quat[2];
-            float w = quat[3];
-
-            //qDebug() << "[" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ", " + std::to_string(w) + "]";
-
-            byte offset = 0;
-            std::memcpy(dest + offset, &x, sizeof(float)); offset += sizeof(float);
-            std::memcpy(dest + offset, &y, sizeof(float)); offset += sizeof(float);
-            std::memcpy(dest + offset, &z, sizeof(float)); offset += sizeof(float);
-            std::memcpy(dest + offset, &w, sizeof(float));
-
-            break;
+        else {
+            T defaultTangent = T();
+            serializeValue<T>(msgStream, defaultTangent);
         }
-        case ZMQMessageHandler::COLOR: {
-            //qDebug() << "Colour";
-            std::vector<float> color = std::any_cast<std::vector<float>>(_vector);
-            float r = color[0];
-            float g = color[1];
-            float b = color[2];
-            float a = color[3];
-
-            //qDebug() << "[" + std::to_string(r) + ", " + std::to_string(g) + ", " + std::to_string(b) + ", " + std::to_string(a) + "]";
-
-            byte offset = 0;
-            std::memcpy(dest + offset, &r, sizeof(float)); offset += sizeof(float);
-            std::memcpy(dest + offset, &g, sizeof(float)); offset += sizeof(float);
-            std::memcpy(dest + offset, &b, sizeof(float)); offset += sizeof(float);
-            std::memcpy(dest + offset, &a, sizeof(float));
-
-            break;
-        }
+            
     }
+
+    //qDebug() << "True Message size: " << newMessage.size();
+    return newMessage;
 }

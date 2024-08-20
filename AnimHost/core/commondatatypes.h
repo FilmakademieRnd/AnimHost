@@ -590,7 +590,7 @@ Q_DECLARE_METATYPE(std::shared_ptr<ControlPoint>)
 */
 class ANIMHOSTCORESHARED_EXPORT ControlPath : public Sequence {
     public:
-    int frameCount;
+    int frameCount = 0;
     std::vector<ControlPoint> mControlPath;
 
     public:
@@ -735,7 +735,7 @@ public:
 
     std::vector<glm::vec3> currentTrajectoryPosition;
 
-    glm::mat4 rootTransform;
+    glm::mat4 rootTransform = glm::mat4(1);
 
 
 

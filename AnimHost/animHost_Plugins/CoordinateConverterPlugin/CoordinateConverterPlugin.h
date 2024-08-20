@@ -26,8 +26,7 @@
 #include <QMetaType>
 #include <QtWidgets>
 #include <pluginnodeinterface.h>
-
-class QPushButton;
+#include "UIUtils.h"
 
 class COORDINATECONVERTERPLUGINSHARED_EXPORT CoordinateConverterPlugin : public PluginNodeInterface
 {
@@ -35,22 +34,60 @@ class COORDINATECONVERTERPLUGINSHARED_EXPORT CoordinateConverterPlugin : public 
     Q_PLUGIN_METADATA(IID "de.animhost.CoordinateConverter" FILE "CoordinateConverterPlugin.json")
     Q_INTERFACES(PluginNodeInterface)
 
+public:
+
+    /**
+     * @struct CoordinateConversionPreset
+     * @brief A structure to hold the settings for a coordinate conversion preset.
+     *
+     * This structure encapsulates the settings for a coordinate conversion preset,
+     * containing a transformation matrix and nessecary transforms to quaternion rotations.
+     */
+    struct CoordinateConversionPreset {
+        QString name;
+        glm::mat4 transformMatrix = glm::mat4(1.0f);
+        bool flipYZ = false;
+        bool negX = false;
+        bool negY = false;
+        bool negZ = false;
+        bool negW = false;
+    };
+
 private:
+    
     std::weak_ptr<AnimNodeData<Animation>> _animationIn;
-
     std::shared_ptr<AnimNodeData<Animation>> _animationOut = nullptr; 
+    std::vector<CoordinateConversionPreset> presets;
 
-private:
+    CoordinateConversionPreset activePreset;
+
+    // UI
     QWidget* widget = nullptr;
-
     QVBoxLayout* _layout = nullptr;
+    QCheckBox* debugCheckBox = nullptr;
 
+
+    // Preset selection
+    QHBoxLayout* presetLayout = nullptr;
+    QLabel* presetLabel = nullptr;
+    QComboBox* presetComboBox = nullptr;
+
+
+    // Debug Widget
+    QWidget* debugWidget = nullptr;
+    QVBoxLayout* debugLayout = nullptr;
+
+    // Checkboxes
     QCheckBox* xButton = nullptr;
     QCheckBox* yButton = nullptr;
     QCheckBox* zButton = nullptr;
     QCheckBox* wButton = nullptr;
-    
     QCheckBox* swapYzButton = nullptr;
+
+    // Matrix Editor
+    QLabel* matrixLabel = nullptr;
+    MatrixEditorWidget* matrixEditor = nullptr;
+    QPushButton* applyButton = nullptr;
 
 
 public:

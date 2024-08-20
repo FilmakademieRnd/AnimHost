@@ -124,7 +124,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
 
             if (recvMsg.size() > 0) {
                 
-                qDebug() << "Processing message...";
+                //qDebug() << "Processing message...";
 
                 QByteArray msgArray = QByteArray((char*) recvMsg.data(), static_cast<int>(recvMsg.size())); // Convert message into explicit byte array
                 MessageType msgType = static_cast<MessageType>(msgArray[2]);                          // Extract message type from byte array (always third byte)

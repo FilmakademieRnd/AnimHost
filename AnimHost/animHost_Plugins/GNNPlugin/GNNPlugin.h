@@ -67,15 +67,20 @@ private:
 
 public:
     GNNPlugin();
+    GNNPlugin(bool active) {
+        _widget = nullptr;
+        qDebug() << "ACTIVE GNNPlugin created";
+    };
     ~GNNPlugin();
 
     QJsonObject save() const override;
     void load(QJsonObject const& p) override;
     
-    std::unique_ptr<NodeDelegateModel> Init() override { return  std::unique_ptr<GNNPlugin>(new GNNPlugin()); };
+    std::unique_ptr<NodeDelegateModel> Init() override { return  std::unique_ptr<GNNPlugin>(new GNNPlugin(true)); };
+
 
     QString category() override { return "Undefined Category"; };
-    QString caption() const override { return this->name(); }
+    QString caption() const override { return "Locomotion Generator (2D Spline)"; }
     bool captionVisible() const override { return true; }
 
     unsigned int nDataPorts(QtNodes::PortType portType) const override;
