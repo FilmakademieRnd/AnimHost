@@ -44,7 +44,7 @@ void AnimHostMessageSender::requestStop() {
     if (_working) {
         _stop = true;
         _paused = false;
-        //_working = false;
+        _working = false;
         qDebug() << "AnimHost Message Sender stopping";// in Thread "<<thread()->currentThreadId();
     }
     mutex.unlock();
@@ -70,11 +70,26 @@ void AnimHostMessageSender::run() {
     //sendSocket = new zmq::socket_t(*context, zmq::socket_type::pub); // publisher socket
     sendSocket->connect(QString("tcp://127.0.0.1:5557").toLatin1().data());
 
-    /*zmq::pollitem_t items[] = {
-            { static_cast<void*>(*sendSocket), 0, ZMQ_POLLIN, 0 }
-    };*/
+    while (!_stop) { //loop until stop is requested (by calling requestStop(); on deletion of sender node in compute graph)
 
-    qDebug() << "Starting AnimHost Message Sender";// in Thread " << thread()->currentThreadId();
+        if (streamAnimation) {   
+            streamAnimationData(); // on completion of streaming the animation, the streamAnimation flag is set to false
+        }
+        else if (!streamAnimation && sendBlock) {
+            sendAnimationDataBlock(); // on completion of sending the animation block, the sendBlock flag is set to false
+        }
+
+    };
+
+    qDebug() << "AnimHost Message Sender process to be stopped";
+
+    emit stopped();
+}
+
+
+void AnimHostMessageSender::streamAnimationData()
+{
+    qDebug() << "Starting STREAM AnimHost Message Sender";// in Thread " << thread()->currentThreadId();
 
     //zmq::message_t* tempMsg = new zmq::message_t();
 
@@ -95,25 +110,38 @@ void AnimHostMessageSender::run() {
     int timestamp = INT_MIN;
     float animFrame = 0;
     bool locked = false;
-    while (_working) {
+    while (_working && streamAnimation) {
         // checks if process should be aborted
         mutex.lock();
         bool stop = _stop;
         mutex.unlock();
 
+        if (stop) {
+			break;
+		}
+
         m_pauseMutex.lock();
-        sendFrameWaitCondition->wait(&m_pauseMutex);
-            
-        // Send Poses Sequentially from a KEYFRAMED animation
-        //qDebug() << "Timer interval" << ZMQMessageHandler::localTick->interval() << "Timer status" << ZMQMessageHandler::localTick->remainingTime();
-        //qDebug() << "LocalTimeStamp = " << ZMQMessageHandler::getLocalTimeStamp();
-        //qDebug() << "AnimationFrame = " << animFrame;
 
-        //SerializePose(animData, charObj, sceneNodeList, msgBodyAnim, (int) animFrame);
 
-        SerializeAnimation(animData, charObj, sceneNodeList, msgBodyAnim, (int) animFrame);
-        //qDebug() << "Body Message size: " << msgBodyAnim->size();
-        //qDebug() << "animFrame =" << animFrame;
+        // Wait for TRACER Tick to send the next frame
+        if (!sendFrameWaitCondition->wait(&m_pauseMutex, 100)) {
+
+            // If TRACER Tick is not received, stop the process.
+            // Currently occurs when UI Drawing is too slow & 
+            // message sender thread is destroyed, as aresult of deleting the sender node
+            // in the compute graph.
+       
+            qDebug() << "Timeout in AnimHost Message Sender";
+            m_pauseMutex.unlock();
+            break;
+        }
+  
+
+        // Send Poses Sequentially as Parameter Update Messages based on the current frame.
+        mutex.lock();
+        SerializePose(animData, charObj, sceneNodeList, msgBodyAnim, (int) animFrame);
+        mutex.unlock();
+
         // Create ZMQ Message
         // -> implemented in parent class because the message header is the same for all messages emitted from same client (not unique to parameter update messages)
         createNewMessage(ZMQMessageHandler::getLocalTimeStamp(), ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
@@ -125,78 +153,115 @@ void AnimHostMessageSender::run() {
             debugOut = debugOut + std::to_string(debugDataArray[i]) + " ";
         }*/
 
-        int type;
-        size_t type_size = sizeof(type);
-
-        sendSocket->getsockopt(ZMQ_TYPE, &type, &type_size);
-        //qDebug() << "Message size: " << message->size();
-        
         // Sending LOCK message to the character (necessary for applying root animations)
         if (!locked) {
             createLockMessage(ZMQMessageHandler::getLocalTimeStamp(), charObj->sceneObjectID, true);
-            int retunLockVal = sendSocket->send((void*) lockMessage->data(), lockMessage->size());
+            int retunLockVal = sendSocket->send((void*)lockMessage->data(), lockMessage->size());
             locked = true;
         }
-        
+
         // Sending new pose message
-        int retunVal = sendSocket->send((void*) message->data(), message->size());
-        //qDebug() << "Attempting SEND connection on" << ZMQMessageHandler::getOwnIP();
-        timestamp = ZMQMessageHandler::getLocalTimeStamp();
+        int retunVal = sendSocket->send((void*)message->data(), message->size());
+
 
         if (animDataSize == 1) {    // IF   the animation data contains only one frame
             _paused = true;         // THEN stop the loop even if the loop check is marked
         }
 
-        if (animFrame >= animDataSize && loop) {    // IF   at the end of the animation AND LOOP is checked
-            animFrame = 0;                          // THEN restart streaming the animation
-        } else if (animFrame < animDataSize-1) {      // IF   the animation has not been fully sent
-            animFrame += deltaAnimFrame;            // THEN increase the frame count by the given delta (animFrameRate / playbackFrameRate)
-        } else {                                    // ELSE (the animation has been fully sent AND LOOP unchecked)
-            _paused = true;                            //      stop the working loop
+        if (animFrame >= (animDataSize - 1) && loop) {    // IF   at the end of the animation AND LOOP is checked
+            animFrame = 0;                                // THEN restart streaming the animation
         }
-        // TODO: improving cleanup and re-connection for streaming animation again...and again...and again :)
-        
-        QThread::msleep(1);
+        else if (animFrame < animDataSize - 1) {          // IF   the animation has not been fully sent
+            animFrame += deltaAnimFrame;                  // THEN increase the frame count by the given delta (animFrameRate / playbackFrameRate)
+        }
+        else {      
+            mutex.lock();                                  // ELSE (the animation has been fully sent AND LOOP unchecked)
+            streamAnimation = false;                       // THEN     stop the streaming loop
+            mutex.unlock();
+        }
 
-        if (_paused) {
-            // if _paused condition has been triggered, then wait until wakeAll signal
-            // this will be triggered by clicking on the Send Animation button in the Qt pluginUI
-            reconnectWaitCondition->wait(&m_pauseMutex);
-            
-            // after resuming, reset animFrame
-            animFrame = 0;
-        }
-        
         m_pauseMutex.unlock();
 
-        if (stop) {
-            qDebug() << "Stopping AnimHost Message Sender";// in Thread "<<thread()->currentThreadId();
-            break;
-        }
-        //qDebug() << "AnimHostMessageSender Running";
-        //QThread::yieldCurrentThread();
     }
 
     createLockMessage(ZMQMessageHandler::getLocalTimeStamp(), charObj->sceneObjectID, false);
-    int retunUnlockVal = sendSocket->send((void*) lockMessage->data(), lockMessage->size());
+    int retunUnlockVal = sendSocket->send((void*)lockMessage->data(), lockMessage->size());
     locked = false;
 
     // Set _working to false -> process cannot be aborted anymore
     mutex.lock();
-    _working = false;
+    streamAnimation = false;
     mutex.unlock();
-
-    QThread::yieldCurrentThread();
-
-    qDebug() << "AnimHost Message Sender process stopped";// in Thread "<<thread()->currentThreadId();
-
-    emit stopped();
 }
 
+void AnimHostMessageSender::sendAnimationDataBlock()
+{
+    qDebug() << "Starting BLOCK AnimHost Message Sender";// in Thread " << thread()->currentThreadId();
+
+    //zmq::message_t* tempMsg = new zmq::message_t();
+
+    // Allows up- and down-sampling of the animation in order to keep the perceived speed the same even though the playback framerate is not the same
+    // w.r.t. the framerate, for which the animation was designed
+    QByteArray* msgBodyAnim = new QByteArray();
+
+    // The length of the animation is defined by the bones that has the more frames
+   
+
+
+    bool locked = false;
+
+
+    m_pauseMutex.lock();
+
+    mutex.lock();
+    SerializeAnimation(animData, charObj, sceneNodeList, msgBodyAnim, 0);
+    mutex.unlock();
+    
+    
+    createNewMessage(ZMQMessageHandler::getLocalTimeStamp(), ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
+
+    // Sending LOCK message to the character (necessary for applying root animations)
+    if (!locked) {
+        createLockMessage(ZMQMessageHandler::getLocalTimeStamp(), charObj->sceneObjectID, true);
+        int retunLockVal = sendSocket->send((void*)lockMessage->data(), lockMessage->size());
+        locked = true;
+    }
+
+    // Sending new parameter update message
+    int retunVal = sendSocket->send((void*)message->data(), message->size());
+
+    QThread::msleep(1);
+
+    m_pauseMutex.unlock();
+        
+    //UNLOCK CHARACTER
+    createLockMessage(ZMQMessageHandler::getLocalTimeStamp(), charObj->sceneObjectID, false);
+    int retunUnlockVal = sendSocket->send((void*)lockMessage->data(), lockMessage->size());
+    locked = false;
+
+    // Set _working to false -> process cannot be aborted anymore
+    mutex.lock();
+    sendBlock = false;
+    mutex.unlock();
+
+}
+
+
+
 void AnimHostMessageSender::setAnimationAndSceneData(std::shared_ptr<Animation> ad, std::shared_ptr<CharacterObject> co, std::shared_ptr<SceneNodeObjectSequence> snl) {
+    mutex.lock();
     animData = ad;
     charObj = co;
     sceneNodeList = snl;
+
+    animDataSize = 0;
+    for (Bone bone : animData->mBones) {
+        int boneFrames = bone.mRotationKeys.size();
+        if (boneFrames > animDataSize)
+            animDataSize = boneFrames;
+    }
+
+    mutex.unlock();
 }
 
 /**
@@ -346,6 +411,8 @@ void AnimHostMessageSender::SerializeAnimation(std::shared_ptr<Animation> animDa
     }
 
 }
+
+
 
 
 // Creating ZMQ Parameter Update Message Body from T value

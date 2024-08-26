@@ -68,6 +68,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
     //! Default destructor, closes connection and cleans up
 	~TickReceiver() {
         receiveSocket->close();
+        qDebug() << "~TickReceiver()";
     }
 
     //! Request this process to start working
@@ -92,7 +93,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
         if (_working) {
             _stop = true;
             _paused = false;
-            //_working = false;
+            _working = false;
             qDebug() << "AnimHost Tick Receiver stopping";// in Thread "<<thread()->currentThreadId();
         }
         mutex.unlock();
@@ -118,7 +119,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
         zmq::message_t recvMsg;
 
         while (_working) {
-            qDebug() << "Waiting for SYNC message...";
+            //qDebug() << "Waiting for SYNC message...";
             //try to receive zeroMQ messages
             receiveSocket->recv(&recvMsg);
 
@@ -132,13 +133,15 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHand
                 //if tick received with time tickTime
                 if (msgType == MessageType::SYNC) { // Should we check also against Client ID?
                     const int syncTime = static_cast<int>(msgArray[1]); // Extract sync time from message (always second byte)
-                    qDebug() << "SYNC message received with time " << syncTime;
+                    //qDebug() << "SYNC message received with time " << syncTime;
                     mutex.lock();
                     tick(syncTime);
                     mutex.unlock();
                 }
             }
         }
+        qDebug() << "AnimHost Tick Receiver process to be stopped";// in Thread "<<thread()->currentThreadId();
+        emit stopped();
     }
 
     Q_SIGNALS:

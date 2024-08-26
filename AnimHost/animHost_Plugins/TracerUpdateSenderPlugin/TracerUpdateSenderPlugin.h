@@ -65,29 +65,48 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT TracerUpdateSenderPlugin : public Pl
     Q_INTERFACES(PluginNodeInterface)
 
 private:
+
+    // UI Elements
     QWidget* widget;                                //!< UI container element
-    QPushButton* _sendUpdateButton;                 //!< UI button element, onClick starts the animation-sending sub-thread
-    QComboBox* _selectIPAddress;                    //!< UI drop down menu to select the IP address (and therefore the Client ID)
-    QCheckBox* _loopCheck;                          //!< UI checkbox to enable/disable looping the animation
+    QVBoxLayout* _mainLayout;                        //!< UI layout element
+;                 
     QHBoxLayout* _ipAddressLayout;                  //!< UI layout element
+    QComboBox* _selectIPAddress;                    //!< UI drop down menu to select the IP address (and therefore the Client ID)
     QRegularExpressionValidator* _ipValidator;      //!< IP Address validation regex (to be removed)
+
+    QCheckBox* _streamCheck;                        //!< UI checkbox element to enable/disable streaming animation
+
+    QWidget* _streamWidget;
+    QHBoxLayout* _streamLayout;//!< UI container element for controlling streaming animation (TRACER ParameterUpdate with "live" playback)
+    QPushButton* _sendStreamButton;                 //!< UI button element, onClick starts the animation-sending sub-thread, toggles between "Start" and "Stop"
+    QCheckBox* _loopCheck;                          //!< UI checkbox to enable/disable looping the animation
+
+    QWidget* _enBlocWidget;
+    QHBoxLayout* _enBlocLayout;//!< UI container element for controlling on bolck animation (TRACER AnimatedParameterUpdate)
+    QPushButton* _sendEnBlocButton;               //!< UI button element, onClick starts the animation-sending sub-thread without iterating over whole animation sequence 
+
 
     QString _ipAddress;                             //!< The selected IP Address
 
     zmq::context_t* _updateSenderContext = nullptr; //!< 0MQ context to establish connection and send messages
+    
     QThread* zeroMQSenderThread = nullptr;          //!< Sub-thread to handle message sending without making the UI thread unresponsive
+    AnimHostMessageSender* msgSender = nullptr;     //!< Pointer to instance of the class that builds and sends the pose updates
+    
+    TickReceiver* tickReceiver = nullptr;           //!< Pointer to instance of the class that receives sync signals
     QThread* zeroMQTickReceiverThread = nullptr;    //!< Sub-thread to handle receiving synchronisation messages
 
+
+    bool isStreaming = false;                       //!< Whether the animation is being streamed or not
+
+
+    //Node Inputs
     std::weak_ptr<AnimNodeData<Animation>> _animIn;                         //!< The animation data (consisting of one or more poses) - **Data set by UI PortIn**
     std::weak_ptr<AnimNodeData<CharacterObject>> _characterIn;              //!< The selected character to which the animation is going to be applied - **Data set by UI PortIn**
     std::weak_ptr<AnimNodeData<SceneNodeObjectSequence>> _sceneNodeListIn;  //!< A description of the scene of the TRACER client. Necessary to match animation data to character rig - **Data set by UI PortIn**
 
-    AnimHostMessageSender* msgSender = nullptr;     //!< Pointer to instance of the class that builds and sends the pose updates
-    TickReceiver* tickReceiver = nullptr;           //!< Pointer to instance of the class that receives sync signals
 
-    void freeData(void* data, void* hint) {
-        free(data);
-    }
+
 
     int validData = -1;
 
@@ -167,7 +186,10 @@ private Q_SLOTS:
     * Gets the pointers to the input ports' data, passes them to the [AnimHostMessageSender](@ref AnimHostMessageSender),
     * starts the subthread and runs the main loop of this class
     */
-    void onButtonClicked();
+    void onStreamButtonClicked();
+
+    //! Slot called when the "Send EnBloc" button is clicked
+    void onEnBlocButtonClicked();
     
     //! Slot called when the "Loop" check gets clicked
     /*!

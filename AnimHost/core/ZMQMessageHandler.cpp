@@ -31,6 +31,8 @@ QList<QHostAddress> ZMQMessageHandler::ipList;
 
 QTimer* ZMQMessageHandler::localTick = new QTimer();
 int ZMQMessageHandler::localTimeStamp = 0;
+
+// Fixed Number of "Ticks" per TRACER update cycle
 int ZMQMessageHandler::bufferSize = 120;
 int ZMQMessageHandler::animFrameRate = 60;
 int ZMQMessageHandler::playbackFrameRate = 60;
@@ -41,6 +43,7 @@ ZMQMessageHandler::ZMQMessageHandler() {
 
     ZMQMessageHandler::localTick->setTimerType(Qt::PreciseTimer);
     ZMQMessageHandler::localTick->setSingleShot(false);
+    //Check if intevall is fixed to floor or ceil
     ZMQMessageHandler::localTick->setInterval(1000/ZMQMessageHandler::playbackFrameRate);
     QObject::connect(ZMQMessageHandler::localTick, &QTimer::timeout, this, &ZMQMessageHandler::increaseTimeStamp);
 
