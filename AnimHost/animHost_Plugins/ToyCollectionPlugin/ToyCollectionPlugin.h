@@ -47,17 +47,27 @@ class TOYCOLLECTIONPLUGINSHARED_EXPORT ToyCollectionPlugin : public PluginNodeCo
             "MIT"
         };
 
+    QTimer* localTick = nullptr;
+
     public:
         ToyCollectionPlugin() { qDebug() << "ToyCollectionPlugin created"; };
         ToyCollectionPlugin(const ToyCollectionPlugin& p) {};
 
         ~ToyCollectionPlugin() { qDebug() << "~ToyCollectionPlugin()"; };
 
-       void PreNodeCollectionRegistration() override {};
+       void PreNodeCollectionRegistration() override {
+        // Initialize here
+		   localTick = new QTimer();
+		   localTick->setTimerType(Qt::PreciseTimer);
+		   localTick->setSingleShot(false);
+		   localTick->setInterval(2000);
+		   localTick->start();
+       };
 
        void RegisterNodeCollection(NodeDelegateModelRegistry& nodeRegistry) override {
            // Register nodes here
-           nodeRegistry.registerModel<ToyAlphaNode>(QString("ToyCollection"));
+           //nodeRegistry.registerModel<ToyAlphaNode>(QString("ToyCollection"));
+           nodeRegistry.registerModel<ToyAlphaNode>([this](){ return  std::make_unique<ToyAlphaNode>(*localTick); });
        };
 
        void PostNodeCollectionRegistration() override {};

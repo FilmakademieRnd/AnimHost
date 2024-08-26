@@ -42,10 +42,11 @@ private:
     std::shared_ptr<AnimNodeData<Animation>> _animationOut;
 
 public:
-    ToyAlphaNode();
+    ToyAlphaNode(const QTimer& tick);
     ~ToyAlphaNode();
 
-    std::unique_ptr<NodeDelegateModel> Init() override { return  std::unique_ptr<ToyAlphaNode>(new ToyAlphaNode()); };
+    std::unique_ptr<NodeDelegateModel> Init() override { return nullptr; };//  std::unique_ptr<ToyAlphaNode>(new ToyAlphaNode();
+
 
     QString caption() const override { return this->name(); }
     bool captionVisible() const override { return true; }

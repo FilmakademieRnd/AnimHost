@@ -7,10 +7,14 @@ Welcome to AnimHost's documentation!
 ====================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
    
+   
+   ./nodecollection
    api/library_root
+
+
 
 
 

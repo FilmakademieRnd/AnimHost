@@ -22,11 +22,13 @@
 #include "ToyAlphaNode.h"
 #include <QtWidgets>
 
-ToyAlphaNode::ToyAlphaNode()
+ToyAlphaNode::ToyAlphaNode(const QTimer& tick)
 {
     _widget = nullptr;
 
     _animationOut = std::make_shared<AnimNodeData<Animation>>();
+
+    connect(&tick, &QTimer::timeout, this, &ToyAlphaNode::run);
 
     qDebug() << "ToyAlphaNode created";
 }
