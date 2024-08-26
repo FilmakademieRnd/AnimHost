@@ -28,12 +28,11 @@
 #include "plugininterface.h"
 #include <QtNodes/NodeDelegateModel>
 #include <nodedatatypes.h>
-#include "pluginnodeinterface_global.h"
 
 //!
 //! \brief Interface for plugins for the AnimHost
 //!
-class PLUGINNODEINTERFACESHARED_EXPORT PluginNodeInterface : public QtNodes::NodeDelegateModel
+class ANIMHOSTCORESHARED_EXPORT PluginNodeInterface : public QtNodes::NodeDelegateModel
 {
 
 private:

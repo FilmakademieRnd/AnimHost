@@ -51,6 +51,13 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMe
     Q_OBJECT
 
     public:
+
+    enum SendMode {
+		STREAMSTART,
+        STREAMSTOP,
+		ENBLOCK
+	};
+
     //! Default constructor
     AnimHostMessageSender() {}
     //! \brief Constructor
@@ -66,6 +73,7 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMe
     //! Default destructor
     ~AnimHostMessageSender() {
         //sendSocket->close();
+        qDebug() << "~AnimHostMessageSender()";
     }
 
     //! Request this process to start working
@@ -85,6 +93,10 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMe
      * Sets \c _paused to false and wakes the thread that is waiting on the reconnectWaitCondition
      */
     void resumeSendFrames();
+
+    
+
+
 
     //! Setting data necessary to create new TRACER Update Message representing a character pose
     /*!
@@ -161,6 +173,40 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMe
     */
     bool loop = false;
 
+    bool streamAnimation = false; //!< Indicates whether the animation data has to be streamed frame by frame or send en bloc
+
+    bool sendBlock = false; //!< Indicates whether the animation data has to be sent en bloc
+
+    int animDataSize = 0; //!< The size of the animation data to be sent
+
+    //! Set sending mode to stream animation frame by frame or send en bloc
+    //! 
+    void setStreamAnimation(SendMode sendMode) {
+        
+        mutex.lock();
+
+        switch(sendMode) {
+			case SendMode::STREAMSTART:
+				streamAnimation = true;
+				sendBlock = false;
+				break;
+			case SendMode::STREAMSTOP:
+				streamAnimation = false;
+				sendBlock = false;
+				break;
+			case SendMode::ENBLOCK:
+				streamAnimation = false;
+				sendBlock = true;
+				break;
+		}
+    
+        mutex.unlock();
+        
+
+      
+    }
+
+
     //! The delta, by which the timestamp is increased for sending the next frame
     /*!
     * The default is 1, it's higher if the sent animation has a **lower** frame rate w.r.t. the target application
@@ -179,6 +225,9 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMe
     */
     int initialOffset = 0;
 
+
+
+
     std::shared_ptr<Animation> animData = nullptr;                      //!< Animation data to be serialised and sent
     std::shared_ptr<CharacterObject> charObj = nullptr;                 //!< Character Object to which the animation will be applied
     std::shared_ptr<SceneNodeObjectSequence> sceneNodeList = nullptr;   //!< Description of the scene to be updated (contains the character that will be animated)
@@ -189,6 +238,16 @@ class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMe
 
     //syncMessage
     //byte syncMessage[3] = { targetHostID,0,MessageType::EMPTY };
+
+
+    private:
+
+    //! Function to initialise and continouesly streaming of animation data frame by frame
+    void streamAnimationData();
+
+    //! Function to initialise and stream a animation data as a AnimationParameterUpdateMessage en bloc
+    void sendAnimationDataBlock();
+
 
     signals:
     //signal emitted when process requests to work

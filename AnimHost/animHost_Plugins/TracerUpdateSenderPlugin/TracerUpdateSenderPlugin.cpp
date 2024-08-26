@@ -28,7 +28,7 @@
 
 TracerUpdateSenderPlugin::TracerUpdateSenderPlugin()
 {
-    _sendUpdateButton = nullptr;
+    _sendStreamButton = nullptr;
     widget = nullptr;
     _selectIPAddress = nullptr;
     _loopCheck = nullptr;
@@ -44,7 +44,11 @@ TracerUpdateSenderPlugin::TracerUpdateSenderPlugin()
         zeroMQSenderThread = new QThread();
 
     msgSender->moveToThread(zeroMQSenderThread);
-    QObject::connect(zeroMQSenderThread, &QThread::started, msgSender, &AnimHostMessageSender::run);
+
+    connect(zeroMQSenderThread, &QThread::started, msgSender, &AnimHostMessageSender::run);
+    connect(msgSender, &AnimHostMessageSender::stopped, zeroMQSenderThread, &QThread::quit);
+    connect(zeroMQSenderThread, &QThread::finished, msgSender, &QObject::deleteLater);
+    connect(zeroMQSenderThread, &QThread::finished, zeroMQSenderThread, &QObject::deleteLater);
 
     if(!tickReceiver)
         tickReceiver = new TickReceiver(false, _updateSenderContext);
@@ -52,20 +56,44 @@ TracerUpdateSenderPlugin::TracerUpdateSenderPlugin()
         zeroMQTickReceiverThread = new QThread();
 
     tickReceiver->moveToThread(zeroMQTickReceiverThread);
-    QObject::connect(tickReceiver, &TickReceiver::tick, this, &TracerUpdateSenderPlugin::ticked);
-    QObject::connect(zeroMQTickReceiverThread, &QThread::started, tickReceiver, &TickReceiver::run);
+    connect(zeroMQTickReceiverThread, &QThread::started, tickReceiver, &TickReceiver::run);
+    connect(tickReceiver, &TickReceiver::tick, this, &TracerUpdateSenderPlugin::ticked);
+    connect(tickReceiver, &TickReceiver::stopped, zeroMQTickReceiverThread, &QThread::quit);
+    connect(zeroMQTickReceiverThread, &QThread::finished, tickReceiver, &QObject::deleteLater);
+    connect(zeroMQTickReceiverThread, &QThread::finished, zeroMQTickReceiverThread, &QObject::deleteLater);
+    
 
     qDebug() << "TracerUpdateSenderPlugin created";
 }
 
 TracerUpdateSenderPlugin::~TracerUpdateSenderPlugin()
 {
-    zeroMQSenderThread->quit(); zeroMQSenderThread->wait();
-    zeroMQTickReceiverThread->quit(); zeroMQTickReceiverThread->wait();
 
-    if (msgSender)
-        msgSender->~AnimHostMessageSender();
-    _updateSenderContext->close();
+    if(zeroMQSenderThread->isRunning()) {
+		//tickReceiver->requestStop();
+        msgSender->requestStop();
+        zeroMQSenderThread->quit();
+        zeroMQSenderThread->wait();
+        qDebug() << "TracerUpdateSenderPlugin: TickReceiverThread stopped";
+	}
+
+
+    if(zeroMQTickReceiverThread->isRunning()) {
+		tickReceiver->requestStop();
+		zeroMQTickReceiverThread->quit();
+		//zeroMQTickReceiverThread->wait();
+		qDebug() << "TracerUpdateSenderPlugin: ZeroMQSenderThread stopped";
+	}
+
+    
+    //zeroMQSenderThread->quit();
+    //zeroMQSenderThread->wait();
+    //zeroMQSenderThread->quit(); //zeroMQSenderThread->wait();
+    //zeroMQTickReceiverThread->quit(); zeroMQTickReceiverThread->wait();
+
+    //if (msgSender)
+        //msgSender->~AnimHostMessageSender();
+    //_updateSenderContext->close();
 
     qDebug() << "~TracerUpdateSenderPlugin()";
 }
@@ -145,6 +173,11 @@ void TracerUpdateSenderPlugin::run() {
         zeroMQTickReceiverThread->start();
     }
 
+    if(!zeroMQSenderThread->isRunning()) {
+		msgSender->requestStart();
+		zeroMQSenderThread->start();
+	}
+
     // every time the buffer is **predicted to be** half-read, fill the next half buffer
     // TO BE UNCOMMENTED AS SOON AS I RECEIVE bufferSize and renderingFrameRate from receiver
     /*if (localTime % (bufferReadTime / 2) == 0) {
@@ -174,33 +207,85 @@ std::shared_ptr<NodeData> TracerUpdateSenderPlugin::processOutData(QtNodes::Port
 
 QWidget* TracerUpdateSenderPlugin::embeddedWidget() {
     if (!widget) {
-        _sendUpdateButton = new QPushButton("Send Animation");
+
+        widget = new QWidget();
+        _mainLayout = new QVBoxLayout();
+
+        //IP Address Selection
+        _ipAddressLayout = new QHBoxLayout();
         _selectIPAddress = new QComboBox();
-        _loopCheck = new QCheckBox("Loop");
         _ipAddress = ZMQMessageHandler::getIPList().at(0).toString();
         _ipValidator = new QRegularExpressionValidator(ZMQMessageHandler::ipRegex, this);
-
-        connect(_selectIPAddress, &QComboBox::currentIndexChanged, this, &TracerUpdateSenderPlugin::onChangedSelection);
-        connect(_loopCheck, &QCheckBox::stateChanged, this, &TracerUpdateSenderPlugin::onLoopCheck);
+        _selectIPAddress->setValidator(_ipValidator);
 
         for (QHostAddress ipAddress : ZMQMessageHandler::getIPList()) {
             _selectIPAddress->addItem(ipAddress.toString());
         }
-        _selectIPAddress->setValidator(_ipValidator);
-
-        _sendUpdateButton->resize(QSize(30, 30));
-        _ipAddressLayout = new QHBoxLayout();
 
         _ipAddressLayout->addWidget(_selectIPAddress);
-        _ipAddressLayout->addWidget(_loopCheck);
-        _ipAddressLayout->addWidget(_sendUpdateButton);
-
         _ipAddressLayout->setSizeConstraint(QLayout::SetMinimumSize);
+        _mainLayout->addLayout(_ipAddressLayout);
 
-        widget = new QWidget();
-        widget->setLayout(_ipAddressLayout);
-        connect(_sendUpdateButton, &QPushButton::released, this, &TracerUpdateSenderPlugin::onButtonClicked);
+        connect(_selectIPAddress, &QComboBox::currentIndexChanged, this, &TracerUpdateSenderPlugin::onChangedSelection);
 
+        // Toggle between En Bloc and Stream Animation
+        _streamCheck = new QCheckBox("Stream");
+        _mainLayout->addWidget(_streamCheck);
+
+        connect(_streamCheck, &QCheckBox::stateChanged, [this](int state) {
+			if (state == Qt::Checked) {
+				_streamWidget->show();
+				_enBlocWidget->hide();
+                
+			} else {
+				_streamWidget->hide();
+				_enBlocWidget->show();
+			}
+
+            widget->adjustSize();
+            Q_EMIT embeddedWidgetSizeUpdated();
+		});
+
+        // Stream Animation Section
+        {
+            _streamWidget = new QWidget();
+            _streamLayout = new QHBoxLayout();
+            _sendStreamButton = new QPushButton("Send Animation");
+            _sendStreamButton->resize(QSize(30, 30));
+            _loopCheck = new QCheckBox("Loop");
+
+            _streamLayout->addWidget(_loopCheck);
+            _streamLayout->addWidget(_sendStreamButton);
+
+            _streamWidget->setLayout(_streamLayout);
+
+            _mainLayout->addWidget(_streamWidget);
+
+            _streamWidget->hide();
+
+            connect(_loopCheck, &QCheckBox::stateChanged, this, &TracerUpdateSenderPlugin::onLoopCheck);
+            connect(_sendStreamButton, &QPushButton::released, this, &TracerUpdateSenderPlugin::onStreamButtonClicked);
+        }
+
+        // En Bloc Animation Section
+		{
+			_enBlocWidget = new QWidget();
+            _enBlocLayout = new QHBoxLayout();
+
+            _sendEnBlocButton = new QPushButton("Send En Bloc");
+
+            _enBlocLayout->addWidget(_sendEnBlocButton);
+
+            _enBlocWidget->setLayout(_enBlocLayout);
+
+            _mainLayout->addWidget(_enBlocWidget);
+
+            connect(_sendEnBlocButton, &QPushButton::released, this, &TracerUpdateSenderPlugin::onEnBlocButtonClicked);
+		}
+        
+
+
+		widget->setLayout(_mainLayout);
         widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
                               "QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"
                               "QPushButton{border: 1px solid white; border-radius: 4px; padding: 5px; background-color:rgb(98, 139, 202);}"
@@ -228,49 +313,63 @@ void TracerUpdateSenderPlugin::onLoopCheck(int state) {
     msgSender->loop = (state != Qt::Unchecked);
 }
 
-void TracerUpdateSenderPlugin::onButtonClicked() {
-    auto sp_character = _characterIn.lock();
-    auto sp_animation = _animIn.lock();
-    auto sp_sceneNodeList = _sceneNodeListIn.lock();
+void TracerUpdateSenderPlugin::onStreamButtonClicked() {
+    
+    // Start/Stop streaming of animation
 
-    // abort if any shared pointer is invalid
-    assert(sp_character && sp_animation && sp_sceneNodeList);
+    if (isStreaming) {
 
-    // Set animation, character and scene data (necessary for creating a pose update message) in the message sender object
-    msgSender->setAnimationAndSceneData(sp_animation->getData(), sp_character->getData(), sp_sceneNodeList->getData());
+        // Stop Streaming
 
-    // If the sending thread is not already running, start it, otherwise just wake it
-    if (!zeroMQSenderThread->isRunning()) {
-        msgSender->requestStart();
-        zeroMQSenderThread->start();
+        _sendStreamButton->setText("Send Animation");
+        isStreaming = false;
+        msgSender->setStreamAnimation(AnimHostMessageSender::STREAMSTOP);
+
+
     } else {
-        msgSender->resumeSendFrames();
+
+        if (isDataAvailable()) {
+            auto sp_character = _characterIn.lock();
+            auto sp_animation = _animIn.lock();
+            auto sp_sceneNodeList = _sceneNodeListIn.lock();
+
+            // Set animation, character and scene data (necessary for creating a pose update message) in the message sender object
+            msgSender->setAnimationAndSceneData(sp_animation->getData(), sp_character->getData(), sp_sceneNodeList->getData());
+            
+            _sendStreamButton->setText("Stop Animation");
+            isStreaming = true;
+            msgSender->setStreamAnimation(AnimHostMessageSender::STREAMSTART);
+        }
+
+        
+	}
+   
+}
+
+void TracerUpdateSenderPlugin::onEnBlocButtonClicked()
+{
+    //msgSender->setStreamAnimation(false);
+
+    if (isStreaming) {
+        // Stop Streaming
+
+        _sendStreamButton->setText("Send Animation");
+        isStreaming = false;
+
+        msgSender->setStreamAnimation(AnimHostMessageSender::STREAMSTOP);
+
     }
 
-    ///! DEBUGGING SAMPLE DATA USED TO TEST SENDING
+    if (isDataAvailable()) {
+        auto sp_character = _characterIn.lock();
+        auto sp_animation = _animIn.lock();
+        auto sp_sceneNodeList = _sceneNodeListIn.lock();
 
-    /*bool boolExample = true;
-    QByteArray msgBodyBool = msgSender->createMessageBody(0, 0, 0, ZMQMessageHandler::ParameterType::BOOL, boolExample);*/
+        // Set animation, character and scene data (necessary for creating a pose update message) in the message sender object
+        msgSender->setAnimationAndSceneData(sp_animation->getData(), sp_character->getData(), sp_sceneNodeList->getData());
 
-    /*int intExample = -64;
-    QByteArray msgBodyInt = msgSender->createMessageBody(0, 0, 0, ZMQMessageHandler::ParameterType::INT, intExample);*/
+        // Start Streaming
+        msgSender->setStreamAnimation(AnimHostMessageSender::ENBLOCK);
+    }
 
-    /*float floatExample = 78.3;
-    QByteArray msgBodyFloat = msgSender->createMessageBody(0, 0, 0, ZMQMessageHandler::ParameterType::FLOAT, floatExample);*/
-
-    //std::vector<float> vec3Example = { 2.5, -7.4, 0 };
-    //QByteArray msgBodyVec3 = msgSender->createMessageBody(0, 0, 0, ZMQMessageHandler::ParameterType::VECTOR3, vec3Example);
-
-   /* std::vector<float> quatExample = { -0.38, -0.07, 0.16, 0.91 };
-    std::vector<float> quatExample2 = { 0.06, 0.5, 0.86, 0.11 };
-    QByteArray msgBodyQuat = msgSender->createMessageBody(254, 3, 3, ZMQMessageHandler::ParameterType::QUATERNION, quatExample);
-    QByteArray msgQuat2 = msgSender->createMessageBody(254, 3, 47, ZMQMessageHandler::ParameterType::QUATERNION, quatExample2);
-    msgBodyQuat.append(msgQuat2);*/ 
-
-    // Example of message creation
-    //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyBool));
-    //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyInt));
-    //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyFloat));
-    //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyVec3));
-    //msgSender->setMessage(msgSender->createMessage(ipAddress[ipAddress.size() - 1].digitValue(), localTime, ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgBodyQuat));
 }

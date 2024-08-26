@@ -1,24 +1,29 @@
-set(target_name DataExportPlugin)
+set(target_name ToyCollectionPlugin)
 
 qt_add_library(${target_name}
-    DataExportPlugin.cpp DataExportPlugin.h
-    DataExportPlugin_global.h
+    ToyCollectionPlugin_global.h
+    ToyCollectionPlugin.h ToyCollectionPlugin.cpp 
+    ToyAlphaNode.h ToyAlphaNode.cpp
+    ToyBetaNode.h ToyBetaNode.cpp
+    
 )
 
 set_target_properties (${target_name} PROPERTIES
-    FOLDER Plugins/DataOutput
+    FOLDER Plugins/NeuralNetwork
 )
 
 target_include_directories(${target_name} PUBLIC
-    ../PluginNodeInterface
 )
 
 target_compile_definitions(${target_name} PRIVATE
-    DATAEXPORTPLUGIN_LIBRARY
+    TOYCOLLECTIONPLUGIN_LIBRARY
 )
 
+target_link_directories(AnimHostCore PUBLIC 
+ )
+
 target_link_libraries(${target_name} PUBLIC
-    PluginInterface
+    AnimHostCore
 )
 
 install(TARGETS ${target_name}

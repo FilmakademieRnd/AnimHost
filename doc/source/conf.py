@@ -7,7 +7,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'AnimHost'
-copyright = '2024, Simon Haag'
+copyright = '2024, Filmakademie Baden-Wuerttemberg, Animationsinstitut R&D Labs'
 author = 'Simon Haag'
 release = '0.0.1'
 

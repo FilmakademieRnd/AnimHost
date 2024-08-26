@@ -1,6 +1,6 @@
 # AnimHost
 AnimHost connects animation generators to Digital Content Creation applications, on-set tools like VPET or Game Engines in general. It explores enhanced XR production processes for animated films, utilising machine learning with a “fair use of data” and an “artists in the loop” approach.
-![AnimHost](/doc/resources/AnimHost_Shematic.png)
+![AnimHost](/doc/resources/AnimHost_Shematic_1k.png)
 
 **AninHost web site:** https://research.animationsinstitut.de/animhost
 
