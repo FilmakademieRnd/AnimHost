@@ -24,10 +24,13 @@
 
 ToyAlphaNode::ToyAlphaNode(const QTimer& tick)
 {
+    /*
+    * Initialize all neccessary variables, especially the output data of the node.
+    * Leave to widget initialization to embeddedWidget().
+    */
+
     _widget = nullptr;
-
     _animationOut = std::make_shared<AnimNodeData<Animation>>();
-
     connect(&tick, &QTimer::timeout, this, &ToyAlphaNode::run);
 
     qDebug() << "ToyAlphaNode created";
@@ -40,6 +43,10 @@ ToyAlphaNode::~ToyAlphaNode()
 
 unsigned int ToyAlphaNode::nDataPorts(QtNodes::PortType portType) const
 {
+    /*
+    * Return the number of data ports for the given port type. In or Out.
+    * The number of ports can be dynamic, but must match the dataPortType() function.
+    */
     if (portType == QtNodes::PortType::In)
         return 1;
     else
@@ -48,6 +55,10 @@ unsigned int ToyAlphaNode::nDataPorts(QtNodes::PortType portType) const
 
 NodeDataType ToyAlphaNode::dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
 {
+    /*
+    * Return the data port type for the given port type and port index.
+    * This function must match the nDataPorts() function.
+    */
     NodeDataType type;
     if (portType == QtNodes::PortType::In)
         return AnimNodeData<Animation>::staticType();
@@ -59,16 +70,31 @@ NodeDataType ToyAlphaNode::dataPortType(QtNodes::PortType portType, QtNodes::Por
 
 void ToyAlphaNode::run()
 {
+    /*
+    * Run the main node logic here. run() is called through the incoming run signal of another node.
+    * run() can also be called through another signal, like a button press or in our case a timer.
+    * But it is recommended to keep user interaction to a minimum. 
+    */
     qDebug() << "ToyAlphaNode run";
 }
 
 std::shared_ptr<NodeData> ToyAlphaNode::processOutData(QtNodes::PortIndex port)
 {
+    /*
+    * return processed data based on the rquested output port. Returned data type must match the dataPortType() function.
+    */
     return _animationOut;
 }
 
 void ToyAlphaNode::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex)
 {
+    /*
+    * Check if the incoming data is valid and cast it to the correct type based on the previously defined types in dataPortType() function.
+    * If the data is valid, store it in a member variable for further processing.
+    * If data is invalid, emit dataInvalidated() to notify the downstream nodes.
+    * We recommend handling incoming data as weak_ptr.
+    */
+
     if (!data) {
         Q_EMIT dataInvalidated(0);
     }
@@ -79,23 +105,18 @@ void ToyAlphaNode::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIn
 }
 
 bool ToyAlphaNode::isDataAvailable() {
+    /*
+    * Use this function to check if the inbound data is available and can be processed.
+    */
     return !_animationIn.expired();
 }
 
 QWidget* ToyAlphaNode::embeddedWidget()
 {
-    /*if (!_widget) {
-
-        _widget = new QWidget();
-    }
-
-    _widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
-        "QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"
-        "QPushButton{border: 1px solid white; border-radius: 4px; padding: 5px; background-color:rgb(98, 139, 202);}"
-        "QLabel{padding: 5px;}"
-    );
-
-    return _widget;*/
+    /*
+    * Return the embedded widget of the node. This can be a QWidget or nullptr if no widget is embedded.
+    * To propagate dynamic changes to the widget size, call Q_EMIT embeddedWidgetSizeUpdated() whenever the widget size changes.
+    */
 
     return nullptr;
 }

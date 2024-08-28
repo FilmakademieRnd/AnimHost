@@ -162,17 +162,8 @@ Each node in the collection should be a subclass of `PluginNodeInterface`, tailo
 Step 5: Packaging the Plugin
 ============================
 
-To make the plugin usable within AnimHost, you need to compile it and ensure that it is placed in the correct directory where AnimHost loads plugins. The plugin should be accompanied by a metadata file, such as `ToyCollectionPlugin.json`, which might look like this:
+To make the plugin usable within AnimHost, you need to compile it and ensure that it is placed in the correct directory where AnimHost loads plugins.
 
-.. code-block:: json
-
-   {
-       "name": "ToyCollectionPlugin",
-       "version": "1.0",
-       "description": "A collection of toy nodes",
-       "author": "Filmakademie Baden-Wuerttemberg, Animationsinstitut R&D Labs",
-       "license": "MIT"
-   }
 
 Testing the Plugin
 ==================

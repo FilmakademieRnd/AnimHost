@@ -45,11 +45,11 @@ public:
     ToyAlphaNode(const QTimer& tick);
     ~ToyAlphaNode();
 
-    std::unique_ptr<NodeDelegateModel> Init() override { return nullptr; };//  std::unique_ptr<ToyAlphaNode>(new ToyAlphaNode();
+    std::unique_ptr<NodeDelegateModel> Init() override { return nullptr; };
 
-
-    QString caption() const override { return this->name(); }
-    bool captionVisible() const override { return true; }
+    QString caption() const override { return this->name();}
+   
+    bool captionVisible() const override { return true; };
 
     static QString Name() { return QString("ToyAlphaNode"); }
 
@@ -63,6 +63,7 @@ public:
     bool isDataAvailable() override;
 
     void run() override;
+
 
     QWidget* embeddedWidget() override;
 

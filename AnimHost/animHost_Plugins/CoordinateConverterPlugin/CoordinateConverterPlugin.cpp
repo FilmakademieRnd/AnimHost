@@ -186,7 +186,7 @@ QWidget* CoordinateConverterPlugin::embeddedWidget()
             debugLayout->addWidget(swapYzButton);
 
             // Matrix Editor
-            matrixLabel = new QLabel("Transformation Matrix:");
+            matrixLabel = new QLabel("Transformation Character Root Matrix:");
             matrixEditor = new MatrixEditorWidget();
             matrixEditor->SetMatrix(activePreset.transformMatrix);
             applyButton = new QPushButton("Apply Matrix");
