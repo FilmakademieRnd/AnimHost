@@ -1,9 +1,35 @@
+/*
+ ***************************************************************************************
+
+ *   Copyright (c) 2024 Filmakademie Baden-Wuerttemberg, Animationsinstitut R&D Labs
+ *   https://research.animationsinstitut.de/animhost
+ *   https://github.com/FilmakademieRnd/AnimHost
+ *
+ *   AnimHost is a development by Filmakademie Baden-Wuerttemberg, Animationsinstitut
+ *   R&D Labs in the scope of the EU funded project MAX-R (101070072).
+ *
+ *   This program is distributed in the hope that it will be useful, but WITHOUT
+ *   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *   FOR A PARTICULAR PURPOSE. See the MIT License for more details.
+ *   You should have received a copy of the MIT License along with this program;
+ *   if not go to https://opensource.org/licenses/MIT
+
+ ***************************************************************************************
+ */
+
 #include "CharacterSelectorNode.h"
+#include <QWidget>
+#include <QVBoxLayout>
+#include <QComboBox>
 #include <QPushButton>
 
 CharacterSelectorNode::CharacterSelectorNode()
 {
-    _pushButton = nullptr;
+    _widget = nullptr;
+    _selectionLayout = nullptr;
+    _selectionMenu = nullptr;
+
+    _characterOut = std::make_shared<AnimNodeData<CharacterObject>>();
     qDebug() << "CharacterSelectorNode created";
 }
 
@@ -15,67 +41,94 @@ CharacterSelectorNode::~CharacterSelectorNode()
 unsigned int CharacterSelectorNode::nDataPorts(QtNodes::PortType portType) const
 {
     if (portType == QtNodes::PortType::In)
-        return 0;
-    else            
-        return 0;
+        return 1;
+    else
+        return 1;
 }
 
 NodeDataType CharacterSelectorNode::dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
 {
     NodeDataType type;
     if (portType == QtNodes::PortType::In)
-        return type;
+        return AnimNodeData<CharacterObjectSequence>::staticType();
     else
-        return type;
+        return AnimNodeData<CharacterObject>::staticType();
 }
 
 void CharacterSelectorNode::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex)
 {
-    qDebug() << "CharacterSelectorNode setInData";
+    if (!data) {
+        Q_EMIT dataInvalidated(0);
+    }
+    _characterListIn = std::static_pointer_cast<AnimNodeData<CharacterObjectSequence>>(data);
+
+    if (auto spCharacterList = _characterListIn.lock()) {
+        _selectionMenu->clear();
+        for (CharacterObject chpkg : spCharacterList->getData()->mCharacterObjectSequence) {
+            qDebug() << "Received Character" << chpkg.objectName << "with ID" << chpkg.sceneObjectID;
+            _selectionMenu->addItem(QString::fromStdString(chpkg.objectName));
+        }
+        _widget->adjustSize();
+        _widget->updateGeometry();
+    }
+    else {
+        return;
+    }
+    qDebug() << "CharacterSelectorPlugin setInData";
 }
 
 std::shared_ptr<NodeData> CharacterSelectorNode::processOutData(QtNodes::PortIndex port)
 {
-	return nullptr;
+    return _characterOut;
 }
 
-bool CharacterSelectorNode::isDataAvailable() {
-    /*
-    * Use this function to check if the inbound data is available and can be processed.
-    */
-    return false;
+bool CharacterSelectorNode::isDataAvailable() 
+{
+    return !_characterListIn.expired();
 }
 
 void CharacterSelectorNode::run()
 {
-    /*
-    * Run the main node logic here. run() is called through the incoming run signal of another node.
-    * run() can also be called through another signal, like a button press or in our case a timer.
-    * But it is recommended to keep user interaction to a minimum. 
-    */
-    qDebug() << "CharacterSelectorNode run";
-    if(isDataAvailable()){
-        /*
-        * Do Stuff
-        */
-    }
+    emitRunNextNode();
 }
 
 
 
 QWidget* CharacterSelectorNode::embeddedWidget()
 {
-	if (!_pushButton) {
-		_pushButton = new QPushButton("Example Widget");
-		_pushButton->resize(QSize(100, 50));
+    if (!_widget) {
+        _selectionLayout = new QVBoxLayout();
+        _selectionMenu = new QComboBox();
+        _selectionMenu->setSizeAdjustPolicy(QComboBox::SizeAdjustPolicy::AdjustToContents);
+        connect(_selectionMenu, &QComboBox::currentIndexChanged, this, &CharacterSelectorNode::onChangedSelection);
 
-		connect(_pushButton, &QPushButton::released, this, &CharacterSelectorNode::onButtonClicked);
-	}
+        _selectionLayout->addWidget(_selectionMenu);
 
-	return _pushButton;
+        _selectionLayout->setSizeConstraint(QLayout::SetMinimumSize);
+
+        _widget = new QWidget();
+        _widget->setLayout(_selectionLayout);
+        _widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
+            "QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"
+            "QPushButton{border: 1px solid white; border-radius: 4px; padding: 5px; background-color:rgb(98, 139, 202);}"
+            "QLabel{background-color:rgb(25, 25, 25); border: 1px; border-color: rgb(60, 60, 60); border-radius: 4px; padding: 5px;}");
+    }
+
+    return _widget;
 }
 
-void CharacterSelectorNode::onButtonClicked()
+void CharacterSelectorNode::onChangedSelection(int index)
 {
-	qDebug() << "Example Widget Clicked";
+    qDebug() << "Character Selection Changed";
+    if (index >= 0) {
+        if (auto spCharacterList = _characterListIn.lock()) {
+            // Overwrite _characterOut with new selected element
+            CharacterObject selectedCharacter = spCharacterList->getData()->mCharacterObjectSequence.at(index);
+            _characterOut->getData()->fill(selectedCharacter);
+            emitDataUpdate(0);
+        }
+    }
+    else {
+        emitDataInvalidated(0);
+    }
 }

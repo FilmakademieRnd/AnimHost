@@ -3,16 +3,17 @@ set(target_name TRACERPlugin)
 qt_add_library(${target_name}
     TRACERPlugin.cpp TRACERPlugin.h
     TRACERPlugin_global.h
-    SceneReciever/SceneRecieverNode.h SceneReciever/SceneRecieverNode.cpp
-AnimationSender/AnimationSenderNode.h AnimationSender/AnimationSenderNode.cpp
-CharacterSelector/CharacterSelectorNode.h CharacterSelector/CharacterSelectorNode.cpp
-ControlPathUpdate/ControlPathUpdateNode.h ControlPathUpdate/ControlPathUpdateNode.cpp
-RPCTrigger/RPCTriggerNode.h RPCTrigger/RPCTriggerNode.cpp
+    SceneReceiver/SceneReceiverNode.h SceneReceiver/SceneReceiverNode.cpp
+    SceneReceiver/SceneReceiver.h SceneReceiver/SceneReceiver.cpp
+    AnimationSender/AnimationSenderNode.h AnimationSender/AnimationSenderNode.cpp
+    CharacterSelector/CharacterSelectorNode.h CharacterSelector/CharacterSelectorNode.cpp
+    ControlPathUpdate/ControlPathUpdateNode.h ControlPathUpdate/ControlPathUpdateNode.cpp
+    RPCTrigger/RPCTriggerNode.h RPCTrigger/RPCTriggerNode.cpp
 
 )
 
 set_target_properties (${target_name} PROPERTIES
-    FOLDER Plugins/Custom
+    FOLDER Plugins/TRACER
 )
 
 

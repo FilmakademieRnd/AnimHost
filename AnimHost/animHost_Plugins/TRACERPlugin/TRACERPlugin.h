@@ -29,7 +29,7 @@
 #include <commondatatypes.h>
 #include <nodedatatypes.h>
 
-//#include "YourNodeHeader.h"
+#include "CharacterSelector/CharacterSelectorNode.h"
 
 
 class TRACERPLUGINSHARED_EXPORT TRACERPlugin : public PluginNodeCollectionInterface
@@ -61,7 +61,8 @@ class TRACERPLUGINSHARED_EXPORT TRACERPlugin : public PluginNodeCollectionInterf
 
        void RegisterNodeCollection(NodeDelegateModelRegistry& nodeRegistry) override {
            // Register nodes here
-           //nodeRegistry.registerModel<YourNode>([this](){ return  std::make_unique<YourNode>(YourSharedResources); });
+           nodeRegistry.registerModel<CharacterSelectorNode>([this](){ return  std::make_unique<CharacterSelectorNode>();}, "TRACER");
+           nodeRegistry.registerModel<SceneReceiverNode>([this]() { return  std::make_unique<SceneReceiverNode>(); }, "TRACER");
        };
 
        void PostNodeCollectionRegistration() override {};
