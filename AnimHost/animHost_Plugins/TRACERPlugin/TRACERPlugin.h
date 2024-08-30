@@ -63,6 +63,7 @@ class TRACERPLUGINSHARED_EXPORT TRACERPlugin : public PluginNodeCollectionInterf
            // Register nodes here
            nodeRegistry.registerModel<CharacterSelectorNode>([this](){ return  std::make_unique<CharacterSelectorNode>();}, "TRACER");
            nodeRegistry.registerModel<SceneReceiverNode>([this]() { return  std::make_unique<SceneReceiverNode>(); }, "TRACER");
+           nodeRegistry.registerModel<AnimationSenderNode>([this]() { return  std::make_unique<AnimationSenderNode>(); }, "TRACER");
        };
 
        void PostNodeCollectionRegistration() override {};

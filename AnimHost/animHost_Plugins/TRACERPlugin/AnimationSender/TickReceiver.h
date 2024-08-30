@@ -37,13 +37,13 @@
 #define TICKRECEIVER_H
 
 #include "ZMQMessageHandler.h"
-#include "TracerUpdateSenderPlugin.h"
+#include "AnimationSenderNode.h"
 
 #include <QMutex>
 #include <QThread>
 //#include <nzmqt/nzmqt.hpp>
 
-class TRACERUPDATESENDERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHandler {
+class TRACERPLUGINSHARED_EXPORT TickReceiver : public ZMQMessageHandler {
 
 	Q_OBJECT
 

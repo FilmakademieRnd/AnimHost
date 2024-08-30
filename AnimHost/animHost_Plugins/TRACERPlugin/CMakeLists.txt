@@ -5,7 +5,11 @@ qt_add_library(${target_name}
     TRACERPlugin_global.h
     SceneReceiver/SceneReceiverNode.h SceneReceiver/SceneReceiverNode.cpp
     SceneReceiver/SceneReceiver.h SceneReceiver/SceneReceiver.cpp
+
     AnimationSender/AnimationSenderNode.h AnimationSender/AnimationSenderNode.cpp
+    AnimationSender/AnimHostMessageSender.h AnimationSender/AnimHostMessageSender.cpp
+    AnimationSender/TickReceiver.h AnimationSender/TickReceiver.cpp
+
     CharacterSelector/CharacterSelectorNode.h CharacterSelector/CharacterSelectorNode.cpp
     ControlPathUpdate/ControlPathUpdateNode.h ControlPathUpdate/ControlPathUpdateNode.cpp
     RPCTrigger/RPCTriggerNode.h RPCTrigger/RPCTriggerNode.cpp

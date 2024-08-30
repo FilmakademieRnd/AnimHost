@@ -37,7 +37,7 @@
 #define ANIMHOSTMESSAGESENDER_H
 
 #include "ZMQMessageHandler.h"
-#include "TracerUpdateSenderPlugin.h"
+#include "AnimationSenderNode.h"
 
 #include <QMutex>
 #include <QMultiMap>
@@ -46,7 +46,7 @@
 #include <zmq.hpp>
 
 
-class TRACERUPDATESENDERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMessageHandler {
+class TRACERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMessageHandler {
     
     Q_OBJECT
 
