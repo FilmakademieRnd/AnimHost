@@ -24,10 +24,12 @@
 #include "TRACERPlugin_global.h"
 
 #include <QMetaType>
-#include <QtCore/QObject>
+#include <QObject>
 #include <PluginNodeCollectionInterface.h>
 #include <commondatatypes.h>
 #include <nodedatatypes.h>
+
+#include "TRACERGlobalTimer.h"
 
 #include "CharacterSelector/CharacterSelectorNode.h"
 
@@ -49,6 +51,8 @@ class TRACERPLUGINSHARED_EXPORT TRACERPlugin : public PluginNodeCollectionInterf
 
     // Add shared data here
 
+    TRACERGlobalTimer* _globalTimer;
+
     public:
         TRACERPlugin() { qDebug() << "TRACERPlugin created"; };
         TRACERPlugin(const TRACERPlugin& p) {};
@@ -57,6 +61,8 @@ class TRACERPLUGINSHARED_EXPORT TRACERPlugin : public PluginNodeCollectionInterf
 
        void PreNodeCollectionRegistration() override {
             // Initialize here
+           _globalTimer = new TRACERGlobalTimer();
+           _globalTimer->startTimer(1000);
        };
 
        void RegisterNodeCollection(NodeDelegateModelRegistry& nodeRegistry) override {
