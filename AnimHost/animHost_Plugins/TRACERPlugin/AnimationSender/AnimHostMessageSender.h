@@ -50,6 +50,9 @@ class TRACERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMessageHandler
     
     Q_OBJECT
 
+
+    std::shared_ptr<TRACERGlobalTimer> _globalTimer;
+
     public:
 
     enum SendMode {
@@ -63,7 +66,7 @@ class TRACERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMessageHandler
     //! \brief Constructor
     //! \param[in]  m_debugState    boolean inherited from [ZMQMessageHandler](@ref ZMQMessageHandler) indicating whether to print debug messages
     //! \param[in]  m_context       pointer to ZMQ Context instance
-    AnimHostMessageSender(bool m_debugState, zmq::context_t * m_context) {
+    AnimHostMessageSender(bool m_debugState, zmq::context_t * m_context, std::shared_ptr<TRACERGlobalTimer> globalTimer) : _globalTimer(globalTimer) {
         _debug = m_debugState;
         context = m_context;
         _stop = true;

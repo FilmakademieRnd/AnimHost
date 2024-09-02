@@ -17,16 +17,14 @@
  ***************************************************************************************
  */
 
-
-
 #include "AnimationSenderNode.h"
 #include "AnimHostMessageSender.h"
-#include "TickReceiver.h"
 
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-AnimationSenderNode::AnimationSenderNode()
+AnimationSenderNode::AnimationSenderNode(std::shared_ptr<TRACERGlobalTimer> globalTimer, std::shared_ptr<zmq::context_t> zmqConext) : 
+    _globalTimer(globalTimer), _updateSenderContext(zmqConext)
 {
     _sendStreamButton = nullptr;
     widget = nullptr;
@@ -36,10 +34,8 @@ AnimationSenderNode::AnimationSenderNode()
     _ipAddress = nullptr;
     _ipValidator = nullptr;
 
-    _updateSenderContext = new zmq::context_t(1);
-
     if (!msgSender) // trying to avoid multiple instances
-        msgSender = new AnimHostMessageSender(false, _updateSenderContext);
+        msgSender = new AnimHostMessageSender(false, _updateSenderContext.get(), _globalTimer);
     if (!zeroMQSenderThread) // trying to avoid multiple instances
         zeroMQSenderThread = new QThread();
 
@@ -50,18 +46,6 @@ AnimationSenderNode::AnimationSenderNode()
     connect(zeroMQSenderThread, &QThread::finished, msgSender, &QObject::deleteLater);
     connect(zeroMQSenderThread, &QThread::finished, zeroMQSenderThread, &QObject::deleteLater);
 
-    if (!tickReceiver)
-        tickReceiver = new TickReceiver(false, _updateSenderContext);
-    if (!zeroMQTickReceiverThread)
-        zeroMQTickReceiverThread = new QThread();
-
-    tickReceiver->moveToThread(zeroMQTickReceiverThread);
-    connect(zeroMQTickReceiverThread, &QThread::started, tickReceiver, &TickReceiver::run);
-    connect(tickReceiver, &TickReceiver::tick, this, &AnimationSenderNode::ticked);
-    connect(tickReceiver, &TickReceiver::stopped, zeroMQTickReceiverThread, &QThread::quit);
-    connect(zeroMQTickReceiverThread, &QThread::finished, tickReceiver, &QObject::deleteLater);
-    connect(zeroMQTickReceiverThread, &QThread::finished, zeroMQTickReceiverThread, &QObject::deleteLater);
-
 
     qDebug() << "AnimationSenderNode created";
 }
@@ -70,30 +54,11 @@ AnimationSenderNode::~AnimationSenderNode()
 {
 
     if (zeroMQSenderThread->isRunning()) {
-        //tickReceiver->requestStop();
         msgSender->requestStop();
         zeroMQSenderThread->quit();
         zeroMQSenderThread->wait();
         qDebug() << "AnimationSenderNode: TickReceiverThread stopped";
     }
-
-
-    if (zeroMQTickReceiverThread->isRunning()) {
-        tickReceiver->requestStop();
-        zeroMQTickReceiverThread->quit();
-        //zeroMQTickReceiverThread->wait();
-        qDebug() << "AnimationSenderNode: ZeroMQSenderThread stopped";
-    }
-
-
-    //zeroMQSenderThread->quit();
-    //zeroMQSenderThread->wait();
-    //zeroMQSenderThread->quit(); //zeroMQSenderThread->wait();
-    //zeroMQTickReceiverThread->quit(); zeroMQTickReceiverThread->wait();
-
-    //if (msgSender)
-        //msgSender->~AnimHostMessageSender();
-    //_updateSenderContext->close();
 
     qDebug() << "~AnimationSenderNode()";
 }
@@ -168,11 +133,6 @@ void AnimationSenderNode::run() {
 
     qDebug() << "AnimationSenderNode running...";
 
-    if (!zeroMQTickReceiverThread->isRunning()) {
-        tickReceiver->requestStart();
-        zeroMQTickReceiverThread->start();
-    }
-
     if (!zeroMQSenderThread->isRunning()) {
         msgSender->requestStart();
         zeroMQSenderThread->start();
@@ -183,17 +143,6 @@ void AnimationSenderNode::run() {
     /*if (localTime % (bufferReadTime / 2) == 0) {
         msgSender->resume();
     }*/
-}
-
-// When TICK is received message sender is enabled
-// This Tick-Slot is connected to the Tick-Signal in the TickRecieverThread
-void AnimationSenderNode::ticked(int externalTime) {
-    if (std::abs(externalTime - ZMQMessageHandler::getLocalTimeStamp()) > 20) {
-        // Set the new timestamp
-        ZMQMessageHandler::setLocalTimeStamp(externalTime);
-        // Start the local clock with the same interval (timeout callback called N times a second, where N is the playback frame rate set from the TRACER Application)
-        ZMQMessageHandler::localTick->start(1000 / ZMQMessageHandler::getPlaybackFrameRate());
-    }
 }
 
 std::shared_ptr<NodeData> AnimationSenderNode::processOutData(QtNodes::PortIndex port) {

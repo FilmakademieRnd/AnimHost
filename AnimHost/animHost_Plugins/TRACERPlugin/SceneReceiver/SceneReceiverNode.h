@@ -82,7 +82,7 @@ private:
     // !!!TEMPORARY!!!
     std::shared_ptr<AnimNodeData<ControlPath>> controlPathOut;
 
-    zmq::context_t* _sceneReceiverContext = nullptr;    //!< 0MQ context to establish connection, send and receive messages
+    std::shared_ptr<zmq::context_t> _sceneReceiverContext = nullptr;    //!< 0MQ context to establish connection, send and receive messages
     QThread* zeroMQSceneReceiverThread = nullptr;       //!< Sub-thread to handle sending request messages and receiving replies
 
     SceneReceiver* sceneReceiver;                       //!< Pointer to instance of the class that is responsible to exchange messages with the rest of the TRACER framework
@@ -98,10 +98,10 @@ public:
      * - \c SceneReceiverNode::requestSceneNodeData() signal is connected to \c SceneReceiver::requestSceneNodeData()
      * - \c SceneReceiverNode::requestHeaderData() signal is connected to \c SceneReceiver::requestHeaderData()
      */
-    SceneReceiverNode();
+    SceneReceiverNode(std::shared_ptr<zmq::context_t> zmqConext);
     ~SceneReceiverNode();
     
-    std::unique_ptr<NodeDelegateModel> Init() override { return  std::unique_ptr<SceneReceiverNode>(new SceneReceiverNode()); };
+    std::unique_ptr<NodeDelegateModel> Init() override { return  nullptr; };
 
     static QString Name() { return QString("SceneReceiverNode"); }
 

@@ -42,6 +42,7 @@
 #define ANIMATIONSENDER_H
 
 #include "../TRACERPlugin_global.h"
+#include "../TRACERGlobalTimer.h"
 #include "ZMQMessageHandler.h"
 #include <QMetaType>
 #include <QThread>
@@ -57,42 +58,37 @@
 #include <zmq.hpp>
 
 class AnimHostMessageSender;
-class TickReceiver;
 
 class TRACERPLUGINSHARED_EXPORT AnimationSenderNode : public PluginNodeInterface
 {
     Q_OBJECT
 private:
     // UI Elements
-    QWidget* widget;                                //!< UI container element
-    QVBoxLayout* _mainLayout;                        //!< UI layout element
+    QWidget* widget = nullptr;                                //!< UI container element
+    QVBoxLayout* _mainLayout = nullptr;                        //!< UI layout element
     ;
-    QHBoxLayout* _ipAddressLayout;                  //!< UI layout element
-    QComboBox* _selectIPAddress;                    //!< UI drop down menu to select the IP address (and therefore the Client ID)
-    QRegularExpressionValidator* _ipValidator;      //!< IP Address validation regex (to be removed)
+    QHBoxLayout* _ipAddressLayout = nullptr;                  //!< UI layout element
+    QComboBox* _selectIPAddress = nullptr;                    //!< UI drop down menu to select the IP address (and therefore the Client ID)
+    QRegularExpressionValidator* _ipValidator = nullptr;      //!< IP Address validation regex (to be removed)
 
-    QCheckBox* _streamCheck;                        //!< UI checkbox element to enable/disable streaming animation
+    QCheckBox* _streamCheck = nullptr;                        //!< UI checkbox element to enable/disable streaming animation
 
-    QWidget* _streamWidget;
-    QHBoxLayout* _streamLayout;//!< UI container element for controlling streaming animation (TRACER ParameterUpdate with "live" playback)
-    QPushButton* _sendStreamButton;                 //!< UI button element, onClick starts the animation-sending sub-thread, toggles between "Start" and "Stop"
-    QCheckBox* _loopCheck;                          //!< UI checkbox to enable/disable looping the animation
+    QWidget* _streamWidget = nullptr;
+    QHBoxLayout* _streamLayout = nullptr;//!< UI container element for controlling streaming animation (TRACER ParameterUpdate with "live" playback)
+    QPushButton* _sendStreamButton = nullptr;                 //!< UI button element, onClick starts the animation-sending sub-thread, toggles between "Start" and "Stop"
+    QCheckBox* _loopCheck = nullptr;                          //!< UI checkbox to enable/disable looping the animation
 
-    QWidget* _enBlocWidget;
-    QHBoxLayout* _enBlocLayout;//!< UI container element for controlling on bolck animation (TRACER AnimatedParameterUpdate)
-    QPushButton* _sendEnBlocButton;               //!< UI button element, onClick starts the animation-sending sub-thread without iterating over whole animation sequence 
+    QWidget* _enBlocWidget = nullptr;
+    QHBoxLayout* _enBlocLayout = nullptr;//!< UI container element for controlling on bolck animation (TRACER AnimatedParameterUpdate)
+    QPushButton* _sendEnBlocButton = nullptr;               //!< UI button element, onClick starts the animation-sending sub-thread without iterating over whole animation sequence 
 
 
     QString _ipAddress;                             //!< The selected IP Address
 
-    zmq::context_t* _updateSenderContext = nullptr; //!< 0MQ context to establish connection and send messages
+    std::shared_ptr<zmq::context_t> _updateSenderContext = nullptr; //!< 0MQ context to establish connection and send messages
 
     QThread* zeroMQSenderThread = nullptr;          //!< Sub-thread to handle message sending without making the UI thread unresponsive
     AnimHostMessageSender* msgSender = nullptr;     //!< Pointer to instance of the class that builds and sends the pose updates
-
-    TickReceiver* tickReceiver = nullptr;           //!< Pointer to instance of the class that receives sync signals
-    QThread* zeroMQTickReceiverThread = nullptr;    //!< Sub-thread to handle receiving synchronisation messages
-
 
     bool isStreaming = false;                       //!< Whether the animation is being streamed or not
 
@@ -104,6 +100,12 @@ private:
 
     int validData = -1;
 
+    /*
+    *
+    */
+    std::shared_ptr<TRACERGlobalTimer> _globalTimer = nullptr;
+
+
 public:
     /*!
      * Instantiates message sender and tick receiver classes, moves both to their separate threads and connects the various signals to the associated functions:
@@ -111,10 +113,10 @@ public:
      * - \c QThread::started() signal is connected to \c TickReceiver::run()
      * - \c TickReceiver::tick() signal is connected to TracerUpdateSenderPlugin::ticked()
      */
-    AnimationSenderNode();
+    AnimationSenderNode(std::shared_ptr<TRACERGlobalTimer> globalTimer, std::shared_ptr<zmq::context_t> zmqConext);
     ~AnimationSenderNode();
     
-    std::unique_ptr<NodeDelegateModel> Init() override { return  std::unique_ptr<AnimationSenderNode>(new AnimationSenderNode()); };
+    std::unique_ptr<NodeDelegateModel> Init() override { return  nullptr; };
 
     static QString Name() { return QString("AnimationSenderNode"); }
 
@@ -181,14 +183,6 @@ private Q_SLOTS:
     * At the moment, does nothing. Empty main loop.
     */
     void run();
-
-    //! Slot called when the subthread responsible for receiving SYNC messages gets a message
-    /*!
-    * Checks whether the internal timer of the application and the other client's timer are in sync.
-    * Resumes the message sending subthread if paused.
-    * \param    externalTime    the time of the client, with which the application is communicating
-    */
-    void ticked(int externalTime);
 
 };
 

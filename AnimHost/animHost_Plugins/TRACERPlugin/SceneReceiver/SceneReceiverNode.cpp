@@ -25,7 +25,7 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/ext/quaternion_float.hpp>
 
-SceneReceiverNode::SceneReceiverNode() {
+SceneReceiverNode::SceneReceiverNode(std::shared_ptr<zmq::context_t> zmqConext) {
 	_pushButton = nullptr;
 	widget = nullptr;
 	_connectIPAddress = nullptr;
@@ -39,9 +39,9 @@ SceneReceiverNode::SceneReceiverNode() {
 	sceneNodeListOut = std::make_shared<AnimNodeData<SceneNodeObjectSequence>>();
 	controlPathOut = std::make_shared<AnimNodeData<ControlPath>>();
 
-	_sceneReceiverContext = new zmq::context_t(1);
+	_sceneReceiverContext = zmqConext;
 	zeroMQSceneReceiverThread = new QThread();
-	sceneReceiver = new SceneReceiver(this, _ipAddress, false, _sceneReceiverContext);
+	sceneReceiver = new SceneReceiver(this, _ipAddress, false, _sceneReceiverContext.get());
 	sceneReceiver->moveToThread(zeroMQSceneReceiverThread);
 	QObject::connect(sceneReceiver, &SceneReceiver::passCharacterByteArray, this, &SceneReceiverNode::processCharacterByteData);
 	QObject::connect(sceneReceiver, &SceneReceiver::passSceneNodeByteArray, this, &SceneReceiverNode::processSceneNodeByteData);

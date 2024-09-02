@@ -30,6 +30,7 @@
 #include <nodedatatypes.h>
 
 #include "TRACERGlobalTimer.h"
+#include "TRACERUpdateReceiver.h"
 
 #include "CharacterSelector/CharacterSelectorNode.h"
 
@@ -51,7 +52,14 @@ class TRACERPLUGINSHARED_EXPORT TRACERPlugin : public PluginNodeCollectionInterf
 
     // Add shared data here
 
-    TRACERGlobalTimer* _globalTimer;
+    std::shared_ptr<TRACERGlobalTimer> _globalTimer = nullptr;
+    std::shared_ptr<zmq::context_t> _zmqContext = nullptr;
+
+    TRACERUpdateReceiver* _updateReceiver = nullptr;
+    QThread _updateReceiverThread;
+
+
+
 
     public:
         TRACERPlugin() { qDebug() << "TRACERPlugin created"; };
@@ -61,15 +69,30 @@ class TRACERPLUGINSHARED_EXPORT TRACERPlugin : public PluginNodeCollectionInterf
 
        void PreNodeCollectionRegistration() override {
             // Initialize here
-           _globalTimer = new TRACERGlobalTimer();
-           _globalTimer->startTimer(1000);
+           _globalTimer = std::make_shared<TRACERGlobalTimer>();
+           _globalTimer->startTimer();
+
+           _zmqContext = std::make_shared<zmq::context_t>(1);
+
+           _updateReceiver = new TRACERUpdateReceiver(true, _zmqContext.get(), _globalTimer);
+           _updateReceiver->moveToThread(&_updateReceiverThread);
+
+           // Connect signals and slots for the TRACERUpdateReceiver
+           connect(&_updateReceiverThread, &QThread::started, _updateReceiver, &TRACERUpdateReceiver::run);
+           connect(_updateReceiver, &TRACERUpdateReceiver::stopped, &_updateReceiverThread, &QThread::quit);
+           connect(&_updateReceiverThread, &QThread::finished, _updateReceiver, &TRACERUpdateReceiver::deleteLater);
+           connect(&_updateReceiverThread, &QThread::finished, &_updateReceiverThread, &QThread::deleteLater);
+
+           _updateReceiver->requestStart();
+           _updateReceiverThread.start();
+
        };
 
        void RegisterNodeCollection(NodeDelegateModelRegistry& nodeRegistry) override {
            // Register nodes here
            nodeRegistry.registerModel<CharacterSelectorNode>([this](){ return  std::make_unique<CharacterSelectorNode>();}, "TRACER");
-           nodeRegistry.registerModel<SceneReceiverNode>([this]() { return  std::make_unique<SceneReceiverNode>(); }, "TRACER");
-           nodeRegistry.registerModel<AnimationSenderNode>([this]() { return  std::make_unique<AnimationSenderNode>(); }, "TRACER");
+           nodeRegistry.registerModel<SceneReceiverNode>([this]() { return  std::make_unique<SceneReceiverNode>(_zmqContext); }, "TRACER");
+           nodeRegistry.registerModel<AnimationSenderNode>([this]() { return  std::make_unique<AnimationSenderNode>(_globalTimer, _zmqContext); }, "TRACER");
        };
 
        void PostNodeCollectionRegistration() override {};

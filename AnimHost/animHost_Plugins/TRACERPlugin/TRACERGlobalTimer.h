@@ -35,11 +35,14 @@
 class TRACERPLUGINSHARED_EXPORT TRACERGlobalTimer : public QObject {
 	Q_OBJECT
 
-		QThread _timerThread;
-	    QTimer* _timer;
+		QThread* _timerThread = nullptr;
+	    QTimer* _timer = nullptr;
 
 		int _bufferSize = 120;
 		int _animFrameRate = 60;
+		int _playbackFrameRate = 60;
+
+		qint64 curr, prev = 0;
 
 		int _localTimeStamp = 0;
 
@@ -52,7 +55,7 @@ class TRACERPLUGINSHARED_EXPORT TRACERGlobalTimer : public QObject {
 		TRACERGlobalTimer(QObject *parent = nullptr);
 		~TRACERGlobalTimer();
 
-		void startTimer(int interval);
+		void startTimer();
 		
 		void stopTimer();
 
@@ -77,6 +80,14 @@ class TRACERPLUGINSHARED_EXPORT TRACERGlobalTimer : public QObject {
 		void waitOnTick();
 
 		int getLocalTimeStamp();
+
+		int getPlaybackFrameRate() {
+			return _playbackFrameRate;
+		}
+
+		int getAnimFrameRate() {
+			return _animFrameRate;
+		}
 
 	signals:
 	    /** 

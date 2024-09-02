@@ -32,7 +32,7 @@ void AnimHostMessageSender::requestStart() {
     _working = true;
     _stop = false;
     _paused = false;
-    ZMQMessageHandler::localTick->start();
+    //ZMQMessageHandler::localTick->start();
     qDebug() << "AnimHost Message Sender requested to start";// in Thread "<<thread()->currentThreadId();
 
     sendSocket = new zmq::socket_t(*context, zmq::socket_type::pub); // publisher socket
@@ -95,7 +95,7 @@ void AnimHostMessageSender::streamAnimationData()
 
     // Allows up- and down-sampling of the animation in order to keep the perceived speed the same even though the playback framerate is not the same
     // w.r.t. the framerate, for which the animation was designed
-    deltaAnimFrame = (float)ZMQMessageHandler::getAnimFrameRate() / ZMQMessageHandler::getPlaybackFrameRate();
+    deltaAnimFrame = (float) 1; //_globalTimer->getAnimFrameRate() / _globalTimer->getPlaybackFrameRate();
 
     QByteArray* msgBodyAnim = new QByteArray();
 
@@ -124,17 +124,19 @@ void AnimHostMessageSender::streamAnimationData()
 
 
         // Wait for TRACER Tick to send the next frame
-        if (!sendFrameWaitCondition->wait(&m_pauseMutex, 100)) {
+        //if (!sendFrameWaitCondition->wait(&m_pauseMutex, 100)) {
 
-            // If TRACER Tick is not received, stop the process.
-            // Currently occurs when UI Drawing is too slow & 
-            // message sender thread is destroyed, as aresult of deleting the sender node
-            // in the compute graph.
+        //    // If TRACER Tick is not received, stop the process.
+        //    // Currently occurs when UI Drawing is too slow & 
+        //    // message sender thread is destroyed, as aresult of deleting the sender node
+        //    // in the compute graph.
        
-            qDebug() << "Timeout in AnimHost Message Sender";
-            m_pauseMutex.unlock();
-            break;
-        }
+        //    qDebug() << "Timeout in AnimHost Message Sender";
+        //    m_pauseMutex.unlock();
+        //    break;
+        //}
+
+        _globalTimer->waitOnTick();
   
 
         // Send Poses Sequentially as Parameter Update Messages based on the current frame.
@@ -144,7 +146,7 @@ void AnimHostMessageSender::streamAnimationData()
 
         // Create ZMQ Message
         // -> implemented in parent class because the message header is the same for all messages emitted from same client (not unique to parameter update messages)
-        createNewMessage(ZMQMessageHandler::getLocalTimeStamp(), ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
+        createNewMessage(_globalTimer->getLocalTimeStamp(), ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
 
         // Check message data
         /*std::string debugOut;
@@ -155,7 +157,7 @@ void AnimHostMessageSender::streamAnimationData()
 
         // Sending LOCK message to the character (necessary for applying root animations)
         if (!locked) {
-            createLockMessage(ZMQMessageHandler::getLocalTimeStamp(), charObj->sceneObjectID, true);
+            createLockMessage(_globalTimer->getLocalTimeStamp(), charObj->sceneObjectID, true);
             int retunLockVal = sendSocket->send((void*)lockMessage->data(), lockMessage->size());
             locked = true;
         }
@@ -184,7 +186,7 @@ void AnimHostMessageSender::streamAnimationData()
 
     }
 
-    createLockMessage(ZMQMessageHandler::getLocalTimeStamp(), charObj->sceneObjectID, false);
+    createLockMessage(_globalTimer->getLocalTimeStamp(), charObj->sceneObjectID, false);
     int retunUnlockVal = sendSocket->send((void*)lockMessage->data(), lockMessage->size());
     locked = false;
 
@@ -218,11 +220,11 @@ void AnimHostMessageSender::sendAnimationDataBlock()
     mutex.unlock();
     
     
-    createNewMessage(ZMQMessageHandler::getLocalTimeStamp(), ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
+    createNewMessage( _globalTimer->getLocalTimeStamp(), ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
 
     // Sending LOCK message to the character (necessary for applying root animations)
     if (!locked) {
-        createLockMessage(ZMQMessageHandler::getLocalTimeStamp(), charObj->sceneObjectID, true);
+        createLockMessage(_globalTimer->getLocalTimeStamp(), charObj->sceneObjectID, true);
         int retunLockVal = sendSocket->send((void*)lockMessage->data(), lockMessage->size());
         locked = true;
     }
@@ -235,7 +237,7 @@ void AnimHostMessageSender::sendAnimationDataBlock()
     m_pauseMutex.unlock();
         
     //UNLOCK CHARACTER
-    createLockMessage(ZMQMessageHandler::getLocalTimeStamp(), charObj->sceneObjectID, false);
+    createLockMessage(_globalTimer->getLocalTimeStamp(), charObj->sceneObjectID, false);
     int retunUnlockVal = sendSocket->send((void*)lockMessage->data(), lockMessage->size());
     locked = false;
 
