@@ -62,6 +62,7 @@ void TRACERGlobalTimer::syncTimer(int externalTimeStamp)
 
 	if (std::abs(externalTimeStamp - _localTimeStamp) > 20) {
 		// Set the new timestamp
+		qDebug() << "Syncing ... " << externalTimeStamp << " ... " << _localTimeStamp;
 		_localTimeStamp = externalTimeStamp;
 	}
 	

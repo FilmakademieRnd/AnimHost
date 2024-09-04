@@ -3,6 +3,7 @@
 
 #include "../TRACERPlugin_global.h"
 #include "../TRACERUpdateReceiver.h"
+#include <ZMQMessageHandler.h>
 #include <QMetaType>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -59,10 +60,14 @@ public:
 
     void run() override;
 
+    
     QWidget* embeddedWidget() override;
 
 private Q_SLOTS:
     void onButtonClicked();
+
+    void forwardParameterUpdateMessage(uint8_t sceneID, uint16_t objectID, uint16_t paramID, ZMQMessageHandler::ParameterType paramType, const QByteArray rawData);
+
 
 };
 

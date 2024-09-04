@@ -56,6 +56,8 @@ private:
 
     bool _restart = false;  //!< Flag to restart the receiver
 
+    byte _clientID = 123; //PLACEHOLDER
+
 public:
 
     //! Constructor
@@ -74,11 +76,17 @@ public:
     //! Default destructor, closes connection and cleans up
     ~TRACERUpdateReceiver() {
         if(receiveSocket != nullptr) {
-			receiveSocket->close();
-			delete receiveSocket;
+            try {
+                receiveSocket->setsockopt(ZMQ_LINGER, 0);  // Set the linger period to 0
+                receiveSocket->close();  // Gracefully close the ZeroMQ socket
+            }
+            catch (const zmq::error_t& e) {
+                qDebug() << "Error closing socket: " << e.what();
+            }
+			//delete receiveSocket;
 			receiveSocket = nullptr;
 		}
-        emit shutdown();
+        qDebug() << "TRACER Update Receiver destroyed";
     }
 
     //! Request this process to start working
@@ -99,6 +107,7 @@ public:
     }
 
     void requestStart(QString serverIP) {
+
 		mutex.lock();
         if (!_working) {
             _working = true;
@@ -146,8 +155,19 @@ public:
             mutex.unlock();
             qDebug() << "TRACER Update Message Receiver stopping";// in Thread "<<thread()->currentThreadId();
         }
+		else {
+			mutex.unlock();
+			qDebug() << "TRACER Update Message Receiver already stopped";
+		}
     }
 
+private:
+
+    void deserializeMessage(QByteArray& rawMessageData);
+
+    void deserializeParameterUpdateMessage(const QByteArray& rawMessageData);
+
+    void deserializeRPCMessage(const QByteArray& rawMessageData);   
 
 
 private Q_SLOTS:
@@ -175,7 +195,7 @@ Q_SIGNALS:
      * Passes along the objectID, paramID and the raw data for filtering and further processing
      * by the connected slots.
      */
-    void parameterUpdateMessage(uint16_t objectID, uint16_t paramID, const QByteArray rawData);
+    void parameterUpdateMessage(uint8_t sceneID, uint16_t objectID, uint16_t paramID, ParameterType paramType, const QByteArray rawData);
 
     /**
 	 * @brief Signal emitted when a lock update message is received. 
@@ -187,7 +207,7 @@ Q_SIGNALS:
     /**
     * @brief Signal emitted when a RPC message is received.
     */
-    void rpcMessage(const QByteArray rawData);
+    void rpcMessage(uint8_t sceneID, uint16_t objectID, uint16_t paramID, ParameterType paramType, const QByteArray rawData);
 
 
     void stopped();

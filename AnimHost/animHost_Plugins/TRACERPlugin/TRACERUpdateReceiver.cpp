@@ -27,7 +27,7 @@ void TRACERUpdateReceiver::initializeUpdateReceiverSocket(QString serverIP) {
     // Subscribe to all topics
     try {
         receiveSocket->setsockopt(ZMQ_SUBSCRIBE, "", 0);
-        receiveSocket->setsockopt(ZMQ_RCVTIMEO, 1000);  // Set a receive timeout of 1000ms (1 second)
+        receiveSocket->setsockopt(ZMQ_RCVTIMEO, 0);  
     }
     catch (zmq::error_t& e) {
         qDebug() << "Error initializing socket: " << e.what();
@@ -38,7 +38,9 @@ void TRACERUpdateReceiver::initializeUpdateReceiverSocket(QString serverIP) {
 
 }
 
-void TRACERUpdateReceiver::runUpdateReciever() {   
+
+
+void TRACERUpdateReceiver::runUpdateReciever() {
     while (_working) {
         mutex.lock();
         bool shouldStop = _stop;
@@ -72,28 +74,19 @@ void TRACERUpdateReceiver::runUpdateReciever() {
 		// Receive message
 		zmq::message_t recvMsg;
 
-		bool recievedMessage = receiveSocket->recv(&recvMsg);
+        qDebug() << "TRACER starting to receive messages";
+		bool recievedMessage = receiveSocket->recv(&recvMsg, ZMQ_NOBLOCK);
+        qDebug() << "TRACER received message";
 
         if (recievedMessage && recvMsg.size() > 0) {
 
             QByteArray msgArray = QByteArray((char*)recvMsg.data(), static_cast<int>(recvMsg.size())); // Convert message into explicit byte array
-            MessageType msgType = static_cast<MessageType>(msgArray[2]);                                // Extract message type from byte array (always third byte)
-
-            if (msgType == MessageType::SYNC) {
-                const int syncTime = static_cast<int>(msgArray[1]);  // Extract sync time (2nd byte)
-                _globalTimer->syncTimer(syncTime);  // Sync the global timer with received sync time
-            }
-            else if (msgType == MessageType::PARAMETERUPDATE) {
-                qDebug() << "PARAMETERUPDATE message received";
-                msgArray.remove(0, 3);  // Remove the first 3 bytes (Header)
-                mutex.lock();
-                // Process the parameter update (method implementation required)
-                mutex.unlock();
-            }
+            
+            deserializeMessage(msgArray);  // Deserialize the message
 
         }
         else {
-            QThread::msleep(1); // Sleep for 1ms to prevent busy waiting
+            QThread::msleep(1); // Sleep for 1ms to prevent tight loop
         }
     }
 
@@ -101,7 +94,96 @@ void TRACERUpdateReceiver::runUpdateReciever() {
     if (_stop) {
         qDebug() << "TRACER Update Receiver is stopping";
         receiveSocket->close();
+        //QThread::msleep(100);  // Sleep for 100ms to allow the socket to close
         delete receiveSocket;
         receiveSocket = nullptr;
+        qDebug() << "TRACER Update Receiver is stopped";
+    }
+}
+
+
+void TRACERUpdateReceiver::deserializeMessage(QByteArray& rawMessageData)
+{
+    byte inClientID = rawMessageData[0];
+    byte inTimeStamp = rawMessageData[1];
+    MessageType inMessageType = static_cast<MessageType>(rawMessageData[2]);
+
+    if(inClientID != _clientID){
+	    
+        switch(inMessageType){
+			case MessageType::SYNC:
+				qDebug() << "SYNC message received";
+                _globalTimer->syncTimer(static_cast<int>(inTimeStamp));  // Sync the global timer with received sync time
+				break;
+			case MessageType::PARAMETERUPDATE:
+				qDebug() << "PARAMETERUPDATE message received";
+                rawMessageData.remove(0, 3);  // Remove the first 3 bytes (Header)
+                deserializeParameterUpdateMessage(rawMessageData);
+				break;
+            case MessageType::LOCK:
+				qDebug() << "LOCKUPDATE message received";
+				break;
+			default:
+				qDebug() << "Unknown message type received";
+				break;
+		}
+	}
+
+}
+
+void TRACERUpdateReceiver::deserializeParameterUpdateMessage(const QByteArray& rawMessageData)
+{
+
+    QDataStream msgStream(rawMessageData);
+    msgStream.setByteOrder(QDataStream::LittleEndian);
+    msgStream.setFloatingPointPrecision(QDataStream::SinglePrecision);
+    
+    while(!msgStream.atEnd()){
+        
+        uint8_t sceneID;
+        uint16_t objectID, paramID;
+        ParameterType paramType;
+        uint32_t lengt;
+        
+        msgStream >> sceneID;
+        msgStream >> objectID;
+        msgStream >> paramID;
+        msgStream >> paramType;
+        msgStream >> lengt;
+
+        QByteArray data;
+        data.resize(lengt);
+        msgStream.readRawData(data.data(), lengt - 10); // -10 to account for the sceneID, objectID, paramID, paramType and length
+
+        Q_EMIT parameterUpdateMessage(sceneID, objectID, paramID, paramType, data);
+    }
+}
+
+void TRACERUpdateReceiver::deserializeRPCMessage(const QByteArray& rawMessageData)
+{
+    QDataStream msgStream(rawMessageData);
+    msgStream.setByteOrder(QDataStream::LittleEndian);
+    msgStream.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+    while (!msgStream.atEnd()) {
+
+        uint8_t sceneID;
+        uint16_t objectID, paramID;
+        ParameterType paramType;
+        uint32_t lengt;
+
+        msgStream >> sceneID;
+        msgStream >> objectID;
+        msgStream >> paramID;
+        msgStream >> paramType;
+        msgStream >> lengt;
+
+        QByteArray data;
+        data.resize(lengt);
+        msgStream.readRawData(data.data(), lengt - 10); // -10 to account for the sceneID, objectID, paramID, paramType and length
+
+        qDebug() << "SceneID: " << sceneID << " ObjectID: " << objectID << " ParamID: " << paramID << " ParamType: " << paramType;
+
+        Q_EMIT rpcMessage(sceneID, objectID, paramID, paramType, data);
     }
 }

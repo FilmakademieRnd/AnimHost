@@ -5,12 +5,17 @@ UpdateReceiverNode::UpdateReceiverNode(std::shared_ptr<TRACERUpdateReceiver> upd
 {
     _connectButton = nullptr;
 
+
+    connect(_updateReceiver.get(), &TRACERUpdateReceiver::parameterUpdateMessage, 
+            this, &UpdateReceiverNode::forwardParameterUpdateMessage, 
+            Qt::QueuedConnection);
+
     qDebug() << "UpdateReceiverNode created";
 }
 
 UpdateReceiverNode::~UpdateReceiverNode()
 {
-    _updateReceiver->requestStop();
+    _updateReceiver.reset();
     qDebug() << "~UpdateReceiverNode()";
 }
 
@@ -65,6 +70,7 @@ void UpdateReceiverNode::run()
 
 
 
+
 QWidget* UpdateReceiverNode::embeddedWidget()
 {
 	if (!_widget) {
@@ -107,6 +113,12 @@ QWidget* UpdateReceiverNode::embeddedWidget()
 	}
 
 	return _widget;
+}
+
+void UpdateReceiverNode::forwardParameterUpdateMessage(uint8_t sceneID, uint16_t objectID, uint16_t paramID, 
+    ZMQMessageHandler::ParameterType paramType, const QByteArray rawData)
+{
+    qDebug() << "SceneID: " << sceneID << " ObjectID: " << objectID << " ParamID: " << paramID << " ParamType: " << paramType;
 }
 
 void UpdateReceiverNode::onButtonClicked()

@@ -25,6 +25,7 @@
 
 #include <QMetaType>
 #include <QObject>
+#include <QApplication>
 #include <PluginNodeCollectionInterface.h>
 #include <commondatatypes.h>
 #include <nodedatatypes.h>
@@ -68,7 +69,15 @@ class TRACERPLUGINSHARED_EXPORT TRACERPlugin : public PluginNodeCollectionInterf
         TRACERPlugin() { qDebug() << "TRACERPlugin created"; };
         TRACERPlugin(const TRACERPlugin& p) {};
 
-        ~TRACERPlugin() { qDebug() << "~TRACERPlugin()"; };
+        ~TRACERPlugin() { 
+            
+            //_updateReceiver.reset();
+            
+
+
+
+            qDebug() << "~TRACERPlugin()"; 
+        };
 
        void PreNodeCollectionRegistration() override {
             // Initialize here
@@ -80,11 +89,15 @@ class TRACERPLUGINSHARED_EXPORT TRACERPlugin : public PluginNodeCollectionInterf
            _updateReceiver = std::make_shared<TRACERUpdateReceiver>(true, _zmqContext.get(), _globalTimer);
            _updateReceiver->moveToThread(&_updateReceiverThread);
 
+
+
            // Connect signals and slots for the TRACERUpdateReceiver
            //connect(&_updateReceiverThread, &QThread::started, _updateReceiver.get(), &TRACERUpdateReceiver::initializeUpdateReceiverSocket);
            connect(_updateReceiver.get(), &TRACERUpdateReceiver::shutdown, &_updateReceiverThread, &QThread::quit);
-           connect(&_updateReceiverThread, &QThread::finished, _updateReceiver.get(), &TRACERUpdateReceiver::deleteLater);
+           //connect(&_updateReceiverThread, &QThread::finished, _updateReceiver.get(), &TRACERUpdateReceiver::deleteLater);
            connect(&_updateReceiverThread, &QThread::finished, &_updateReceiverThread, &QThread::deleteLater);
+
+           connect(qApp, &QCoreApplication::aboutToQuit, this, &TRACERPlugin::cleanUp);
 
            //_updateReceiver->requestStart();
            _updateReceiverThread.start();
@@ -113,6 +126,25 @@ class TRACERPLUGINSHARED_EXPORT TRACERPlugin : public PluginNodeCollectionInterf
        QString GetNodeCollectionMetaData() override {
 		   return _collectionMetaData.version;
 	   };
+
+       void cleanUp() {
+           _updateReceiver->requestStop();
+
+           _globalTimer.reset();
+
+           //wait for the signal finished from the thread
+           QThread::msleep(100);
+
+           _zmqContext->shutdown();
+           _zmqContext->close();
+
+
+           QThread::msleep(100);
+           _updateReceiver.reset();
+
+           _updateReceiverThread.quit();
+           _updateReceiverThread.wait();
+       }
 
 };
 
