@@ -47,12 +47,14 @@ class TRACERPLUGINSHARED_EXPORT TRACERUpdateReceiver : public ZMQMessageHandler 
 
     Q_OBJECT
 
-
-
 private:
     zmq::socket_t* receiveSocket = nullptr;     //!< Pointer to the instance of the socket that will listen to the messages
 
     std::shared_ptr<TRACERGlobalTimer> _globalTimer = nullptr; //!< Pointer to the global timer instance
+
+    QString _ipAddr;    //!< IP address of the TRACER Server
+
+    bool _restart = false;  //!< Flag to restart the receiver
 
 public:
 
@@ -79,13 +81,49 @@ public:
     * Sets \c _working to true, \c _stopped and \c _paused to false and creates a new publishing \c sendSocket for message broadcasting
     */
     void requestStart() override {
-        mutex.lock();
-        _working = true;
-        _stop = false;
-        _paused = false;
-        qDebug() << "TRACER Update Message Receiver requested to start";// in Thread "<<thread()->currentThreadId();
-        mutex.unlock();
+        if (!_working) {
+            mutex.lock();
+            _working = true;
+            _stop = false;
+            _paused = false;
+            qDebug() << "TRACER Update Message Receiver requested to start";// in Thread "<<thread()->currentThreadId();
+            mutex.unlock();
+
+            initializeUpdateReceiverSocket(_ipAddr);
+        }       
     }
+
+    void requestStart(QString serverIP) {
+		if (!_working) {
+			mutex.lock();
+			_working = true;
+			_stop = false;
+			_paused = false;
+			qDebug() << "TRACER Update Message Receiver requested to start";// in Thread "<<thread()->currentThreadId();
+			mutex.unlock();
+
+			initializeUpdateReceiverSocket(serverIP);
+		}
+        else {
+            mutex.lock();
+            _restart = true;
+            _working = true;
+            _stop = false;
+            _paused = false;
+            qDebug() << "TRACER Update Message Receiver requested to restart";// in Thread "<<thread()->currentThreadId();
+            mutex.unlock();
+        }
+	}
+
+    void requestRestart() {
+		mutex.lock();
+		_restart = true;
+		_working = true;
+		_stop = false;
+		_paused = false;
+		qDebug() << "TRACER Update Message Receiver requested to restart";// in Thread "<<thread()->currentThreadId();
+		mutex.unlock();
+	}
 
     //! Request this process to stop working
     /*!
@@ -105,60 +143,51 @@ public:
 
 
 public Q_SLOTS:
-    //! Main loop, executes all operations
-    /*!
-     * Gets triggered by the Qt Application UI thread, when the TracerUpdateSender Plugin is initialised.
-     * It opens a socket and listens to all the messages coming its way. If a SYNC message is received, it reads it and notifies the UI thread.
+
+    /**
+	 * @brief Initializes the update receiver socket
+	 */
+    void initializeUpdateReceiverSocket(QString serverIP = "127.0.0.1");
+
+    /**
+     * @brief Main loop, processes incoming messages from the TRACER clients & DataHub
+     * Gets invoked when the TRACER Plugin is initialised and its corresbonding thread is started.
+     * It opens a socket and listens to all the messages coming its way. 
+     * If a SYNC message is received, it will update the global timer with the received timestamp.
+     * If a PARAMETERUPDATE message is received, it will emit a signal with the objectID, paramID and the raw data.
+     * If a LOCKUPDATE message is received, it will emit a signal with the objectID and the lock state.
      */
-    void run() {
-        // open socket
-        receiveSocket = new zmq::socket_t(*context, zmq::socket_type::sub);
-        receiveSocket->connect(QString("tcp://127.0.0.1:5556").toLatin1().data());
+    void runUpdateReciever();
 
-        // In order to subscribe to every topic it is necessary to specify a option-lenght of 0 (ZERO) characters
-        // Using only an empty string doesn't work because by default it will contain an END-OF-STRING character so its length will be 1 instead of 0
-        receiveSocket->setsockopt(ZMQ_SUBSCRIBE, "", 0);
-
-        zmq::message_t recvMsg;
-
-        while (_working) {
-            //qDebug() << "Waiting for PARAMETERUPDATE message...";
-            //try to receive zeroMQ messages
-            receiveSocket->recv(&recvMsg);
-
-            if (recvMsg.size() > 0) {
-
-                //qDebug() << "Checking message...";
-
-                QByteArray msgArray = QByteArray((char*)recvMsg.data(), static_cast<int>(recvMsg.size())); // Convert message into explicit byte array
-                MessageType msgType = static_cast<MessageType>(msgArray[2]);                                // Extract message type from byte array (always third byte)
-
-                //if tick received with time tickTime
-                if (msgType == MessageType::SYNC) { // Should we check also against Client ID?
-                    const int syncTime = static_cast<int>(msgArray[1]); // Extract sync time from message (always second byte)
-                    //qDebug() << "SYNC message received with time " << syncTime;
-                    mutex.lock();
-                    //tick(syncTime);
-                    _globalTimer->syncTimer(syncTime);
-                    mutex.unlock();
-                }
-
-                //if the message is of type PARAMETERUPDATE
-                if (msgType == MessageType::PARAMETERUPDATE) {
-                    qDebug() << "PARAMETERUPDATE message received";
-                    msgArray.remove(0, 3); // Remove first 3 bytes (aka the Header)
-                    mutex.lock();
-                    //processUpdateMessage(&msgArray);
-                    mutex.unlock();
-                }
-            }
-        }
-        qDebug() << "TRACER Update Receiver process to be stopped";// in Thread "<<thread()->currentThreadId();
-        emit stopped();
-    }
+    /**
+	 * @brief Stops the update receiver process
+	 */
+    void stopUpdateReceiver();
 
 Q_SIGNALS:
-    void processUpdateMessage(QByteArray* updateMessage);    //!< Signal emitted when a SYNC message is received. Passes along the received timestamp
-    void stopped();             //!< Signal emitted when process is finished
+    
+    /**
+     * @brief Signal emitted when a parameter update message is received. 
+     * Passes along the objectID, paramID and the raw data for filtering and further processing
+     * by the connected slots.
+     */
+    void parameterUpdateMessage(uint16_t objectID, uint16_t paramID, const QByteArray rawData);
+
+    /**
+	 * @brief Signal emitted when a lock update message is received. 
+	 * Passes along the objectID and the lock state for filtering and further processing
+	 * by the connected slots.
+	 */
+    void lockUpdateMessage(uint16_t objectID, bool lockState);
+
+    /**
+    * @brief Signal emitted when a RPC message is received.
+    */
+    void rpcMessage(const QByteArray rawData);
+
+
+    void stopped();
+
+    void shutdown();
 };
 #endif // TICKRECEIVER_H

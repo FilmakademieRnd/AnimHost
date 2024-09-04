@@ -9,6 +9,8 @@ qt_add_library(${target_name}
     SceneReceiver/SceneReceiverNode.h SceneReceiver/SceneReceiverNode.cpp
     SceneReceiver/SceneReceiver.h SceneReceiver/SceneReceiver.cpp
 
+    UpdateReceiver/UpdateReceiverNode.h UpdateReceiver/UpdateReceiverNode.cpp 
+
     AnimationSender/AnimationSenderNode.h AnimationSender/AnimationSenderNode.cpp
     AnimationSender/AnimHostMessageSender.h AnimationSender/AnimHostMessageSender.cpp
 
@@ -20,6 +22,8 @@ qt_add_library(${target_name}
 
 source_group("SceneReceiver" FILES SceneReceiver/SceneReceiverNode.h SceneReceiver/SceneReceiverNode.cpp 
     SceneReceiver/SceneReceiver.h SceneReceiver/SceneReceiver.cpp)
+
+source_group("UpdateReceiver" FILES  UpdateReceiver/UpdateReceiverNode.h UpdateReceiver/UpdateReceiverNode.cpp)
 
 source_group("AnimationSender" FILES AnimationSender/AnimationSenderNode.h AnimationSender/AnimationSenderNode.cpp
     AnimationSender/AnimHostMessageSender.h AnimationSender/AnimHostMessageSender.cpp

@@ -33,6 +33,9 @@
 #include "TRACERUpdateReceiver.h"
 
 #include "CharacterSelector/CharacterSelectorNode.h"
+#include "UpdateReceiver/UpdateReceiverNode.h"
+#include "SceneReceiver/SceneReceiverNode.h"
+#include "AnimationSender/AnimationSenderNode.h"
 
 
 class TRACERPLUGINSHARED_EXPORT TRACERPlugin : public PluginNodeCollectionInterface
@@ -55,7 +58,7 @@ class TRACERPLUGINSHARED_EXPORT TRACERPlugin : public PluginNodeCollectionInterf
     std::shared_ptr<TRACERGlobalTimer> _globalTimer = nullptr;
     std::shared_ptr<zmq::context_t> _zmqContext = nullptr;
 
-    TRACERUpdateReceiver* _updateReceiver = nullptr;
+    std::shared_ptr<TRACERUpdateReceiver> _updateReceiver = nullptr;
     QThread _updateReceiverThread;
 
 
@@ -74,13 +77,13 @@ class TRACERPLUGINSHARED_EXPORT TRACERPlugin : public PluginNodeCollectionInterf
 
            _zmqContext = std::make_shared<zmq::context_t>(1);
 
-           _updateReceiver = new TRACERUpdateReceiver(true, _zmqContext.get(), _globalTimer);
+           _updateReceiver = std::make_shared<TRACERUpdateReceiver>(true, _zmqContext.get(), _globalTimer);
            _updateReceiver->moveToThread(&_updateReceiverThread);
 
            // Connect signals and slots for the TRACERUpdateReceiver
-           connect(&_updateReceiverThread, &QThread::started, _updateReceiver, &TRACERUpdateReceiver::run);
-           connect(_updateReceiver, &TRACERUpdateReceiver::stopped, &_updateReceiverThread, &QThread::quit);
-           connect(&_updateReceiverThread, &QThread::finished, _updateReceiver, &TRACERUpdateReceiver::deleteLater);
+           //connect(&_updateReceiverThread, &QThread::started, _updateReceiver.get(), &TRACERUpdateReceiver::initializeUpdateReceiverSocket);
+           connect(_updateReceiver.get(), &TRACERUpdateReceiver::shutdown, &_updateReceiverThread, &QThread::quit);
+           connect(&_updateReceiverThread, &QThread::finished, _updateReceiver.get(), &TRACERUpdateReceiver::deleteLater);
            connect(&_updateReceiverThread, &QThread::finished, &_updateReceiverThread, &QThread::deleteLater);
 
            _updateReceiver->requestStart();
@@ -93,6 +96,7 @@ class TRACERPLUGINSHARED_EXPORT TRACERPlugin : public PluginNodeCollectionInterf
            nodeRegistry.registerModel<CharacterSelectorNode>([this](){ return  std::make_unique<CharacterSelectorNode>();}, "TRACER");
            nodeRegistry.registerModel<SceneReceiverNode>([this]() { return  std::make_unique<SceneReceiverNode>(_zmqContext); }, "TRACER");
            nodeRegistry.registerModel<AnimationSenderNode>([this]() { return  std::make_unique<AnimationSenderNode>(_globalTimer, _zmqContext); }, "TRACER");
+           nodeRegistry.registerModel<UpdateReceiverNode>([this]() { return  std::make_unique<UpdateReceiverNode>(_updateReceiver); }, "TRACER");
        };
 
        void PostNodeCollectionRegistration() override {};

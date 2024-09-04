@@ -25,6 +25,7 @@
 #include <QThread>
 #include <QDebug>
 #include <QDataStream>
+#include <QElapsedTimer>
 #include <iostream>
 
 void AnimHostMessageSender::requestStart() {
@@ -72,11 +73,19 @@ void AnimHostMessageSender::run() {
 
     while (!_stop) { //loop until stop is requested (by calling requestStop(); on deletion of sender node in compute graph)
 
-        if (streamAnimation) {   
+        if (streamAnimation) {  
+            
+            //measuring time for streaming
+			
             streamAnimationData(); // on completion of streaming the animation, the streamAnimation flag is set to false
+
         }
         else if (!streamAnimation && sendBlock) {
+
+            QElapsedTimer timer;
+            timer.start();
             sendAnimationDataBlock(); // on completion of sending the animation block, the sendBlock flag is set to false
+            qDebug() << "Block Time: " << timer.elapsed() << "ms";
         }
 
     };
