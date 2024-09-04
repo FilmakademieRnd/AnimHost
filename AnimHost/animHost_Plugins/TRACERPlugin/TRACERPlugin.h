@@ -86,7 +86,7 @@ class TRACERPLUGINSHARED_EXPORT TRACERPlugin : public PluginNodeCollectionInterf
            connect(&_updateReceiverThread, &QThread::finished, _updateReceiver.get(), &TRACERUpdateReceiver::deleteLater);
            connect(&_updateReceiverThread, &QThread::finished, &_updateReceiverThread, &QThread::deleteLater);
 
-           _updateReceiver->requestStart();
+           //_updateReceiver->requestStart();
            _updateReceiverThread.start();
 
        };

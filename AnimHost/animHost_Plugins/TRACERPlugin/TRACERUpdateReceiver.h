@@ -73,7 +73,12 @@ public:
 
     //! Default destructor, closes connection and cleans up
     ~TRACERUpdateReceiver() {
-        receiveSocket->close();
+        if(receiveSocket != nullptr) {
+			receiveSocket->close();
+			delete receiveSocket;
+			receiveSocket = nullptr;
+		}
+        emit shutdown();
     }
 
     //! Request this process to start working
@@ -81,48 +86,51 @@ public:
     * Sets \c _working to true, \c _stopped and \c _paused to false and creates a new publishing \c sendSocket for message broadcasting
     */
     void requestStart() override {
-        if (!_working) {
-            mutex.lock();
-            _working = true;
-            _stop = false;
-            _paused = false;
-            qDebug() << "TRACER Update Message Receiver requested to start";// in Thread "<<thread()->currentThreadId();
-            mutex.unlock();
+        //if (!_working) {
+        //    mutex.lock();
+        //    _working = true;
+        //    _stop = false;
+        //    _paused = false;
+        //    qDebug() << "TRACER Update Message Receiver requested to start";// in Thread "<<thread()->currentThreadId();
+        //    mutex.unlock();
 
-            initializeUpdateReceiverSocket(_ipAddr);
-        }       
+        //    initializeUpdateReceiverSocket(_ipAddr);
+        //}       
     }
 
     void requestStart(QString serverIP) {
-		if (!_working) {
-			mutex.lock();
-			_working = true;
-			_stop = false;
-			_paused = false;
-			qDebug() << "TRACER Update Message Receiver requested to start";// in Thread "<<thread()->currentThreadId();
-			mutex.unlock();
-
-			initializeUpdateReceiverSocket(serverIP);
-		}
-        else {
-            mutex.lock();
-            _restart = true;
+		mutex.lock();
+        if (!_working) {
             _working = true;
             _stop = false;
             _paused = false;
-            qDebug() << "TRACER Update Message Receiver requested to restart";// in Thread "<<thread()->currentThreadId();
+            _ipAddr = serverIP;
+            
             mutex.unlock();
+            qDebug() << "TRACER Update Message Receiver requested to start";
+            QMetaObject::invokeMethod( this, "initializeUpdateReceiverSocket", Qt::QueuedConnection, Q_ARG(QString, serverIP));
+
+            QMetaObject::invokeMethod(this, "runUpdateReciever", Qt::QueuedConnection);
         }
+        else {
+			mutex.unlock();
+			qDebug() << "TRACER Update Message Receiver already running";
+		}
 	}
 
-    void requestRestart() {
-		mutex.lock();
-		_restart = true;
-		_working = true;
-		_stop = false;
-		_paused = false;
-		qDebug() << "TRACER Update Message Receiver requested to restart";// in Thread "<<thread()->currentThreadId();
-		mutex.unlock();
+    void requestRestart(QString serverIP) {
+        mutex.lock();
+        if(_working){
+			_restart = true;
+            _ipAddr = serverIP;
+            mutex.unlock();
+            qDebug() << "TRACER Update Message Receiver requested to restart";
+		}
+        else {
+		    mutex.unlock();
+            qDebug() << "TRACER Update Message Receiver not running, starting instead";
+            requestStart(serverIP);         
+        }
 	}
 
     //! Request this process to stop working
@@ -135,14 +143,14 @@ public:
             _stop = true;
             _paused = false;
             _working = false;
+            mutex.unlock();
             qDebug() << "TRACER Update Message Receiver stopping";// in Thread "<<thread()->currentThreadId();
         }
-        mutex.unlock();
     }
 
 
 
-public Q_SLOTS:
+private Q_SLOTS:
 
     /**
 	 * @brief Initializes the update receiver socket
@@ -159,10 +167,6 @@ public Q_SLOTS:
      */
     void runUpdateReciever();
 
-    /**
-	 * @brief Stops the update receiver process
-	 */
-    void stopUpdateReceiver();
 
 Q_SIGNALS:
     

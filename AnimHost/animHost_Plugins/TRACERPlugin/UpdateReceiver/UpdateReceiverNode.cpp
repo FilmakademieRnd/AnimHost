@@ -10,6 +10,7 @@ UpdateReceiverNode::UpdateReceiverNode(std::shared_ptr<TRACERUpdateReceiver> upd
 
 UpdateReceiverNode::~UpdateReceiverNode()
 {
+    _updateReceiver->requestStop();
     qDebug() << "~UpdateReceiverNode()";
 }
 
@@ -111,7 +112,7 @@ QWidget* UpdateReceiverNode::embeddedWidget()
 void UpdateReceiverNode::onButtonClicked()
 {
 
-    QMetaObject::invokeMethod(_updateReceiver.get(), "initializeUpdateReceiverSocket", Qt::QueuedConnection, Q_ARG(QString, _ipAddress->text()));
+    _updateReceiver->requestRestart(_ipAddress->text());
 
 
 	qDebug() << "Example Widget Clicked";
