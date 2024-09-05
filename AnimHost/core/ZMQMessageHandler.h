@@ -136,6 +136,7 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
         SYNC, PING, RESENDUPDATE, // sync
         UNDOREDOADD, RESETOBJECT, // undo redo
         DATAHUB, // DataHub
+        RPC,
         EMPTY = 255
     };
 

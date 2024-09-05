@@ -7,6 +7,13 @@
 #include <pluginnodeinterface.h>
 
 
+enum AnimHostRPCType : uint32_t {
+	STOP = 0,
+	STREAM = 1,
+	STREAM_LOOP = 2,
+    BLOCK =3
+};
+
 class QPushButton;
 
 class TRACERPLUGINSHARED_EXPORT RPCTriggerNode : public PluginNodeInterface

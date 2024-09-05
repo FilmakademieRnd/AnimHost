@@ -113,6 +113,11 @@ void TRACERUpdateReceiver::deserializeMessage(QByteArray& rawMessageData)
 				qDebug() << "SYNC message received";
                 _globalTimer->syncTimer(static_cast<int>(inTimeStamp));  // Sync the global timer with received sync time
 				break;
+            case MessageType::RPC:
+                qDebug() << "RPC message received";
+				rawMessageData.remove(0, 3);  // Remove the first 3 bytes (Header)
+				deserializeRPCMessage(rawMessageData);
+                break;
 			case MessageType::PARAMETERUPDATE:
 				qDebug() << "PARAMETERUPDATE message received";
                 rawMessageData.remove(0, 3);  // Remove the first 3 bytes (Header)
@@ -150,7 +155,7 @@ void TRACERUpdateReceiver::deserializeParameterUpdateMessage(const QByteArray& r
         msgStream >> lengt;
 
         QByteArray data;
-        data.resize(lengt);
+        data.resize(lengt-10);
         msgStream.readRawData(data.data(), lengt - 10); // -10 to account for the sceneID, objectID, paramID, paramType and length
 
         Q_EMIT parameterUpdateMessage(sceneID, objectID, paramID, paramType, data);
@@ -177,7 +182,7 @@ void TRACERUpdateReceiver::deserializeRPCMessage(const QByteArray& rawMessageDat
         msgStream >> lengt;
 
         QByteArray data;
-        data.resize(lengt);
+        data.resize(lengt-10);
         msgStream.readRawData(data.data(), lengt - 10); // -10 to account for the sceneID, objectID, paramID, paramType and length
 
         qDebug() << "SceneID: " << sceneID << " ObjectID: " << objectID << " ParamID: " << paramID << " ParamType: " << paramType;

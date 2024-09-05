@@ -5,10 +5,14 @@ UpdateReceiverNode::UpdateReceiverNode(std::shared_ptr<TRACERUpdateReceiver> upd
 {
     _connectButton = nullptr;
 
-
+    _rpcUpdateOut = std::make_shared<AnimNodeData<RPCUpdate>>();
     connect(_updateReceiver.get(), &TRACERUpdateReceiver::parameterUpdateMessage, 
             this, &UpdateReceiverNode::forwardParameterUpdateMessage, 
             Qt::QueuedConnection);
+
+    connect(_updateReceiver.get(), &TRACERUpdateReceiver::rpcMessage,
+        this, &UpdateReceiverNode::forwardRPCMessage,
+		Qt::QueuedConnection);
 
     qDebug() << "UpdateReceiverNode created";
 }
@@ -93,7 +97,7 @@ void UpdateReceiverNode::forwardParameterUpdateMessage(uint8_t sceneID, uint16_t
     auto paramUpdate = std::make_shared<ParameterUpdate>(sceneID, objectID,paramID,
         paramType, rawData);
 
-    _parameterUpdateOut->setVariant(QVariant::fromValue(paramUpdate));
+    _parameterUpdateOut->setVariant(QVariant::fromValue(*paramUpdate));
 
     emitDataUpdate(0);
 }
@@ -102,7 +106,7 @@ void UpdateReceiverNode::forwardRPCMessage(uint8_t sceneID, uint16_t objectID, u
 {
     qDebug() << "RPC::SceneID: " << sceneID << " ObjectID: " << objectID << " ParamID: " << paramID << " ParamType: " << paramType;
 
-    auto rpcUpdate = std::make_shared<RPCUpdate>(sceneID, objectID, paramID,
+    std::shared_ptr<RPCUpdate> rpcUpdate = std::make_shared<RPCUpdate>(sceneID, objectID, paramID,
         paramType, rawData);
 
     _rpcUpdateOut->setVariant(QVariant::fromValue(rpcUpdate));

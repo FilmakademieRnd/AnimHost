@@ -37,6 +37,8 @@ void RPCTriggerNode::processInData(std::shared_ptr<NodeData> data, QtNodes::Port
     }
 
     _RPCIn = std::static_pointer_cast<AnimNodeData<RPCUpdate>>(data);
+    
+    run();
 
     qDebug() << "RPCTriggerNode setInData";
 }
@@ -50,7 +52,7 @@ bool RPCTriggerNode::isDataAvailable() {
     /*
     * Use this function to check if the inbound data is available and can be processed.
     */
-    return false;
+    return true;
 }
 
 void RPCTriggerNode::run()
@@ -65,6 +67,19 @@ void RPCTriggerNode::run()
         
         if(auto RPCData = _RPCIn.lock()){
 			qDebug() << "RPCData Received";
+
+            auto sp_rpc = RPCData->getData();
+
+            if (sp_rpc->sceneID == 255 && sp_rpc->objectID == 1 && sp_rpc->paramID == 0 && sp_rpc->paramType == ZMQMessageHandler::INT) {
+                QByteArray data = sp_rpc->rawData;
+
+                uint32_t rpc;
+                //convert data to int
+                std::memcpy(&rpc, data.data(), sizeof(uint32_t));
+
+                qDebug() << "RPCData Received: " << rpc;
+            }
+            
 
             emitRunNextNode();
 		}
