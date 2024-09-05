@@ -3,10 +3,13 @@
 
 #include <QtCore/qglobal.h>
 
+
 #if defined(TRACERPLUGIN_LIBRARY)
 #define TRACERPLUGINSHARED_EXPORT Q_DECL_EXPORT
 #else
 #define TRACERPLUGINSHARED_EXPORT Q_DECL_IMPORT
 #endif
+
+
 
 #endif // TRACERPLUGINSHARED_GLOBAL_H

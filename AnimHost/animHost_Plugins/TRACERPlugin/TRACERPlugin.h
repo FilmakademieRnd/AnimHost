@@ -22,6 +22,7 @@
 #define TRACERPLUGIN_H
 
 #include "TRACERPlugin_global.h"
+#include "TRACERUpdateMessage.h"
 
 #include <QMetaType>
 #include <QObject>
@@ -29,6 +30,7 @@
 #include <PluginNodeCollectionInterface.h>
 #include <commondatatypes.h>
 #include <nodedatatypes.h>
+#include <ZMQMessageHandler.h>
 
 #include "TRACERGlobalTimer.h"
 #include "TRACERUpdateReceiver.h"
@@ -66,16 +68,17 @@ class TRACERPLUGINSHARED_EXPORT TRACERPlugin : public PluginNodeCollectionInterf
 
 
     public:
-        TRACERPlugin() { qDebug() << "TRACERPlugin created"; };
+        TRACERPlugin() { 
+            qRegisterMetaType<std::shared_ptr<ParameterUpdate>>("ParameterUpdate");
+            qRegisterMetaType<std::shared_ptr<RPCUpdate>>("RPCUpdate");
+            qDebug() << "TRACERPlugin created"; 
+        
+        };
         TRACERPlugin(const TRACERPlugin& p) {};
 
         ~TRACERPlugin() { 
             
             //_updateReceiver.reset();
-            
-
-
-
             qDebug() << "~TRACERPlugin()"; 
         };
 
@@ -110,6 +113,7 @@ class TRACERPLUGINSHARED_EXPORT TRACERPlugin : public PluginNodeCollectionInterf
            nodeRegistry.registerModel<SceneReceiverNode>([this]() { return  std::make_unique<SceneReceiverNode>(_zmqContext); }, "TRACER");
            nodeRegistry.registerModel<AnimationSenderNode>([this]() { return  std::make_unique<AnimationSenderNode>(_globalTimer, _zmqContext); }, "TRACER");
            nodeRegistry.registerModel<UpdateReceiverNode>([this]() { return  std::make_unique<UpdateReceiverNode>(_updateReceiver); }, "TRACER");
+           nodeRegistry.registerModel<RPCTriggerNode>([this]() { return  std::make_unique<RPCTriggerNode>(); }, "TRACER");
        };
 
        void PostNodeCollectionRegistration() override {};
@@ -147,5 +151,8 @@ class TRACERPLUGINSHARED_EXPORT TRACERPlugin : public PluginNodeCollectionInterf
        }
 
 };
+
+
+
 
 #endif // TRACERPLUGIN_H

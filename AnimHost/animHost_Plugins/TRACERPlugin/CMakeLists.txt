@@ -5,6 +5,7 @@ qt_add_library(${target_name}
     TRACERPlugin_global.h
     TRACERGlobalTimer.h TRACERGlobalTimer.cpp
     TRACERUpdateReceiver.h TRACERUpdateReceiver.cpp
+    TRACERUpdateMessage.h
     
     SceneReceiver/SceneReceiverNode.h SceneReceiver/SceneReceiverNode.cpp
     SceneReceiver/SceneReceiver.h SceneReceiver/SceneReceiver.cpp

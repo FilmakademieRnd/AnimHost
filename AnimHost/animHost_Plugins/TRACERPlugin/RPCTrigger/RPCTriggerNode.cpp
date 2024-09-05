@@ -15,7 +15,7 @@ RPCTriggerNode::~RPCTriggerNode()
 unsigned int RPCTriggerNode::nDataPorts(QtNodes::PortType portType) const
 {
     if (portType == QtNodes::PortType::In)
-        return 0;
+        return 1;
     else            
         return 0;
 }
@@ -24,13 +24,20 @@ NodeDataType RPCTriggerNode::dataPortType(QtNodes::PortType portType, QtNodes::P
 {
     NodeDataType type;
     if (portType == QtNodes::PortType::In)
-        return type;
+        return AnimNodeData<RPCUpdate>::staticType();
     else
         return type;
 }
 
 void RPCTriggerNode::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex)
 {
+
+    if (!data) {
+        Q_EMIT dataInvalidated(0);
+    }
+
+    _RPCIn = std::static_pointer_cast<AnimNodeData<RPCUpdate>>(data);
+
     qDebug() << "RPCTriggerNode setInData";
 }
 
@@ -55,9 +62,15 @@ void RPCTriggerNode::run()
     */
     qDebug() << "RPCTriggerNode run";
     if(isDataAvailable()){
-        /*
-        * Do Stuff
-        */
+        
+        if(auto RPCData = _RPCIn.lock()){
+			qDebug() << "RPCData Received";
+
+            emitRunNextNode();
+		}
+		else{
+			qDebug() << "RPCData not Received";
+		}
     }
 }
 

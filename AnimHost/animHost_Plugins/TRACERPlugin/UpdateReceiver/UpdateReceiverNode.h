@@ -3,6 +3,7 @@
 
 #include "../TRACERPlugin_global.h"
 #include "../TRACERUpdateReceiver.h"
+#include "../TRACERUpdateMessage.h"
 #include <ZMQMessageHandler.h>
 #include <QMetaType>
 #include <QVBoxLayout>
@@ -11,6 +12,7 @@
 #include <QRegularExpressionValidator>
 #include <QCheckBox>
 #include <pluginnodeinterface.h>
+#include <UIUtils.h>
 
 class QPushButton;
 
@@ -34,9 +36,10 @@ private:
 
     QPushButton* _connectButton = nullptr;
 
+    SignalLightWidget* _signalLight = nullptr;
 
-    
-
+    std::shared_ptr<AnimNodeData<ParameterUpdate>> _parameterUpdateOut = nullptr;
+    std::shared_ptr<AnimNodeData<RPCUpdate>> _rpcUpdateOut = nullptr;
 
 public:
     UpdateReceiverNode(std::shared_ptr<TRACERUpdateReceiver> updateReceiver);
@@ -67,6 +70,8 @@ private Q_SLOTS:
     void onButtonClicked();
 
     void forwardParameterUpdateMessage(uint8_t sceneID, uint16_t objectID, uint16_t paramID, ZMQMessageHandler::ParameterType paramType, const QByteArray rawData);
+
+    void forwardRPCMessage(uint8_t sceneID, uint16_t objectID, uint16_t paramID, ZMQMessageHandler::ParameterType paramType, const QByteArray rawData);
 
 
 };

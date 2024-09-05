@@ -74,9 +74,7 @@ void TRACERUpdateReceiver::runUpdateReciever() {
 		// Receive message
 		zmq::message_t recvMsg;
 
-        qDebug() << "TRACER starting to receive messages";
 		bool recievedMessage = receiveSocket->recv(&recvMsg, ZMQ_NOBLOCK);
-        qDebug() << "TRACER received message";
 
         if (recievedMessage && recvMsg.size() > 0) {
 

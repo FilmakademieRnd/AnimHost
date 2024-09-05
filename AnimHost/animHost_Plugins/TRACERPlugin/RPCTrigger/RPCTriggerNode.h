@@ -2,8 +2,10 @@
 #define RPCTRIGGER_H
 
 #include "../TRACERPlugin_global.h"
+#include "../TRACERUpdateMessage.h"
 #include <QMetaType>
 #include <pluginnodeinterface.h>
+
 
 class QPushButton;
 
@@ -12,6 +14,9 @@ class TRACERPLUGINSHARED_EXPORT RPCTriggerNode : public PluginNodeInterface
     Q_OBJECT
 private:
     QPushButton* _pushButton;
+
+
+    std::weak_ptr<AnimNodeData<RPCUpdate>> _RPCIn;
 
 public:
     RPCTriggerNode();
@@ -24,6 +29,8 @@ public:
     QString category() override { return "Undefined Category"; };
     QString caption() const override { return this->name(); }
     bool captionVisible() const override { return true; }
+
+    bool hasInputRunSignal() const override { return false; }
 
     unsigned int nDataPorts(QtNodes::PortType portType) const override;
     NodeDataType dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;

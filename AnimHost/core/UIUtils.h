@@ -142,5 +142,30 @@ Q_SIGNALS:
 
 };
 
+class ANIMHOSTCORESHARED_EXPORT SignalLightWidget : public QWidget
+{
+	Q_OBJECT
+
+public:
+	explicit SignalLightWidget(QWidget* parent = nullptr);
+	void setColor(const QColor& color);
+	void startFadeOut(int duration = 1000); // duration in ms
+
+protected:
+	void paintEvent(QPaintEvent* event) override;
+
+private slots:
+	void updateFade();
+
+private:
+	QColor currentColor;
+	int alpha; // To manage the fade effect
+	QTimer fadeTimer;
+	int fadeDuration;
+	int timeElapsed;
+
+	void drawLight(QPainter& painter);
+};
+
 
 #endif // ANIMHOST_UI_UTIL_H
