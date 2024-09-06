@@ -149,7 +149,8 @@ class ANIMHOSTCORESHARED_EXPORT SignalLightWidget : public QWidget
 public:
 	explicit SignalLightWidget(QWidget* parent = nullptr);
 	void setColor(const QColor& color);
-	void startFadeOut(int duration = 1000); // duration in ms
+	void setDefaultColor(const QColor& color);
+	void startFadeOut(int duration = 1000, const QColor& defaulColor= QColor(50, 255, 50)); // duration in ms
 
 protected:
 	void paintEvent(QPaintEvent* event) override;
@@ -159,6 +160,7 @@ private slots:
 
 private:
 	QColor currentColor;
+	QColor defaultColor;
 	int alpha; // To manage the fade effect
 	QTimer fadeTimer;
 	int fadeDuration;

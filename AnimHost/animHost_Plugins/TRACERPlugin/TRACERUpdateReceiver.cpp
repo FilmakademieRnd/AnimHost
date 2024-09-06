@@ -27,7 +27,8 @@ void TRACERUpdateReceiver::initializeUpdateReceiverSocket(QString serverIP) {
     // Subscribe to all topics
     try {
         receiveSocket->setsockopt(ZMQ_SUBSCRIBE, "", 0);
-        receiveSocket->setsockopt(ZMQ_RCVTIMEO, 0);  
+        receiveSocket->setsockopt(ZMQ_RCVTIMEO, 0); 
+        emit receiverStatus(0);
     }
     catch (zmq::error_t& e) {
         qDebug() << "Error initializing socket: " << e.what();
@@ -51,12 +52,14 @@ void TRACERUpdateReceiver::runUpdateReciever() {
         if (!receiveSocket) {
             qDebug() << "No socket available";
             _working = false; // reset working flag, so start can be requested again
+            emit receiverStatus(-1);
             break;
         }
 
 
         if (shouldStop){
 			qDebug() << "Stopping TRACER Update Receiver";
+            emit receiverStatus(-1);
 			break;
 		}
 
@@ -115,11 +118,13 @@ void TRACERUpdateReceiver::deserializeMessage(QByteArray& rawMessageData)
 				break;
             case MessageType::RPC:
                 qDebug() << "RPC message received";
+                emit receiverStatus(2);
 				rawMessageData.remove(0, 3);  // Remove the first 3 bytes (Header)
 				deserializeRPCMessage(rawMessageData);
                 break;
 			case MessageType::PARAMETERUPDATE:
 				qDebug() << "PARAMETERUPDATE message received";
+                emit receiverStatus(1);
                 rawMessageData.remove(0, 3);  // Remove the first 3 bytes (Header)
                 deserializeParameterUpdateMessage(rawMessageData);
 				break;

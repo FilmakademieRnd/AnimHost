@@ -53,6 +53,9 @@ public:
     QString caption() const override { return this->name(); }
     bool captionVisible() const override { return true; }
 
+    bool hasInputRunSignal() const override { return false; }
+    bool hasOutputRunSignal() const override { return false; }
+
     unsigned int nDataPorts(QtNodes::PortType portType) const override;
     NodeDataType dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
 

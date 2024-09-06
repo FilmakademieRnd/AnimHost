@@ -4,6 +4,9 @@
 #include "../TRACERPlugin_global.h"
 #include "../TRACERUpdateMessage.h"
 #include <QMetaType>
+#include <QObject>
+#include <QComboBox>
+#include <QVBoxLayout>
 #include <pluginnodeinterface.h>
 
 
@@ -20,10 +23,14 @@ class TRACERPLUGINSHARED_EXPORT RPCTriggerNode : public PluginNodeInterface
 {
     Q_OBJECT
 private:
-    QPushButton* _pushButton;
-
+    QWidget* _widget = nullptr;
+    QVBoxLayout* _mainLayout = nullptr;
+    QPushButton* _pushButton = nullptr;
+    QComboBox* _comboBox = nullptr;
 
     std::weak_ptr<AnimNodeData<RPCUpdate>> _RPCIn;
+
+    AnimHostRPCType _filterType = AnimHostRPCType::BLOCK;
 
 public:
     RPCTriggerNode();

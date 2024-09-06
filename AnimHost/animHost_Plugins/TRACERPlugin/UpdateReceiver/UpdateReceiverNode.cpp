@@ -94,10 +94,10 @@ void UpdateReceiverNode::forwardParameterUpdateMessage(uint8_t sceneID, uint16_t
 {
     qDebug() << "PARAM::SceneID: " << sceneID << " ObjectID: " << objectID << " ParamID: " << paramID << " ParamType: " << paramType;
 
-    auto paramUpdate = std::make_shared<ParameterUpdate>(sceneID, objectID,paramID,
+    std::shared_ptr<ParameterUpdate> paramUpdate = std::make_shared<ParameterUpdate>(sceneID, objectID,paramID,
         paramType, rawData);
 
-    _parameterUpdateOut->setVariant(QVariant::fromValue(*paramUpdate));
+    _parameterUpdateOut->setVariant(QVariant::fromValue(paramUpdate));
 
     emitDataUpdate(0);
 }
@@ -110,6 +110,7 @@ void UpdateReceiverNode::forwardRPCMessage(uint8_t sceneID, uint16_t objectID, u
         paramType, rawData);
 
     _rpcUpdateOut->setVariant(QVariant::fromValue(rpcUpdate));
+
 
     emitDataUpdate(1);
 }
@@ -133,6 +134,9 @@ QWidget* UpdateReceiverNode::embeddedWidget()
         _ipAddress->setToolTip("Enter the IP Address of the TRACER Server");
         _ipAddressLayout->addWidget(_ipAddress);    
 
+        _signalLight = new SignalLightWidget();
+        _ipAddressLayout->addWidget(_signalLight);
+
         _mainLayout->addLayout(_ipAddressLayout);
 
         _autoStart = new QCheckBox("Auto Start");
@@ -144,17 +148,34 @@ QWidget* UpdateReceiverNode::embeddedWidget()
         _mainLayout->addWidget(_connectButton);
 
 
-        _signalLight = new SignalLightWidget();
-
-    
-        _mainLayout->addWidget(_signalLight);
-
+        
 
         _widget->setLayout(_mainLayout);
 
 		connect(_connectButton, &QPushButton::released, this, &UpdateReceiverNode::onButtonClicked);
-        connect(_connectButton, &QPushButton::released, _signalLight, [=]() {
-            _signalLight->startFadeOut(1000); // 1 second fade out
+
+
+        connect(_updateReceiver.get(), &TRACERUpdateReceiver::receiverStatus,
+            this, [=](int status) {
+                switch(status){
+					case 0: // Running
+						_signalLight->setColor(QColor(50, 255, 50));
+						//_signalLight->startFadeOut(500);
+						break;
+					case 1: //Parameter Update
+						_signalLight->setColor(QColor(255, 200, 50));
+						_signalLight->startFadeOut(100, QColor(50, 255, 50));
+						break;
+					case 2: // RPC
+						_signalLight->setColor(QColor(255, 50, 150));
+						_signalLight->startFadeOut(100, QColor(50, 255, 50));
+						break;
+					default:
+						_signalLight->setColor(QColor(255, 0, 0));
+						//_signalLight->startFadeOut(500);
+						break;
+				}
+
             });
 
         _widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px none white;""}"

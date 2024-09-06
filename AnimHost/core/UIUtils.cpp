@@ -260,9 +260,17 @@ void SignalLightWidget::setColor(const QColor& color)
 	update();
 }
 
-void SignalLightWidget::startFadeOut(int duration)
+void SignalLightWidget::setDefaultColor(const QColor& color)
+{
+	defaultColor = color;
+	alpha = 255; // Reset alpha when changing the color
+	update();
+}
+
+void SignalLightWidget::startFadeOut(int duration, const QColor& resetColor)
 {
 	fadeDuration = duration;
+	defaultColor = resetColor;
 	timeElapsed = 0;
 	alpha = 255;
 	fadeTimer.start(30); // Start a timer to update every 30ms
@@ -274,7 +282,8 @@ void SignalLightWidget::updateFade()
 
 	if (timeElapsed >= fadeDuration) {
 		fadeTimer.stop();
-		alpha = 0;
+		alpha = 255;
+		currentColor = defaultColor;
 	}
 	else {
 		alpha = 255 - (255 * timeElapsed / fadeDuration);

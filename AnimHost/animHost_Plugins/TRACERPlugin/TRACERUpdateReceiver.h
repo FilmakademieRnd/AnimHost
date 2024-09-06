@@ -209,6 +209,7 @@ Q_SIGNALS:
     */
     void rpcMessage(uint8_t sceneID, uint16_t objectID, uint16_t paramID, ParameterType paramType, const QByteArray rawData);
 
+    void receiverStatus(int status);
 
     void stopped();
 
