@@ -47,7 +47,12 @@ public:
     
     std::unique_ptr<NodeDelegateModel> Init() override { return  nullptr; };
 
+    QJsonObject save() const override;
+    void load(QJsonObject const& p) override;
+
     static QString Name() { return QString("UpdateReceiverNode"); }
+
+
 
     QString category() override { return "Undefined Category"; };
     QString caption() const override { return this->name(); }

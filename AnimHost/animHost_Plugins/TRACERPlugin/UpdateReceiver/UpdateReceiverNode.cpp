@@ -6,6 +6,8 @@ UpdateReceiverNode::UpdateReceiverNode(std::shared_ptr<TRACERUpdateReceiver> upd
     _connectButton = nullptr;
 
     _rpcUpdateOut = std::make_shared<AnimNodeData<RPCUpdate>>();
+    _parameterUpdateOut = std::make_shared<AnimNodeData<ParameterUpdate>>();
+
     connect(_updateReceiver.get(), &TRACERUpdateReceiver::parameterUpdateMessage, 
             this, &UpdateReceiverNode::forwardParameterUpdateMessage, 
             Qt::QueuedConnection);
@@ -21,6 +23,36 @@ UpdateReceiverNode::~UpdateReceiverNode()
 {
     _updateReceiver.reset();
     qDebug() << "~UpdateReceiverNode()";
+}
+
+QJsonObject UpdateReceiverNode::save() const
+{
+    QJsonObject modelJson = NodeDelegateModel::save();
+    if(_ipAddress){
+		modelJson["ipAddress"] = _ipAddress->text();
+	}
+
+    if (_autoStart) {
+        modelJson["autoStart"] = _autoStart->isChecked();
+    }
+
+    
+    return modelJson;
+}
+
+void UpdateReceiverNode::load(QJsonObject const& p)
+{
+    if (p.contains("ipAddress")) {
+		_ipAddress->setText(p["ipAddress"].toString());
+	}
+
+	if (p.contains("autoStart")) {
+		_autoStart->setChecked(p["autoStart"].toBool());
+	}
+
+    if(_autoStart->isChecked()){
+		_updateReceiver->requestRestart(_ipAddress->text());
+	}
 }
 
 unsigned int UpdateReceiverNode::nDataPorts(QtNodes::PortType portType) const
@@ -164,11 +196,11 @@ QWidget* UpdateReceiverNode::embeddedWidget()
 						break;
 					case 1: //Parameter Update
 						_signalLight->setColor(QColor(255, 200, 50));
-						_signalLight->startFadeOut(100, QColor(50, 255, 50));
+						_signalLight->startFadeOut(400, QColor(50, 255, 50));
 						break;
 					case 2: // RPC
 						_signalLight->setColor(QColor(255, 50, 150));
-						_signalLight->startFadeOut(100, QColor(50, 255, 50));
+						_signalLight->startFadeOut(400, QColor(50, 255, 50));
 						break;
 					default:
 						_signalLight->setColor(QColor(255, 0, 0));
