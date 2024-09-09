@@ -194,6 +194,8 @@ Q_SIGNALS:
      * @brief Signal emitted when a parameter update message is received. 
      * Passes along the objectID, paramID and the raw data for filtering and further processing
      * by the connected slots.
+     * @param rawData The raw payload of the update message. Starts with the parameter value. Excluding the header.
+     *
      */
     void parameterUpdateMessage(uint8_t sceneID, uint16_t objectID, uint16_t paramID, ParameterType paramType, const QByteArray rawData);
 
