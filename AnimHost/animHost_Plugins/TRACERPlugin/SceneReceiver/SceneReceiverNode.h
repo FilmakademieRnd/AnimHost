@@ -86,6 +86,11 @@ private:
     QThread* zeroMQSceneReceiverThread = nullptr;       //!< Sub-thread to handle sending request messages and receiving replies
 
     SceneReceiver* sceneReceiver;                       //!< Pointer to instance of the class that is responsible to exchange messages with the rest of the TRACER framework
+    
+    bool _headerReady = false;
+    bool _sceneReady = false;
+    bool _pathReady = false;
+    bool _characterReady = false;
 
 public:
     //! Default constructor
@@ -122,6 +127,19 @@ public:
     * It is creating the scene receiver and the sub-thread, in which it's going to be run
     */
     void run() override;
+
+    void resetDataReady() {
+		_headerReady = false;
+		_sceneReady = false;
+		_characterReady = false;
+		_pathReady = false;
+	}
+
+    void checkDataReady() {
+        if (_headerReady && _sceneReady && _characterReady && _pathReady) {
+            emitRunNextNode();
+        }
+    }
 
     //! Initializes the plugin's UI elements
     /*!

@@ -132,6 +132,7 @@ QWidget* SceneReceiverNode::embeddedWidget() {
 
 void SceneReceiverNode::onButtonClicked()
 {
+	resetDataReady();
 	// Set IP Address
 	_ipAddress = _connectIPAddress->text();
 
@@ -153,7 +154,23 @@ void SceneReceiverNode::run() {
 	sceneReceiver->requestStart();
 	zeroMQSceneReceiverThread->start();
 
-	emitRunNextNode();
+	// Reset data ready flags. Only run next node when all requested scene data has been received.
+	resetDataReady();
+
+	//TEMP REQUEST SCENE DATA ON EVERY RUN
+	// Set IP Address
+	_ipAddress = _connectIPAddress->text();
+
+	// TODO: Reconnecting the socket requires a correct shut-down process before creating a new connection. To be refactored.
+	sceneReceiver->connectSocket(_ipAddress); // DO NOT COMMENT THIS LINE
+
+	requestHeaderData();
+	requestCharacterData();
+	requestControlPathData();
+
+
+
+	//emitRunNextNode();
 }
 
 /*
@@ -240,6 +257,9 @@ void SceneReceiverNode::processCharacterByteData(QByteArray* characterByteArray)
 
 	// Requesting the complete Scenegraph in order to "fill in the blanks" of the CharacterObject
 	requestSceneNodeData();
+
+	_characterReady = true;
+	checkDataReady();
 }
 
 /*
@@ -463,7 +483,9 @@ void SceneReceiverNode::processSceneNodeByteData(QByteArray* sceneNodeByteArray)
 	qDebug() << "Number of scene nodes received from VPET:" << sceneNodeListOut.get()->getData()->mSceneNodeObjectSequence.size();
 	qDebug() << "Number of character received from VPET:" << characterListOut.get()->getData()->mCharacterObjectSequence.size();
 
+	_sceneReady = true;
 	emitDataUpdate(0);
+	checkDataReady();
 }
 
 void SceneReceiverNode::processHeaderByteData(QByteArray* headerByteArray) {
@@ -478,6 +500,9 @@ void SceneReceiverNode::processHeaderByteData(QByteArray* headerByteArray) {
 	if (framerate > 0)
 		ZMQMessageHandler::setPlaybackFrameRate(framerate);
 	qDebug() << "Playback Framerate" << ZMQMessageHandler::getPlaybackFrameRate();
+
+	_headerReady = true;
+	checkDataReady();
 }
 
 void SceneReceiverNode::processControlPathByteData(QByteArray* controlPointByteArray) {
@@ -523,4 +548,7 @@ void SceneReceiverNode::processControlPathByteData(QByteArray* controlPointByteA
 	}
 
 	qDebug() << "Control Path with" << size << "frames received!";
+
+	_pathReady = true;
+	checkDataReady();
 }
