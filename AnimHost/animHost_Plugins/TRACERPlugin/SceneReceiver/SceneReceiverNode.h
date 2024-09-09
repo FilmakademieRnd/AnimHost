@@ -4,41 +4,41 @@
  *   Copyright (c) 2024 Filmakademie Baden-Wuerttemberg, Animationsinstitut R&D Labs
  *   https://research.animationsinstitut.de/animhost
  *   https://github.com/FilmakademieRnd/AnimHost
- *    
+ *
  *   AnimHost is a development by Filmakademie Baden-Wuerttemberg, Animationsinstitut
  *   R&D Labs in the scope of the EU funded project MAX-R (101070072).
- *    
+ *
  *   This program is distributed in the hope that it will be useful, but WITHOUT
  *   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  *   FOR A PARTICULAR PURPOSE. See the MIT License for more details.
- *   You should have received a copy of the MIT License along with this program; 
+ *   You should have received a copy of the MIT License along with this program;
  *   if not go to https://opensource.org/licenses/MIT
 
  ***************************************************************************************
  */
 
- 
 
-//!
-//! @file "TracerSceneReceiverPlugin.h"
-//! @implements PluginNodeInterface
-//! @brief Plugin allowing the user to request scene data from TRACER
-//! @param[out] characterListOut    The list of characters (CharacterObjects) to be passed to the CharacterSelectorPlugin
-//! @param[out] sceneNodeListOut    The selected character to which the animation is going to be applied
-//! @author Francesco Andreussi
-//! @version 0.5
-//! @date 26.01.2024
-//!
-/*!
- * ###Plugin class with UI elements for requesting scene information from DataHub or TRACER clients
- * Using the UI elements, it's possible to write an IP address onto which to send the request message.
- * The received replies are processed, converted in more accessible data structures, and passed along to other AnimHost plugins for further usage
- */
 
-#ifndef TRACERSCENERECEIVERPLUGINPLUGIN_H
-#define TRACERSCENERECEIVERPLUGINPLUGIN_H
+ //!
+ //! @file "SceneReceiverNode.h"
+ //! @implements PluginNodeInterface
+ //! @brief Plugin allowing the user to request scene data from TRACER
+ //! @param[out] characterListOut    The list of characters (CharacterObjects) to be passed to the CharacterSelectorPlugin
+ //! @param[out] sceneNodeListOut    The selected character to which the animation is going to be applied
+ //! @author Francesco Andreussi
+ //! @version 0.5
+ //! @date 26.01.2024
+ //!
+ /*!
+  * ###Plugin class with UI elements for requesting scene information from DataHub or TRACER clients
+  * Using the UI elements, it's possible to write an IP address onto which to send the request message.
+  * The received replies are processed, converted in more accessible data structures, and passed along to other AnimHost plugins for further usage
+  */
 
-#include "TracerSceneReceiverPlugin_global.h"
+#ifndef SCENERECEIVER_H
+#define SCENERECEIVER_H
+
+#include "../TRACERPlugin_global.h"
 #include "ZMQMessageHandler.h"
 
 #include <QMetaType>
@@ -54,23 +54,19 @@
 #include <commondatatypes.h>
 
 #include <zmq.hpp>
-//#include <nzmqt/nzmqt.hpp>
 
 class SceneReceiver;
 
-class TRACERSCENERECEIVERPLUGINSHARED_EXPORT TracerSceneReceiverPlugin : public PluginNodeInterface
+class TRACERPLUGINSHARED_EXPORT SceneReceiverNode : public PluginNodeInterface
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "de.animhost.TracerSceneReceiver" FILE "TracerSceneReceiverPlugin.json")
-    Q_INTERFACES(PluginNodeInterface)
-
 private:
     QWidget* widget;                                //!< UI container element
     QPushButton* _pushButton;                       //!< UI button element, onClick sends out the request message
     QLineEdit* _connectIPAddress;                   //!< UI single-line text box where the desired IP address is typed in
     QHBoxLayout* _ipAddressLayout;                  //!< UI layout element
     QRegularExpressionValidator* _ipValidator;      //!< IP Address validation regex
-    QString _ipAddress;                             //!< The typed IP Address
+    QString _ipAddress;                             //!< The typed IP 
 
     //! The list of characters received from TRACER
     /*!
@@ -86,63 +82,65 @@ private:
     // !!!TEMPORARY!!!
     std::shared_ptr<AnimNodeData<ControlPath>> controlPathOut;
 
-    zmq::context_t* _sceneReceiverContext = nullptr;    //!< 0MQ context to establish connection, send and receive messages
+    std::shared_ptr<zmq::context_t> _sceneReceiverContext = nullptr;    //!< 0MQ context to establish connection, send and receive messages
     QThread* zeroMQSceneReceiverThread = nullptr;       //!< Sub-thread to handle sending request messages and receiving replies
 
     SceneReceiver* sceneReceiver;                       //!< Pointer to instance of the class that is responsible to exchange messages with the rest of the TRACER framework
+    
+    bool _headerReady = false;
+    bool _sceneReady = false;
+    bool _pathReady = false;
+    bool _characterReady = false;
 
 public:
     //! Default constructor
     /*!
      * Instantiates the scene receiver class, moves it to its separate thread and connects the various signals to the associated functions:
-     * - \c SceneReceiver::passCharacterByteArray() signal is connected to \c TracerSceneReceiverPlugin::processCharacterByteData()
-     * - \c SceneReceiver::passSceneNodeByteArray() signal is connected to \c TracerSceneReceiverPlugin::processSceneNodeByteData()
-     * - \c SceneReceiver::passHeaderByteArray() signal is connected to \c TracerSceneReceiverPlugin::processHeaderByteData()
-     * - \c TracerSceneReceiverPlugin::requestCharacterData() signal is connected to \c SceneReceiver::requestCharacterData()
-     * - \c TracerSceneReceiverPlugin::requestSceneNodeData() signal is connected to \c SceneReceiver::requestSceneNodeData()
-     * - \c TracerSceneReceiverPlugin::requestHeaderData() signal is connected to \c SceneReceiver::requestHeaderData()
+     * - \c SceneReceiver::passCharacterByteArray() signal is connected to \c SceneReceiverNode::processCharacterByteData()
+     * - \c SceneReceiver::passSceneNodeByteArray() signal is connected to \c SceneReceiverNode::processSceneNodeByteData()
+     * - \c SceneReceiver::passHeaderByteArray() signal is connected to \c SceneReceiverNode::processHeaderByteData()
+     * - \c SceneReceiverNode::requestCharacterData() signal is connected to \c SceneReceiver::requestCharacterData()
+     * - \c SceneReceiverNode::requestSceneNodeData() signal is connected to \c SceneReceiver::requestSceneNodeData()
+     * - \c SceneReceiverNode::requestHeaderData() signal is connected to \c SceneReceiver::requestHeaderData()
      */
-    TracerSceneReceiverPlugin();
-    //! Default destructor
-    ~TracerSceneReceiverPlugin();
+    SceneReceiverNode(std::shared_ptr<zmq::context_t> zmqConext);
+    ~SceneReceiverNode();
     
-    //! Initialising function returning pointer to instance of self (calls the default constructor)
-    std::unique_ptr<NodeDelegateModel> Init() override { return  std::unique_ptr<TracerSceneReceiverPlugin>(new TracerSceneReceiverPlugin()); };
+    std::unique_ptr<NodeDelegateModel> Init() override { return  nullptr; };
 
-    //! Defines the category of this plugin as **Import** for the plugin selection menu of the AnimHost Application, called by Qt Application
-    QString category() override { return "Import"; };
+    static QString Name() { return QString("SceneReceiverNode"); }
 
-    //! Returning Plugin name, called by Qt Application
+    QString category() override { return "TRACER"; };
     QString caption() const override { return this->name(); }
-
-    //! Whether name is visible on UI, called by Qt Application
     bool captionVisible() const override { return true; }
 
-    //! Public function called by Qt Application returning number of in and out ports
-    /*!
-    * \param  portType (enum - 0: IN, 1: OUT, 2: NONE)
-    * \return number of IN and OUT ports
-    */
     unsigned int nDataPorts(QtNodes::PortType portType) const override;
-
-    //! Public function called by Qt Application returning which datatype is associated to a specific port
-    /*!
-    * \param  portType (enum - 0: IN, 1: OUT, 2: NONE)
-    * \param  portIndex (unsinged int with additional checks)
-    * \return datatype associated to the portIndex-th IN or OUT port
-    */
     NodeDataType dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
 
-    std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;                 //!< Given a port index, processes and returns a pointer to the data of the corresponding OUT port
-    void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;  //!< Given a port index, processes the data of the corresponding IN port
-    bool isDataAvailable() override;                                                            //!< Checks whether the input data of the plugin is valid and available. If not the plugin run function is not going to be run
-    
+    std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;
+    void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
+
+    bool  isDataAvailable() override;
+
     //! It's called when the plugin is started.
     /*!
     * It is creating the scene receiver and the sub-thread, in which it's going to be run
     */
     void run() override;
-    
+
+    void resetDataReady() {
+		_headerReady = false;
+		_sceneReady = false;
+		_characterReady = false;
+		_pathReady = false;
+	}
+
+    void checkDataReady() {
+        if (_headerReady && _sceneReady && _characterReady && _pathReady) {
+            emitRunNextNode();
+        }
+    }
+
     //! Initializes the plugin's UI elements
     /*!
     * Connects the various signals emitted by the UI elements to slots and functions of this class:
@@ -164,14 +162,13 @@ public:
     */
     enum NodeType { GROUP, GEO, LIGHT, CAMERA, SKINNEDMESH, CHARACTER };
 
-    Q_SIGNALS:
+Q_SIGNALS:
     void requestCharacterData();    //!< Triggers requesting scene character data
     void requestSceneNodeData();    //!< Triggers requesting scene description data
     void requestHeaderData();       //!< Triggers requesting scene header data
     void requestControlPathData();       //!< Triggers requesting scene header data !!!TEMPORARY!!!
 
 private Q_SLOTS:
-    
     //! Slot called when the "Request Data" button is clicked
     /*!
     * Trigger the request of header, scene nodes and character data.
@@ -204,4 +201,4 @@ private Q_SLOTS:
 
 };
 
-#endif // TRACERSCENERECEIVERPLUGINPLUGIN_H
+#endif // SCENERECEIVER_H

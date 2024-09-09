@@ -28,21 +28,21 @@
 //! \date 26.01.2024
 //!
 /*!
- * ###This class is instanced by the [TracerSceneReceiverPlugin](@ref TracerSceneReceiverPlugin) and is run in a subthread.
+ * ###This class is instanced by the [SceneReceiverNode](@ref SceneReceiverNode) and is run in a subthread.
  * The class requests all the relevant data from the TRACER client, to which the AnimHost Application will send the Update Messages
  */
 
-#ifndef SCENERECEIVER_H
-#define SCENERECEIVER_H
+#ifndef TRACERSCENERECEIVER_H
+#define TRACERSCENERECEIVER_H
 
 #include "ZMQMessageHandler.h"
-#include "TracerSceneReceiverPlugin.h"
+#include "SceneReceiverNode.h"
 
 #include <QMutex>
 #include <QThread>
 //#include <nzmqt/nzmqt.hpp>
 
-class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHandler {
+class TRACERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHandler {
 
     Q_OBJECT
 
@@ -52,12 +52,12 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
 
     //! Constructor
     /*!
-    * \param[in]    m_TSRPlugin     The TracerSceneReceiverPlugin instance that calls the constructor
+    * \param[in]    m_TSRPlugin     The SceneReceiverNode instance that calls the constructor
     * \param[in]    _senderIP       IP address for the socket connection
     * \param[in]    m_debugState    Whether the class should print out debug messages
     * \param[in]    m_context       A pointer to the 0MQ Context instanciated by \c m_TSRPlugin
     */
-    SceneReceiver(TracerSceneReceiverPlugin* m_TSRPlugin, QString _senderIP, bool m_debugState, zmq::context_t* m_context) {
+    SceneReceiver(SceneReceiverNode* m_TSRPlugin, QString _senderIP, bool m_debugState, zmq::context_t* m_context) {
         TSRPlugin = m_TSRPlugin;
         senderIP = _senderIP;
         _debug = m_debugState;
@@ -134,7 +134,7 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
     //! Requesting the Character Package list in the TRACER client scene
     /*!
     * Uses a Request-Receive pattern to get the TRACER CharacterPackage data, converts message into explicit byte array and
-    * passes byte array to TracerSceneReceiverPlugin to be parsed and saved in an AnimHost CharacterObjectSequence data structure
+    * passes byte array to SceneReceiverNode to be parsed and saved in an AnimHost CharacterObjectSequence data structure
     */
     void requestCharacterData() {
         std::string charReq = "characters";
@@ -150,13 +150,13 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
         if (replyCharMsg.size() > 0)
             charPkgArray->append((char*)replyCharMsg.data(), replyCharMsg.size()); // Convert message into explicit byte array
 
-        passCharacterByteArray(charPkgArray); // Pass byte array to TracerSceneReceiverPlugin to be parsed as chracter packages
+        passCharacterByteArray(charPkgArray); // Pass byte array to SceneReceiverNode to be parsed as chracter packages
     }
 
     //! Requesting the SceneNode list in the TRACER client scene
     /*!
     * Uses a Request-Receive pattern to get the TRACER SceneNode data, converts message into explicit byte array and
-    * passes it to the TracerSceneReceiverPlugin to be parsed and saved in an AnimHost SceneNodeObjectSequence data structure
+    * passes it to the SceneReceiverNode to be parsed and saved in an AnimHost SceneNodeObjectSequence data structure
     */
     void requestSceneNodeData() {
         std::string nodesReq = "nodes";
@@ -172,13 +172,13 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
         if (replyNodeMsg.size() > 0)
             nodesArray->append((char*) replyNodeMsg.data(), replyNodeMsg.size());
 
-        passSceneNodeByteArray(nodesArray); // Pass byte array to TracerSceneReceiverPlugin to be parsed as scene nodes
+        passSceneNodeByteArray(nodesArray); // Pass byte array to SceneReceiverNode to be parsed as scene nodes
     }
 
     //! Requesting the header data containing global information of the TRACER client
     /*!
     * Uses a Request-Receive pattern to get the TRACER SceneNode data, converts message into explicit byte array and
-    * passes it to the TracerSceneReceiverPlugin to be parsed and saved in an AnimHost SceneNodeObjectSequence data structure
+    * passes it to the SceneReceiverNode to be parsed and saved in an AnimHost SceneNodeObjectSequence data structure
     */
     void requestHeaderData() {
         std::string headReq = "header";
@@ -194,7 +194,7 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
         if (replyHeaderMsg.size() > 0)
             headerArray->append((char*) replyHeaderMsg.data(), replyHeaderMsg.size());
 
-        passHeaderByteArray(headerArray); // Pass byte array to TracerSceneReceiverPlugin to be parsed as header data
+        passHeaderByteArray(headerArray); // Pass byte array to SceneReceiverNode to be parsed as header data
     }
 
     // !!!!!!TEMPORARY!!!!!!!
@@ -212,7 +212,7 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
         if (replyHeaderMsg.size() > 0)
             pathArray->append((char*) replyHeaderMsg.data(), replyHeaderMsg.size());
 
-        passControlPathByteArray(pathArray); // Pass byte array to TracerSceneReceiverPlugin to be parsed as header data
+        passControlPathByteArray(pathArray); // Pass byte array to SceneReceiverNode to be parsed as header data
     }
 
     //! Opens a Request-Receive communication socket
@@ -233,7 +233,7 @@ class TRACERSCENERECEIVERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHa
     zmq::socket_t* receiveSocket = nullptr; //!< Pointer to the instance of the socket that will receive the messages. It's going to be initialised in the constructor as a Request-Receive socket.
     QString senderIP;                       //!< The IP address, on which the connection is going to be established
 
-    TracerSceneReceiverPlugin* TSRPlugin = nullptr; //!< Pointer to the instance of TracerSceneReceiverPlugin that owns this SceneReceiver
+    SceneReceiverNode* TSRPlugin = nullptr; //!< Pointer to the instance of SceneReceiverNode that owns this SceneReceiver
     zmq::message_t requestMsg {};                   //!< 0MQ message that will contain the request message to be sent out to DataHub or the TRACER client
     zmq::message_t replyNodeMsg {};                 //!< 0MQ message that will be filled with the scene description data
     zmq::message_t replyHeaderMsg {};               //!< 0MQ message that will be filled with the header data

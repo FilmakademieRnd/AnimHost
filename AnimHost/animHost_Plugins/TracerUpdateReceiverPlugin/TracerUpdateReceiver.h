@@ -33,8 +33,8 @@
  * and notifies \c TracerUpdateSenderPlugin of the arrival of the message
  */
 
-#ifndef TRACERUPDATERECEIVER_H
-#define TRACERUPDATERECEIVER_H
+#ifndef depTRACERUPDATERECEIVER_H
+#define depTRACERUPDATERECEIVER_H
 
 #include "ZMQMessageHandler.h"
 #include "TracerUpdateReceiverPlugin.h"
@@ -146,4 +146,4 @@ class TRACERUPDATERECEIVERPLUGINSHARED_EXPORT TracerUpdateReceiver : public ZMQM
     void processUpdateMessage(QByteArray* updateMessage);    //!< Signal emitted when a SYNC message is received. Passes along the received timestamp
     void stopped();             //!< Signal emitted when process is finished
 };
-#endif // TICKRECEIVER_H
+#endif // depTICKRECEIVER_H

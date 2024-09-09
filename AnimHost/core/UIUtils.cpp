@@ -22,6 +22,13 @@
 #include "animhosthelper.h"
 #include <commondatatypes.h>
 
+#include <QPainter>
+#include <QTimer>
+#include <QBrush>
+#include <QLinearGradient>
+#include <QTime>
+
+
 BoneSelectionWidget::BoneSelectionWidget(QWidget* parent ) : QWidget(parent)
 {
 	layout = new QHBoxLayout();
@@ -231,3 +238,87 @@ void PlotWidget::paintEvent(QPaintEvent* event)
 }
 
 
+
+///!=========================
+/// Signal Light
+///!=========================
+
+
+SignalLightWidget::SignalLightWidget(QWidget* parent)
+	: QWidget(parent), currentColor(Qt::red), alpha(255), timeElapsed(0), fadeDuration(1000)
+{
+
+	setAttribute(Qt::WA_StyledBackground, false);
+	setFixedSize(30, 30);
+	connect(&fadeTimer, &QTimer::timeout, this, &SignalLightWidget::updateFade);
+}
+
+void SignalLightWidget::setColor(const QColor& color)
+{
+	currentColor = color;
+	alpha = 255; // Reset alpha when changing the color
+	update();
+}
+
+void SignalLightWidget::setDefaultColor(const QColor& color)
+{
+	defaultColor = color;
+	alpha = 255; // Reset alpha when changing the color
+	update();
+}
+
+void SignalLightWidget::startFadeOut(int duration, const QColor& resetColor)
+{
+	fadeDuration = duration;
+	defaultColor = resetColor;
+	timeElapsed = 0;
+	alpha = 255;
+	fadeTimer.start(30); // Start a timer to update every 30ms
+}
+
+void SignalLightWidget::updateFade()
+{
+	timeElapsed += 30;
+
+	if (timeElapsed >= fadeDuration) {
+		fadeTimer.stop();
+		alpha = 255;
+		currentColor = defaultColor;
+	}
+	else {
+		alpha = 255 - (255 * timeElapsed / fadeDuration);
+	}
+
+	update(); // Trigger a repaint
+}
+
+void SignalLightWidget::paintEvent(QPaintEvent* event)
+{
+	QPainter painter(this);
+	painter.setRenderHint(QPainter::Antialiasing);
+	painter.setPen(Qt::NoPen);
+
+	drawLight(painter);
+}
+
+void SignalLightWidget::drawLight(QPainter& painter)
+{
+	int radius = width() / 4;
+	QPoint center(width() / 2, height() / 2);
+
+	// Draw the glow effect (shine)
+	QRadialGradient radialGrad(center, radius * 2);
+	QColor glowColor = currentColor;
+	glowColor.setAlpha(alpha / 3); // Fade glow with time
+	radialGrad.setColorAt(0, glowColor);
+	radialGrad.setColorAt(1, QColor(0, 0, 0, 0));
+	painter.setBrush(radialGrad);
+	painter.drawEllipse(center, radius * 2, radius * 2);
+
+	// Draw the main signal light
+	QColor lightColor = currentColor;
+	lightColor.setAlpha(alpha); // Fade light with time
+	painter.setBrush(lightColor);
+	painter.setPen(Qt::NoPen);
+	painter.drawEllipse(center, radius, radius);
+}
