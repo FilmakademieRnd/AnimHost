@@ -114,6 +114,7 @@ class TRACERPLUGINSHARED_EXPORT TRACERPlugin : public PluginNodeCollectionInterf
            nodeRegistry.registerModel<AnimationSenderNode>([this]() { return  std::make_unique<AnimationSenderNode>(_globalTimer, _zmqContext); }, "TRACER");
            nodeRegistry.registerModel<UpdateReceiverNode>([this]() { return  std::make_unique<UpdateReceiverNode>(_updateReceiver); }, "TRACER");
            nodeRegistry.registerModel<RPCTriggerNode>([this]() { return  std::make_unique<RPCTriggerNode>(); }, "TRACER");
+           nodeRegistry.registerModel<ControlPathDecoderNode>([this]() { return  std::make_unique<ControlPathDecoderNode>(); }, "TRACER");
        };
 
        void PostNodeCollectionRegistration() override {};

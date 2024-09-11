@@ -18,6 +18,7 @@ qt_add_library(${target_name}
     CharacterSelector/CharacterSelectorNode.h CharacterSelector/CharacterSelectorNode.cpp
     ControlPathUpdate/ControlPathUpdateNode.h ControlPathUpdate/ControlPathUpdateNode.cpp
     RPCTrigger/RPCTriggerNode.h RPCTrigger/RPCTriggerNode.cpp
+    ControlPathDecoder/ControlPathDecoder.h ControlPathDecoder/ControlPathDecoder.cpp
 
 )
 
@@ -35,6 +36,9 @@ source_group("CharacterSelector" FILES CharacterSelector/CharacterSelectorNode.h
 source_group("ControlPathUpdate" FILES ControlPathUpdate/ControlPathUpdateNode.h ControlPathUpdate/ControlPathUpdateNode.cpp)
 
 source_group("RPCTrigger" FILES RPCTrigger/RPCTriggerNode.h RPCTrigger/RPCTriggerNode.cpp)
+
+source_group("ControlPathDecoder" FILES ControlPathDecoder/ControlPathDecoder.h ControlPathDecoder/ControlPathDecoder.cpp)
+
 
 set_target_properties (${target_name} PROPERTIES
     FOLDER Plugins/TRACER
