@@ -77,6 +77,13 @@ public:
 private Q_SLOTS:
     void onButtonClicked();
 
+
+    /**
+     * @brief Slot for receiving a parameter update message.
+     * Passes along the objectID, paramID and the raw data for filtering and further processing
+     * by the connected slots.
+     * @param rawData The raw payload of the update message. Starts with the parameter value. Excluding the header.
+     */
     void forwardParameterUpdateMessage(uint8_t sceneID, uint16_t objectID, uint16_t paramID, ZMQMessageHandler::ParameterType paramType, const QByteArray rawData);
 
     void forwardRPCMessage(uint8_t sceneID, uint16_t objectID, uint16_t paramID, ZMQMessageHandler::ParameterType paramType, const QByteArray rawData);

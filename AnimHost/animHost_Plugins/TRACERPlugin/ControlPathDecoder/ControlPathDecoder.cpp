@@ -48,6 +48,11 @@ void ControlPathDecoderNode::processInData(std::shared_ptr<NodeData> data, QtNod
             qDebug() << "Control Points received" << "ObjectID: " << spParamIn->objectID;
 
             //Decode Raw Data
+            std::unique_ptr<AbstractParameterPayload> ppp = spParamIn->decodeRawData();
+
+            /** @todo Further process the decoded data */
+            //auto Vec3 = dynamic_cast<ParameterPayload<glm::vec3>*>(ppp.get());
+
 
             _recievedControlPathControlPoints = true;
         }
@@ -55,6 +60,8 @@ void ControlPathDecoderNode::processInData(std::shared_ptr<NodeData> data, QtNod
             qDebug() << "Control Orientation recieved" << "ObjectID: " << spParamIn->objectID;
 
             //Decode Raw Data
+            /** @todo Decode Quats */
+            /** @todo Further process the decoded data */
 
             _recievedControlPathOrientation = true;
         }
