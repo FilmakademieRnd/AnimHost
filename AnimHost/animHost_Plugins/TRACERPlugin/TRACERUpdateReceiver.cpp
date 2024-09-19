@@ -108,7 +108,7 @@ void TRACERUpdateReceiver::deserializeMessage(QByteArray& rawMessageData)
     byte inClientID = rawMessageData[0];
     byte inTimeStamp = rawMessageData[1];
     MessageType inMessageType = static_cast<MessageType>(rawMessageData[2]);
-
+    qDebug() << inClientID << " "  << inMessageType;
     if(inClientID != _clientID){
 	    
         switch(inMessageType){
@@ -151,17 +151,17 @@ void TRACERUpdateReceiver::deserializeParameterUpdateMessage(const QByteArray& r
         uint8_t sceneID;
         uint16_t objectID, paramID;
         ParameterType paramType;
-        uint32_t lengt;
+        uint32_t length;
         
         msgStream >> sceneID;
         msgStream >> objectID;
         msgStream >> paramID;
         msgStream >> paramType;
-        msgStream >> lengt;
+        msgStream >> length;
 
         QByteArray data;
-        data.resize(lengt-10);
-        msgStream.readRawData(data.data(), lengt - 10); // -10 to account for the sceneID, objectID, paramID, paramType and length
+        data.resize(length-10);
+        msgStream.readRawData(data.data(), length - 10); // -10 to account for the sceneID, objectID, paramID, paramType and length
 
         Q_EMIT parameterUpdateMessage(sceneID, objectID, paramID, paramType, data);
     }
@@ -178,17 +178,17 @@ void TRACERUpdateReceiver::deserializeRPCMessage(const QByteArray& rawMessageDat
         uint8_t sceneID;
         uint16_t objectID, paramID;
         ParameterType paramType;
-        uint32_t lengt;
+        uint32_t lengthh;
 
         msgStream >> sceneID;
         msgStream >> objectID;
         msgStream >> paramID;
         msgStream >> paramType;
-        msgStream >> lengt;
+        msgStream >> lengthh;
 
         QByteArray data;
-        data.resize(lengt-10);
-        msgStream.readRawData(data.data(), lengt - 10); // -10 to account for the sceneID, objectID, paramID, paramType and length
+        data.resize(lengthh-10);
+        msgStream.readRawData(data.data(), lengthh - 10); // -10 to account for the sceneID, objectID, paramID, paramType and length
 
         qDebug() << "SceneID: " << sceneID << " ObjectID: " << objectID << " ParamID: " << paramID << " ParamType: " << paramType;
 

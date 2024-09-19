@@ -576,6 +576,8 @@ class ANIMHOSTCORESHARED_EXPORT ControlPoint {
 
     public:
     ControlPoint() {};
+    ControlPoint(glm::vec3 pos, glm::quat rot, int frame, float vel) :
+        position { pos }, lookAt { rot }, frameTimestamp { frame }, velocity { vel } {};
 
     COMMONDATA(controlPoint, ControlPoint)
 
@@ -594,7 +596,12 @@ class ANIMHOSTCORESHARED_EXPORT ControlPath : public Sequence {
     std::vector<ControlPoint> mControlPath;
 
     public:
-    ControlPath() : mControlPath {} { qDebug() << "ControlPath()"; };
+    ControlPath() { 
+        mControlPath = {};
+        qDebug() << "ControlPath()";
+    };
+
+    std::shared_ptr<std::vector<ControlPoint>> getPath() { return std::make_shared<std::vector<ControlPoint>>(mControlPath); };
 
     void CreateSpline();
 
@@ -654,20 +661,25 @@ class ANIMHOSTCORESHARED_EXPORT CharacterObject :public SceneNodeObject {
     
     std::vector<SkinnedMeshComponent> skinnedMeshList;
 
-    ControlPath controlPath;
+    int controlPathID = 1; // TODO: extend the CharacterPackage to include the control path ID.
+    std::shared_ptr<ControlPath> controlPath;
 
     public:
     CharacterObject(int soID, int oID, std::string name) :
         SceneNodeObject ( soID, oID, name ),
         boneMapping {}, skeletonObjIDs {},
         tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {},
-        skinnedMeshList {} {};
+        skinnedMeshList {} {
+        controlPath = std::make_shared<ControlPath>();
+    };
     
     CharacterObject() :
         SceneNodeObject(),
         boneMapping {}, skeletonObjIDs {},
         tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {},
-        skinnedMeshList {} {};
+        skinnedMeshList {} {
+        controlPath = std::make_shared<ControlPath>();
+    };
 
     void fill(const CharacterObject& _otherChObj) {
         sceneObjectID = _otherChObj.sceneObjectID;
@@ -685,6 +697,11 @@ class ANIMHOSTCORESHARED_EXPORT CharacterObject :public SceneNodeObject {
         tposeBoneScale = _otherChObj.tposeBoneScale;
 
         skinnedMeshList = _otherChObj.skinnedMeshList;
+    }
+
+    void setPath(std::vector<ControlPoint> otherPath) {
+        this->controlPath->frameCount = otherPath.size();
+        this->controlPath->mControlPath = otherPath;
     }
 
     COMMONDATA(characterObject, CharacterObject)

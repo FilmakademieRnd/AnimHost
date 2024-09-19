@@ -6,15 +6,17 @@
 #include "TRACERPlugin_global.h"
 #include <commondatatypes.h>
 #include <ZMQMessageHandler.h>
+#include <QDataStream>
 
 
 // VECTOR3
-TRACERPLUGINSHARED_EXPORT QDataStream& operator>>(QDataStream& stream, glm::vec3& vec);
+inline TRACERPLUGINSHARED_EXPORT QDataStream& operator>>(QDataStream& stream, glm::vec3& vec) { stream >> vec.x; stream >> vec.y; stream >> vec.z; return stream; }
+
+// VECTOR4
+inline TRACERPLUGINSHARED_EXPORT QDataStream& operator>>(QDataStream& stream, glm::vec4& vec){ stream >> vec.x; stream >> vec.y; stream >> vec.z; stream >> vec.w; return stream; }
 
 //QUATERNION
-TRACERPLUGINSHARED_EXPORT QDataStream& operator>>(QDataStream& stream, glm::quat& quat);
-
-
+inline TRACERPLUGINSHARED_EXPORT QDataStream& operator>>(QDataStream& stream, glm::quat& quat) { stream >> quat.w; stream >> quat.x; stream >> quat.y; stream >> quat.z; return stream; }
 
 template <typename T>
 struct TRACERPLUGINSHARED_EXPORT KeyFrame {
@@ -78,16 +80,19 @@ class TRACERPLUGINSHARED_EXPORT ParameterPayload : public AbstractParameterPaylo
 
             stream >> keyFrame.keyType;
 			stream >> keyFrame.time;
-           //stream >> keyFrame.inTangentTime;
+            stream >> keyFrame.inTangentTime;
             stream >> keyFrame.outTangentTime;
 			stream >> keyFrame.value;
-            //stream >> keyFrame.inTangentValue;
+            stream >> keyFrame.inTangentValue;
             stream >> keyFrame.outTangentValue;
 
 			_keyList.push_back(keyFrame);
 		}
 
 	};
+
+    T getValue() { return parameterValue; }
+    std::vector<KeyFrame<T>> getKeyList() { return _keyList; }
 
 };
 
@@ -115,10 +120,6 @@ public:
         ZMQMessageHandler::ParameterType paramType, const QByteArray& rawData)
         : sceneID(sceneID), objectID(objectID), paramID(paramID), paramType(paramType), rawData(rawData) {};
 
-
-
-
-
 };
 
 class TRACERPLUGINSHARED_EXPORT ParameterUpdate : public UpdateMessage {
@@ -131,19 +132,14 @@ public:
         ZMQMessageHandler::ParameterType paramType, const QByteArray rawData) :
         UpdateMessage(sceneID, objectID, paramID, paramType, rawData) {};
 
-
    
-   // decoder with void pointer parameter return values   
+    // decoder with void pointer parameter return values   
     std::unique_ptr<AbstractParameterPayload> decodeRawData() {
 		//Decode Raw Data
 
         QDataStream stream(rawData);
         stream.setByteOrder(QDataStream::LittleEndian); // Assuming little-endian, adjust if needed
         stream.setFloatingPointPrecision(QDataStream::SinglePrecision);
-  
-
-     
-
         switch (paramType) {
         case ZMQMessageHandler::ParameterType::INT:
             qDebug() << "Decoding INT";
@@ -159,8 +155,12 @@ public:
             break;
         case ZMQMessageHandler::ParameterType::VECTOR4:
             qDebug() << "Decoding VECTOR4";
+            return std::make_unique<ParameterPayload<glm::vec4>>(stream);
+            break;
         case ZMQMessageHandler::ParameterType::QUATERNION:
             qDebug() << "Decoding QUATERNION";
+            return std::make_unique<ParameterPayload<glm::quat>>(stream);
+            break;
         default:
             qDebug() << "Unsupported parameter type!";
             return std::make_unique<AbstractParameterPayload>();

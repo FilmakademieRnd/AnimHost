@@ -21,17 +21,31 @@ private:
     QComboBox* _comboBox = nullptr;
 
 
-    bool _recievedControlPathControlPoints = false;
-    bool _recievedControlPathOrientation = false;
+    bool _receivedControlPathPointRotation = false;
+    bool _receivedControlPathPointLocation = false;
 
+    uint16_t _characterID = 2;          // It refers to the selected Character Object
+    uint16_t _paramControlPath = -1;    // This is the parameterID of the Character Object that keeps the ID of the Control Path associated with the selected Character Object 
+    uint16_t _controlPathID = 1;        // It refers to the Control Path for the selected Character (as indicated by the paramControlPathID)
+    uint16_t _paramPointLocationID = 3; // This is the parameterID of the Locations of the points of the Control Path
+    uint16_t _paramPointRotationID = 4; // This is the parameterID of the Rotations of the points of the Control Path
 
-    uint16_t _objectID = 1;
-    uint16_t _paramControlPointID = 3;
-    uint16_t _paramOrientationID = 4;
-
-
+    std::vector<KeyFrame<glm::vec3>> _pointLocation;
+    std::vector<KeyFrame<glm::quat>> _pointRotation;
 
     std::weak_ptr<AnimNodeData<ParameterUpdate>> _ParamIn;
+    std::weak_ptr<AnimNodeData<CharacterObject>> _characterIn;
+
+    std::shared_ptr<AnimNodeData<ControlPath>> _OutControlPath;
+
+    // Helper functions for adaptive Beziér Sampling
+    static std::vector<ControlPoint>*   adaptiveSegmentSampling(glm::vec3       knot1,      glm::vec3   handle1,    glm::vec3   handle2,    glm::vec3   knot2,
+                                                                float           easeFrom,   float       easeTo,
+                                                                glm::quat       quat1,      glm::quat   quat2,
+                                                                int             frameStart, int         frameEnd,
+                                                                ControlPoint*   prevCP = nullptr);
+    static std::vector<float>           adaptiveTimingsResampling(float easeFrom, float easeTo, int nSamples);
+    static glm::vec3                    sampleBezier(glm::vec3 knot1, glm::vec3 handle1, glm::vec3 handle2, glm::vec3 knot2, float t);
 
 public:
     ControlPathDecoderNode();
