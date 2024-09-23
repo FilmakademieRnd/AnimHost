@@ -115,12 +115,16 @@ public:
     glm::mat4 GetRestingTransform() { return mRestingTransform; };
 
     glm::quat GetOrientation(int frame) const;
+	void SetOrientation(int frame, glm::quat ori);
 
     glm::vec3 GetPosition(int frame) const;
+    void SetPosition(int frame, glm::vec3 pos) {};
 
     glm::vec3 GetScale(int frame) const;
+    void SetScale(int frame, glm::vec3 scl) {};
 
     glm::mat4 GetTransform(int frame) const;
+    void SetTransform(int frame, glm::mat4) {};
 
     COMMONDATA(bone, Bone)
 
