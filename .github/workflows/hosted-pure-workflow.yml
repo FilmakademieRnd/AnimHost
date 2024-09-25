@@ -13,12 +13,12 @@
 name: hosted-pure-workflow
 on:
   push:
-    branches: 
-    - main
-  pull_request:
-    branches: 
-    - main
+    tags:
+    - '*-alpha'
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   job:
@@ -111,5 +111,14 @@ jobs:
       - name: Archive Build (Release configuration)
         uses: actions/upload-artifact@v4
         with:
-          name: buildarch
+          name: AnimHostBuild
           path: ${{ github.workspace }}/builds/ninja-multi-vcpkg/Release
+
+      - name: Upload Release
+        uses: ncipollo/release-action@v1.14.0
+        with:
+          name: 'AnimHost (Alpha)'
+          draft: True
+          artifacts: "AnimHostBuild.zip"
+          token: ${{ secrets.GITHUB_TOKEN }}
+

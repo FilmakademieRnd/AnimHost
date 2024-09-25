@@ -539,6 +539,8 @@ void SceneReceiverNode::processControlPathByteData(QByteArray* controlPointByteA
 		memcpy(&z, controlPointByteArray->sliced(currentZDir, sizeof(z)), sizeof(z));
 		glm::vec3 tLookAt = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(x, y, z, 0.0f);
 
+		glm::vec3 tLookAt = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(x, y, z, 0.0f);
+
 		key.lookAt = glm::rotation(glm::vec3(0, 0, 1), tLookAt);
 		//key.lookAt = glm::angleAxis(z, glm::vec3(0, 1, 0));
 
