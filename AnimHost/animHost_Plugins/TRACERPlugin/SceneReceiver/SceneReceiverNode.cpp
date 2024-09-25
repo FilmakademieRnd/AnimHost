@@ -168,7 +168,7 @@ void SceneReceiverNode::run() {
 
 
 
-	//emitRunNextNode();
+	emitRunNextNode();
 }
 
 /*

@@ -137,7 +137,7 @@ public:
 
     void checkDataReady() {
         if (_headerReady && _sceneReady && _characterReady && _pathReady) {
-            emitRunNextNode();
+            //emitRunNextNode();
         }
     }
 
