@@ -29,12 +29,6 @@ CoordinateConverterPlugin::CoordinateConverterPlugin()
 {
     _animationOut = std::make_shared<AnimNodeData<Animation>>();
 
-    presets.push_back({"AH<->Blender Default",glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix()), false, false, false, false, false });
-
-    presets.push_back({"No Conversion", glm::mat4(1.0), false, false, false, false, false});
-
-    activePreset = presets[0];
-
 
     presets.push_back({"AH<->Blender Default",glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix()), false, false, false, false, false });
 
@@ -187,38 +181,6 @@ QWidget* CoordinateConverterPlugin::embeddedWidget()
             zButton = new QCheckBox("- Z");
             wButton = new QCheckBox("- W");
             swapYzButton = new QCheckBox("Swap Y-Z");
-        widget = new QWidget();
-
-        //preset selection
-        presetLayout = new QHBoxLayout();
-        presetLabel = new QLabel("Presets:");
-        presetComboBox = new QComboBox();
-
-        for (auto& preset : presets) {
-			presetComboBox->addItem(preset.name);
-		}
-
-        presetLayout->addWidget(presetLabel);
-        presetLayout->addWidget(presetComboBox);
-
-        debugCheckBox = new QCheckBox("Enable Debug Mode");
-
-        _layout = new QVBoxLayout();
-
-        _layout->addLayout(presetLayout);
-        _layout->addWidget(debugCheckBox);
-
-        //Debug Widget
-        {
-            debugWidget = new QWidget(widget);
-            debugLayout = new QVBoxLayout();
-
-            // Quat Checkboxes
-            xButton = new QCheckBox("- X");
-            yButton = new QCheckBox("- Y");
-            zButton = new QCheckBox("- Z");
-            wButton = new QCheckBox("- W");
-            swapYzButton = new QCheckBox("Swap Y-Z");
 
             debugLayout->addWidget(xButton);
             debugLayout->addWidget(yButton);
@@ -270,32 +232,6 @@ QWidget* CoordinateConverterPlugin::embeddedWidget()
 			run();
 		});
 
-        QObject::connect(debugCheckBox, &QCheckBox::toggled, [=](bool checked) {
-			debugWidget->setVisible(checked);
-
-            debugWidget->parentWidget()->adjustSize();
-    
-            Q_EMIT embeddedWidgetSizeUpdated();
-		});
-
-        QObject::connect(presetComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index) {
-            const QSignalBlocker blocker(xButton);
-            const QSignalBlocker blocker2(yButton);
-            const QSignalBlocker blocker3(zButton);
-            const QSignalBlocker blocker4(wButton);
-            const QSignalBlocker blocker5(swapYzButton);
-            
-            activePreset = presets[index];
-			xButton->setChecked(activePreset.negX);
-			yButton->setChecked(activePreset.negY);
-			zButton->setChecked(activePreset.negZ);
-			wButton->setChecked(activePreset.negW);
-			swapYzButton->setChecked(activePreset.flipYZ);
-            matrixEditor->SetMatrix(activePreset.transformMatrix);
-
-			run();
-		});
-
         QObject::connect(xButton, &QCheckBox::stateChanged, this, &CoordinateConverterPlugin::onChangedCheck);
         QObject::connect(yButton, &QCheckBox::stateChanged, this, &CoordinateConverterPlugin::onChangedCheck);
         QObject::connect(zButton, &QCheckBox::stateChanged, this, &CoordinateConverterPlugin::onChangedCheck);
@@ -307,45 +243,9 @@ QWidget* CoordinateConverterPlugin::embeddedWidget()
             activePreset.transformMatrix = mat;
             run();
         });
-
-        QObject::connect(applyButton, &QPushButton::clicked, this, [=]() {
-            glm::mat4 mat = this->matrixEditor->GetMatrix();
-            activePreset.transformMatrix = mat;
-            run();
-        });
 	}
 
     widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
-           "QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"
-           "QPushButton{border: 1px solid white; border-radius: 4px; padding: 5px; background-color:rgb(98, 139, 202);}"
-           "QLabel{padding: 0px;}"
-           "QComboBox{background-color:rgb(25, 25, 25); border: 1px; border-color: rgb(60, 60, 60); border-radius: 4px; padding: 5px;}"
-           "QComboBox::drop-down{"
-           "background-color:rgb(98, 139, 202);"
-           "subcontrol-origin: padding;"
-           "subcontrol-position: top right;"
-           "width: 15px;"
-           "border-top-right-radius: 4px;"
-           "border-bottom-right-radius: 4px;}"
-           "QComboBox QAbstractItemView{background-color:rgb(25, 25, 25); border: 1px; border-color: rgb(60, 60, 60); border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; padding: 0px;}"
-           "QScrollBar:vertical {"
-           "border: 1px rgb(25, 25, 25);"
-           "background:rgb(25, 25, 25);"
-           "border-radius: 2px;"
-           "width:6px;"
-           "margin: 2px 0px 2px 1px;}"
-           "QScrollBar::handle:vertical {"
-           "border-radius: 2px;"
-           "min-height: 0px;"
-           "background-color: rgb(25, 25, 25);}"
-           "QScrollBar::add-line:vertical {"
-           "height: 0px;"
-           "subcontrol-position: bottom;"
-           "subcontrol-origin: margin;}"
-           "QScrollBar::sub-line:vertical {"
-           "height: 0px;"
-           "subcontrol-position: top;"
-           "subcontrol-origin: margin;}"
            "QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"
            "QPushButton{border: 1px solid white; border-radius: 4px; padding: 5px; background-color:rgb(98, 139, 202);}"
            "QLabel{padding: 0px;}"

@@ -30,6 +30,7 @@
 #include <QUuid>
 #include <vector>
 #include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <glm/ext/quaternion_float.hpp>
 
 

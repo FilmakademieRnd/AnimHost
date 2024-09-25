@@ -22,8 +22,6 @@
 #include "SceneReceiverNode.h"
 #include "SceneReceiver.h"
 #include "animhosthelper.h"
-#include <glm/gtx/quaternion.hpp>
-#include <glm/ext/quaternion_float.hpp>
 
 SceneReceiverNode::SceneReceiverNode(std::shared_ptr<zmq::context_t> zmqConext) {
 	_pushButton = nullptr;
@@ -537,7 +535,6 @@ void SceneReceiverNode::processControlPathByteData(QByteArray* controlPointByteA
 		memcpy(&x, controlPointByteArray->sliced(currentXDir, sizeof(x)), sizeof(x));
 		memcpy(&y, controlPointByteArray->sliced(currentYDir, sizeof(y)), sizeof(y));
 		memcpy(&z, controlPointByteArray->sliced(currentZDir, sizeof(z)), sizeof(z));
-		glm::vec3 tLookAt = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(x, y, z, 0.0f);
 
 		glm::vec3 tLookAt = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(x, y, z, 0.0f);
 
