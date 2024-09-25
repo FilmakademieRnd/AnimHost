@@ -13,8 +13,6 @@
 name: hosted-pure-workflow
 on:
   push:
-    branches: 
-    - main
     tags:
     - '*-alpha'
   workflow_dispatch:
