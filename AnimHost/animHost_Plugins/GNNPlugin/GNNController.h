@@ -133,7 +133,7 @@ private:
     //in & output tensors
 
     std::vector<float> input_values;
-    //std::vector<float> output_values;
+    std::vector<float> output_values;
 
     //Plotting
     //matplot::figure_handle figure = nullptr;

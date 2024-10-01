@@ -165,10 +165,6 @@ void SceneReceiverNode::run() {
 	requestHeaderData();
 	requestCharacterData();
 	requestControlPathData();
-
-
-
-	emitRunNextNode();
 }
 
 /*

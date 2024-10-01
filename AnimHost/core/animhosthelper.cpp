@@ -107,6 +107,13 @@ int AnimHostHelper::FindParentBone(const std::map<int, std::vector<int>>& bone_h
     return -1;
 }
 
+glm::vec3 AnimHostHelper::ProjectPointOnGroundPlane(const glm::vec3& point, glm::vec3 groundNormal)
+{
+	//Project point on ground plane
+	glm::vec3 groundPoint = point - glm::dot(point, groundNormal) * groundNormal;
+    return groundPoint;
+}
+
 glm::mat4 AnimHostHelper::GetCoordinateSystemTransformationMatrix()
 {
     glm::mat4 newmatrix(1.0f);

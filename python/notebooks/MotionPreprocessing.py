@@ -217,7 +217,7 @@ class MotionProcessor:
         self.num_phase_channel = 5
         self.input_feature_count = 475
         self.output_feature_count = 429
-        self.sample_count = 56871
+        self.sample_count = 76093
 
         self.dataset_path = r"C:\DEV\DATASETS\Survivor_Gen"
         self.trained_phase_param_file = r"C:\DEV\AI4Animation\AI4Animation\SIGGRAPH_2022\PyTorch\PAE\Training\Parameters_30.txt"

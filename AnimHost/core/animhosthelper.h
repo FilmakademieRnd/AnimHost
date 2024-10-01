@@ -38,7 +38,7 @@ public:
 
 	static int FindParentBone(const std::map<int, std::vector<int>>& bone_hierarchy, int currentBone);
 
-
+	static glm::vec3 ProjectPointOnGroundPlane(const glm::vec3& point, glm::vec3 groundNormal = glm::vec3(0, 1, 0));
 	/*
 	* @brief: This function returns Coordinate system transformation matrix swapping the Y and Z axis and negating the new Z axis
 	*/

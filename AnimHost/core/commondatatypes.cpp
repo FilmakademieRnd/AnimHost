@@ -240,9 +240,9 @@ void Animation::ApplyChangeOfBasis(int rootBoneIdx) {
 glm::mat4 Animation::CalculateRootTransform(int frame, int boneIdx) {
 	
 	//Check if the bone and frame has valid index
-	if (boneIdx >= mBones.size() || frame >= mDurationFrames) {
+	if (boneIdx >= mBones.size()) {
 
-		qDebug() << "Bone or frame index out of range";
+		qDebug() << "Bone index out of range";
 		return glm::mat4(1.0f);
 	}
 

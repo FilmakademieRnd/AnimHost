@@ -76,18 +76,20 @@ private:
 
     int rootbone_idx = 0;
 
-    std::vector<std::vector<float>> rootSequenceData;
-    std::vector<std::vector<glm::vec3>> sequenceRelativeJointPosition;
-    std::vector<std::vector<glm::quat>> sequenceRelativJointRotations;
-    std::vector<std::vector<Rotation6D>> sequenceRelativJointRotations6D;
-    std::vector<std::vector<glm::vec3>> sequenceRelativeJointVelocities;
+	std::vector<glm::mat4> rootBoneTransforms; //<! The root bone transforms for each frame
 
-    std::vector<std::vector<float>> Y_RootSequenceData;
-    std::vector<std::vector<glm::vec3>> Y_SequenceRelativeJointPosition;
-    std::vector<std::vector<glm::quat>> Y_SequenceRelativJointRotations;
-    std::vector<std::vector<Rotation6D>> Y_SequenceRelativJointRotations6D;
-    std::vector<std::vector<glm::vec3>> Y_SequenceRelativeJointVelocities;
-    std::vector<glm::vec3> Y_SequenceDeltaUpdate;
+	std::vector<std::vector<float>> rootSequenceData; //<! The root trajectory data for each frame, including the positional trajectory, direction, velocity, and speed relative to the root orientation, already flattened
+	std::vector<std::vector<glm::vec3>> sequenceRelativeJointPosition; //<! The relative joint positions for each frame, relative to the reference frame
+	std::vector<std::vector<glm::quat>> sequenceRelativJointRotations; //<! The relative joint rotations for each frame, relative to the reference frame
+	std::vector<std::vector<Rotation6D>> sequenceRelativJointRotations6D; //<! The relative joint rotations for each frame, relative to the reference frame, converted to 6D rotations
+	std::vector<std::vector<glm::vec3>> sequenceRelativeJointVelocities; //<! The relative joint velocities for each frame, relative to the reference frame
+
+	std::vector<std::vector<float>> Y_RootSequenceData; //<! Output data: The root trajectory data for each frame, including the positional trajectory, direction, velocity, and speed relative to the root orientation, already flattened
+	std::vector<std::vector<glm::vec3>> Y_SequenceRelativeJointPosition; //<! Output data: The relative joint positions for each frame, relative to the reference frame
+	std::vector<std::vector<glm::quat>> Y_SequenceRelativJointRotations; //<! Output data: The relative joint rotations for each frame, relative to the reference frame
+	std::vector<std::vector<Rotation6D>> Y_SequenceRelativJointRotations6D; //<! Output data: The relative joint rotations for each frame, relative to the reference frame, converted to 6D rotations
+	std::vector<std::vector<glm::vec3>> Y_SequenceRelativeJointVelocities; //<! Output data: The relative joint velocities for each frame, relative to the reference frame
+	std::vector<glm::vec3> Y_SequenceDeltaUpdate; //<! Output data: The delta update for the root position for each frame
 
 
 public:
@@ -125,6 +127,29 @@ public:
      * @param skeleton A shared pointer to the Skeleton that contains the joint hierarchy.
      */
     void processFrame(int frameCounter, std::shared_ptr<PoseSequence> poseSequenceIn, std::shared_ptr<Animation> animation, std::shared_ptr<JointVelocitySequence> velSeq, std::shared_ptr<Skeleton> skeleton);
+
+
+
+    /**
+	 * Calculate character forward direction. Calculated the torsos forward direction by averaging the forward direction of the clavicle and hip joints.
+     * 
+     * \param poseSequenceIn
+     * \param skeleton
+     * \return 
+     */
+	std::vector<glm::quat> prepareRootRotation(std::shared_ptr<PoseSequence> poseSequenceIn, std::shared_ptr<Skeleton> skeleton);
+
+
+    /**
+	 * Calculate characters root tranform for whole sequence. 
+	 * Rotation is based on averaged forward direction of clavicle and hip joints. 
+	 * Position is based on the hip joint position projected to the ground plane.
+     * 
+     * \param poseSequenceIn
+     * \param skeleton
+     * \return 
+     */
+	std::vector<glm::mat4> prepareBipedRoot(std::shared_ptr<PoseSequence> poseSequenceIn, std::shared_ptr<Skeleton> skeleton);
 
     /**
      * This function prepares the trajectory data for a given frame.

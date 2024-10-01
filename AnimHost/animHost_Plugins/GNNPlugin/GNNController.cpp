@@ -70,6 +70,13 @@ void GNNController::prepareControlTrajectory() {
 
 		idx++;
 	}
+
+	// Add additional frames to the end of the control path to allow for a smooth transition to the generated path
+	for (int i = 0; i < 60; i++) {
+		ctrlTrajPos.push_back(ctrlTrajPos.back());
+		ctrlTrajForward.push_back(ctrlTrajForward.back());
+		ctrlTrajVel.push_back(glm::vec2(0.f,0.f));
+	}
 }
 
 void GNNController::prepareInput()
@@ -77,8 +84,16 @@ void GNNController::prepareInput()
 
 	qDebug() << "Generate Animation with Control Path of size: " << controlPath->mControlPath.size();
 
+
+	if (controlPath->mControlPath.size() <= 0) {
+		qDebug() << "Control Path is empty";
+		return;
+	}
+
+
 	clearGeneratedData();
 	prepareControlTrajectory();
+
 
 	genRootPos.push_back(ctrlTrajPos[0]);
 	genRootForward.push_back(ctrlTrajForward[0]);
@@ -233,10 +248,10 @@ void GNNController::prepareInput()
 		genRootPos.push_back({ root[3][0], root[3][2] });
 		genRootForward.push_back(glm::toQuat(glm::mat4(root)));
 		
-		//if (genIdx % 10 == 0) {
-			//UpdatePlotData(inTrajFrame, outTrajFrame, rootSeries, futurePath);
-			//DrawPlot();
-		//}
+		/*if (genIdx % 10 == 0) {
+			UpdatePlotData(inTrajFrame, outTrajFrame, rootSeries, futurePath);
+			DrawPlot();
+		}*/
 	}
 
 	BuildAnimationSequence(genJointRot, rootSeries);

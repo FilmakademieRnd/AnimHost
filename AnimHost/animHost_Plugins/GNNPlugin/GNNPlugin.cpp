@@ -210,30 +210,37 @@ void GNNPlugin::run()
            
                     controller->prepareInput();
 
-                    auto animOut = controller->GetAnimationOut();
-                    animOut->mDurationFrames = 1;
-
-                    _animationOut = std::make_shared<AnimNodeData<Animation>>();
-                    _animationOut->setData(animOut);
-
-
-                    _debugSignalOut = std::make_shared<AnimNodeData<DebugSignal>>();
-                    _debugSignalOut->setData(controller->GetDebugSignal());
+					if (auto animOut = controller->GetAnimationOut()) {
+						_animationOut = std::make_shared<AnimNodeData<Animation>>();
+						_animationOut->setData(animOut);
+                        animOut->mDurationFrames = 1;
 
 
-                    auto end = std::chrono::high_resolution_clock::now();
-
-                    // Calculate the duration in milliseconds
-                    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-
-                    // Output the duration
-                   qDebug() << "Generation took " << duration << " milliseconds to execute.";
+                        _debugSignalOut = std::make_shared<AnimNodeData<DebugSignal>>();
+                        _debugSignalOut->setData(controller->GetDebugSignal());
 
 
+                        auto end = std::chrono::high_resolution_clock::now();
 
-                    emitDataUpdate(0);
-                    emitDataUpdate(1);
-                    emitRunNextNode();
+                        // Calculate the duration in milliseconds
+                        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+                        // Output the duration
+                        qDebug() << "Generation took " << duration << " milliseconds to execute.";
+
+
+
+                        emitDataUpdate(0);
+                        emitDataUpdate(1);
+                        emitRunNextNode();
+					}
+                    else
+                    {
+						qDebug() << "Error: No Animation generated";
+
+						emitDataInvalidated(0);
+                        emitDataInvalidated(1);
+                    }
 
                 }  
             }
