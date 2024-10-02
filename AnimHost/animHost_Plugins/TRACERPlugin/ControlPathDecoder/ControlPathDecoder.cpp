@@ -1,5 +1,6 @@
 #include "ControlPathDecoder.h"
 #include <QPushButton>
+#include "animhosthelper.h"
 
 ControlPathDecoderNode::ControlPathDecoderNode()
 {
@@ -76,11 +77,11 @@ void ControlPathDecoderNode::processInData(std::shared_ptr<NodeData> data, QtNod
                 auto pointLocationParam = dynamic_cast<ParameterPayload<glm::vec3>*>(paramPayload.release());
                 this->_pointLocation = pointLocationParam->getKeyList();
                 // Flip the values on the y-axis - DOESN'T WORK
-                for (int i = 0; i < this->_pointLocation.size(); i++) {
+                /*for (int i = 0; i < this->_pointLocation.size(); i++) {
                     this->_pointLocation.at(i).value.z *= -1;
                     this->_pointLocation.at(i).inTangentValue.z *= -1;
                     this->_pointLocation.at(i).outTangentValue.z *= -1;
-                }
+                }*/
 
                 _receivedControlPathPointLocation = true;
 
@@ -184,6 +185,23 @@ void ControlPathDecoderNode::run()
 
         // TODO: If path is cyclic, evaluate last-to-first segment
 
+
+        for (int i = 0; i < path.size(); i++) {
+            // Transform the control points to the global coordinate system
+
+            path[i].position = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(path[i].position, 1.0f);
+
+            // Rotate the control points to the global coordinate system
+
+			glm::vec3 lookAt = path[i].lookAt * glm::vec3(0, -1.f,0);
+		
+            lookAt = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(lookAt, 0.0f);
+
+            path[i].lookAt = glm::rotation(glm::vec3(0, 0, 1), lookAt);
+
+			//path[i].lookAt = glm::toQuat(AnimHostHelper::GetCoordinateSystemTransformationMatrix()) * path[i].lookAt;
+
+		}
 
         spCharacterIn->getData()->setPath(path);
         emitDataUpdate(0);

@@ -16,7 +16,7 @@ inline TRACERPLUGINSHARED_EXPORT QDataStream& operator>>(QDataStream& stream, gl
 inline TRACERPLUGINSHARED_EXPORT QDataStream& operator>>(QDataStream& stream, glm::vec4& vec){ stream >> vec.x; stream >> vec.y; stream >> vec.z; stream >> vec.w; return stream; }
 
 //QUATERNION
-inline TRACERPLUGINSHARED_EXPORT QDataStream& operator>>(QDataStream& stream, glm::quat& quat) { stream >> quat.w; stream >> quat.x; stream >> quat.y; stream >> quat.z; return stream; }
+inline TRACERPLUGINSHARED_EXPORT QDataStream& operator>>(QDataStream& stream, glm::quat& quat) { stream >> quat.x; stream >> quat.y; stream >> quat.z; stream >> quat.w; return stream; }
 
 template <typename T>
 struct TRACERPLUGINSHARED_EXPORT KeyFrame {
