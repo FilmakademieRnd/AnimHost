@@ -513,7 +513,7 @@ QByteArray AnimHostMessageSender::createAnimationParameterUpdateBody(byte sceneI
   
     //qDebug() << "Parameter Size:" << getParameterDimension(parameterType);
     uint32_t payloadSize = Keys.size();
-    uint32_t payloadSizeBytes = payloadSize * (1 + 2 * sizeof(float) + 2 *  getParameterDimension(parameterType)); // number of frames * (keytype + (key and tangent time) + (key and tangent data))
+    uint32_t payloadSizeBytes = payloadSize * (1 + 3 * sizeof(float) + 3 *  getParameterDimension(parameterType)); // number of frames * (keytype + (key and tangent l/r time) + (key and tangent l/r data))
     uint32_t messageSize = 10 + getParameterDimension(parameterType) + sizeof(short) + payloadSizeBytes; // HEADER + PARAMETER_Data + NUMBER OF KEYS + Animation Payload
     // Constructing new message
     QByteArray newMessage(0, Qt::Uninitialized);
@@ -553,10 +553,13 @@ QByteArray AnimHostMessageSender::createAnimationParameterUpdateBody(byte sceneI
 
         if (useTangentKeys) {
             msgStream << tangentKeys[i].first;// TANGENT TIME
+			msgStream << tangentKeys[i].first;// TANGENT TIME @TODO: add tangent data
         }
         else {
             float defaultTime = -1.0f;
             msgStream << defaultTime;
+
+			msgStream << defaultTime;
         }
             
 
@@ -566,10 +569,13 @@ QByteArray AnimHostMessageSender::createAnimationParameterUpdateBody(byte sceneI
         // TANGENT DATA
         if (useTangentKeys) {
             serializeValue<T>(msgStream, tangentKeys[i].second);
+			serializeValue<T>(msgStream, tangentKeys[i].second); // @TODO: add tangent data
         }
         else {
             T defaultTangent = T();
             serializeValue<T>(msgStream, defaultTangent);
+
+			serializeValue<T>(msgStream, defaultTangent); // @TODO: add tangent data
         }
             
     }
