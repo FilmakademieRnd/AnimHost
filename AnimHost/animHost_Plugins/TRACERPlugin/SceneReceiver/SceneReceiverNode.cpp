@@ -35,7 +35,6 @@ SceneReceiverNode::SceneReceiverNode(std::shared_ptr<zmq::context_t> zmqConext) 
 
 	characterListOut = std::make_shared<AnimNodeData<CharacterObjectSequence>>();
 	sceneNodeListOut = std::make_shared<AnimNodeData<SceneNodeObjectSequence>>();
-	controlPathOut = std::make_shared<AnimNodeData<ControlPath>>();
 
 	_sceneReceiverContext = zmqConext;
 	zeroMQSceneReceiverThread = new QThread();
@@ -44,24 +43,17 @@ SceneReceiverNode::SceneReceiverNode(std::shared_ptr<zmq::context_t> zmqConext) 
 	QObject::connect(sceneReceiver, &SceneReceiver::passCharacterByteArray, this, &SceneReceiverNode::processCharacterByteData);
 	QObject::connect(sceneReceiver, &SceneReceiver::passSceneNodeByteArray, this, &SceneReceiverNode::processSceneNodeByteData);
 	QObject::connect(sceneReceiver, &SceneReceiver::passHeaderByteArray, this, &SceneReceiverNode::processHeaderByteData);
-	QObject::connect(sceneReceiver, &SceneReceiver::passControlPathByteArray, this, &SceneReceiverNode::processControlPathByteData);
 	QObject::connect(this, &SceneReceiverNode::requestCharacterData, sceneReceiver, &SceneReceiver::requestCharacterData);
 	QObject::connect(this, &SceneReceiverNode::requestSceneNodeData, sceneReceiver, &SceneReceiver::requestSceneNodeData);
 	QObject::connect(this, &SceneReceiverNode::requestHeaderData, sceneReceiver, &SceneReceiver::requestHeaderData);
-	QObject::connect(this, &SceneReceiverNode::requestControlPathData, sceneReceiver, &SceneReceiver::requestControlPathData);
 
-	qDebug() << "SceneReceiverNode created";
-}
-
-SceneReceiverNode::~SceneReceiverNode() {
-	qDebug() << "~SceneReceiverNode()";
 }
 
 unsigned int SceneReceiverNode::nDataPorts(QtNodes::PortType portType) const {
 	if (portType == QtNodes::PortType::In)
 		return 0;
 	else
-		return 3;
+		return 2;
 }
 
 NodeDataType SceneReceiverNode::dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const {
@@ -73,8 +65,6 @@ NodeDataType SceneReceiverNode::dataPortType(QtNodes::PortType portType, QtNodes
 			return AnimNodeData<CharacterObjectSequence>::staticType();
 		else if (portIndex == 1)
 			return AnimNodeData<SceneNodeObjectSequence>::staticType();
-		else if (portIndex == 2)
-			return AnimNodeData<ControlPath>::staticType();
 		else
 			return type;
 }
@@ -92,8 +82,7 @@ std::shared_ptr<NodeData> SceneReceiverNode::processOutData(QtNodes::PortIndex p
 		return characterListOut;
 	else if (port == 1)
 		return sceneNodeListOut;
-	else if (port == 2)
-		return controlPathOut;
+
 }
 
 QWidget* SceneReceiverNode::embeddedWidget() {
@@ -141,7 +130,6 @@ void SceneReceiverNode::onButtonClicked()
 	requestHeaderData();
 	requestCharacterData();
 	// requestSceneNodeData() is then called after processCharacterData() is done (i.e. at thew end of its body)
-	requestControlPathData();
 
 	//qDebug() << "Attempting RECEIVE connection to" << _ipAddress;
 }
@@ -164,7 +152,7 @@ void SceneReceiverNode::run() {
 
 	requestHeaderData();
 	requestCharacterData();
-	requestControlPathData();
+
 }
 
 /*
@@ -496,54 +484,5 @@ void SceneReceiverNode::processHeaderByteData(QByteArray* headerByteArray) {
 	qDebug() << "Playback Framerate" << ZMQMessageHandler::getPlaybackFrameRate();
 
 	_headerReady = true;
-	checkDataReady();
-}
-
-void SceneReceiverNode::processControlPathByteData(QByteArray* controlPointByteArray) {
-	if (controlPointByteArray->size() == 0)
-		return;
-
-	controlPathOut->getData()->mControlPath.clear();	// clearing controlPathOut every time a new path is (requested and) received
-
-	// - int	size of data (3 * N_of_frames)
-	// - float	data (frame1_xyz, frame2_xyz, frame3_xyz, ..., frameN_xyz)
-	unsigned int size; memcpy(&size, controlPointByteArray->sliced(0, sizeof(size)).data(), sizeof(size)); // Copies byte values directly into the new variable, which interprets it as the correct type
-	controlPointByteArray->remove(0, sizeof(size)); // removing first 4 bytes (aka first int) so that reading keyframes can start from 0
-
-	for (int frame = 0; frame < size; frame++) {
-		ControlPoint key;
-		float x, y, z;
-		int currentXPos = (sizeof(x) * 3) * frame;
-		int currentYPos = currentXPos + sizeof(x);
-		int currentZPos = currentYPos + sizeof(y);
-		memcpy(&x, controlPointByteArray->sliced(currentXPos, sizeof(x)), sizeof(x));
-		memcpy(&y, controlPointByteArray->sliced(currentYPos, sizeof(y)), sizeof(y));
-		memcpy(&z, controlPointByteArray->sliced(currentZPos, sizeof(z)), sizeof(z));
-		key.frameTimestamp = frame;
-		key.position = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(x, y, z, 1.0f);
-		//qDebug() << "Frame" << frame << "- Pos(" << key.position.x << "," << key.position.y << "," << key.position.z << ")";
-
-
-
-		int currentXDir = (size * sizeof(float) * 3) + (sizeof(x) * 3) * frame;
-		int currentYDir = currentXDir + sizeof(x);
-		int currentZDir = currentYDir + sizeof(y);
-		memcpy(&x, controlPointByteArray->sliced(currentXDir, sizeof(x)), sizeof(x));
-		memcpy(&y, controlPointByteArray->sliced(currentYDir, sizeof(y)), sizeof(y));
-		memcpy(&z, controlPointByteArray->sliced(currentZDir, sizeof(z)), sizeof(z));
-
-		glm::vec3 tLookAt = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(x, y, z, 0.0f);
-
-		key.lookAt = glm::rotation(glm::vec3(0, 0, 1), tLookAt);
-		//key.lookAt = glm::angleAxis(z, glm::vec3(0, 1, 0));
-
-		//qDebug() << "Frame" << frame << "- Dir(" << key.lookAt.w << "," << key.lookAt.x << "," << key.lookAt.y << "," << key.lookAt.z << ")";
-
-		controlPathOut->getData()->mControlPath.push_back(key);
-	}
-
-	qDebug() << "Control Path with" << size << "frames received!";
-
-	_pathReady = true;
 	checkDataReady();
 }

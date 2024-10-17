@@ -79,9 +79,6 @@ private:
     */
     std::shared_ptr<AnimNodeData<SceneNodeObjectSequence>> sceneNodeListOut;
 
-    // !!!TEMPORARY!!!
-    std::shared_ptr<AnimNodeData<ControlPath>> controlPathOut;
-
     std::shared_ptr<zmq::context_t> _sceneReceiverContext = nullptr;    //!< 0MQ context to establish connection, send and receive messages
     QThread* zeroMQSceneReceiverThread = nullptr;       //!< Sub-thread to handle sending request messages and receiving replies
 
@@ -89,7 +86,6 @@ private:
     
     bool _headerReady = false;
     bool _sceneReady = false;
-    bool _pathReady = false;
     bool _characterReady = false;
 
 public:
@@ -104,7 +100,7 @@ public:
      * - \c SceneReceiverNode::requestHeaderData() signal is connected to \c SceneReceiver::requestHeaderData()
      */
     SceneReceiverNode(std::shared_ptr<zmq::context_t> zmqConext);
-    ~SceneReceiverNode();
+    ~SceneReceiverNode() {};
     
     std::unique_ptr<NodeDelegateModel> Init() override { return  nullptr; };
 
@@ -132,11 +128,10 @@ public:
 		_headerReady = false;
 		_sceneReady = false;
 		_characterReady = false;
-		_pathReady = false;
 	}
 
     void checkDataReady() {
-        if (_headerReady && _sceneReady && _characterReady && _pathReady) {
+        if (_headerReady && _sceneReady && _characterReady) {
             emitRunNextNode();
         }
     }
@@ -195,9 +190,6 @@ private Q_SLOTS:
     * for now only the \c targetSceneID is set
     */
     void processHeaderByteData(QByteArray* headerByteArray);
-
-    // !!!TEMPORARY!!!
-    void processControlPathByteData(QByteArray* headerByteArray);
 
 };
 
