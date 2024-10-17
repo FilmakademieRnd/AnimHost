@@ -29,12 +29,12 @@ HistoryPlugin::HistoryPlugin()
 
     _outPoseSeq = std::make_shared<AnimNodeData<PoseSequence>>();
 
-    qDebug() << "HistoryPlugin created";
+
 }
 
 HistoryPlugin::~HistoryPlugin()
 {
-    qDebug() << "~HistoryPlugin()";
+
 }
 
 unsigned int HistoryPlugin::nDataPorts(QtNodes::PortType portType) const

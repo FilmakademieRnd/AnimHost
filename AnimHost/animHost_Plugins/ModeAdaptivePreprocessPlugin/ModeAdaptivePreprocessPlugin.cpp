@@ -39,12 +39,10 @@
 
 ModeAdaptivePreprocessPlugin::ModeAdaptivePreprocessPlugin()
 {
-	qDebug() << "ModeAdaptivePreprocessPlugin created";
 }
 
 ModeAdaptivePreprocessPlugin::~ModeAdaptivePreprocessPlugin()
 {
-	qDebug() << "~ModeAdaptivePreprocessPlugin()";
 }
 
 

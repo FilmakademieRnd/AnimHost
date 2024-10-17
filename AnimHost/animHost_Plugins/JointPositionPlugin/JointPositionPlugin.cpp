@@ -33,7 +33,6 @@
 
 JointPositionPlugin::JointPositionPlugin()
 {
-    qDebug() << "JointPositionPlugin created";
  
     //Data
     inputs.append(QMetaType::fromName("Skeleton"));
@@ -44,7 +43,6 @@ JointPositionPlugin::JointPositionPlugin()
 
 JointPositionPlugin::~JointPositionPlugin()
 {
-    qDebug() << "~JointPositionPlugin()";
 }
 
 // execute the main functionality of the plugin

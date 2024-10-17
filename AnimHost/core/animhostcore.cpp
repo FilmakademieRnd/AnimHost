@@ -86,26 +86,19 @@ bool AnimHost::loadPlugins()
     const QStringList entries = pluginsDir.entryList(QDir::Files);
     for (const QString &fileName : entries) {
         QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
-        
-        qDebug()<< "Try loading as plugin: " << fileName;
 
         QObject *plugin = pluginLoader.instance();
         if (plugin) {
-            PluginInterface* pluginInterface = qobject_cast<PluginInterface* >(plugin);
+            
+            PluginInterface* pluginInterface = qobject_cast<PluginInterface*>(plugin);
             if (pluginInterface)
             {
-                //register analyser plugin to requested file types
-                /*QList<QVariant> inputs = pluginInterface->inputs;
-                QList<QVariant>* outputs = pluginInterface->outputs*/;
-
-
                 std::shared_ptr<PluginInterface> sp_PluginInterface(pluginInterface);
 
                 registerPlugin(sp_PluginInterface);
                 createNodeFromPlugin(sp_PluginInterface);
 
                 continue;
-                //return true;
             }
             
             PluginNodeInterface* pluginNodeInterface = qobject_cast<PluginNodeInterface*>(plugin);
@@ -124,20 +117,26 @@ bool AnimHost::loadPlugins()
 				pluginNodeCollectionInterface->PreNodeCollectionRegistration();
 				pluginNodeCollectionInterface->RegisterNodeCollection(*nodes);
 				pluginNodeCollectionInterface->PostNodeCollectionRegistration();
+
 			}
-            //pluginLoader.unload();
         }
     }
+
+	//print names of all registered nodes, name is first element of pair
+    auto registeredModels = nodes->registeredModelCreators();
+
+	for (auto it = registeredModels.begin(); it != registeredModels.end(); ++it)
+	{
+		qDebug() << "Plugin Loaded: " <<it->first;
+	}
 
     return false;
 }
 
 void AnimHost::createNodeFromNodePlugin(std::shared_ptr<PluginNodeInterface> plugin)
 {
-
     NodeDelegateModelRegistry::RegistryItemCreator creator = [p = plugin]() {  return p->Init(); };
     nodes->registerModel<PluginNodeInterface>(std::move(creator), plugin->category());
-
 }
 
 //!

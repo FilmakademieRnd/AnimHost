@@ -53,8 +53,7 @@ AssimpLoaderPlugin::AssimpLoaderPlugin()
 	widget = nullptr;
 	_label = nullptr;
 	_filePathLayout = nullptr;
-	
-	qDebug() << this->name();
+
 }
 
 QJsonObject AssimpLoaderPlugin::save() const
@@ -152,7 +151,7 @@ void AssimpLoaderPlugin::run() {
 	for (auto file : files) {
 		//QString file_name = QFileDialog::getOpenFileName(nullptr, "Import Animation", "C://", "(*.bvh *.fbx)");
 
-		qDebug() << "... Start Process " << file;
+		qDebug() << "Start processing " << file;
 
 		Q_EMIT emitDataInvalidated(0);
 		Q_EMIT emitDataInvalidated(1);
@@ -171,14 +170,14 @@ void AssimpLoaderPlugin::run() {
 		// If character is our own "survivor" character, we need to adjust the skeleton and animation data
 		if (_subsamplingCheck->isChecked())
 		{
-			UseSubSkeleton("hip", { "hand_R", "hand_L" });
+			UseSubSkeleton("hip", { "hand_R", "hand_L", "head", "toe_L", "toe_R", "heel_02_L", "heel_02_R"});
 			_animation->getData()->ApplyChangeOfBasis();
 		}
 
 		emitDataUpdate(0);
 		emitDataUpdate(1);
 
-		qDebug() << "Process " << shorty << "... Done";
+		qDebug() << "Processing " << shorty << " done.";
 
 		Q_EMIT embeddedWidgetSizeUpdated();
 
@@ -247,7 +246,7 @@ void AssimpLoaderPlugin::loadAnimationData(aiAnimation* pASSIMPAnimation, Skelet
 			boneIndex = pSkeleton->bone_names.at(name);
 		}
 		catch(const std::out_of_range& e){
-			qDebug() << "Bone: " << name << "not found.";
+			qWarning() << "Bone: " << name << "not found.";
 			continue;
 		}
 		
@@ -387,7 +386,7 @@ void AssimpLoaderPlugin::importAssimpData()
 	}
 
 	if (nullptr == scene) {
-		qDebug() << Q_FUNC_INFO << "\n" << importer.GetErrorString();
+		qWarning() << "Loading failed: " << importer.GetErrorString();
 		bDataValid = false;
 		return;
 	}

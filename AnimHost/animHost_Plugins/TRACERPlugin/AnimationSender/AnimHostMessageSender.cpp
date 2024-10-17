@@ -85,7 +85,7 @@ void AnimHostMessageSender::run() {
             QElapsedTimer timer;
             timer.start();
             sendAnimationDataBlock(); // on completion of sending the animation block, the sendBlock flag is set to false
-            qDebug() << "Block Time: " << timer.elapsed() << "ms";
+            qDebug() << "Time elapsed sending block: " << timer.elapsed() << "ms";
         }
 
     };
@@ -435,7 +435,7 @@ QByteArray AnimHostMessageSender::CreateParameterUpdateBody(byte sceneID, uint16
     targetSceneID = getTargetSceneID();
 
     if (targetSceneID == -1)
-        qDebug() << "WARNING::Invalid target scene ID -1.";
+        qWarning() << "Invalid target scene ID - 1.";
 
     uint32_t messageSize = 10 + getParameterDimension(parameterType);
     // Constructing new message
@@ -465,7 +465,7 @@ QByteArray AnimHostMessageSender::CreateParameterUpdateBody<std::string>(byte sc
     targetSceneID = getTargetSceneID();
 
     if (targetSceneID == -1)
-        qDebug() << "WARNING::Invalid target scene ID -1.";
+        qWarning() << "Invalid target scene ID -1.";
 
     payload.shrink_to_fit();
 
@@ -503,7 +503,7 @@ QByteArray AnimHostMessageSender::createAnimationParameterUpdateBody(byte sceneI
     targetSceneID = getTargetSceneID();
     
     if (targetSceneID == -1)
-        qDebug() << "WARNING::Invalid target scene ID -1.";
+        qDebug() << "Invalid target scene ID - 1.";
 
     //Check if the size of the keys and tangentKeys are the same
     if (Keys.size() != tangentKeys.size()) {

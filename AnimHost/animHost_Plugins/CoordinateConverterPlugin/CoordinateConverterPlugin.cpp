@@ -35,13 +35,11 @@ CoordinateConverterPlugin::CoordinateConverterPlugin()
     presets.push_back({"No Conversion", glm::mat4(1.0), false, false, false, false, false});
 
     activePreset = presets[0];
-
-    qDebug() << "CoordinateConverterPlugin created";
 }
 
 CoordinateConverterPlugin::~CoordinateConverterPlugin()
 {
-    qDebug() << "~CoordinateConverterPlugin()";
+
 }
 
 unsigned int CoordinateConverterPlugin::nDataPorts(QtNodes::PortType portType) const

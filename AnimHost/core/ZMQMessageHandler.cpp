@@ -48,9 +48,9 @@ ZMQMessageHandler::ZMQMessageHandler() {
     QObject::connect(ZMQMessageHandler::localTick, &QTimer::timeout, this, &ZMQMessageHandler::increaseTimeStamp);
 
     //debug
-    for (QHostAddress ipAddress : ZMQMessageHandler::ipList) {
+    /*for (QHostAddress ipAddress : ZMQMessageHandler::ipList) {
         qDebug() << ipAddress.toString();
-    }
+    }*/
 }
 
 //void ZMQMessageHandler::Serialize(byte* dest, bool _value) {

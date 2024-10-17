@@ -71,15 +71,10 @@ class TRACERPLUGINSHARED_EXPORT TRACERPlugin : public PluginNodeCollectionInterf
         TRACERPlugin() { 
             qRegisterMetaType<std::shared_ptr<ParameterUpdate>>("ParameterUpdate");
             qRegisterMetaType<std::shared_ptr<RPCUpdate>>("RPCUpdate");
-            qDebug() << "TRACERPlugin created"; 
-        
         };
         TRACERPlugin(const TRACERPlugin& p) {};
 
         ~TRACERPlugin() { 
-            
-            //_updateReceiver.reset();
-            qDebug() << "~TRACERPlugin()"; 
         };
 
        void PreNodeCollectionRegistration() override {

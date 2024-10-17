@@ -36,12 +36,11 @@ void TRACERGlobalTimer::startTimer()
 {
 	if (!_timer->isActive()) {
 		
-
 		QMetaObject::invokeMethod(_timer, "start");
 
-		qDebug() << "Timers thread: " << _timer->thread();
+		/*qDebug() << "Timers thread: " << _timer->thread();
 		qDebug() << "Timer thread: " << _timerThread;
-		qDebug() << "main thread: " << this->thread();
+		qDebug() << "main thread: " << this->thread();*/
 	}
 }
 

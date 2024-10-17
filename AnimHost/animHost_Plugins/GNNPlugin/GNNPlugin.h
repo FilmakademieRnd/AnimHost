@@ -69,7 +69,6 @@ public:
     GNNPlugin();
     GNNPlugin(bool active) {
         _widget = nullptr;
-        qDebug() << "ACTIVE GNNPlugin created";
     };
     ~GNNPlugin();
 

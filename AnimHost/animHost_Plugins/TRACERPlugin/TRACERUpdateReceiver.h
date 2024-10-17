@@ -81,12 +81,12 @@ public:
                 receiveSocket->close();  // Gracefully close the ZeroMQ socket
             }
             catch (const zmq::error_t& e) {
-                qDebug() << "Error closing socket: " << e.what();
+                qWarning() << "Error closing socket: " << e.what();
             }
 			//delete receiveSocket;
 			receiveSocket = nullptr;
 		}
-        qDebug() << "TRACER Update Receiver destroyed";
+        qDebug() << "Update Receiver destroyed";
     }
 
     //! Request this process to start working

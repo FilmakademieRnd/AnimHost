@@ -32,13 +32,12 @@
 GNNPlugin::GNNPlugin()
 {
     _widget = nullptr;
-    qDebug() << "GNNPlugin created";
 
 }
 
 GNNPlugin::~GNNPlugin()
 {
-    qDebug() << "~GNNPlugin()";
+
 }
 
 QJsonObject GNNPlugin::save() const

@@ -46,8 +46,6 @@ void ControlPathDecoderNode::processInData(std::shared_ptr<NodeData> data, QtNod
         return;
     }
 
-    qDebug() << "ControlPathDecoderNode setInData";
-
     // If a new charcter is selected, update the _objectID and the _controlPathID used for filtering the other Parameter Updates
     if (portIndex == 1) {
        _characterIn  = std::static_pointer_cast<AnimNodeData<CharacterObject>>(data);
@@ -68,7 +66,7 @@ void ControlPathDecoderNode::processInData(std::shared_ptr<NodeData> data, QtNod
             auto paramInData = spParamIn->getData();
 
             if (paramInData->objectID == _controlPathID && paramInData->paramID == _paramPointLocationID) {
-                qDebug() << "Control Point Locations received" << "ObjectID: " << paramInData->objectID;
+                qDebug() << "Control Point Locations received." << "ObjectID: " << paramInData->objectID;
 
                 // Decode Raw Data
                 std::unique_ptr<AbstractParameterPayload> paramPayload = paramInData->decodeRawData();
@@ -86,7 +84,7 @@ void ControlPathDecoderNode::processInData(std::shared_ptr<NodeData> data, QtNod
                 _receivedControlPathPointLocation = true;
 
             } else if (paramInData->objectID == _controlPathID && paramInData->paramID == _paramPointRotationID) {
-                qDebug() << "Control Point Orientations recieved" << "ObjectID: " << paramInData->objectID;
+                qDebug() << "Control Point Orientations recieved. " << "ObjectID: " << paramInData->objectID;
 
                 // Decode Raw Data
                 std::unique_ptr<AbstractParameterPayload> paramPayload = paramInData->decodeRawData();
@@ -98,7 +96,7 @@ void ControlPathDecoderNode::processInData(std::shared_ptr<NodeData> data, QtNod
 
             } else if (paramInData->objectID == _characterID && paramInData->paramType == ZMQMessageHandler::ParameterType::INT && paramInData->paramID == _paramControlPath) {
                 // When receiving an update for the Control Path associated with the selected character, update _controlPathID
-                qDebug() << "New Control Point ID received" << "ObjectID: " << paramInData->objectID << "ParamID: " << paramInData->paramID;
+                qDebug() << "New Control Point ID received. " << "ObjectID: " << paramInData->objectID << "ParamID: " << paramInData->paramID;
 
                 // Decode Raw Data
                 std::unique_ptr<AbstractParameterPayload> paramPayload = paramInData->decodeRawData();
@@ -107,8 +105,11 @@ void ControlPathDecoderNode::processInData(std::shared_ptr<NodeData> data, QtNod
                 // Update current control path ID 
                 _controlPathID = newParamControlPath->getValue();
             }
-        } else
+        }
+        else {
             qDebug() << "ControlPathDecoderNode run" << "No data";
+        }
+           
 
 
         if (_receivedControlPathPointLocation && _receivedControlPathPointRotation) {

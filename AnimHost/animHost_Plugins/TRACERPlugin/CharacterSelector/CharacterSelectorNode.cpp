@@ -74,7 +74,6 @@ void CharacterSelectorNode::processInData(std::shared_ptr<NodeData> data, QtNode
     else {
         return;
     }
-    qDebug() << "CharacterSelectorPlugin setInData";
 }
 
 std::shared_ptr<NodeData> CharacterSelectorNode::processOutData(QtNodes::PortIndex port)

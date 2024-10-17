@@ -301,8 +301,6 @@ public:
     Animation()
     {
         mBones = std::vector<Bone>();
-
-        qDebug() << "Animation()";
     };
 
     /**
@@ -486,7 +484,7 @@ public:
 
 public:
 
-    PoseSequence() { qDebug() << "PoseSequence()"; };
+    PoseSequence() {};
 
 
     /**
@@ -523,7 +521,7 @@ public:
                 				mPoseSequence[FrameIndex].mPositionData[boneIndex].z);
         }
         else {
-            qDebug() << "Error::GetPositionAtFrame: FrameIndex or boneIndex out of range";
+            qWarning() << "FrameIndex or boneIndex out of range. Returning (0,0)";
 			return glm::vec2(0, 0);
 		}   
     }
@@ -545,7 +543,7 @@ public:
 			return mPoseSequence[FrameIndex].mPositionData[boneIndex];
 		}
         else {
-			qDebug() << "Error::GetPositionAtFrame3D: FrameIndex or boneIndex out of range";
+			qWarning() << "FrameIndex or boneIndex out of range. Returning (0,0,0)";
 			return glm::vec3(0, 0, 0);
 		}
 	}
@@ -561,7 +559,7 @@ class ANIMHOSTCORESHARED_EXPORT RunSignal
 
 public:
 
-    RunSignal() { qDebug() << "RunSignal()"; };
+    RunSignal() {};
 
     COMMONDATA(runSignal, Run)
 
@@ -603,7 +601,6 @@ class ANIMHOSTCORESHARED_EXPORT ControlPath : public Sequence {
     public:
     ControlPath() { 
         mControlPath = {};
-        qDebug() << "ControlPath()";
     };
 
     std::shared_ptr<std::vector<ControlPoint>> getPath() { return std::make_shared<std::vector<ControlPoint>>(mControlPath); };
@@ -721,7 +718,7 @@ class ANIMHOSTCORESHARED_EXPORT SceneNodeObjectSequence : public Sequence {
     std::vector<SceneNodeObject> mSceneNodeObjectSequence;
 
     public:
-    SceneNodeObjectSequence() : mSceneNodeObjectSequence {} { qDebug() << "SceneNodeObjectSequence()"; };
+    SceneNodeObjectSequence() : mSceneNodeObjectSequence {} { };
 
     COMMONDATA(sceneNodeObjectSequence, SceneNodeObjectSequence)
 
@@ -735,7 +732,7 @@ class ANIMHOSTCORESHARED_EXPORT CharacterObjectSequence : public Sequence {
     std::vector<CharacterObject> mCharacterObjectSequence;
 
     public:
-    CharacterObjectSequence() : mCharacterObjectSequence {} { qDebug() << "CharacterObjectSequence()"; };
+    CharacterObjectSequence() : mCharacterObjectSequence {} { };
 
     COMMONDATA(characterObjectSequence, CharacterObjectSequence)
       
@@ -761,7 +758,7 @@ public:
 
 
 
-    DebugSignal() { qDebug() << "DebugSignal()"; };
+    DebugSignal() { };
 
     COMMONDATA(debugSignal, Debug)
 
