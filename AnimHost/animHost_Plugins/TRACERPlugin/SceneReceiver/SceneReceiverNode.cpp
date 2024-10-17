@@ -24,8 +24,8 @@
 #include "animhosthelper.h"
 
 SceneReceiverNode::SceneReceiverNode(std::shared_ptr<zmq::context_t> zmqConext) {
-	_pushButton = nullptr;
-	widget = nullptr;
+	_requestButton = nullptr;
+	_widget = nullptr;
 	_connectIPAddress = nullptr;
 	_ipAddressLayout = nullptr;
 	_ipAddress = "127.0.0.1";
@@ -47,6 +47,35 @@ SceneReceiverNode::SceneReceiverNode(std::shared_ptr<zmq::context_t> zmqConext) 
 	QObject::connect(this, &SceneReceiverNode::requestSceneNodeData, sceneReceiver, &SceneReceiver::requestSceneNodeData);
 	QObject::connect(this, &SceneReceiverNode::requestHeaderData, sceneReceiver, &SceneReceiver::requestHeaderData);
 
+}
+
+QJsonObject SceneReceiverNode::save() const
+{
+	QJsonObject modelJson = NodeDelegateModel::save();
+	if (_connectIPAddress) {
+		modelJson["ipAddress"] = _connectIPAddress->text();
+	}
+
+	if (_autoStart) {
+		modelJson["autoStart"] = _autoStart->isChecked();
+	}
+
+	return modelJson;
+}
+
+void SceneReceiverNode::load(QJsonObject const& p)
+{
+	if (p.contains("ipAddress")) {
+		_connectIPAddress->setText(p["ipAddress"].toString());
+	}
+
+	if (p.contains("autoStart")) {
+		_autoStart->setChecked(p["autoStart"].toBool());
+	}
+
+	if (_autoStart->isChecked()) {
+		run();
+	}
 }
 
 unsigned int SceneReceiverNode::nDataPorts(QtNodes::PortType portType) const {
@@ -83,42 +112,61 @@ std::shared_ptr<NodeData> SceneReceiverNode::processOutData(QtNodes::PortIndex p
 	else if (port == 1)
 		return sceneNodeListOut;
 
+	return nullptr;
+
 }
 
 QWidget* SceneReceiverNode::embeddedWidget() {
-	if (!_pushButton) {
-		_pushButton = new QPushButton("Request Data");
+	if (!_widget) {
+
+		_widget = new QWidget();
+		_mainLayout = new QVBoxLayout();
+
+		_ipAddressLayout = new QHBoxLayout();
 		_connectIPAddress = new QLineEdit();
 
-		_connectIPAddress->setText(_ipAddress);
-		_connectIPAddress->displayText();
+		QRegularExpression ipRegex(
+			R"((^((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])$))");
+
+		_ipValidator = new QRegularExpressionValidator(ipRegex, _connectIPAddress);
 		_connectIPAddress->setValidator(_ipValidator);
-
-		_pushButton->resize(QSize(30, 30));
-		_ipAddressLayout = new QHBoxLayout();
-
+		_connectIPAddress->setPlaceholderText("Enter IP Address");
+		_connectIPAddress->setToolTip("Enter the IP Address of the TRACER Scene Server");
 		_ipAddressLayout->addWidget(_connectIPAddress);
-		_ipAddressLayout->addWidget(_pushButton);
 
-		_ipAddressLayout->setSizeConstraint(QLayout::SetMinimumSize);
+		_signalLight = new SignalLightWidget();
+		_ipAddressLayout->addWidget(_signalLight);
 
-		widget = new QWidget();
+		_mainLayout->addLayout(_ipAddressLayout);
 
-		widget->setLayout(_ipAddressLayout);
-		connect(_pushButton, &QPushButton::released, this, &SceneReceiverNode::onButtonClicked);
+		_autoStart = new QCheckBox("Auto Start");
+		_autoStart->setToolTip("Automatically start the TRACER Scene Receiver on loading a Node Setup");
+		_mainLayout->addWidget(_autoStart);
+
+		_requestButton = new QPushButton("Request Scene");
+		_requestButton->setToolTip("Connect to the TRACER Scene Server");
+		_mainLayout->addWidget(_requestButton);
+
+		_widget->setLayout(_mainLayout);
+
+		connect(_requestButton, &QPushButton::released, this, &SceneReceiverNode::onButtonClicked);
+	
 	}
 
-	widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
+	_widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
 		"QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"
 		"QPushButton{border: 1px solid white; border-radius: 4px; padding: 5px; background-color:rgb(98, 139, 202);}"
 		"QLabel{background-color:rgb(25, 25, 25); border: 1px; border-color: rgb(60, 60, 60); border-radius: 4px; padding: 5px;}"
 	);
 
-	return widget;
+	return _widget;
 }
 
 void SceneReceiverNode::onButtonClicked()
 {
+
+	sceneReceiver->requestStart();
+	zeroMQSceneReceiverThread->start();
 	resetDataReady();
 	// Set IP Address
 	_ipAddress = _connectIPAddress->text();
@@ -253,6 +301,9 @@ void SceneReceiverNode::processSceneNodeByteData(QByteArray* sceneNodeByteArray)
 	int sceneNodeCounter = 0; // Counting the sceneNodes in order to calculate the objectID
 	int editableSceneNodeCounter = 0; // Counting the sceneNodes that are editable in order to retrieve the sceneObjectID used for the ParameterUpdateMessage
 	int characterCounter = 0;
+
+
+	sceneNodeListOut.get()->getData()->mSceneNodeObjectSequence.clear();
 	CharacterObject* currentChar = new CharacterObject();
 
 	while (sceneNodeByteArray->size() > nodeByteCounter) {

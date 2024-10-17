@@ -48,6 +48,8 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include <QHBoxLayout>
+#include <QCheckBox>
+#include <UIUtils.h>
 
 #include <pluginnodeinterface.h>
 #include <nodedatatypes.h>
@@ -61,12 +63,24 @@ class TRACERPLUGINSHARED_EXPORT SceneReceiverNode : public PluginNodeInterface
 {
     Q_OBJECT
 private:
-    QWidget* widget;                                //!< UI container element
-    QPushButton* _pushButton;                       //!< UI button element, onClick sends out the request message
-    QLineEdit* _connectIPAddress;                   //!< UI single-line text box where the desired IP address is typed in
-    QHBoxLayout* _ipAddressLayout;                  //!< UI layout element
+
+	// UI elements
+    QWidget* _widget;                                //!< UI container element
+	QVBoxLayout* _mainLayout;                        //!< UI layout element
+
+	// IP Input
+	QHBoxLayout* _ipAddressLayout;                   //!< IP Address layout element
+	QLineEdit* _connectIPAddress;                           //!< IP Address text box element
     QRegularExpressionValidator* _ipValidator;      //!< IP Address validation regex
+
+	QCheckBox* _autoStart;                           //!< Checkbox element to automatically start the TRACER Scene Receiver
+
+    QPushButton* _requestButton;                       //!< UI button element, onClick sends out the request message
+    
     QString _ipAddress;                             //!< The typed IP 
+
+	SignalLightWidget* _signalLight = nullptr;	   //!< Signal light widget to show the connection status
+
 
     //! The list of characters received from TRACER
     /*!
@@ -104,11 +118,16 @@ public:
     
     std::unique_ptr<NodeDelegateModel> Init() override { return  nullptr; };
 
+	QJsonObject save() const override;
+	void load(QJsonObject const& p) override;
+
     static QString Name() { return QString("SceneReceiverNode"); }
 
     QString category() override { return "TRACER"; };
     QString caption() const override { return this->name(); }
     bool captionVisible() const override { return true; }
+
+    bool hasInputRunSignal() const override { return false; }
 
     unsigned int nDataPorts(QtNodes::PortType portType) const override;
     NodeDataType dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
@@ -132,6 +151,7 @@ public:
 
     void checkDataReady() {
         if (_headerReady && _sceneReady && _characterReady) {
+			_signalLight->setColor(QColor(50, 255, 50));
             emitRunNextNode();
         }
     }
