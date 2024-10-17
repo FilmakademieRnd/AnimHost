@@ -18,6 +18,7 @@ qt_add_library(AnimHostCore SHARED
     PluginNodeCollectionInterface/PluginNodeCollectionInterface.cpp
     animhostcore_global.h
     TimeSeries.h
+    Logger.h Logger.cpp
 )
 
 
