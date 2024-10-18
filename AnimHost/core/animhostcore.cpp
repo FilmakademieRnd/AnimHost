@@ -127,7 +127,7 @@ bool AnimHost::loadPlugins()
 
 	for (auto it = registeredModels.begin(); it != registeredModels.end(); ++it)
 	{
-		qDebug() << "Plugin Loaded: " <<it->first;
+		qInfo() << "Plugin Loaded: " <<it->first;
 	}
 
     return false;

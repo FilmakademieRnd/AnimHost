@@ -32,24 +32,12 @@ QMutex Logger::mutex;
 
 bool Logger::isInitialized = false;
 
-QHash<QtMsgType, QString> Logger::contextNames = {
-	{QtMsgType::QtDebugMsg, "DEBUG"},
-	{QtMsgType::QtInfoMsg, "INFO"},
-	{QtMsgType::QtWarningMsg, "WARNING"},
-	{QtMsgType::QtCriticalMsg, "CRITICAL"},
-	{QtMsgType::QtFatalMsg, "FATAL"}
-};
 
-QHash<QtMsgType, QString> Logger::colorCodes = {
-	{QtDebugMsg, "\033[36m"},    // Cyan
-	{QtInfoMsg, "\033[32m"},     // Green
-	{QtWarningMsg, "\033[33m"},  // Yellow
-	{QtCriticalMsg, "\033[31m"}, // Red
-	{QtFatalMsg, "\033[35m"}     // Magenta
-};
+QHash<QtMsgType, QString>* Logger::contextNames = nullptr;
+QHash<QtMsgType, QString>* Logger::colorCodes = nullptr;
+
 
 const QString Logger::resetCode = "\033[0m";
-
 QtMessageHandler Logger::defaultHandler = nullptr;
 
 void Logger::Initialize()
@@ -58,6 +46,26 @@ void Logger::Initialize()
 	{
 		return;
 	}
+
+	// Init Hashmaps
+	contextNames = new QHash<QtMsgType, QString>({
+		{QtDebugMsg, "DEBUG"},
+		{QtInfoMsg, "INFO"},
+		{QtWarningMsg, "WARNING"},
+		{QtCriticalMsg, "CRITICAL"},
+		{QtFatalMsg, "FATAL"}
+		});
+
+	colorCodes = new QHash<QtMsgType, QString>({
+	   {QtDebugMsg, "\033[36m"},    // Cyan
+	   {QtInfoMsg, "\033[32m"},     // Green
+	   {QtWarningMsg, "\033[33m"},  // Yellow
+	   {QtCriticalMsg, "\033[31m"}, // Red
+	   {QtFatalMsg, "\033[35m"}     // Magenta
+		});
+
+
+	// Create the log file
 
 	logFile = new QFile;
 	logFile->setFileName("./LogOutput.txt");
@@ -75,19 +83,56 @@ void Logger::Initialize()
 
 void Logger::Cleanup()
 {
+	if (!isInitialized)
+	{
+		return;
+	}
+
+
+	// Uninstall the message handler
+	qInstallMessageHandler(defaultHandler);
+	//defaultHandler = nullptr;
+
 	if (logFile != Q_NULLPTR)
 	{
 		logFile->close();
 		delete logFile;
 	}
+
+
+	
+
+	// Delete the hash maps
+	if (contextNames != nullptr)
+	{
+		delete contextNames;
+		contextNames = nullptr;
+	}
+
+	if (colorCodes != nullptr)
+	{
+		delete colorCodes;
+		colorCodes = nullptr;
+	}
+
+	isInitialized = false;
 }
 
 void Logger::messageOutput(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
 	QMutexLocker locker(&mutex);
 
+	if (!isInitialized)
+	{
+		if (defaultHandler)
+		{
+			defaultHandler(type, context, msg);
+		}
+		return;
+	}
+
 	QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
-	QString contextName = contextNames.value(type, "UNKNOWN");
+	QString contextName = contextNames->value(type, "UNKNOWN");
 	QString fileName = QString(context.file).section('\\', -1);
 	QString functionName = QString(context.function).section('(', -2, -2).section(' ', -1).section(':', -1);
 
@@ -107,7 +152,7 @@ void Logger::messageOutput(QtMsgType type, const QMessageLogContext& context, co
 	}
 
 	// Print to console with colored formatting
-	QString colorCode = colorCodes.value(type, resetCode);
+	QString colorCode = colorCodes->value(type, resetCode);
 
 	QString formattedConsoleMessage = QString("%1 || %2")
 		.arg(colorCode + contextName + resetCode)

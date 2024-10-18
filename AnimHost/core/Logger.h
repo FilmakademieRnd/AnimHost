@@ -41,9 +41,9 @@ private:
 
 	static bool isInitialized; //!< @brief Flag to check if the logger has been initialized
 
-	static QHash<QtMsgType, QString> contextNames; //!< @brief Types of context messages
+	static QHash<QtMsgType, QString>* contextNames; //!< @brief Types of context messages
 
-	static QHash<QtMsgType, QString> colorCodes; //!< @brief Color codes for the different message types
+	static QHash<QtMsgType, QString>* colorCodes; //!< @brief Color codes for the different message types
 
 	static const QString resetCode; //!< @brief Reset code for the color
 
