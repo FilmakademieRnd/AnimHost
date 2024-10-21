@@ -58,8 +58,6 @@ void GNNController::prepareControlTrajectory() {
 		ctrlTrajPos.push_back(glm::vec2(p.position.x, p.position.z) * 100.f);
 		ctrlTrajForward.push_back(p.lookAt);
 
-
-		
 		glm::vec2 prevPos = ctrlTrajPos[glm::max(0, idx - 1)];
 		glm::vec2 currPos = ctrlTrajPos[idx];
 
@@ -72,11 +70,11 @@ void GNNController::prepareControlTrajectory() {
 	}
 
 	// Add additional frames to the end of the control path to allow for a smooth transition to the generated path
-	for (int i = 0; i < 60; i++) {
+	/*for (int i = 0; i < 60; i++) {
 		ctrlTrajPos.push_back(ctrlTrajPos.back());
 		ctrlTrajForward.push_back(ctrlTrajForward.back());
 		ctrlTrajVel.push_back(glm::vec2(0.f,0.f));
-	}
+	}*/
 }
 
 void GNNController::prepareInput()
@@ -84,16 +82,13 @@ void GNNController::prepareInput()
 
 	qDebug() << "Generate Animation with Control Path of size: " << controlPath->mControlPath.size();
 
-
 	if (controlPath->mControlPath.size() <= 0) {
 		qDebug() << "Control Path is empty";
 		return;
 	}
 
-
 	clearGeneratedData();
 	prepareControlTrajectory();
-
 
 	genRootPos.push_back(ctrlTrajPos[0]);
 	genRootForward.push_back(ctrlTrajForward[0]);
@@ -122,10 +117,8 @@ void GNNController::prepareInput()
 
 	JointsFrameData outJointFrame;
 
-
 	RootSeries rootSeries;
 	rootSeries.Setup(glm::translate(glm::vec3(ctrlTrajPos[0].x, 0.0f,ctrlTrajPos[0].y)) * glm::toMat4(ctrlTrajForward[0]));
-
 
 	for (int genIdx = 0; genIdx < ctrlTrajPos.size(); genIdx++) {
 		//get current root
@@ -170,6 +163,8 @@ void GNNController::prepareInput()
 
 		rootSeries.ApplyControls(futurePath, futureForward, futureVelocity, tau);
 
+		auto _testRootSeries = rootSeries;
+
 		inTrajFrame = BuildTrajectoryFrameData(rootSeries, root);
 		
 		if (genJointPos.size() <= 0) {
@@ -190,6 +185,11 @@ void GNNController::prepareInput()
 
 		//Inference
 		std::vector<float> inferenceOutputValues = network->RunInference(input_values);
+
+		if (inferenceOutputValues.size() == 0) {
+			qCritical() << "Stopping Animation Generation. Inference failed.";
+			return;
+		}
 
 		std::vector<std::vector<glm::vec2>> outPhase2D;
 		std::vector<std::vector<float>> outAmplitude;
@@ -215,6 +215,11 @@ void GNNController::prepareInput()
 		glm::mat4 deltaTransform = glm::translate(glm::mat4(1.0), glm::vec3(deltaOut.x, 0.0, deltaOut.y)) * glm::toMat4(deltaRot);
 		glm::mat4 inferredRoot = root * deltaTransform;
 
+		int _testIdx = glm::min(genIdx + 1, int(ctrlTrajPos.size()-1));
+		glm::vec3 _testPos(ctrlTrajPos[_testIdx].x, 0.0f, ctrlTrajPos[_testIdx].y);
+		glm::quat _testRot(ctrlTrajForward[_testIdx]);
+		glm::mat4 _testTrans = glm::translate(glm::mat4(1.0), _testPos) * glm::toMat4(_testRot);
+		
 		glm::mat4 nextControlRoot = rootSeries.GetTransform(61);
 
 		root = MathUtils::MixTransform(inferredRoot, nextControlRoot, rootTranslationWeight, rootRotationWeight, 1.f);
@@ -222,7 +227,7 @@ void GNNController::prepareInput()
 		rootSeries.UpdateTransform(root, 60);
 
 		FrameRange frameRange(13, 60, 60, 7); //start at pivot + 1 -> keyindex: 7
-		int tmpIdx = 0; //start at 1 since output still contains the pivot frame
+		int tmpIdx = 0; 
 		
 		for (int i : frameRange) {
 
@@ -248,10 +253,10 @@ void GNNController::prepareInput()
 		genRootPos.push_back({ root[3][0], root[3][2] });
 		genRootForward.push_back(glm::toQuat(glm::mat4(root)));
 		
-		/*if (genIdx % 10 == 0) {
-			UpdatePlotData(inTrajFrame, outTrajFrame, rootSeries, futurePath);
+		if (genIdx % 10 == 0) {
+			UpdatePlotData(inTrajFrame, outTrajFrame, rootSeries, _testRootSeries, futurePath, ctrlTrajPos);
 			DrawPlot();
-		}*/
+		}
 	}
 
 	BuildAnimationSequence(genJointRot, rootSeries);
@@ -579,7 +584,7 @@ glm::mat4 GNNController::updateRootTranform(const glm::mat4& pos, const glm::vec
 void GNNController::InitPlot() {
 	
 	//figure = matplot::figure(true);
-	//figure->size(800, 800);
+	//figure->size(1200, 1200);
 	//
 
 
@@ -601,90 +606,117 @@ void GNNController::InitPlot() {
 
 }
 
-void GNNController::UpdatePlotData(const TrajectoryFrameData& inTrajFrame, const TrajectoryFrameData& outTrajFrame, const RootSeries& rootSeries, const std::vector<glm::vec2>& futurePath) {
+void GNNController::UpdatePlotData(const TrajectoryFrameData& inTrajFrame, const TrajectoryFrameData& outTrajFrame, const RootSeries& rootSeries, const RootSeries& inRootSeries, const std::vector<glm::vec2>& futurePath, const std::vector<glm::vec2>& fullControlPath) {
+		
+		//// (BLUE) Plot 2D Root Trajectory, part of the network input. Relative to the characters current root transform 
+		//std::vector<double> xin(inTrajFrame.pos.size());
+		//std::transform(inTrajFrame.pos.begin(), inTrajFrame.pos.end(), xin.begin(), [&](glm::vec2 pos) {return pos.x; });
+		//std::vector<double> yin(xin.size());
+		//std::transform(inTrajFrame.pos.begin(), inTrajFrame.pos.end(), yin.begin(), [&](glm::vec2 pos) {return pos.y; });
 
-			/*std::vector<double> xin(inTrajFrame.pos.size());
-			std::transform(inTrajFrame.pos.begin(), inTrajFrame.pos.end(), xin.begin(), [&](glm::vec2 pos) {return pos.x; });
-			std::vector<double> yin(xin.size());
-			std::transform(inTrajFrame.pos.begin(), inTrajFrame.pos.end(), yin.begin(), [&](glm::vec2 pos) {return pos.y; });
+		//auto axTrajectory = matplot::subplot(figure, 2, 2, 0, true);
+		//matplot::xlim(axTrajectory, { -600, 600 });
+		//matplot::ylim(axTrajectory, { -600, 600 });
+		//	
+		//axTrajectory->scatter(xin, yin);
 
-			auto ax = matplot::subplot(figure, 2, 2, 0, true);
-			matplot::xlim(ax, { -600, 600 });
-			matplot::ylim(ax, { -600, 600 });
-			
-			ax->scatter(xin, yin);
-
-			std::vector<double> xout(outTrajFrame.pos.size());
-			std::transform(outTrajFrame.pos.begin(), outTrajFrame.pos.end(), xout.begin(), [&](glm::vec2 pos) {return pos.x; });
-			std::vector<double> yout(xout.size());
-			std::transform(outTrajFrame.pos.begin(), outTrajFrame.pos.end(), yout.begin(), [&](glm::vec2 pos) {return pos.y; });
-			matplot::hold(ax, true);
-			ax->scatter(xout, yout);
-			matplot::hold(ax, false);
-
-			auto rootTransforms = rootSeries.GetTransforms();
-			std::vector<double> xRootIn(rootTransforms.size());
-			std::transform(rootTransforms.begin(), rootTransforms.end(), xRootIn.begin(), [&](glm::mat4 t) {return t[3][0]; });
-			std::vector<double> yRootIn(rootTransforms.size());
-			std::transform(rootTransforms.begin(), rootTransforms.end(), yRootIn.begin(), [&](glm::mat4 t) {return t[3][2]; });
-			
-			auto ax1 = matplot::subplot(figure, 2, 2, 1, true);
-
-			ax1->scatter(xRootIn, yRootIn);
-
-			std::vector<double> rootFutureX(futurePath.size());
-			std::transform(futurePath.begin(), futurePath.end(), rootFutureX.begin(), [&](glm::vec2 t) {return t.x; });
-			std::vector<double> rootFutureY(futurePath.size());
-			std::transform(futurePath.begin(), futurePath.end(), rootFutureY.begin(), [&](glm::vec2 t) {return t.y; });
-
-			matplot::hold(ax1, true);
-			ax1->scatter(rootFutureX, rootFutureY);
-			matplot::hold(ax1, false);
+		//// (RED) Plot 2D Root Trajectory, part of the network output. Relative to the characters current root transform
+		//std::vector<double> xout(outTrajFrame.pos.size());
+		//std::transform(outTrajFrame.pos.begin(), outTrajFrame.pos.end(), xout.begin(), [&](glm::vec2 pos) {return pos.x; });
+		//std::vector<double> yout(xout.size());
+		//std::transform(outTrajFrame.pos.begin(), outTrajFrame.pos.end(), yout.begin(), [&](glm::vec2 pos) {return pos.y; });
+		//matplot::hold(axTrajectory, true);
+		//axTrajectory->scatter(xout, yout);
+		//matplot::hold(axTrajectory, false);
 
 
-			std::vector<float> freq = phaseSequence.GetFrequencySequence(0);
-			auto ax2 = matplot::subplot(figure, 2, 2, 2, true);
-			ax2->plot(freq);
-			
+		//// (BLUE) Plot Root Series Transform, basis for the network input. In world space. 
+		//auto rootTransforms = rootSeries.GetTransforms();
+		//std::vector<double> xRootIn(rootTransforms.size());
+		//std::transform(rootTransforms.begin(), rootTransforms.end(), xRootIn.begin(), [&](glm::mat4 t) {return t[3][0]; });
+		//std::vector<double> yRootIn(rootTransforms.size());
+		//std::transform(rootTransforms.begin(), rootTransforms.end(), yRootIn.begin(), [&](glm::mat4 t) {return t[3][2]; });
+		//	
+		//auto axRootTransform = matplot::subplot(figure, 2, 2, 1, true);
+
+		//axRootTransform->scatter(xRootIn, yRootIn);
+
+		//// (RED) Plot Root Series Transform, basis for the network output. In world space.
+		//auto inRootTransforms = inRootSeries.GetTransforms();
+		//std::vector<double> xRootOut(inRootTransforms.size());
+		//std::transform(inRootTransforms.begin(), inRootTransforms.end(), xRootOut.begin(), [&](glm::mat4 t) {return t[3][0]; });
+		//std::vector<double> yRootOut(inRootTransforms.size());
+		//std::transform(inRootTransforms.begin(), inRootTransforms.end(), yRootOut.begin(), [&](glm::mat4 t) {return t[3][2]; });
+
+		//matplot::hold(axRootTransform, true);
+		//axRootTransform->scatter(xRootOut, yRootOut);
+		//matplot::hold(axRootTransform, false);
 
 
-			auto ax3 = matplot::subplot(figure, 2, 2, 3, true);
-			matplot::xlim(ax3, { -4, 4 });
-			matplot::ylim(ax3, { -4, 4 });
+		//// (RED) Plot Root Control Transform. Based on the control path. In world space.
+		//std::vector<double> rootFutureX(futurePath.size());
+		//std::transform(futurePath.begin(), futurePath.end(), rootFutureX.begin(), [&](glm::vec2 t) {return t.x; });
+		//std::vector<double> rootFutureY(futurePath.size());
+		//std::transform(futurePath.begin(), futurePath.end(), rootFutureY.begin(), [&](glm::vec2 t) {return t.y; });
 
-			auto phases2D = phaseSequence.GetFlattenedPhaseSequence();
-			std::vector<double> xphase(phases2D.size());
-			std::transform(phases2D.begin(), phases2D.end(), xphase.begin(), [&](glm::vec2 pos) {return pos.x; });
-			std::vector<double> yphase(xphase.size());
-			std::transform(phases2D.begin(), phases2D.end(), yphase.begin(), [&](glm::vec2 pos) {return pos.y; });
-
-			std::vector<double> filteredXphase;
-			std::vector<double> filteredYphase;
-
-			for (size_t i = 0; i < std::min(xphase.size(), yphase.size()); i += 5) {
-				filteredXphase.push_back(xphase[i]);
-				filteredYphase.push_back(yphase[i]);
-			}
-
-			ax3->plot(filteredXphase, filteredYphase);
-			matplot::hold(ax3, true);
-			ax3->scatter({ filteredXphase.back()}, {filteredYphase.back() });
-			matplot::hold(ax3, false);
-
-			filteredXphase.clear();
-			filteredYphase.clear();
-			for (size_t i = 1; i < std::min(xphase.size(), yphase.size()); i += 5) {
-				filteredXphase.push_back(xphase[i]);
-				filteredYphase.push_back(yphase[i]);
-			}
-
-			matplot::hold(ax3, true);
-			ax3->plot(filteredXphase, filteredYphase);
-			matplot::hold(ax3, false);
+		//matplot::hold(axRootTransform, true);
+		//axRootTransform->scatter(rootFutureX, rootFutureY);
+		//matplot::hold(axRootTransform, false);
 
 
+		//// (GREEN) Plot Control Path. In world space.
+		//std::vector<double> controlPathX(fullControlPath.size());
+		//std::transform(fullControlPath.begin(), fullControlPath.end(), controlPathX.begin(), [&](glm::vec2 t) {return t.x; });
+		//std::vector<double> controlPathY(fullControlPath.size());
+		//std::transform(fullControlPath.begin(), fullControlPath.end(), controlPathY.begin(), [&](glm::vec2 t) {return t.y; });
 
-			figure->draw();*/
+		//matplot::hold(axRootTransform, true);
+		//auto l = axRootTransform->scatter(controlPathX, controlPathY);
+		//l->marker_style(matplot::line_spec::marker_style::cross);
+		//matplot::hold(axRootTransform, false);
+
+
+		//std::vector<float> freq = phaseSequence.GetFrequencySequence(0);
+		//auto axPhaseFrequency = matplot::subplot(figure, 2, 2, 2, true);
+		//axPhaseFrequency->plot(freq);
+		//	
+
+
+		//auto ax2DPhase = matplot::subplot(figure, 2, 2, 3, true);
+		//matplot::xlim(ax2DPhase, { -4, 4 });
+		//matplot::ylim(ax2DPhase, { -4, 4 });
+
+		//auto phases2D = phaseSequence.GetFlattenedPhaseSequence();
+		//std::vector<double> xphase(phases2D.size());
+		//std::transform(phases2D.begin(), phases2D.end(), xphase.begin(), [&](glm::vec2 pos) {return pos.x; });
+		//std::vector<double> yphase(xphase.size());
+		//std::transform(phases2D.begin(), phases2D.end(), yphase.begin(), [&](glm::vec2 pos) {return pos.y; });
+
+		//std::vector<double> filteredXphase;
+		//std::vector<double> filteredYphase;
+
+		//for (size_t i = 0; i < std::min(xphase.size(), yphase.size()); i += 5) {
+		//	filteredXphase.push_back(xphase[i]);
+		//	filteredYphase.push_back(yphase[i]);
+		//}
+
+		//ax2DPhase->plot(filteredXphase, filteredYphase);
+		//matplot::hold(ax2DPhase, true);
+		//ax2DPhase->scatter({ filteredXphase.back()}, {filteredYphase.back() });
+		//matplot::hold(ax2DPhase, false);
+
+		//filteredXphase.clear();
+		//filteredYphase.clear();
+		//for (size_t i = 1; i < std::min(xphase.size(), yphase.size()); i += 5) {
+		//	filteredXphase.push_back(xphase[i]);
+		//	filteredYphase.push_back(yphase[i]);
+		//}
+
+		//matplot::hold(ax2DPhase, true);
+		//ax2DPhase->plot(filteredXphase, filteredYphase);
+		//matplot::hold(ax2DPhase, false);
+
+		//figure->draw();
 
 }
 

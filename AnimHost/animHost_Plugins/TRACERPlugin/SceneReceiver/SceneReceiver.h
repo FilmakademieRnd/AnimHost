@@ -197,24 +197,6 @@ class TRACERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHandler {
         passHeaderByteArray(headerArray); // Pass byte array to SceneReceiverNode to be parsed as header data
     }
 
-    // !!!!!!TEMPORARY!!!!!!!
-    void requestControlPathData() {
-        std::string headReq = "curve";
-        requestMsg.rebuild(headReq.c_str(), headReq.size());
-        qDebug() << "Requesting control path";
-        receiveSocket->send(requestMsg);
-
-        receiveSocket->recv(&replyHeaderMsg);
-        qDebug() << "Reply received!";
-
-        QByteArray* pathArray = new QByteArray();
-        // replyHeaderMsg will contain a series of bytes encoding basic global data of the scene and its client/server
-        if (replyHeaderMsg.size() > 0)
-            pathArray->append((char*) replyHeaderMsg.data(), replyHeaderMsg.size());
-
-        passControlPathByteArray(pathArray); // Pass byte array to SceneReceiverNode to be parsed as header data
-    }
-
     //! Opens a Request-Receive communication socket
     /*!
     * \param[in]    newIPAddress    The (optional) new IP Address, empty string by default. If not empty the new address replaces the previous one
@@ -248,6 +230,5 @@ class TRACERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHandler {
     void passCharacterByteArray(QByteArray* characterMsgArray); //!< Signal emitted to pass the character byte sequence onto the main thread
     void passSceneNodeByteArray(QByteArray* sceneNodeMsgArray); //!< Signal emitted to pass the scene node byte sequence onto the main thread
     void passHeaderByteArray(QByteArray* headerMsgArray);       //!< Signal emitted to pass the header byte sequence onto the main thread
-    void passControlPathByteArray(QByteArray* controlPathMsgArray);       // !!!TEMPORARY!!!
 };
 #endif // SCENERECEIVER_H

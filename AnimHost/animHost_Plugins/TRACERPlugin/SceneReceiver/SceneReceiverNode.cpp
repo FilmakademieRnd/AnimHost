@@ -99,7 +99,6 @@ NodeDataType SceneReceiverNode::dataPortType(QtNodes::PortType portType, QtNodes
 }
 
 void SceneReceiverNode::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) {
-	qDebug() << "SceneReceiverNode setInData";
 }
 
 bool SceneReceiverNode::isDataAvailable() {
@@ -183,7 +182,6 @@ void SceneReceiverNode::onButtonClicked()
 }
 
 void SceneReceiverNode::run() {
-	qDebug() << "SceneReceiverNode running...";
 
 	sceneReceiver->requestStart();
 	zeroMQSceneReceiverThread->start();
@@ -280,7 +278,7 @@ void SceneReceiverNode::processCharacterByteData(QByteArray* characterByteArray)
 		// Adding character to the characterList
 		characterListOut->getData()->mCharacterObjectSequence.push_back(character);
 	}
-	qDebug() << "Number of character received from VPET:" << characterListOut.get()->getData()->mCharacterObjectSequence.size();
+	//qDebug() << "Number of character received from VPET:" << characterListOut.get()->getData()->mCharacterObjectSequence.size();
 
 	// Do not emit Update because not ALL of the data has been processed
 	//emitDataUpdate(0);
@@ -303,7 +301,7 @@ void SceneReceiverNode::processSceneNodeByteData(QByteArray* sceneNodeByteArray)
 	int characterCounter = 0;
 
 
-	sceneNodeListOut.get()->getData()->mSceneNodeObjectSequence.clear();
+	sceneNodeListOut->getData()->mSceneNodeObjectSequence.clear();
 	CharacterObject* currentChar = new CharacterObject();
 
 	while (sceneNodeByteArray->size() > nodeByteCounter) {
@@ -360,7 +358,7 @@ void SceneReceiverNode::processSceneNodeByteData(QByteArray* sceneNodeByteArray)
 			}
 
 			// Adding the characterObject also to the list of all the scene nodes in the scene to retain the same structure wrt the original scene
-			sceneNodeListOut.get()->getData()->mSceneNodeObjectSequence.push_back(*currentChar);
+			sceneNodeListOut->getData()->mSceneNodeObjectSequence.push_back(*currentChar);
 
 			break;
 		case SKINNEDMESH:
@@ -425,7 +423,7 @@ void SceneReceiverNode::processSceneNodeByteData(QByteArray* sceneNodeByteArray)
 			sceneNode.rot = objRot;
 			sceneNode.scl = objScale;
 
-			sceneNodeListOut.get()->getData()->mSceneNodeObjectSequence.push_back(sceneNode);
+			sceneNodeListOut->getData()->mSceneNodeObjectSequence.push_back(sceneNode);
 
 			break;
 		case GEO:
@@ -446,7 +444,7 @@ void SceneReceiverNode::processSceneNodeByteData(QByteArray* sceneNodeByteArray)
 			sceneNode.rot = objRot;
 			sceneNode.scl = objScale;
 
-			sceneNodeListOut.get()->getData()->mSceneNodeObjectSequence.push_back(sceneNode);
+			sceneNodeListOut->getData()->mSceneNodeObjectSequence.push_back(sceneNode);
 			break;
 		case LIGHT:
 			// skip Light Node fields
@@ -468,7 +466,7 @@ void SceneReceiverNode::processSceneNodeByteData(QByteArray* sceneNodeByteArray)
 			sceneNode.rot = objRot;
 			sceneNode.scl = objScale;
 
-			sceneNodeListOut.get()->getData()->mSceneNodeObjectSequence.push_back(sceneNode);
+			sceneNodeListOut->getData()->mSceneNodeObjectSequence.push_back(sceneNode);
 			break;
 		case CAMERA:
 			// skip Camera Node fields
@@ -491,7 +489,7 @@ void SceneReceiverNode::processSceneNodeByteData(QByteArray* sceneNodeByteArray)
 			sceneNode.rot = objRot;
 			sceneNode.scl = objScale;
 
-			sceneNodeListOut.get()->getData()->mSceneNodeObjectSequence.push_back(sceneNode);
+			sceneNodeListOut->getData()->mSceneNodeObjectSequence.push_back(sceneNode);
 			break;
 		case GROUP:
 			// Create and populate SceneNodeObject
@@ -503,7 +501,7 @@ void SceneReceiverNode::processSceneNodeByteData(QByteArray* sceneNodeByteArray)
 			sceneNode.scl = objScale;
 
 			// TODO: Add latest SceneNodeObject to the global SceneNodeSequence/SceneDescription (which should be accessible throughout AnimHost)
-			sceneNodeListOut.get()->getData()->mSceneNodeObjectSequence.push_back(sceneNode);
+			sceneNodeListOut->getData()->mSceneNodeObjectSequence.push_back(sceneNode);
 
 			break;
 		default:
@@ -513,8 +511,9 @@ void SceneReceiverNode::processSceneNodeByteData(QByteArray* sceneNodeByteArray)
 		// After processing the current SceneNode increment the counter
 		sceneNodeCounter++;
 	}
-	qDebug() << "Number of scene nodes received from VPET:" << sceneNodeListOut.get()->getData()->mSceneNodeObjectSequence.size();
-	qDebug() << "Number of character received from VPET:" << characterListOut.get()->getData()->mCharacterObjectSequence.size();
+	qInfo() << "TRACER Scene deserialized: " << sceneNodeListOut->getData()->mSceneNodeObjectSequence.size() <<  " Nodes | " 
+		<< characterListOut->getData()->mCharacterObjectSequence.size() << " Character(s)";
+	//qDebug() << "Number of character received from VPET:" << characterListOut->getData()->mCharacterObjectSequence.size();
 
 	_sceneReady = true;
 	emitDataUpdate(0);

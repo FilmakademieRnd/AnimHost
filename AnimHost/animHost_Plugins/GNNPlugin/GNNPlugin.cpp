@@ -235,7 +235,7 @@ void GNNPlugin::run()
 					}
                     else
                     {
-						qDebug() << "Error: No Animation generated";
+						qWarning() << "No Animation generated";
 
 						emitDataInvalidated(0);
                         emitDataInvalidated(1);

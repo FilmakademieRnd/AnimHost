@@ -108,7 +108,7 @@ void TRACERUpdateReceiver::deserializeMessage(QByteArray& rawMessageData)
     byte inClientID = rawMessageData[0];
     byte inTimeStamp = rawMessageData[1];
     MessageType inMessageType = static_cast<MessageType>(rawMessageData[2]);
-    qDebug() << inClientID << " "  << inMessageType;
+    //qDebug() << inClientID << " "  << inMessageType;
     if(inClientID != _clientID){
 	    
         switch(inMessageType){

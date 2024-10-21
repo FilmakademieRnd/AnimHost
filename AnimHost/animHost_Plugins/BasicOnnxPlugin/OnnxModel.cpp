@@ -116,18 +116,26 @@ std::vector<std::string> OnnxModel::GetTensorShapes(bool bGetInput)
 std::vector<float> OnnxModel::RunInference(std::vector<float>& inputValue)
 {
     if (!bModelValid) {
-        qDebug() << "Inference not possible. No model loaded or invalid.";
+        qCritical() << "Inference not possible. No model loaded or invalid.";
         return std::vector<float>(0);
     }
 
     std::vector<Ort::Value> input_tensors;
 
+
+	//Dirty: RunInference only takes one vector reference, so technically only networks with one input tensor are supported
+	//@TODO: Implement support for multiple input tensors
     for (std::size_t i = 0; i < session->GetInputCount(); i++) {
         auto total_num_of_elements = std::accumulate(input_shapes[i].begin(), input_shapes[i].end(), 1,
             [](int a, int b) { return a * b; });
 
         if (total_num_of_elements == inputValue.size()) {
             input_tensors.push_back(OnnxHelper::vecToTensor<float>(inputValue, input_shapes[i]));
+        }
+        else {
+            qCritical() << "Inference not possible. Mismatch between input and network dimensions.";
+			qCritical() << "Expected " << total_num_of_elements << " but got " << inputValue.size();
+            return std::vector<float>(0);
         }
     }
 

@@ -176,7 +176,9 @@ public:
 private:
 
     void InitPlot();
-    void UpdatePlotData(const TrajectoryFrameData& inTrajFrame, const TrajectoryFrameData& outTrajFrame, const RootSeries& rootSeries, const std::vector<glm::vec2>& futurePath);
+    void UpdatePlotData(const TrajectoryFrameData& inTrajFrame, const TrajectoryFrameData& outTrajFrame, 
+        const RootSeries& rootSeries, const RootSeries& inRootSeries, const std::vector<glm::vec2>& futurePath,
+        const std::vector<glm::vec2>& fullControlPath);
     void DrawPlot();
 
 
