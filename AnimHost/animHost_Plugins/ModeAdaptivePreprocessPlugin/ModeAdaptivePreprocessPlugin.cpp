@@ -388,7 +388,7 @@ std::vector<float> ModeAdaptivePreprocessPlugin::prepareTrajectoryData(int refer
 
 	for (int frameIdx : frameRange) {
 
-		qDebug() << "Frame Index: " << frameIdx;
+		//qDebug() << "Frame Index: " << frameIdx;
 
 		//NEW TRAJECTORY DATA
 		//glm::mat4 frameRoot = animation->CalculateRootTransform(frameIdx, rootbone_idx);

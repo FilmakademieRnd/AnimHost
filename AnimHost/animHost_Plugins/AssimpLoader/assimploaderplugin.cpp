@@ -289,20 +289,20 @@ void AssimpLoaderPlugin::UseSubSkeleton(std::string pRootBone, std::vector<std::
 
 	auto subSkel = _skeleton->getData()->CreateSubSkeleton(pRootBone, pLeaveBones);
 
-	//print each bone in skeleton bone_names
+	/*
+	// print each bone in skeleton before and after sub skeleton
 	qDebug() << "Bone Names before Subskeleton: ";
 	for (auto var : _skeleton->getData()->bone_names)
 	{
 		qDebug() << var.first.c_str() << " :: " << var.second;
 	}
 
-	//auto subSkel = skel->CreateSubSkeleton("hip", { "hand_R", "hand_L" });
 	qDebug() << "Bone Names after Subskeleton: ";
 	for (auto var : subSkel.bone_names)
 	{
 		qDebug() << var.first.c_str() << " :: " << var.second;
 	}
-
+	*/
 
 	std::shared_ptr<Animation> anim = std::make_shared<Animation>();
 
@@ -366,13 +366,14 @@ void AssimpLoaderPlugin::importAssimpData()
 
 
 	// Create a logger instance
-	Assimp::DefaultLogger::create("", Assimp::Logger::VERBOSE);
+	Assimp::DefaultLogger::create("", Assimp::Logger::NORMAL);
 
 	// Now I am ready for logging my stuff
 	Assimp::DefaultLogger::get()->info("this is my info-call");
 
 
-	const unsigned int severity =  Assimp::Logger::Info | Assimp::Logger::Err | Assimp::Logger::Warn;
+	//const unsigned int severity =  Assimp::Logger::Info | Assimp::Logger::Err | Assimp::Logger::Warn;
+	const unsigned int severity =  Assimp::Logger::Err | Assimp::Logger::Warn;
 	Assimp::DefaultLogger::get()->attachStream(new AssimpQTStream, severity);
 
 	const  aiScene* scene = importer.ReadFile(SourceFilePath.toStdString(),
@@ -380,10 +381,11 @@ void AssimpLoaderPlugin::importAssimpData()
 
 	auto keys = scene->mMetaData->mKeys;
 
-	for (int i = 0; i < scene->mMetaData->mNumProperties; i++)
+	// Print all metadata
+	/*for (int i = 0; i < scene->mMetaData->mNumProperties; i++)
 	{
 		qDebug() << scene->mMetaData->mKeys[i].C_Str() << " :: " << *static_cast<int32_t*>(scene->mMetaData->mValues[i].mData) ;
-	}
+	}*/
 
 	if (nullptr == scene) {
 		qWarning() << "Loading failed: " << importer.GetErrorString();

@@ -4,7 +4,7 @@
 RPCTriggerNode::RPCTriggerNode()
 {
     _pushButton = nullptr;
-    qDebug() << "RPCTriggerNode created";
+    //qDebug() << "RPCTriggerNode created";
 }
 
 RPCTriggerNode::~RPCTriggerNode()
@@ -62,11 +62,11 @@ void RPCTriggerNode::run()
     * run() can also be called through another signal, like a button press or in our case a timer.
     * But it is recommended to keep user interaction to a minimum. 
     */
-    qDebug() << "RPCTriggerNode run";
+    //qDebug() << "RPCTriggerNode run";
     if(isDataAvailable()){
         
         if(auto RPCData = _RPCIn.lock()){
-			qDebug() << "RPCData Received";
+			//qDebug() << "RPCData Received";
 
             auto sp_rpc = RPCData->getData();
 

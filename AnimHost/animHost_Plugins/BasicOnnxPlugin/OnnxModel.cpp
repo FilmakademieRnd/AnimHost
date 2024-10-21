@@ -47,22 +47,26 @@ void OnnxModel::LoadOnnxModel(QString Path)
         bModelValid = true;
 
         Ort::AllocatorWithDefaultOptions allocator;
-        qDebug() << "\nInput Node Name/Shape: \n";
+
+		QString networkReport = QString("Input Node Name/Shape:");
 
         for (std::size_t i = 0; i < session->GetInputCount(); i++) {
 
             input_names.push_back(session->GetInputNameAllocated(i, allocator).get());
             input_shapes.emplace_back(session->GetInputTypeInfo(i).GetTensorTypeAndShapeInfo().GetShape());
-            qDebug() << "\t" << input_names.at(i) << shape_printer(input_shapes[i]);
+            networkReport = networkReport + " " + QString::fromStdString(input_names.at(i)) + QString::fromStdString(shape_printer(input_shapes[i]));
         }
+		qInfo(networkReport.toLocal8Bit().data());
+
 
         // output
-        qDebug() << "\nOutput Node Name/Shape: \n";
+        networkReport = "Output Node Name/Shape:";
         for (std::size_t i = 0; i < session->GetOutputCount(); i++) {
             output_names.push_back(session->GetOutputNameAllocated(i, allocator).get());
             output_shapes.emplace_back(session->GetOutputTypeInfo(i).GetTensorTypeAndShapeInfo().GetShape());
-            qDebug() << "\t" << output_names.at(i) << shape_printer(output_shapes[i]);
+            networkReport = networkReport + " " + QString::fromStdString(output_names.at(i)) + QString::fromStdString(shape_printer(output_shapes[i]));
         }
+        qInfo(networkReport.toLocal8Bit().data());
     }
 
     catch (const Ort::Exception& exception) {

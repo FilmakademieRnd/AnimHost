@@ -139,11 +139,11 @@ class TRACERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHandler {
     void requestCharacterData() {
         std::string charReq = "characters";
         requestMsg.rebuild(charReq.c_str(), charReq.size());
-        qDebug() << "Requesting character packages";
+        //qDebug() << "Requesting character packages";
         receiveSocket->send(requestMsg);
 
         receiveSocket->recv(&replyCharMsg);
-        qDebug() << "Reply received!";
+        qDebug() << "TRACER character package receive!";
 
         QByteArray* charPkgArray = new QByteArray();
         // replyCharMsg will contain a series of bytes representing the Characters in the scene
@@ -161,11 +161,11 @@ class TRACERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHandler {
     void requestSceneNodeData() {
         std::string nodesReq = "nodes";
         requestMsg.rebuild(nodesReq.c_str(), nodesReq.size());
-        qDebug() << "Requesting nodes";
+        //qDebug() << "Requesting nodes";
         receiveSocket->send(requestMsg);
 
         receiveSocket->recv(&replyNodeMsg);
-        qDebug() << "Reply received!";
+        qDebug() << "TRACER scene nodes received!";
 
         QByteArray* nodesArray = new QByteArray();
         // replyNodeMsg will contain a series of bytes representing all the Scene Nodes in the scene
@@ -183,11 +183,11 @@ class TRACERPLUGINSHARED_EXPORT SceneReceiver : public ZMQMessageHandler {
     void requestHeaderData() {
         std::string headReq = "header";
         requestMsg.rebuild(headReq.c_str(), headReq.size());
-        qDebug() << "Requesting nodes";
+        //qDebug() << "Requesting nodes";
         receiveSocket->send(requestMsg);
 
         receiveSocket->recv(&replyHeaderMsg);
-        qDebug() << "Reply received!";
+        qDebug() << "TRACER scene header received!";
 
         QByteArray* headerArray = new QByteArray();
         // replyHeaderMsg will contain a series of bytes encoding basic global data of the scene and its client/server

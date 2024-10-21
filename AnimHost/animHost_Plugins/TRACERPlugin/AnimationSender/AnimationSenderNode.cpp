@@ -47,7 +47,7 @@ AnimationSenderNode::AnimationSenderNode(std::shared_ptr<TRACERGlobalTimer> glob
     connect(zeroMQSenderThread, &QThread::finished, zeroMQSenderThread, &QObject::deleteLater);
 
 
-    qDebug() << "AnimationSenderNode created";
+    //qDebug() << "AnimationSenderNode created";
 }
 
 AnimationSenderNode::~AnimationSenderNode()
@@ -120,7 +120,7 @@ void AnimationSenderNode::processInData(std::shared_ptr<NodeData> data, QtNodes:
         return;
     }
 
-    qDebug() << "AnimationSenderNode setInData";
+    //qDebug() << "AnimationSenderNode setInData";
 }
 
 bool AnimationSenderNode::isDataAvailable() {

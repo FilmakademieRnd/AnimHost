@@ -105,10 +105,9 @@ NodeDataType GNNPlugin::dataPortType(QtNodes::PortType portType, QtNodes::PortIn
 
 void GNNPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex)
 {
-    qDebug() << "GNNPlugin setInData";
-
 
     if (!data) {
+        //qDebug() << "GNNPlugin invalid data set on port: " << portIndex;
         switch (portIndex) {
         case 0:
             _skeletonIn.reset();
@@ -180,6 +179,10 @@ void GNNPlugin::run()
                     controller->initJointPos.clear();
                     controller->initJointRot.clear();
                     controller->initJointVel.clear();
+
+					controller->initJointPos.reserve(transforms.size());
+					controller->initJointRot.reserve(transforms.size());
+					controller->initJointVel.reserve(transforms.size());
 
                     for (int i = 0; i < transforms.size(); i++) {
                         glm::vec3 scale;
@@ -254,6 +257,8 @@ std::shared_ptr<NodeData> GNNPlugin::processOutData(QtNodes::PortIndex port)
         return _animationOut;
     case 1:
         return _debugSignalOut;
+	default:
+		return nullptr;
     }
 }
 

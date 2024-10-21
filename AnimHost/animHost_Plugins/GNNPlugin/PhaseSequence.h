@@ -62,13 +62,13 @@ public:
 
 	PhaseSequence() : FullFrameWindow(13,60,60), FutureFrameWindow(13,60,60,6) {
 
-		for (int frameIdx : FullFrameWindow) {
+		/*for (int frameIdx : FullFrameWindow) {
 			qDebug() << "Frame Index: " << frameIdx;
 		}
 		
 		for (int frameIdx : FutureFrameWindow) {
 			qDebug() << "Frame Index: " << frameIdx;
-		}
+		}*/
 
 	    phaseSequence = std::vector<std::vector<float>>(sequenceLength, std::vector<float>(numChannels, 0.0f));
 		frequencySequence = std::vector<std::vector<float>>(sequenceLength, std::vector<float>(numChannels, 0.f));

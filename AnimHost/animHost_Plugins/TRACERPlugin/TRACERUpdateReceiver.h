@@ -137,7 +137,7 @@ public:
 		}
         else {
 		    mutex.unlock();
-            qDebug() << "TRACER Update Message Receiver not running, starting instead";
+            // TRACER Update Message Receiver not running, starting instead;
             requestStart(serverIP);         
         }
 	}

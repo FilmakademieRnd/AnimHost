@@ -16,7 +16,7 @@ UpdateReceiverNode::UpdateReceiverNode(std::shared_ptr<TRACERUpdateReceiver> upd
         this, &UpdateReceiverNode::forwardRPCMessage,
 		Qt::QueuedConnection);
 
-    qDebug() << "UpdateReceiverNode created";
+    //qDebug() << "UpdateReceiverNode created";
 }
 
 UpdateReceiverNode::~UpdateReceiverNode()
@@ -81,7 +81,7 @@ NodeDataType UpdateReceiverNode::dataPortType(QtNodes::PortType portType, QtNode
 
 void UpdateReceiverNode::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex)
 {
-    qDebug() << "UpdateReceiverNode setInData";
+   // qDebug() << "UpdateReceiverNode setInData";
 }
 
 std::shared_ptr<NodeData> UpdateReceiverNode::processOutData(QtNodes::PortIndex port)

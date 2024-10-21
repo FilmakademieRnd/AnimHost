@@ -7,7 +7,7 @@ ControlPathDecoderNode::ControlPathDecoderNode()
     _pushButton = nullptr;
 
     _OutControlPath = std::make_shared<AnimNodeData<ControlPath>>();
-    qDebug() << "ControlPathDecoderNode created";
+    //qDebug() << "ControlPathDecoderNode created";
 }
 
 ControlPathDecoderNode::~ControlPathDecoderNode()

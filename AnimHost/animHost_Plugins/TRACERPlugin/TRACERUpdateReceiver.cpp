@@ -16,7 +16,7 @@ void TRACERUpdateReceiver::initializeUpdateReceiverSocket(QString serverIP) {
     }
 
     QString address = "tcp://" + serverIP + ":5556";
-    qDebug() << "Try connecting to " << address;
+    qInfo() << "Try connecting to " << address;
 
     _ipAddr = serverIP;  // Save the server IP
 

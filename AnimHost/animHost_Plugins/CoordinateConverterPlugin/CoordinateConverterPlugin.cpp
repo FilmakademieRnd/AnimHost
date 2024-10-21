@@ -67,7 +67,7 @@ void CoordinateConverterPlugin::processInData(std::shared_ptr<NodeData> data, Qt
 
     _animationIn = std::static_pointer_cast<AnimNodeData<Animation>>(data);
 
-    qDebug() << "CoordinateConverterPlugin setInData";
+   // qDebug() << "CoordinateConverterPlugin setInData";
 }
 
 bool CoordinateConverterPlugin::isDataAvailable() {

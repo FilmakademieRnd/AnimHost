@@ -30,7 +30,7 @@ CharacterSelectorNode::CharacterSelectorNode()
     _selectionMenu = nullptr;
 
     _characterOut = std::make_shared<AnimNodeData<CharacterObject>>();
-    qDebug() << "CharacterSelectorNode created";
+    //qDebug() << "CharacterSelectorNode created";
 }
 
 CharacterSelectorNode::~CharacterSelectorNode()
