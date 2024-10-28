@@ -215,9 +215,9 @@ def run_motion_preprocessing(num_phase_channel,dataset_path, phase_param_file, p
 class MotionProcessor:
     def __init__(self):
         self.num_phase_channel = 5
-        self.input_feature_count = 475
-        self.output_feature_count = 429
-        self.sample_count = 76093
+        self.input_feature_count = 403
+        self.output_feature_count = 357
+        self.sample_count = 121727
 
         self.dataset_path = r"C:\DEV\DATASETS\Survivor_Gen"
         self.trained_phase_param_file = r"C:\DEV\AI4Animation\AI4Animation\SIGGRAPH_2022\PyTorch\PAE\Training\Parameters_30.txt"
