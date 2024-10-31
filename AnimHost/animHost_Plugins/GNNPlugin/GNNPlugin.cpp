@@ -199,7 +199,9 @@ void GNNPlugin::run()
                         controller->initJointPos.push_back(translation);
                         controller->initJointRot.push_back(rotation);
 
-                        controller->initJointVel.push_back(velSeq->mJointVelocitySequence[20].mJointVelocity[i]);
+                        //controller->initJointVel.push_back(velSeq->mJointVelocitySequence[20].mJointVelocity[i]);
+                        controller->initJointVel.push_back(glm::vec3(0.0f,0.0f,0.0f));
+
                     }
 
 
