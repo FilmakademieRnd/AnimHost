@@ -139,38 +139,37 @@ void AnimationSenderNode::run() {
     }
 
 
-
-    // TEMP: SEND ANIMATION EN BLOC EVERY TIME THE NODE IS RUN
-    // IGNORE USER SETTING IN THE WIDGET
-    if (isStreaming) {
-        // Stop Streaming
-
-        _sendStreamButton->setText("Send Animation");
-        isStreaming = false;
-
-        msgSender->setStreamAnimation(AnimHostMessageSender::STREAMSTOP);
-
-    }
+    // Send Animation according to node state
 
     if (isDataAvailable()) {
-        auto sp_character = _characterIn.lock();
-        auto sp_animation = _animIn.lock();
-        auto sp_sceneNodeList = _sceneNodeListIn.lock();
 
-        // Set animation, character and scene data (necessary for creating a pose update message) in the message sender object
-        msgSender->setAnimationAndSceneData(sp_animation->getData(), sp_character->getData(), sp_sceneNodeList->getData());
+		auto sp_character = _characterIn.lock();
+		auto sp_animation = _animIn.lock();
+		auto sp_sceneNodeList = _sceneNodeListIn.lock();
 
-        // Start Streaming
-        msgSender->setStreamAnimation(AnimHostMessageSender::ENBLOCK);
+        if (isStreaming) {
+            // Stop Streaming
+
+            _sendStreamButton->setText("Send Animation");
+            isStreaming = false;
+
+            msgSender->setStreamAnimation(AnimHostMessageSender::STREAMSTOP);
+
+        }
+
+		// Set animation, character and scene data (necessary for creating a pose update message) in the message sender object
+		msgSender->setAnimationAndSceneData(sp_animation->getData(), sp_character->getData(), sp_sceneNodeList->getData());
+
+		if (_streamCheck->isChecked()) {
+			// Start Streaming
+			msgSender->setStreamAnimation(AnimHostMessageSender::STREAMSTART);
+		}
+		else {
+			// Start Streaming
+			msgSender->setStreamAnimation(AnimHostMessageSender::ENBLOCK);
+		}
+
     }
-
-
-
-    // every time the buffer is **predicted to be** half-read, fill the next half buffer
-    // TO BE UNCOMMENTED AS SOON AS I RECEIVE bufferSize and renderingFrameRate from receiver
-    /*if (localTime % (bufferReadTime / 2) == 0) {
-        msgSender->resume();
-    }*/
 }
 
 std::shared_ptr<NodeData> AnimationSenderNode::processOutData(QtNodes::PortIndex port) {
