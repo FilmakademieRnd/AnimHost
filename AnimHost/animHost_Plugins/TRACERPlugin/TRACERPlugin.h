@@ -87,7 +87,7 @@ class TRACERPLUGINSHARED_EXPORT TRACERPlugin : public PluginNodeCollectionInterf
            _updateReceiver = std::make_shared<TRACERUpdateReceiver>(true, _zmqContext.get(), _globalTimer);
            _updateReceiver->moveToThread(&_updateReceiverThread);
 
-
+           ZMQMessageHandler::setClientID(212);
 
            // Connect signals and slots for the TRACERUpdateReceiver
            //connect(&_updateReceiverThread, &QThread::started, _updateReceiver.get(), &TRACERUpdateReceiver::initializeUpdateReceiverSocket);

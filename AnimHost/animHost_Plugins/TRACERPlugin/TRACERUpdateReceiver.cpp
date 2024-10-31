@@ -20,6 +20,8 @@ void TRACERUpdateReceiver::initializeUpdateReceiverSocket(QString serverIP) {
 
     _ipAddr = serverIP;  // Save the server IP
 
+    _clientID = ZMQMessageHandler::getOwnID();
+
     // Create a new ZeroMQ socket
     receiveSocket = new zmq::socket_t(*context, zmq::socket_type::sub);
     receiveSocket->connect(address.toLatin1().data());
@@ -136,7 +138,6 @@ void TRACERUpdateReceiver::deserializeMessage(QByteArray& rawMessageData)
 				break;
 		}
 	}
-
 }
 
 void TRACERUpdateReceiver::deserializeParameterUpdateMessage(const QByteArray& rawMessageData)

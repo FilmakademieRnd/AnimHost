@@ -27,6 +27,8 @@ QWaitCondition* ZMQMessageHandler::reconnectWaitCondition = new QWaitCondition()
 
 byte ZMQMessageHandler::targetSceneID = 0;
 QString ZMQMessageHandler::ownIP = "";
+byte ZMQMessageHandler::ownID = 1;
+bool ZMQMessageHandler::useLocalHostID = false;
 QList<QHostAddress> ZMQMessageHandler::ipList;
 
 QTimer* ZMQMessageHandler::localTick = new QTimer();
