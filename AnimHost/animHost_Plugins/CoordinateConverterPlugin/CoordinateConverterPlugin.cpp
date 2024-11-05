@@ -71,71 +71,82 @@ void CoordinateConverterPlugin::processInData(std::shared_ptr<NodeData> data, Qt
 }
 
 bool CoordinateConverterPlugin::isDataAvailable() {
-    return !_animationIn.expired();
-}
+
+    if (!_animationIn.expired()) {
+        if (auto spAnimationIn = _animationIn.lock()) {
+            auto AnimIn = spAnimationIn->getData();
+            if (AnimIn->mBones.size() > 0)
+                return true;
+        }
+    }
+        return false;
+};
 
 void CoordinateConverterPlugin::run()
 {
-    if (auto spAnimationIn = _animationIn.lock()) {
-        auto AnimIn = spAnimationIn->getData();
-        
-        auto animOut = std::make_shared<Animation>(*AnimIn);
+    if (isDataAvailable()) {
+
+        if (auto spAnimationIn = _animationIn.lock()) {
+            auto AnimIn = spAnimationIn->getData();
+            auto animOut = std::make_shared<Animation>(*AnimIn);
+            bool negX, negY, negZ, negW, swapYZ = false;
+
+            negX = xButton->isChecked();
+            negY = yButton->isChecked();
+            negZ = zButton->isChecked();
+            negW = wButton->isChecked();
+            swapYZ = swapYzButton->isChecked();
 
 
-        bool negX, negY, negZ, negW, swapYZ = false;
+            //Apply Transform to Root Bone
+            for (int i = 0; i < animOut->mBones[0].mPositonKeys.size(); i++) {
 
-        negX = xButton->isChecked();
-        negY = yButton->isChecked();
-        negZ = zButton->isChecked();
-        negW = wButton->isChecked();
-        swapYZ = swapYzButton->isChecked();
-        
-        
-        //Apply Transform to Root Bone
-        for (int i = 0; i < animOut->mBones[1].mPositonKeys.size(); i++) {
+                animOut->mBones[0].mRotationKeys[i].orientation = glm::toQuat(activePreset.transformMatrix) * animOut->mBones[0].GetOrientation(i) * animOut->mBones[0].GetOrientation(i);
+                animOut->mBones[0].mPositonKeys[i].position = glm::toQuat(activePreset.transformMatrix) * glm::vec3(animOut->mBones[0].GetPosition(i));
 
-            
+            }
 
-            animOut->mBones[1].mRotationKeys[i].orientation = glm::toQuat(activePreset.transformMatrix) * animOut->mBones[0].GetOrientation(i) * animOut->mBones[1].GetOrientation(i);
-            animOut->mBones[1].mPositonKeys[i].position = glm::toQuat(activePreset.transformMatrix) * glm::vec3(animOut->mBones[1].GetPosition(i));
+            for (int i = 0; i < animOut->mBones.size(); i++) {
+                int numKeys = animOut->mBones[i].mNumKeysRotation;
+                for (int j = 0; j < numKeys; j++) {
+                    animOut->mBones[i].mRotationKeys[j].orientation = ConvertToTargetSystem(animOut->mBones[i].mRotationKeys[j].orientation,
+                        swapYZ, negX, negY, negZ, negW);
+                }
 
+                numKeys = animOut->mBones[i].mNumKeysPosition;
+                for (int j = 0; j < numKeys; j++) {
+                    animOut->mBones[i].mPositonKeys[j].position = ConvertToTargetSystem(animOut->mBones[i].mPositonKeys[j].position,
+                        swapYZ, negX, negY, negZ, negW) / 100.f;
+                }
+
+                numKeys = animOut->mBones[i].mNumKeysScale;
+                for (int j = 0; j < numKeys; j++) {
+                    animOut->mBones[i].mScaleKeys[j].scale = ConvertToTargetSystem(animOut->mBones[i].GetScale(j),
+                        swapYZ, negX, negY, negZ, negW);
+                }
+
+                animOut->mBones[i].restingRotation = ConvertToTargetSystem(animOut->mBones[i].restingRotation,
+                    swapYZ, negX, negY, negZ, negW);
+
+                animOut->mBones[i].mRestingTransform = ConvertToTargetSystem(animOut->mBones[i].mRestingTransform,
+                    swapYZ, negX, negY, negZ, negW);
+            }
+
+            _animationOut->setVariant(QVariant::fromValue(animOut));
+
+            emitDataUpdate(0);
+            emitRunNextNode();
         }
-        
-        for(int i = 0; i < animOut->mBones.size(); i++) {
-            int numKeys = animOut->mBones[i].mNumKeysRotation;
-            for (int j = 0; j < numKeys; j++) {
-                animOut->mBones[i].mRotationKeys[j].orientation = ConvertToTargetSystem(animOut->mBones[i].GetOrientation(j),
-                    swapYZ, negX, negY, negZ, negW);
-            }
+        else {
 
-            numKeys = animOut->mBones[i].mNumKeysPosition;
-            for (int j = 0; j < numKeys; j++) {
-                animOut->mBones[i].mPositonKeys[j].position = ConvertToTargetSystem(animOut->mBones[i].GetPosition(j),
-                    swapYZ, negX, negY, negZ, negW);
-            }
-
-            numKeys = animOut->mBones[i].mNumKeysScale;
-            for (int j = 0; j < numKeys; j++) {
-                animOut->mBones[i].mScaleKeys[j].scale = ConvertToTargetSystem(animOut->mBones[i].GetScale(j),
-                    swapYZ, negX, negY, negZ, negW);
-            }
-
-            animOut->mBones[i].restingRotation = ConvertToTargetSystem(animOut->mBones[i].restingRotation,
-                swapYZ, negX, negY, negZ, negW);
-
-            animOut->mBones[i].mRestingTransform = ConvertToTargetSystem(animOut->mBones[i].mRestingTransform,
-                swapYZ, negX, negY, negZ, negW);
+            emitDataInvalidated(0);
         }
-			
-        _animationOut->setVariant(QVariant::fromValue(animOut));
 
-        emitDataUpdate(0);
-        emitRunNextNode();
     }
-    else {
-
-        emitDataInvalidated(0);
-    }
+	else {
+		emitDataInvalidated(0);
+	}
+    
 
 }
 
