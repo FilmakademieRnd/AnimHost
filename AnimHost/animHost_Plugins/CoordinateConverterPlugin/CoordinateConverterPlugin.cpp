@@ -99,10 +99,12 @@ void CoordinateConverterPlugin::run()
 
 
             //Apply Transform to Root Bone
-            for (int i = 0; i < animOut->mBones[0].mPositonKeys.size(); i++) {
+            for (int i = 0; i < animOut->mBones[1].mPositonKeys.size(); i++) {
 
-                animOut->mBones[0].mRotationKeys[i].orientation = glm::toQuat(activePreset.transformMatrix) * animOut->mBones[0].GetOrientation(i) * animOut->mBones[0].GetOrientation(i);
-                animOut->mBones[0].mPositonKeys[i].position = glm::toQuat(activePreset.transformMatrix) * glm::vec3(animOut->mBones[0].GetPosition(i));
+
+
+                animOut->mBones[1].mRotationKeys[i].orientation = glm::toQuat(activePreset.transformMatrix) * animOut->mBones[0].mRotationKeys[i].orientation * animOut->mBones[1].mRotationKeys[i].orientation;
+                animOut->mBones[1].mPositonKeys[i].position = glm::toQuat(activePreset.transformMatrix) * glm::vec3(animOut->mBones[1].mPositonKeys[i].position);
 
             }
 
@@ -116,7 +118,7 @@ void CoordinateConverterPlugin::run()
                 numKeys = animOut->mBones[i].mNumKeysPosition;
                 for (int j = 0; j < numKeys; j++) {
                     animOut->mBones[i].mPositonKeys[j].position = ConvertToTargetSystem(animOut->mBones[i].mPositonKeys[j].position,
-                        swapYZ, negX, negY, negZ, negW) / 100.f;
+                        swapYZ, negX, negY, negZ, negW);
                 }
 
                 numKeys = animOut->mBones[i].mNumKeysScale;
