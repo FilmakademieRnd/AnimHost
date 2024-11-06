@@ -69,9 +69,11 @@ QString BoneSelectionWidget::GetSelectedBone()
 	return comboBox->currentText();
 }
 
-FolderSelectionWidget::FolderSelectionWidget(QWidget* parent, SelectionType selectionType)
+FolderSelectionWidget::FolderSelectionWidget(QWidget* parent, SelectionType selectionType, QString fileSuffix, QString fileFilter)
 {
 	_selectionType = selectionType;
+	_fileSuffix = fileSuffix;
+	_fileFilter = fileFilter;
 
 	_filePathLayout = new QHBoxLayout();
 
@@ -94,6 +96,7 @@ FolderSelectionWidget::FolderSelectionWidget(QWidget* parent, SelectionType sele
 
 }
 
+
 void FolderSelectionWidget::UpdateDirectory()
 {
 
@@ -104,6 +107,9 @@ void FolderSelectionWidget::UpdateDirectory()
 	}
 	else if (_selectionType == SelectionType::File) {
 		dialog.setFileMode(QFileDialog::ExistingFile);
+		// Set the filter to only allow .json files
+		dialog.setNameFilter(_fileFilter);
+		dialog.setDefaultSuffix(_fileSuffix);
 	}
 
 

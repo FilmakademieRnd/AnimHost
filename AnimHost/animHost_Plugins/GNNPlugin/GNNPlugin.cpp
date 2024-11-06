@@ -271,7 +271,7 @@ QWidget* GNNPlugin::embeddedWidget()
 
 
 
-       _fileSelectionWidget = new FolderSelectionWidget(_widget, FolderSelectionWidget::File);
+       _fileSelectionWidget = new FolderSelectionWidget(_widget, FolderSelectionWidget::File,"onnx","ONNX File (*.onnx)");
 
 
        _mixRootRotation = new QDoubleSpinBox(_widget);

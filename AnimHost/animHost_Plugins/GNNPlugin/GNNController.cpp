@@ -80,12 +80,17 @@ void GNNController::prepareControlTrajectory() {
 void GNNController::prepareInput()
 {
 
-	qDebug() << "Generate Animation with Control Path of size: " << controlPath->mControlPath.size();
-
-	if (controlPath->mControlPath.size() <= 0) {
-		qDebug() << "Control Path is empty";
+	if (!network->IsModelValid()) {
+		qWarning() << "Model not loaded";
 		return;
 	}
+
+	if (controlPath->mControlPath.size() <= 0) {
+		qWarning() << "Control Path is empty";
+		return;
+	}
+
+	qDebug() << "Generate Animation with Control Path of size: " << controlPath->mControlPath.size();
 
 	clearGeneratedData();
 	prepareControlTrajectory();

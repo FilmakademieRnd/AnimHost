@@ -46,7 +46,7 @@ public:
 	~OnnxModel() {};
 
     void SetupEnvironment();
-    void LoadOnnxModel(QString Path);
+    bool LoadOnnxModel(QString Path);
 
     bool IsModelValid() { return bModelValid; };
 

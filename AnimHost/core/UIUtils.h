@@ -130,6 +130,9 @@ public:
 private:
 	QString _selectedDirectory = "";
 
+	QString _fileSuffix = "";
+	QString _fileFilter = "";
+
 	SelectionType _selectionType = SelectionType::Directory;
 
 	QHBoxLayout* _filePathLayout = nullptr;
@@ -137,7 +140,7 @@ private:
 	QPushButton* _pushButton = nullptr;
 
 public:
-	FolderSelectionWidget(QWidget* parent = nullptr, SelectionType selectionType = SelectionType::Directory);
+	FolderSelectionWidget(QWidget* parent = nullptr, SelectionType selectionType = SelectionType::Directory, QString fileSuffix = "", QString fileFilter = "");
 	~FolderSelectionWidget() {};
 
 	void UpdateDirectory();

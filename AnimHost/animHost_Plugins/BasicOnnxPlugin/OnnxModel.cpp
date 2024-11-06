@@ -35,7 +35,7 @@ void OnnxModel::SetupEnvironment()
 
 }
 
-void OnnxModel::LoadOnnxModel(QString Path)
+bool OnnxModel::LoadOnnxModel(QString Path)
 {
     std::wstring modelFilepath = Path.toStdWString();
 
@@ -67,10 +67,11 @@ void OnnxModel::LoadOnnxModel(QString Path)
             networkReport = networkReport + " " + QString::fromStdString(output_names.at(i)) + QString::fromStdString(shape_printer(output_shapes[i]));
         }
         qInfo(networkReport.toLocal8Bit().data());
+        return true;
     }
 
     catch (const Ort::Exception& exception) {
-        qDebug() << "ERROR running model inference: " << exception.what();
+        qCritical() << "ERROR running model inference: " << exception.what();
 
         input_names.clear();
         input_shapes.clear();
@@ -79,6 +80,7 @@ void OnnxModel::LoadOnnxModel(QString Path)
         output_shapes.clear();
 
         bModelValid = false;
+        return false;
     }
     
 
