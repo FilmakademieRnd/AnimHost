@@ -119,7 +119,14 @@ void FolderSelectionWidget::UpdateDirectory()
 	{
 		filePath = dialog.selectedFiles().at(0);
 		if (!filePath.isEmpty()) {
-			SetDirectory(filePath);
+
+			// Get the application's directory
+			QDir appDir(QApplication::applicationDirPath());
+
+			// Make the path relative to the application's directory
+			QString relativePath = appDir.relativeFilePath(filePath);
+
+			SetDirectory(relativePath);
 			Q_EMIT directoryChanged();
 		}
 	}
