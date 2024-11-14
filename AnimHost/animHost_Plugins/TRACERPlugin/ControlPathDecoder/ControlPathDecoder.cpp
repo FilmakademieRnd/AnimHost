@@ -172,8 +172,6 @@ void ControlPathDecoderNode::run()
 
             glm::quat thisRot = this->_pointRotation.at(i).value;
             glm::quat nextRot = this->_pointRotation.at(i + 1).value;
-
-			qDebug() << "C Out" << easeOut << "C In" << easeIn;
             
             std::vector<ControlPoint>* sampledSegment = adaptiveSegmentSampling(thisLoc, outTang, inTang, nextLoc, easeOut, easeIn, thisRot, nextRot, firstFrame, lastFrame);
 
