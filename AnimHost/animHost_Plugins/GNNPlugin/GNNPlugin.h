@@ -61,7 +61,10 @@ private:
     FolderSelectionWidget* _fileSelectionWidget = nullptr;
     QDoubleSpinBox* _mixRootRotation = nullptr;
     QDoubleSpinBox* _mixRootTranslation = nullptr;
-    QDoubleSpinBox* _mixControlPath = nullptr;
+    QDoubleSpinBox* _mixControlPathTranslation = nullptr;
+    QDoubleSpinBox* _mixControlPathRotation = nullptr;
+	QSlider* _networkPhaseBias = nullptr;
+	QSlider* _networkControlBias = nullptr;
 
    
 

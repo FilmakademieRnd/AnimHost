@@ -96,7 +96,7 @@ public:
 		velocities[this->pivotIndex] = updatedVelocity;
 	}
 
-	void ApplyControls(const std::vector<glm::vec2>& ctrlPositions, const std::vector<glm::quat> ctrlOrientations, const std::vector<glm::vec2> ctrlVelocities, float tau = 1.f);
+	void ApplyControls(const std::vector<glm::vec2>& ctrlPositions, const std::vector<glm::quat> ctrlOrientations, const std::vector<glm::vec2> ctrlVelocities, float tauTranslation = 1.f, float tauRotation = 1.f);
 
 	void UpdateFutureRootSeries(const std::vector<glm::mat4>& futureTransforms, const std::vector<glm::vec3>& futureVelocities);
 

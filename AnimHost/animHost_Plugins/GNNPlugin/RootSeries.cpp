@@ -21,7 +21,7 @@
 #include "RootSeries.h"
 #include <algorithm>
 
-void RootSeries::ApplyControls(const std::vector<glm::vec2>& ctrlPositions, const std::vector<glm::quat> ctrlOrientations, const std::vector<glm::vec2> ctrlVelocities, float tau)
+void RootSeries::ApplyControls(const std::vector<glm::vec2>& ctrlPositions, const std::vector<glm::quat> ctrlOrientations, const std::vector<glm::vec2> ctrlVelocities, float tauTranslation, float tauRotation )
 {
 	IncrementSequence(0, numSamples-1);
 
@@ -44,13 +44,14 @@ void RootSeries::ApplyControls(const std::vector<glm::vec2>& ctrlPositions, cons
 	for (int i = pivotIndex; i < numSamples; i++)
 	{
 		float weight = (i - pivotIndex) / float(numSamples- pivotIndex);
-		weight = glm::pow(weight, tau);
+		float wTranslation = glm::pow(weight, tauTranslation);
+		float wRotation = glm::pow(weight, tauRotation);
 
-		tempPositions[i] = glm::mix(tempPositions[i], glm::vec3(ctrlPositions[i - pivotIndex].x, 0.f, ctrlPositions[i - pivotIndex].y), weight);
+		tempPositions[i] = glm::mix(tempPositions[i], glm::vec3(ctrlPositions[i - pivotIndex].x, 0.f, ctrlPositions[i - pivotIndex].y), wTranslation);
 
-		tempRotations[i] = glm::slerp(tempRotations[i], ctrlOrientations[i - pivotIndex], weight);
+		tempRotations[i] = glm::slerp(tempRotations[i], ctrlOrientations[i - pivotIndex], wRotation);
 		//Velocity currently not controlled need refinement
-		tempVelocities[i] = glm::mix(tempVelocities[i], glm::vec3(ctrlVelocities[i - pivotIndex].x, 0.f, ctrlVelocities[i - pivotIndex].y), weight);
+		tempVelocities[i] = glm::mix(tempVelocities[i], glm::vec3(ctrlVelocities[i - pivotIndex].x, 0.f, ctrlVelocities[i - pivotIndex].y), wTranslation);
 	}
 
 	

@@ -208,7 +208,9 @@ void GNNPlugin::run()
                     controller->SetAnimationIn(animation);
                     controller->SetSkeleton(skeleton);
                     controller->SetControlPath(controlPath);
-                    controller->SetMixWeights(_mixRootTranslation->value(), _mixRootRotation->value(), _mixControlPath->value());
+                    controller->SetMixWeights(_mixRootTranslation->value(), _mixRootRotation->value(), 
+                        _mixControlPathRotation->value(), _mixControlPathTranslation->value(),
+                        _networkControlBias->value()/100.f, _networkPhaseBias->value()/100.f);
 
                     //dummy data
            
@@ -284,10 +286,25 @@ QWidget* GNNPlugin::embeddedWidget()
        _mixRootTranslation->setSingleStep(0.01);
        _mixRootTranslation->setValue(0.5);
 
-       _mixControlPath = new QDoubleSpinBox(_widget);
-       _mixControlPath->setRange(0.0, 5.0);
-       _mixControlPath->setSingleStep(0.1);
-       _mixControlPath->setValue(1.0);    
+       _mixControlPathTranslation = new QDoubleSpinBox(_widget);
+       _mixControlPathTranslation->setRange(0.0, 5.0);
+       _mixControlPathTranslation->setSingleStep(0.1);
+       _mixControlPathTranslation->setValue(0.9);
+
+       _mixControlPathRotation = new QDoubleSpinBox(_widget);
+       _mixControlPathRotation->setRange(0.0, 5.0);
+       _mixControlPathRotation->setSingleStep(0.1);
+       _mixControlPathRotation->setValue(0.4);
+       
+	   _networkPhaseBias = new QSlider(Qt::Horizontal, _widget);
+	   _networkPhaseBias->setRange(0, 100);
+       _networkPhaseBias->setTickInterval(_networkPhaseBias->maximum() / 5);
+       _networkPhaseBias->setTickPosition(QSlider::TicksBelow);
+
+	   _networkControlBias = new QSlider(Qt::Horizontal, _widget);
+	   _networkControlBias->setRange(0, 100);
+       _networkControlBias->setTickInterval(_networkControlBias->maximum() / 5);
+       _networkControlBias->setTickPosition(QSlider::TicksBelow);
        
        QVBoxLayout* layout = new QVBoxLayout();
        layout->addWidget(_fileSelectionWidget);
@@ -297,8 +314,16 @@ QWidget* GNNPlugin::embeddedWidget()
        gridLayout->addWidget(_mixRootRotation, 0, 1);
        gridLayout->addWidget(new QLabel("Mix Root Translation"), 1, 0);
        gridLayout->addWidget(_mixRootTranslation, 1, 1);
-       gridLayout->addWidget(new QLabel("Mix Control Path"), 2, 0);
-       gridLayout->addWidget(_mixControlPath, 2, 1);
+       gridLayout->addWidget(new QLabel("Path Position Influence"), 2, 0);
+       gridLayout->addWidget(_mixControlPathTranslation, 2, 1);
+       gridLayout->addWidget(new QLabel("Path Rotation Influence"), 3, 0);
+       gridLayout->addWidget(_mixControlPathRotation, 3, 1);
+
+	   gridLayout->addWidget(new QLabel("Network Phase Bias"), 4, 0);
+	   gridLayout->addWidget(_networkPhaseBias, 4, 1);
+
+	   gridLayout->addWidget(new QLabel("Network Control Bias"), 5, 0);
+	   gridLayout->addWidget(_networkControlBias, 5, 1);
 
        layout->addLayout(gridLayout);
 

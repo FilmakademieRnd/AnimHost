@@ -41,7 +41,7 @@ void PhaseSequence::IncrementPastSequence() {
 	IncrementSequence(0, sequencePivot);
 }
 
-void PhaseSequence::UpdateSequence(const std::vector<std::vector<glm::vec2>>& newPhases, const std::vector<std::vector<float>>& newFrequencies, const std::vector<std::vector<float>>& newAmplitudes)
+void PhaseSequence::UpdateSequence(const std::vector<std::vector<glm::vec2>>& newPhases, const std::vector<std::vector<float>>& newFrequencies, const std::vector<std::vector<float>>& newAmplitudes, float phaseBias)
 {
 
 	float minAmplitude = 0.01f;
@@ -78,7 +78,7 @@ void PhaseSequence::UpdateSequence(const std::vector<std::vector<glm::vec2>>& ne
 			glm::quat nextQuat = glm::quat(glm::vec3(0.f, 1.f, 0.f), glm::vec3(next,0.f));
 			
 
-			glm::quat mixQuat = glm::slerp(updatedQuat, nextQuat, 1.0f);
+			glm::quat mixQuat = glm::slerp(updatedQuat, nextQuat, phaseBias);
 
 			glm::vec3 mixedVec3 = mixQuat * glm::vec3(0.f, 1.f, 0.f);
 

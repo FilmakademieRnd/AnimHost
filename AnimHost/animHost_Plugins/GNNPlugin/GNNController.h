@@ -24,7 +24,11 @@
 #include "PhaseSequence.h"
 #include "RootSeries.h"
 
-//#include <matplot/matplot.h>
+//#define DEBUG_PLOT
+
+#ifdef DEBUG_PLOT
+#include <matplot/matplot.h>
+#endif
 
 
 /**
@@ -87,7 +91,28 @@ private:
     /*Mix Weights*/
     float rootTranslationWeight = 0.5f;
     float rootRotationWeight = 0.5f;
-    float tau = 1.f;
+
+    /**
+     * Exponential mix factor for rotations between predicted future trajectory values and control trajectory values.
+     */
+    float tauRotation = 1.f;
+
+    /**
+	 * Exponential mix factor for positions between predicted future trajectory values and control trajectory values.
+     */
+	float tauTranslation = 1.f;
+
+    /**
+     * Trajectory Update Bias.
+	 * Controls the mix between predicted future trajectory values and the the current trajectory values.
+     */
+    float networkControlBias = 1.f / 3.f;
+
+    /**
+     * Phase Update Bias.
+	 * Controls the mix between predicted phase values and the the calculated phase values (updated by frequency).
+     */
+    float networkPhaseBias = 0.5f;
 
     /* Control Trajectory derived from controll signal(offline process) */
     
@@ -118,8 +143,6 @@ private:
     //generated joint velocity
     std::vector<std::vector<glm::vec3>> genJointVel;
 
-    std::vector<std::vector<glm::vec2>> genPhase2D;
-
     std::shared_ptr<Skeleton> skeleton;
 
     std::shared_ptr<ControlPath> controlPath;
@@ -136,7 +159,10 @@ private:
     std::vector<float> output_values;
 
     //Plotting
-    //matplot::figure_handle figure = nullptr;
+    #ifdef DEBUG_PLOT
+    matplot::figure_handle figure = nullptr;
+    #endif
+
 
 
 public:
@@ -167,8 +193,15 @@ public:
 
     void SetControlPath(std::shared_ptr<ControlPath> path);
 
-    void SetMixWeights(float translation, float rotation, float controlTau) {
-        rootTranslationWeight = translation; rootRotationWeight = rotation; tau = controlTau; }
+    void SetMixWeights(float translation, float rotation, float controlTauRotation, float controlTauTranslation,
+        float networkControlBias = 1./3.f, float networkPhaseBias = 1./3.f) {
+        this->rootTranslationWeight = translation; 
+        this->rootRotationWeight = rotation; 
+        this->tauRotation = controlTauRotation; 
+        this->tauTranslation = controlTauTranslation;
+		this->networkControlBias = networkControlBias;
+		this->networkPhaseBias = networkPhaseBias;
+    }
 
     std::shared_ptr<Animation> GetAnimationOut();
     std::shared_ptr<DebugSignal> GetDebugSignal(){return debugSignal; }

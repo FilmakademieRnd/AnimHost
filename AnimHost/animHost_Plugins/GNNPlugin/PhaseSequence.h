@@ -78,7 +78,7 @@ public:
 	void IncrementSequence(int startIdx = 0, int endIdx = 60);
 	void IncrementPastSequence();
 	void UpdateSequence(const std::vector<std::vector<glm::vec2>>& newPhases, const std::vector<std::vector<float>>& newFrequencies,
-		const std::vector<std::vector<float>>& newAmplitudes);	
+		const std::vector<std::vector<float>>& newAmplitudes, float phaseBias=0.5f);
 	
 	std::vector<glm::vec2> GetFlattenedPhaseSequence();
 
