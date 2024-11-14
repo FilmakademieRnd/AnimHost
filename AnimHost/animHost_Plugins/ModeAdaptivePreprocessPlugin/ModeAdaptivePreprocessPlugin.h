@@ -206,6 +206,13 @@ public:
 
     QWidget* embeddedWidget() override;
 
+    /** Experimental */
+    std::vector<glm::quat> ApplyGaussianFilter(const std::vector<glm::quat>& rotations, const std::vector<float>& weights, float sigma);
+    std::vector<float> ComputeAdaptiveWeights(const std::vector<glm::quat>& rotations, float sigma);
+    std::vector<glm::quat> SmoothRootRotations(const std::vector<glm::quat>& rootRotations, float timeWindow);
+
+    std::vector<glm::quat> GaussianFilterQuaternions(const std::vector<glm::quat>& quaternions, float sigma);
+
 
 private:
     void clearExistingData();
@@ -217,6 +224,7 @@ private Q_SLOTS:
     void onRootBoneSelectionChanged(const int text);
     void onFolderSelectionChanged();
     void onOverrideCheckbox(int state);
+    
 };
 
 #endif // MODEADAPTIVEPREPROCESSPLUGINPLUGIN_H

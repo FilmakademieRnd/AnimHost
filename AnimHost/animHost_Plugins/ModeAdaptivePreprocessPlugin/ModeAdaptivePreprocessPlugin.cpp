@@ -342,6 +342,15 @@ std::vector<glm::mat4> ModeAdaptivePreprocessPlugin::prepareBipedRoot(std::share
 
 	std::vector<glm::quat> rootRot = prepareRootRotation(poseSequenceIn, skeleton);
 
+
+	//std::vector<glm::quat> smoothedRootRot = SmoothRootRotations(rootRot,120);
+
+	std::vector<glm::quat> smoothedRootRot = rootRot;
+
+	for (int i = 0; i < 5; i++) {
+		smoothedRootRot = GaussianFilterQuaternions(smoothedRootRot, 30);
+	}
+
 	std::vector<glm::vec3> rootPos = std::vector<glm::vec3>(numFrames);
 
 	for (int i = 0; i < numFrames; i++) {
@@ -352,7 +361,7 @@ std::vector<glm::mat4> ModeAdaptivePreprocessPlugin::prepareBipedRoot(std::share
 
 	for (int i = 0; i < numFrames; i++) {
 		glm::vec3 pos = glm::vec3(rootPos[i].x, 0.f,rootPos[i].z);
-		glm::quat rot = rootRot[i];
+		glm::quat rot = smoothedRootRot[i];
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * glm::toMat4(rot);
 
@@ -926,4 +935,94 @@ void ModeAdaptivePreprocessPlugin::onOverrideCheckbox(int state)
 	bOverwriteDataExport = state;
 }
 
+
+// Experimental
+
+// Helper function to apply Gaussian filter
+std::vector<glm::quat> ModeAdaptivePreprocessPlugin::ApplyGaussianFilter(const std::vector<glm::quat>& rotations, const std::vector<float>& weights, float sigma) {
+	std::vector<glm::quat> smoothedRotations(rotations.size());
+
+	int kernelRadius = static_cast<int>(3 * sigma); // Kernel size based on standard deviation
+	int frameCount = rotations.size();
+
+	for (int i = 0; i < frameCount; i++) {
+		glm::quat weightedSum(0, 0, 0, 0);
+		float totalWeight = 0.0f;
+
+		for (int j = -kernelRadius; j <= kernelRadius; j++) {
+			int idx = glm::clamp(i + j, 0, frameCount - 1);
+			float weight = std::exp(-(j * j) / (2 * sigma * sigma)) * weights[idx];
+
+			weightedSum += weight * rotations[idx];
+			totalWeight += weight;
+		}
+
+		smoothedRotations[i] = glm::normalize(weightedSum / totalWeight);
+	}
+
+	return smoothedRotations;
+}
+
+// Function to compute adaptive weights
+std::vector<float> ModeAdaptivePreprocessPlugin::ComputeAdaptiveWeights(const std::vector<glm::quat>& rotations, float sigma) {
+	std::vector<float> weights(rotations.size());
+	int frameCount = rotations.size();
+
+	for (int i = 1; i < frameCount; i++) {
+		glm::quat delta = glm::inverse(rotations[i - 1]) * rotations[i];
+		float angle = 2.0f * std::acos(glm::clamp(delta.w, -1.0f, 1.0f));
+
+		// Use the magnitude of the derivative as the weight
+		weights[i] = std::exp(-angle * angle / (2 * sigma * sigma));
+	}
+
+	weights[0] = weights[1]; // Initialize the first weight
+	return weights;
+}
+
+// Main function to adaptively smooth root rotations
+std::vector<glm::quat> ModeAdaptivePreprocessPlugin::SmoothRootRotations(const std::vector<glm::quat>& rootRotations, float timeWindow) {
+	// Compute the standard deviation for the Gaussian filter
+	float sigma = timeWindow / 4.0f;
+
+	// Step 1: Compute the adaptive weights
+	std::vector<float> weights = ComputeAdaptiveWeights(rootRotations, sigma);
+
+	// Step 2: Apply the Gaussian filter using the adaptive weights
+	std::vector<glm::quat> smoothedRotations = ApplyGaussianFilter(rootRotations, weights, sigma);
+
+	return smoothedRotations;
+}
+
+
+// Gaussian filter for quaternions
+std::vector<glm::quat> ModeAdaptivePreprocessPlugin::GaussianFilterQuaternions(const std::vector<glm::quat>& quaternions, float sigma) {
+	std::vector<glm::quat> smoothedQuaternions(quaternions.size());
+
+	// Calculate the kernel radius based on the standard deviation
+	int kernelRadius = static_cast<int>(std::ceil(3.0f * sigma));
+
+	for (int i = 0; i < quaternions.size(); ++i) {
+		glm::quat weightedSum(0.0f, 0.0f, 0.0f, 0.0f);
+		float totalWeight = 0.0f;
+
+		// Iterate over the kernel window centered around the current sample
+		for (int j = -kernelRadius; j <= kernelRadius; ++j) {
+			int idx = std::clamp(i + j, 0, static_cast<int>(quaternions.size()) - 1);
+			float distance = static_cast<float>(j);
+
+			// Calculate Gaussian weight
+			float weight = std::exp(-(distance * distance) / (2.0f * sigma * sigma));
+
+			// Accumulate the weighted quaternion using SLERP for interpolation
+			weightedSum = glm::slerp(weightedSum, quaternions[idx], weight);
+			totalWeight += weight;
+		}
+
+		// Normalize the result and store it
+		smoothedQuaternions[i] = glm::normalize(weightedSum);
+	}
+
+	return smoothedQuaternions;
+}
 
