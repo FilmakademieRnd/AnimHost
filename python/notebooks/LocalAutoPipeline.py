@@ -33,7 +33,7 @@ df_velocities.set_index(["SeqId","Frame"],inplace = True)
 num_sequences = df_velocities.index.get_level_values('SeqId').nunique()
 print(num_sequences)
 #prepare filter
-fc = 4
+fc = 4.5
 w = fc / (60/2) 
 print(w)
 b, a = scipy.signal.butter(5, w, 'low')

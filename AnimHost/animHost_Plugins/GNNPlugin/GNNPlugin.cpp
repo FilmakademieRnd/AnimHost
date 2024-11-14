@@ -271,10 +271,7 @@ QWidget* GNNPlugin::embeddedWidget()
     if (!_widget) {
        _widget = new QWidget();
 
-
-
        _fileSelectionWidget = new FolderSelectionWidget(_widget, FolderSelectionWidget::File,"onnx","ONNX File (*.onnx)");
-
 
        _mixRootRotation = new QDoubleSpinBox(_widget);
        _mixRootRotation->setRange(0.0, 1.0);
@@ -298,11 +295,13 @@ QWidget* GNNPlugin::embeddedWidget()
        
 	   _networkPhaseBias = new QSlider(Qt::Horizontal, _widget);
 	   _networkPhaseBias->setRange(0, 100);
+	   _networkPhaseBias->setValue(50); 
        _networkPhaseBias->setTickInterval(_networkPhaseBias->maximum() / 5);
        _networkPhaseBias->setTickPosition(QSlider::TicksBelow);
 
 	   _networkControlBias = new QSlider(Qt::Horizontal, _widget);
 	   _networkControlBias->setRange(0, 100);
+	   _networkControlBias->setValue(33);
        _networkControlBias->setTickInterval(_networkControlBias->maximum() / 5);
        _networkControlBias->setTickPosition(QSlider::TicksBelow);
        
@@ -327,15 +326,9 @@ QWidget* GNNPlugin::embeddedWidget()
 
        layout->addLayout(gridLayout);
 
-      
        _widget->setLayout(layout);
 
        connect(_fileSelectionWidget, &FolderSelectionWidget::directoryChanged, this, &GNNPlugin::onFileSelectionChanged);
-
-
-
-
-
 
        _widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
            "QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"

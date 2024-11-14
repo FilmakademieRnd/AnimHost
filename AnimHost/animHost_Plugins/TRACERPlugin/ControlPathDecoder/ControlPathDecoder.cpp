@@ -172,6 +172,8 @@ void ControlPathDecoderNode::run()
 
             glm::quat thisRot = this->_pointRotation.at(i).value;
             glm::quat nextRot = this->_pointRotation.at(i + 1).value;
+
+			qDebug() << "C Out" << easeOut << "C In" << easeIn;
             
             std::vector<ControlPoint>* sampledSegment = adaptiveSegmentSampling(thisLoc, outTang, inTang, nextLoc, easeOut, easeIn, thisRot, nextRot, firstFrame, lastFrame);
 
@@ -180,8 +182,8 @@ void ControlPathDecoderNode::run()
             
             // For every segnment which is not the last one,
             // remove its last frame because the first element of the next segment will duplicate it
-            if (path.size() > 0 && i < this->_pointLocation.size() - 2)
-                path.pop_back();
+            /*if (path.size() > 0 && i < this->_pointLocation.size() - 2)
+                path.pop_back();*/
         }
 
         // TODO: If path is cyclic, evaluate last-to-first segment
@@ -220,14 +222,14 @@ std::vector<ControlPoint>* ControlPathDecoderNode::adaptiveSegmentSampling(glm::
                                                                            glm::quat        quat1,      glm::quat   quat2,
                                                                            int              frame1,     int         frame2,
                                                                            ControlPoint*    lastCP) {
-    int nSamples = frame2 - frame1 + 1;
+    int nSamples = frame2 - frame1;
     std::vector<ControlPoint>* sampledSegment = new std::vector<ControlPoint>();
     std::vector<float> timings = adaptiveTimingsResampling(easeFrom/100, easeTo/100, nSamples);
     
     // Assuming that size of timings == nSamples
     for (int i = 0; i < nSamples; i++) {
         glm::vec3 sampledPos = sampleBezier(knot1, handle1, handle2, knot2, timings[i]);
-        glm::quat sampledRot = glm::slerp(quat1, quat2, timings[i]);
+        glm::quat sampledRot = glm::normalize(glm::slerp(quat1, quat2, timings[i]));
         //float vel = glm::length(sampledSegment->end()->position - sampledPos) / (1.f / 60.f);
 
         // build Control Point 

@@ -369,6 +369,11 @@ void AnimHostMessageSender::SerializeAnimation(std::shared_ptr<Animation> animDa
         int boneID = character->skinnedMeshList.at(0).boneMapIDs.at(i);
         std::string boneName = sceneNodeList->mSceneNodeObjectSequence.at(boneID).objectName;
 
+		// HOTFIX Accomodate Survivor specific special case for heel_02_R and heel_02_L
+		if (boneName.compare("heel_02_R") == 0 || boneName.compare("heel_02_L") == 0) {
+			qDebug() << "heel found";
+			continue;
+		}
 
         int animDataBoneID = -1;
         for (int j = 0; j < animData->mBones.size(); j++) {
