@@ -123,6 +123,30 @@ public:
 	std::vector<glm::mat4> GetTransforms() const {
 		return transforms;
 	}
+
+	// Helper Functions
+
+	float MapAlphaToMixValue(float alpha, float maxTau = 10.f) {
+		float minTau = 1.f / maxTau;
+
+		float tau = minTau * glm::pow(maxTau / minTau, alpha);
+
+		return tau;
+	}
+
+	float CalulateMixWeight(float progress, float tau) {
+		float weight = 0.f;
+
+		if (tau >= 1.f) {
+			weight = glm::pow(progress, tau);
+		}
+		else {
+			//Asymptotic function for tau < 1
+			weight = 1.f - glm::pow(1 - progress, 1.f / tau);
+		}
+
+		return weight;
+	}
 };
 
 #endif // ROOTSERIES_H

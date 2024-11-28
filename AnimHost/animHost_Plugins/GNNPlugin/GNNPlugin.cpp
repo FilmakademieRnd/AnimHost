@@ -284,12 +284,12 @@ QWidget* GNNPlugin::embeddedWidget()
        _mixRootTranslation->setValue(0.5);
 
        _mixControlPathTranslation = new QDoubleSpinBox(_widget);
-       _mixControlPathTranslation->setRange(0.0, 5.0);
+       _mixControlPathTranslation->setRange(0.0, 1.0);
        _mixControlPathTranslation->setSingleStep(0.1);
        _mixControlPathTranslation->setValue(0.9);
 
        _mixControlPathRotation = new QDoubleSpinBox(_widget);
-       _mixControlPathRotation->setRange(0.0, 5.0);
+       _mixControlPathRotation->setRange(0.0, 1.0);
        _mixControlPathRotation->setSingleStep(0.1);
        _mixControlPathRotation->setValue(0.4);
        

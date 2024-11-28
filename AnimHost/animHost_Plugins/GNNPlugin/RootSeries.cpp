@@ -39,13 +39,16 @@ void RootSeries::ApplyControls(const std::vector<glm::vec2>& ctrlPositions, cons
 
 	std::vector<glm::vec3> tempVelocities = velocities;
 
+	float tauT = MapAlphaToMixValue(tauTranslation);
+	float tauR = MapAlphaToMixValue(tauRotation);
 
 	//apply the controls from pivot onwards
 	for (int i = pivotIndex; i < numSamples; i++)
 	{
-		float weight = (i - pivotIndex) / float(numSamples- pivotIndex);
-		float wTranslation = glm::pow(weight, tauTranslation);
-		float wRotation = glm::pow(weight, tauRotation);
+		float progress = (i - pivotIndex) / float(numSamples- pivotIndex);
+
+		float wTranslation = CalulateMixWeight(progress, tauT);
+		float wRotation = CalulateMixWeight(progress, tauR);
 
 		tempPositions[i] = glm::mix(tempPositions[i], glm::vec3(ctrlPositions[i - pivotIndex].x, 0.f, ctrlPositions[i - pivotIndex].y), wTranslation);
 
