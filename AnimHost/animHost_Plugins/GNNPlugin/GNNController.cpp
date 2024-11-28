@@ -215,6 +215,12 @@ void GNNController::prepareInput()
 		phaseSequence.IncrementPastSequence();
 		phaseSequence.UpdateSequence(outPhase2D, outFrequency, outAmplitude, networkPhaseBias);
 
+		// lerp between previous and current joint positions
+
+		for (int i = 0; i < outJointFrame.jointPos.size(); i++) {
+			outJointFrame.jointPos[i] = glm::mix(inJointFrame.jointPos[i] + (outJointFrame.jointVel[i]*100.f)/60.f, outJointFrame.jointPos[i], 0.5);
+		}
+
 		genJointPos.push_back(outJointFrame.jointPos);
 		genJointRot.push_back(outJointFrame.jointRot);
 		genJointVel.push_back(outJointFrame.jointVel);
