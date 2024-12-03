@@ -40,7 +40,7 @@ Follow these steps to set up the project on your local machine:
 AnimHost is a development by [Filmakademie Baden-Wuerttemberg](https://filmakademie.de/), [Animationsinstitut R&D Labs](http://research.animationsinstitut.de/) in the scope of the EU funded project [MAX-R](https://max-r.eu/) (101070072).
 
 ## Funding
-![Animationsinstitut R&D](/doc/resources/EN_FundedbytheEU_RGB_POS_rs.png)
+![Animationsinstitut R&D](/doc/resources/EN_Co-fundedbytheEU_RGB_POS.png)
 
 This project has received funding from the European Union's Horizon Europe Research and Innovation Programme under Grant Agreement No 101070072 MAX-R.
 
