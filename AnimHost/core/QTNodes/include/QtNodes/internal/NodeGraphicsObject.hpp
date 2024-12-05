@@ -32,9 +32,6 @@ public:
     BasicGraphicsScene *nodeScene() const;
 
 
-    //Change AI Simon H.
-    void updateQWidget();
-
     NodeId nodeId() { return _nodeId; }
 
     NodeId nodeId() const { return _nodeId; }
@@ -53,6 +50,8 @@ public:
 
     /// Repaints the node once with reacting ports.
     void reactToConnection(ConnectionGraphicsObject const *cgo);
+
+    void updateQWidgetEmbedPos();
 
 protected:
     void paint(QPainter *painter,
