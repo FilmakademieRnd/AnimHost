@@ -19,6 +19,7 @@ qt_add_library(AnimHostCore SHARED
     animhostcore_global.h
     TimeSeries.h
     Logger.h Logger.cpp
+    UI/DynamicListWidget.h UI/DynamicListWidget.cpp
 )
 
 
@@ -32,6 +33,7 @@ target_include_directories(AnimHostCore PUBLIC
     ../animHost_Plugins/PluginInterface
     ./PluginNodeInterface
     ./PluginNodeCollectionInterface
+    ./UI
     ./
 )
 

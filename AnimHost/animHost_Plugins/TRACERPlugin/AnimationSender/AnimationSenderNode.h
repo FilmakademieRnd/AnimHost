@@ -43,6 +43,7 @@
 
 #include "../TRACERPlugin_global.h"
 #include "../TRACERGlobalTimer.h"
+#include "../TRACERUpdateMessage.h"
 #include "ZMQMessageHandler.h"
 #include <QMetaType>
 #include <QThread>
@@ -62,6 +63,8 @@ class AnimHostMessageSender;
 class TRACERPLUGINSHARED_EXPORT AnimationSenderNode : public PluginNodeInterface
 {
     Q_OBJECT
+
+    Q_PROPERTY(int sendingMode MEMBER _sendingMode)
 private:
     // UI Elements
     QWidget* widget = nullptr;                                //!< UI container element
@@ -99,6 +102,10 @@ private:
     std::weak_ptr<AnimNodeData<SceneNodeObjectSequence>> _sceneNodeListIn;  //!< A description of the scene of the TRACER client. Necessary to match animation data to character rig - **Data set by UI PortIn**
 
     int validData = -1;
+
+	int _sendingMode = 0;
+
+
 
     /*
     *

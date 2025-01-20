@@ -25,6 +25,8 @@
 
 #include <QObject>
 #include <QString>
+#include <QVariant>
+#include <QVariantMap>
 #include <QQuaternion>
 #include <QMetaType>
 #include <QUuid>
@@ -558,8 +560,16 @@ class ANIMHOSTCORESHARED_EXPORT RunSignal
 {
 
 public:
+    QVariantMap metadata;
+
+public:
 
     RunSignal() {};
+
+	RunSignal(QVariantMap meta) : metadata(meta) {};
+
+	RunSignal(const RunSignal& o) : metadata(o.metadata) {};
+
 
     COMMONDATA(runSignal, Run)
 
@@ -606,6 +616,21 @@ class ANIMHOSTCORESHARED_EXPORT ControlPath : public Sequence {
     std::shared_ptr<std::vector<ControlPoint>> getPath() { return std::make_shared<std::vector<ControlPoint>>(mControlPath); };
 
     void CreateSpline();
+
+    //! Static function to create a ControlPath with incremental positions
+    static ControlPath CreateTestControlPath(int totalFrames, glm::vec3 startPosition, glm::vec3 positionIncrement, float velocity) {
+        ControlPath controlPath;
+        controlPath.frameCount = totalFrames;
+
+        glm::quat constantOrientation = glm::quat(1, 0, 0, 0); // Identity quaternion
+
+        for (int frame = 0; frame < totalFrames; ++frame) {
+            glm::vec3 currentPosition = startPosition + (positionIncrement * static_cast<float>(frame));
+            controlPath.mControlPath.emplace_back(currentPosition, constantOrientation, frame, velocity);
+        }
+
+        return controlPath;
+    }
 
     COMMONDATA(controlPath, ControlPath)
 

@@ -27,7 +27,13 @@
 #include <QWidget>
 #include <QPainter>
 #include <QVector>
+#include <DynamicListWidget.h>
 #include <cmath>
+
+
+namespace UIUtils {
+	class DynamicListWidget;
+}
 
 
 class ANIMHOSTCORESHARED_EXPORT StyleSheet {
@@ -163,7 +169,7 @@ private:
 
 	QGridLayout* layout = nullptr;
 	QLabel* header = nullptr;
-	QLineEdit* lineEdits[4][4];
+	QDoubleSpinBox* lineEdits[4][4];
 
 public:
 	MatrixEditorWidget(QWidget* parent = nullptr);

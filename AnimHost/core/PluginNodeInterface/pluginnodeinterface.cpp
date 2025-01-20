@@ -66,13 +66,32 @@ std::shared_ptr<NodeData> PluginNodeInterface::outData(QtNodes::PortIndex port)
 	}
 }
 
+void PluginNodeInterface::propagateMetadata(const QVariantMap& metadata)
+{
+	for (auto it = metadata.begin(); it != metadata.end(); ++it) {
+		const QByteArray key = it.key().toUtf8();
+
+		if (metaObject()->indexOfProperty(key) != -1) {
+			//qDebug() << "Setting property: " << key << " to value: " << it.value();
+			setProperty(key, it.value());
+		} else {
+			//qDebug() << "No property found for key: " << it.key();
+		}
+	}
+
+}
+
 void PluginNodeInterface::setInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex)
 {	
 	if (portIndex == 0 && hasInputRunSignal()) {
 		if (data) {
-			auto runSignal = std::static_pointer_cast<AnimNodeData<RunSignal>>(data);
-			if (runSignal)
+			_runSignalIncoming = std::static_pointer_cast<AnimNodeData<RunSignal>>(data);
+			if (_runSignalIncoming) {
+				QVariantMap metadata = _runSignalIncoming->getData()->metadata;
+				propagateMetadata(metadata);
 				run();
+			}
+				
 		}
 		return;
 	}
@@ -95,16 +114,22 @@ void PluginNodeInterface::emitDataUpdate(QtNodes::PortIndex portIndex)
 	Q_EMIT dataUpdated(portIndex);
 }
 
-void PluginNodeInterface::emitRunNextNode()
+void PluginNodeInterface::emitRunNextNode(QVariantMap* parameter)
 {
 	if (hasOutputRunSignal()) {
-		if (_runSignal) {
-			Q_EMIT dataUpdated(0);
-		} 
-		else {
+		if (!_runSignal) {
 			_runSignal = std::make_shared<AnimNodeData<RunSignal>>();
-			Q_EMIT dataUpdated(0);
+		} 
+
+		//If available, copy parameter
+		if (parameter) {
+			_runSignal->getData()->metadata = *parameter;
 		}
+		else if (_runSignalIncoming) {
+			_runSignal->getData()->metadata = _runSignalIncoming->getData()->metadata;
+		}
+
+		Q_EMIT dataUpdated(0);
 	}
 	else {
 		qDebug() << "Node has no output run signal.";

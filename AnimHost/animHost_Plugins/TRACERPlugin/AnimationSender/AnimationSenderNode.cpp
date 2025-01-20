@@ -133,6 +133,8 @@ void AnimationSenderNode::run() {
 
     qDebug() << "AnimationSenderNode running...";
 
+	qWarning() << "Mode: " << _sendingMode;
+
     if (!zeroMQSenderThread->isRunning()) {
         msgSender->requestStart();
         zeroMQSenderThread->start();
@@ -159,6 +161,25 @@ void AnimationSenderNode::run() {
 
 		// Set animation, character and scene data (necessary for creating a pose update message) in the message sender object
 		msgSender->setAnimationAndSceneData(sp_animation->getData(), sp_character->getData(), sp_sceneNodeList->getData());
+
+
+        if(_sendingMode == AnimHostRPCType::STOP){
+			msgSender->setStreamAnimation(AnimHostMessageSender::STREAMSTOP);
+        }
+
+        if (_sendingMode == AnimHostRPCType::BLOCK) {
+			_streamCheck->setChecked(false);
+        }
+
+		if (_sendingMode == AnimHostRPCType::STREAM) {
+			_streamCheck->setChecked(true);
+		}
+
+		if (_sendingMode == AnimHostRPCType::STREAM_LOOP) {
+			_streamCheck->setChecked(true);
+			_loopCheck->setChecked(true);
+		}
+
 
 		if (_streamCheck->isChecked()) {
 			// Start Streaming
