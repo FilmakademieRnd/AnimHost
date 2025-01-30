@@ -65,6 +65,7 @@ void GNNController::prepareControlTrajectory() {
 		ctrlTrajPos.push_back(glm::vec2(p.position.x, p.position.z) * 100.f);
 		ctrlTrajForward.push_back(p.lookAt);
 
+
 		glm::vec2 prevPos = ctrlTrajPos[glm::max(0, idx - 1)];
 		glm::vec2 currPos = ctrlTrajPos[idx];
 
@@ -94,7 +95,11 @@ void GNNController::prepareInput()
 
 	if (controlPath->mControlPath.size() <= 0) {
 		qWarning() << "Control Path is empty";
-		return;
+		qWarning() << "Use Test Control Path";
+
+		controlPath = std::make_shared<ControlPath>(ControlPath::CreateTestControlPath(360, glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.0f, 0.0f, 0.07f), 0.f));
+
+		//return;
 	}
 
 	qDebug() << "Generate Animation with Control Path of size: " << controlPath->mControlPath.size();
@@ -169,7 +174,7 @@ void GNNController::prepareInput()
 			while (futurePath.size() < desiredLength) {
 				futurePath.push_back(lastPos);
 				futureForward.push_back(lastForward);
-				futureVelocity.push_back(lastVelocity);
+				futureVelocity.push_back(glm::vec2(0.f,0.f));
 			}
 		}
 
@@ -243,12 +248,14 @@ void GNNController::prepareInput()
 		root = MathUtils::MixTransform(inferredRoot, nextControlRoot, rootTranslationWeight, rootRotationWeight, 1.f);
 
 		rootSeries.UpdateTransform(root, 60);
+;
 
 		FrameRange frameRange(13, 60, 60, 7); //start at pivot + 1 -> keyindex: 7
 		int tmpIdx = 0; 
 		
 		for (int i : frameRange) {
 
+			//qDebug() << "Updating Frame: " << i;
 			auto inferedPos = outTrajFrame.pos[tmpIdx];
 			auto inferedDir = outTrajFrame.dir[tmpIdx];
 			auto inferedVel = outTrajFrame.vel[tmpIdx];
@@ -262,7 +269,7 @@ void GNNController::prepareInput()
 			rootSeries.UpdateTransform(t, i);
 
 			glm::vec3 newvelocity = root * glm::vec4(inferedVel.x, 0.0, inferedVel.y, 0.0);
-			auto v = glm::mix(rootSeries.GetVelocity(i), newvelocity, networkControlBias);
+			//auto v = glm::mix(rootSeries.GetVelocity(i), newvelocity, networkControlBias);
 			rootSeries.UpdateVelocity(newvelocity, i);
 
 			tmpIdx++;
@@ -275,7 +282,7 @@ void GNNController::prepareInput()
 		genRootForward.push_back(glm::toQuat(glm::mat4(root)));
 		
 		if (genIdx % 10 == 0) {
-			UpdatePlotData(inTrajFrame, outTrajFrame, rootSeries, _testRootSeries, futurePath, ctrlTrajPos);
+			UpdatePlotData(inTrajFrame, outTrajFrame, rootSeries, _testRootSeries, futurePath, ctrlTrajPos, ctrlTrajForward);
 			DrawPlot();
 		}
 	}
@@ -340,6 +347,13 @@ void GNNController::BuildInputTensor(const TrajectoryFrameData& inTrajFrame,
 		input_values.push_back(inTrajFrame.vel[i].y);
 
 		input_values.push_back(inTrajFrame.speed[i]);
+	}
+
+	//print max joint hight
+
+	float max = 0.f;
+	for (int i = 0; i < inJointFrame.jointPos.size(); i++) {
+		max = glm::max(max, inJointFrame.jointPos[i].y);
 	}
 
 	for (int i = 0; i < inJointFrame.jointPos.size(); i++) {
@@ -628,7 +642,7 @@ void GNNController::InitPlot() {
 #endif // DEBUG_PLOT
 }
 
-void GNNController::UpdatePlotData(const TrajectoryFrameData& inTrajFrame, const TrajectoryFrameData& outTrajFrame, const RootSeries& rootSeries, const RootSeries& inRootSeries, const std::vector<glm::vec2>& futurePath, const std::vector<glm::vec2>& fullControlPath) {
+void GNNController::UpdatePlotData(const TrajectoryFrameData& inTrajFrame, const TrajectoryFrameData& outTrajFrame, const RootSeries& rootSeries, const RootSeries& inRootSeries, const std::vector<glm::vec2>& futurePath, const std::vector<glm::vec2>& fullControlPath, const std::vector<glm::quat>& fullControlDir) {
 #ifdef DEBUG_PLOT
 		// (BLUE) Plot 2D Root Trajectory, part of the network input. Relative to the characters current root transform 
 		std::vector<double> xin(inTrajFrame.pos.size());
@@ -660,8 +674,10 @@ void GNNController::UpdatePlotData(const TrajectoryFrameData& inTrajFrame, const
 		std::transform(rootTransforms.begin(), rootTransforms.end(), yRootIn.begin(), [&](glm::mat4 t) {return t[3][2]; });
 			
 		auto axRootTransform = matplot::subplot(figure, 2, 2, 1, true);
+		/*matplot::xlim(axRootTransform, { -600, 600 });
+		matplot::ylim(axRootTransform, { -600, 600 });*/
 
-		axRootTransform->scatter(xRootIn, yRootIn);
+		axRootTransform->scatter(xRootIn, yRootIn)->marker_color({ 0.f, .5f, .5f }).marker_style(matplot::line_spec::marker_style::cross);
 
 		// (RED) Plot Root Series Transform, basis for the network output. In world space.
 		auto inRootTransforms = inRootSeries.GetTransforms();
@@ -694,8 +710,36 @@ void GNNController::UpdatePlotData(const TrajectoryFrameData& inTrajFrame, const
 
 		matplot::hold(axRootTransform, true);
 		auto l = axRootTransform->scatter(controlPathX, controlPathY);
-		l->marker_style(matplot::line_spec::marker_style::cross);
+		l->marker_style(matplot::line_spec::marker_style::diamond);
 		matplot::hold(axRootTransform, false);
+
+		glm::vec4 forward{ 0.0,0.0,1.0, 0.0};
+		std::vector<double> controlPathDirX(fullControlPath.size());
+		std::vector<double> controlPathDirY(fullControlPath.size());
+		for (int i = 0; i < fullControlDir.size(); i++) {
+			glm::mat4 rot = glm::toMat4(fullControlDir[i]);
+			glm::vec3 charFwrd = rot * forward;
+			auto dirX = charFwrd.x;
+			auto dirY = charFwrd.z;
+			controlPathDirX[i] = dirX;
+			controlPathDirY[i] = dirY;
+		}
+
+		std::vector <std::vector<double>> x = { controlPathX };
+		std::vector <std::vector<double>> y = { controlPathY };
+		std::vector <std::vector<double>> dx = { controlPathDirX };
+		std::vector <std::vector<double>> dy = { controlPathDirY };
+		matplot::vector_2d u =
+			matplot::transform(x, dx, [](double x, double dx) { return dx*30; });
+		matplot::vector_2d v =
+			matplot::transform(y, dy, [](double y, double dy) { return dy*30; });
+
+	
+
+		/*matplot::hold(axRootTransform, true);
+		axRootTransform->quiver(x, y, u, v,0.f);
+		matplot::hold(axRootTransform, false);*/
+
 
 
 		std::vector<float> freq = phaseSequence.GetFrequencySequence(0);
@@ -706,7 +750,7 @@ void GNNController::UpdatePlotData(const TrajectoryFrameData& inTrajFrame, const
 
 		auto ax2DPhase = matplot::subplot(figure, 2, 2, 3, true);
 		matplot::xlim(ax2DPhase, { -4, 4 });
-		matplot::ylim(ax2DPhase, { -4, 4 });
+		matplot::ylim(ax2DPhase, { -4, 4});
 
 		auto phases2D = phaseSequence.GetFlattenedPhaseSequence();
 		std::vector<double> xphase(phases2D.size());
@@ -738,7 +782,44 @@ void GNNController::UpdatePlotData(const TrajectoryFrameData& inTrajFrame, const
 		ax2DPhase->plot(filteredXphase, filteredYphase);
 		matplot::hold(ax2DPhase, false);
 
+		filteredXphase.clear();
+		filteredYphase.clear();
+		for (size_t i = 2; i < std::min(xphase.size(), yphase.size()); i += 5) {
+			filteredXphase.push_back(xphase[i]);
+			filteredYphase.push_back(yphase[i]);
+		}
+
+		matplot::hold(ax2DPhase, true);
+		ax2DPhase->plot(filteredXphase, filteredYphase);
+		matplot::hold(ax2DPhase, false);
+
+		filteredXphase.clear();
+		filteredYphase.clear();
+		for (size_t i = 3; i < std::min(xphase.size(), yphase.size()); i += 5) {
+			filteredXphase.push_back(xphase[i]);
+			filteredYphase.push_back(yphase[i]);
+		}
+
+		matplot::hold(ax2DPhase, true);
+		ax2DPhase->plot(filteredXphase, filteredYphase);
+		matplot::hold(ax2DPhase, false);
+
+		filteredXphase.clear();
+		filteredYphase.clear();
+		for (size_t i = 4; i < std::min(xphase.size(), yphase.size()); i += 5) {
+			filteredXphase.push_back(xphase[i]);
+			filteredYphase.push_back(yphase[i]);
+		}
+
+		matplot::hold(ax2DPhase, true);
+		ax2DPhase->plot(filteredXphase, filteredYphase);
+		matplot::hold(ax2DPhase, false);
+
 		figure->draw();
+
+
+		//auto [x, y] = matplot::meshgrid(matplot::iota(0, 0.2, 2), matplot::iota(0, 0.2, 2));
+		
 #endif
 }
 

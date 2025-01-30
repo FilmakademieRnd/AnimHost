@@ -27,6 +27,27 @@ QJsonObject GNNNode::save() const
 	if (_fileSelectionWidget) {
 		modelJson["fileSelection"] = _fileSelectionWidget->GetSelectedDirectory();
 	}
+
+    if (_mixRootTranslation) {
+        modelJson["mixRootTranslation"] = _mixRootTranslation->value();
+    }
+    if (_mixRootRotation) {
+        modelJson["mixRootRotation"] = _mixRootRotation->value();
+    }
+    if (_mixControlPathRotation) {
+        modelJson["mixControlPathRotation"] = _mixControlPathRotation->value();
+    }
+    if (_mixControlPathTranslation) {
+        modelJson["mixControlPathTranslation"] = _mixControlPathTranslation->value();
+    }
+    if (_networkControlBias) {
+        modelJson["networkControlBias"] = _networkControlBias->value() / 100.f;
+    }
+    if (_networkPhaseBias) {
+        modelJson["networkPhaseBias"] = _networkPhaseBias->value() / 100.f;
+    }
+
+
 	return modelJson;
 }
 
@@ -42,6 +63,26 @@ void GNNNode::load(QJsonObject const& p)
             _widget->updateGeometry();
         }
 	}
+
+    // Load additional properties from the JSON object
+    if (p.contains("mixRootTranslation") && _mixRootTranslation) {
+        _mixRootTranslation->setValue(p["mixRootTranslation"].toDouble());
+    }
+    if (p.contains("mixRootRotation") && _mixRootRotation) {
+        _mixRootRotation->setValue(p["mixRootRotation"].toDouble());
+    }
+    if (p.contains("mixControlPathRotation") && _mixControlPathRotation) {
+        _mixControlPathRotation->setValue(p["mixControlPathRotation"].toDouble());
+    }
+    if (p.contains("mixControlPathTranslation") && _mixControlPathTranslation) {
+        _mixControlPathTranslation->setValue(p["mixControlPathTranslation"].toDouble());
+    }
+    if (p.contains("networkControlBias") && _networkControlBias) {
+        _networkControlBias->setValue(p["networkControlBias"].toDouble() * 100.f);
+    }
+    if (p.contains("networkPhaseBias") && _networkPhaseBias) {
+        _networkPhaseBias->setValue(p["networkPhaseBias"].toDouble() * 100.f);
+    }
 }
 
 unsigned int GNNNode::nDataPorts(QtNodes::PortType portType) const
