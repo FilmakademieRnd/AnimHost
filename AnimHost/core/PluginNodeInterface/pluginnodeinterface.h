@@ -25,6 +25,7 @@
 #include <QList>
 #include <QString>
 #include <QVariant>
+#include <QVariantMap>
 #include "plugininterface.h"
 #include <QtNodes/NodeDelegateModel>
 #include <nodedatatypes.h>
@@ -36,6 +37,8 @@ class ANIMHOSTCORESHARED_EXPORT PluginNodeInterface : public QtNodes::NodeDelega
 {
 
 private:
+
+	std::shared_ptr<AnimNodeData<RunSignal>> _runSignalIncoming = nullptr;
     std::shared_ptr<AnimNodeData<RunSignal>> _runSignal = nullptr;
 
 public:
@@ -107,6 +110,9 @@ public:
 	 */
     virtual std::shared_ptr<NodeData>  processOutData(QtNodes::PortIndex port) = 0;
 
+
+	void propagateMetadata(const QVariantMap& metadata);
+
      
     void setInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex);
 
@@ -125,7 +131,7 @@ public:
     /**
 	 * Emit this whenever the node has finished processing and is ready to run the next node.
 	 */
-    void emitRunNextNode();
+    void emitRunNextNode(QVariantMap* parameter = nullptr);
 
     /**
     * Emit this whenever the data of the specific node output has been invalidated.

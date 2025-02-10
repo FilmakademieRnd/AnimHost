@@ -8,14 +8,13 @@
 #include <QComboBox>
 #include <QVBoxLayout>
 #include <pluginnodeinterface.h>
+#include <QtNodes/NodeDelegateModelRegistry>
+
+#include <UIUtils.h>
+
+using QtNodes::NodeDelegateModelRegistry;
 
 
-enum AnimHostRPCType : uint32_t {
-	STOP = 0,
-	STREAM = 1,
-	STREAM_LOOP = 2,
-    BLOCK =3
-};
 
 class QPushButton;
 
@@ -28,15 +27,36 @@ private:
     QPushButton* _pushButton = nullptr;
     QComboBox* _comboBox = nullptr;
 
+	DynamicListWidget* _listWidget = nullptr;
+
     std::weak_ptr<AnimNodeData<RPCUpdate>> _RPCIn;
 
     AnimHostRPCType _filterType = AnimHostRPCType::BLOCK;
 
+
+	// List of avialable Property Targets for RPC Trigger
+	QList<QPair<QString, QStringList>> _nodeElements;
+
+    // Mapping struct
+    struct TRACERPLUGINSHARED_EXPORT RPCMapping {
+        int parameterID;
+        QString targetNode;
+        QString targetProperty;
+        bool triggerRun;
+        QVariant value;
+    };
+
+
+
+	// Defined Mappings for RPC Trigger
+	QList<RPCMapping> _rpcMappings;
+
+
 public:
-    RPCTriggerNode();
+    RPCTriggerNode(const NodeDelegateModelRegistry& modelRegistry);
     ~RPCTriggerNode();
     
-    std::unique_ptr<NodeDelegateModel> Init() override { return  std::unique_ptr<RPCTriggerNode>(new RPCTriggerNode()); };
+    std::unique_ptr<NodeDelegateModel> Init() override { return nullptr; };
 
     static QString Name() { return QString("RPCTriggerNode"); }
 
@@ -60,6 +80,12 @@ public:
 
 private Q_SLOTS:
     void onButtonClicked();
+
+	void onElementAdded();
+
+    void onElementRemoved(int index);
+
+	void onElementMappingChanged(int elementIdx, int paramId, QString node, QString property, int trigger);
 
 };
 

@@ -23,7 +23,14 @@ class NODE_EDITOR_PUBLIC NodeDelegateModelRegistry
 public:
     using RegistryItemPtr = std::unique_ptr<NodeDelegateModel>;
     using RegistryItemCreator = std::function<RegistryItemPtr()>;
-    using RegisteredModelCreatorsMap = std::unordered_map<QString, RegistryItemCreator>;
+
+    struct RegisteredItem
+    {
+        RegistryItemCreator creator;
+        const QMetaObject* metaObject = nullptr;
+    };
+
+    using RegisteredModelCreatorsMap = std::unordered_map<QString, RegisteredItem>;
     using RegisteredModelsCategoryMap = std::unordered_map<QString, QString>;
     using CategoriesSet = std::set<QString>;
 
@@ -45,7 +52,13 @@ public:
     {
         QString const name = computeName<ModelType>(HasStaticMethodName<ModelType>{}, creator);
         if (!_registeredItemCreators.count(name)) {
-            _registeredItemCreators[name] = std::move(creator);
+
+            RegisteredItem item;
+
+            item.creator = std::move(creator);
+            item.metaObject = &ModelType::staticMetaObject;
+
+            _registeredItemCreators[name] = std::move(item);
             _categories.insert(category);
             _registeredModelsCategory[name] = category;
         }
@@ -101,6 +114,8 @@ public:
     RegisteredModelsCategoryMap const &registeredModelsCategoryAssociation() const;
 
     CategoriesSet const &categories() const;
+
+    const QMetaObject *getMetaObject(QString const &modelName) const;
 
 #if 0
   TypeConverter

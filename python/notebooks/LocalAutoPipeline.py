@@ -18,7 +18,7 @@ from MotionPreprocessing import MotionProcessor, read_csv_style_data, read_csv_d
 # common config
 dataset_path = r"C:\DEV\DATASETS\Survivor_Gen"
 
-num_samples_total = 127677
+num_samples_total = 97400
 num_features_velocity = 78
 
 # Apply butterworth filter to velocity data to remove noise
@@ -74,7 +74,7 @@ shutil.copyfile(dataset_path+ "/sequences_velocity.txt", pae_dataset_path + "/Se
 # start training call Network.py 
 subprocess.run(f'python Network.py', cwd=pae_path)
 
-# prepare training data for generator
+#prepare training data for generator
 
 mp = MotionProcessor()
 df_input_data = mp.input_preprocessing()

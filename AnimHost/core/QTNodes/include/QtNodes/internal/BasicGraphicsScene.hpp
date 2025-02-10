@@ -21,6 +21,7 @@ class QUndoStack;
 
 namespace QtNodes {
 
+class AbstractConnectionPainter;
 class AbstractGraphModel;
 class AbstractNodePainter;
 class ConnectionGraphicsObject;
@@ -49,7 +50,11 @@ public:
 
     AbstractNodePainter &nodePainter();
 
+    AbstractConnectionPainter &connectionPainter();
+
     void setNodePainter(std::unique_ptr<AbstractNodePainter> newPainter);
+
+    void setConnectionPainter(std::unique_ptr<AbstractConnectionPainter> newPainter);
 
     QUndoStack &undoStack();
 
@@ -101,6 +106,8 @@ public:
     virtual QMenu *createSceneMenu(QPointF const scenePos);
 
 Q_SIGNALS:
+    void modified(BasicGraphicsScene *);
+
     void nodeMoved(NodeId const nodeId, QPointF const &newLocation);
 
     void nodeClicked(NodeId const nodeId);
@@ -167,6 +174,8 @@ private:
     std::unique_ptr<AbstractNodeGeometry> _nodeGeometry;
 
     std::unique_ptr<AbstractNodePainter> _nodePainter;
+
+    std::unique_ptr<AbstractConnectionPainter> _connectionPainter;
 
     bool _nodeDrag;
 

@@ -1,9 +1,74 @@
 #include "RPCTriggerNode.h"
 #include <QPushButton>
+#include <QtNodes/NodeDelegateModelRegistry>
+#include <QMetaObject>
+#include <QMetaProperty>
+#include <QMetaMethod>
 
-RPCTriggerNode::RPCTriggerNode()
+
+
+void reportMetaObject(const QMetaObject* metaObject) {
+    if (!metaObject) {
+        qDebug() << "Invalid QMetaObject!";
+        return;
+    }
+
+    qDebug() << "Class Name:" << metaObject->className();
+
+    // Properties
+    qDebug() << "Properties:";
+    for (int i = 0; i < metaObject->propertyCount(); ++i) {
+        QMetaProperty property = metaObject->property(i);
+        qDebug() << " -" << property.name() << "(" << property.typeName() << ")";
+    }
+
+    // Methods
+    qDebug() << "Methods:";
+    for (int i = metaObject->methodOffset(); i < metaObject->methodCount(); ++i) {
+        QMetaMethod method = metaObject->method(i);
+        qDebug() << " -" << method.methodSignature() << "(" << method.methodType() << ")";
+    }
+
+    // Signals
+    qDebug() << "Signals:";
+    for (int i = metaObject->methodOffset(); i < metaObject->methodCount(); ++i) {
+        QMetaMethod method = metaObject->method(i);
+        if (method.methodType() == QMetaMethod::Signal) {
+            qDebug() << " -" << method.methodSignature();
+        }
+    }
+}
+
+RPCTriggerNode::RPCTriggerNode(const NodeDelegateModelRegistry& modelRegistry)
 {
     _pushButton = nullptr;
+
+    auto modelCreators = modelRegistry.registeredModelCreators();
+
+	//print all registered models
+    for (auto it = modelCreators.begin(); it != modelCreators.end(); ++it)
+    {
+        qWarning() << "RPC Plugin Loaded: " << it->first;
+
+
+        // add property names to the list
+        auto metaObject = it->second.metaObject;
+
+        if (metaObject->propertyCount() - metaObject->propertyOffset() > 0) {
+
+			qDebug() << "Number of properties: " << metaObject->propertyCount();
+
+
+            _nodeElements.append(qMakePair(it->first, QStringList()));
+
+            // add property names to the list
+            for (int i = metaObject->propertyOffset(); i < metaObject->propertyCount(); ++i) {
+                QMetaProperty property = metaObject->property(i);
+                _nodeElements.last().second.append(property.name());
+            }
+        }
+    }
+    
     //qDebug() << "RPCTriggerNode created";
 }
 
@@ -70,18 +135,67 @@ void RPCTriggerNode::run()
 
             auto sp_rpc = RPCData->getData();
 
-            if (sp_rpc->sceneID == 255 && sp_rpc->objectID == 1 && sp_rpc->paramID == 0 && sp_rpc->paramType == ZMQMessageHandler::INT) {
-                QByteArray data = sp_rpc->rawData;
+            
+			// AnimHost expects all RPCs to be sent to SceneID 255 and ObjectID 1
+            if (sp_rpc->sceneID == 255 && sp_rpc->objectID == 1) {
 
-                uint32_t rpc;
-                //convert data to int
-                std::memcpy(&rpc, data.data(), sizeof(uint32_t));
+				// Check for the specific animation request
+				if (sp_rpc->paramID == 0 && sp_rpc->paramType == ZMQMessageHandler::INT) {
+					QByteArray data = sp_rpc->rawData;
+					uint32_t rpc;
+					//convert data to int
+					std::memcpy(&rpc, data.data(), sizeof(uint32_t));
+                    
+					_filterType = AnimHostRPCType(rpc);
 
-                if(rpc == _filterType){
-					qDebug() << "RPCData Received: " << rpc;
-                    emitRunNextNode();
+					if (_filterType <= AnimHostRPCType::BLOCK) {
+						qDebug() << "RPCData Received: " << rpc;
+
+                        // create QVaraintMap for filtertype and _rpcMappings
+						QVariantMap parameter;
+						parameter["sendingMode"] = QVariant::fromValue(_filterType);
+
+						for (auto mapping : _rpcMappings) {
+							parameter[mapping.targetProperty] = mapping.value;
+						}
+
+						emitRunNextNode(&parameter);
+					}
 				}
+                else {
+					// Check for possible mapping of RPC to other properties
 
+                    for (auto& mapping : _rpcMappings) {
+						if (mapping.parameterID == sp_rpc->paramID) {
+							
+							auto data = sp_rpc->decodeRawData();
+
+							if (sp_rpc->paramType == ZMQMessageHandler::INT) {
+								auto intData = dynamic_cast<ParameterPayload<int>*>(data.get());
+								mapping.value = intData->getValue();
+							}
+							else if (sp_rpc->paramType == ZMQMessageHandler::FLOAT) {
+								auto floatData = dynamic_cast<ParameterPayload<float>*>(data.get());
+								mapping.value = floatData->getValue();
+							}
+							else if (sp_rpc->paramType == ZMQMessageHandler::VECTOR3) {
+								//auto vec3Data = dynamic_cast<ParameterPayload<glm::vec3>*>(data.get());
+								qWarning() << "Vector 3 parmaeter override currently not supported";
+							}
+							else if (sp_rpc->paramType == ZMQMessageHandler::VECTOR4) {
+								//auto vec4Data = dynamic_cast<ParameterPayload<glm::vec4>*>(data.get());
+								qWarning() << "Vector 4 parmaeter override currently not supported";
+							}
+							else if (sp_rpc->paramType == ZMQMessageHandler::QUATERNION) {
+								//auto quatData = dynamic_cast<ParameterPayload<glm::quat>*>(data.get());
+								qWarning() << "Quaternion parmaeter override currently not supported";
+							}
+                            else {
+                                qDebug() << "Unsupported parameter type in RPC!";
+                            }
+						}
+                    }
+                }
             }
 		}
 		else{
@@ -117,6 +231,16 @@ QWidget* RPCTriggerNode::embeddedWidget()
         _mainLayout->addWidget(_pushButton);
 
 		connect(_pushButton, &QPushButton::released, this, &RPCTriggerNode::onButtonClicked);
+
+		_listWidget = new DynamicListWidget(_widget);
+		_mainLayout->addWidget(_listWidget);
+
+        connect(_listWidget, &DynamicListWidget::elementAdded, this, &RPCTriggerNode::onElementAdded);
+		connect(_listWidget, &DynamicListWidget::elementRemoved, this, &RPCTriggerNode::onElementRemoved);
+		connect(_listWidget, &DynamicListWidget::ItemMappingChanged, this, &RPCTriggerNode::onElementMappingChanged);
+
+
+		_listWidget->SetModifyableElements(_nodeElements);
 
         _widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
             "QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"
@@ -155,7 +279,46 @@ QWidget* RPCTriggerNode::embeddedWidget()
 	return _widget;
 }
 
+void RPCTriggerNode::onElementAdded()
+{
+	qDebug() << "ListWidget Changed";
+
+
+	_rpcMappings.append({ 0, "", "", false });
+
+
+	Q_EMIT embeddedWidgetSizeUpdated();
+}
+
+void RPCTriggerNode::onElementRemoved(int index)
+{
+	qDebug() << "ListWidget Changed";
+
+	_rpcMappings.removeAt(index);
+	
+}
+
+void RPCTriggerNode::onElementMappingChanged(int elementIdx,int paramId, QString node, QString property, int trigger)
+{
+	qDebug() << "Mapping Changed: " << paramId << " " << node << " " << property << " " << trigger;
+
+	if (elementIdx >= _rpcMappings.size()) {
+		qDebug() << "Invalid Element Index";
+		return;
+	}
+	_rpcMappings[elementIdx].parameterID = paramId;
+	_rpcMappings[elementIdx].targetNode = node;
+	_rpcMappings[elementIdx].targetProperty = property;
+	_rpcMappings[elementIdx].triggerRun = trigger;
+}
+
 void RPCTriggerNode::onButtonClicked()
 {
-    emitRunNextNode();
+    // Create Meta Variant Map and fill with the current set AnimHostRPCType
+
+	QVariantMap rpcMap;
+
+	rpcMap["sendingMode"] = QVariant::fromValue(_filterType);
+
+    emitRunNextNode(&rpcMap);
 }

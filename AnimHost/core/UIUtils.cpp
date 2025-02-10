@@ -164,8 +164,9 @@ MatrixEditorWidget::MatrixEditorWidget(QWidget* parent)
 
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
-			lineEdits[i][j] = new QLineEdit();
-			lineEdits[i][j]->setValidator(new QDoubleValidator(this));
+			lineEdits[i][j] = new QDoubleSpinBox();
+			lineEdits[i][j]->setRange(-1000, 1000);
+			//lineEdits[i][j]->setValidator( new QDoubleValidator(this));
 			lineEdits[i][j]->setFixedWidth(50);
 			layout->addWidget(lineEdits[i][j], i, j);
 		}
@@ -189,7 +190,7 @@ glm::mat4 MatrixEditorWidget::GetMatrix() const
 
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
-			matrix[i][j] = lineEdits[i][j]->text().toFloat();
+			matrix[i][j] = lineEdits[i][j]->value();
 		}
 	}
 
@@ -200,7 +201,7 @@ void MatrixEditorWidget::SetMatrix(const glm::mat4& matrix)
 {
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
-			lineEdits[i][j]->setText(QString::number(matrix[i][j]));
+			lineEdits[i][j]->setValue(matrix[i][j]);
 		}
 	}
 }

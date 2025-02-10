@@ -28,14 +28,16 @@ AnimationSenderNode::AnimationSenderNode(std::shared_ptr<TRACERGlobalTimer> glob
 {
     _sendStreamButton = nullptr;
     widget = nullptr;
-    _selectIPAddress = nullptr;
+    _connectIPAddress = nullptr;
     _loopCheck = nullptr;
     _ipAddressLayout = nullptr;
-    _ipAddress = nullptr;
-    _ipValidator = nullptr;
+    _ipTargetAddress = "127.0.0.1";
+
+    // Validation Regex initialization for the QLineEdit Widget of the plugin
+    _ipValidator = new QRegularExpressionValidator(ZMQMessageHandler::ipRegex, this);
 
     if (!msgSender) // trying to avoid multiple instances
-        msgSender = new AnimHostMessageSender(false, _updateSenderContext.get(), _globalTimer);
+        msgSender = new AnimHostMessageSender(false, _updateSenderContext.get(), _globalTimer, _ipTargetAddress);
     if (!zeroMQSenderThread) // trying to avoid multiple instances
         zeroMQSenderThread = new QThread();
 
@@ -61,6 +63,24 @@ AnimationSenderNode::~AnimationSenderNode()
     }
 
     qDebug() << "~AnimationSenderNode()";
+}
+
+QJsonObject AnimationSenderNode::save() const
+{
+    QJsonObject modelJson = NodeDelegateModel::save();
+    if (_connectIPAddress) {
+        modelJson["ipAddress"] = _connectIPAddress->text();
+    }
+
+	return modelJson;
+}
+
+void AnimationSenderNode::load(QJsonObject const& p)
+{
+    if (p.contains("ipAddress")) {
+        _connectIPAddress->setText(p["ipAddress"].toString());
+    }
+
 }
 
 unsigned int AnimationSenderNode::nDataPorts(QtNodes::PortType portType) const {
@@ -133,6 +153,8 @@ void AnimationSenderNode::run() {
 
     qDebug() << "AnimationSenderNode running...";
 
+	qWarning() << "Mode: " << _sendingMode;
+
     if (!zeroMQSenderThread->isRunning()) {
         msgSender->requestStart();
         zeroMQSenderThread->start();
@@ -157,8 +179,29 @@ void AnimationSenderNode::run() {
 
         }
 
+        msgSender->setTargetIP(_connectIPAddress->text());
+
 		// Set animation, character and scene data (necessary for creating a pose update message) in the message sender object
 		msgSender->setAnimationAndSceneData(sp_animation->getData(), sp_character->getData(), sp_sceneNodeList->getData());
+
+
+        if(_sendingMode == AnimHostRPCType::STOP){
+			msgSender->setStreamAnimation(AnimHostMessageSender::STREAMSTOP);
+        }
+
+        if (_sendingMode == AnimHostRPCType::BLOCK) {
+			_streamCheck->setChecked(false);
+        }
+
+		if (_sendingMode == AnimHostRPCType::STREAM) {
+			_streamCheck->setChecked(true);
+		}
+
+		if (_sendingMode == AnimHostRPCType::STREAM_LOOP) {
+			_streamCheck->setChecked(true);
+			_loopCheck->setChecked(true);
+		}
+
 
 		if (_streamCheck->isChecked()) {
 			// Start Streaming
@@ -184,20 +227,15 @@ QWidget* AnimationSenderNode::embeddedWidget() {
 
         //IP Address Selection
         _ipAddressLayout = new QHBoxLayout();
-        _selectIPAddress = new QComboBox();
-        _ipAddress = ZMQMessageHandler::getIPList().at(0).toString();
+        _connectIPAddress = new QLineEdit();
         _ipValidator = new QRegularExpressionValidator(ZMQMessageHandler::ipRegex, this);
-        _selectIPAddress->setValidator(_ipValidator);
+        _connectIPAddress->setValidator(_ipValidator);
 
-        for (QHostAddress ipAddress : ZMQMessageHandler::getIPList()) {
-            _selectIPAddress->addItem(ipAddress.toString());
-        }
-
-        _ipAddressLayout->addWidget(_selectIPAddress);
+        _ipAddressLayout->addWidget(_connectIPAddress);
         _ipAddressLayout->setSizeConstraint(QLayout::SetMinimumSize);
         _mainLayout->addLayout(_ipAddressLayout);
 
-        connect(_selectIPAddress, &QComboBox::currentIndexChanged, this, &AnimationSenderNode::onChangedSelection);
+        //connect(_selectIPAddress, &QComboBox::currentIndexChanged, this, &AnimationSenderNode::onChangedSelection);
 
         // Toggle between En Bloc and Stream Animation
         _streamCheck = new QCheckBox("Stream");
@@ -256,6 +294,14 @@ QWidget* AnimationSenderNode::embeddedWidget() {
         }
 
 
+        // Add Stop Button
+
+		_stopButton = new QPushButton("Reconnect");
+		_mainLayout->addWidget(_stopButton);
+
+		connect(_stopButton, &QPushButton::released, this, &AnimationSenderNode::onStopButtonClicked);
+
+
 
         widget->setLayout(_mainLayout);
         widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
@@ -270,7 +316,7 @@ QWidget* AnimationSenderNode::embeddedWidget() {
 }
 
 void AnimationSenderNode::onChangedSelection(int index) {
-    qDebug() << "IP Address Selection Changed";
+   /* qDebug() << "IP Address Selection Changed";
     if (index >= 0) {
         ZMQMessageHandler::setIPAddress(ZMQMessageHandler::getIPList().at(index).toString());
         emitDataUpdate(0);
@@ -278,7 +324,7 @@ void AnimationSenderNode::onChangedSelection(int index) {
     else {
         emitDataInvalidated(0);
     }
-    qDebug() << "New IP Address:" << ZMQMessageHandler::getOwnIP();
+    qDebug() << "New IP Address:" << ZMQMessageHandler::getOwnIP();*/
 }
 
 void AnimationSenderNode::onLoopCheck(int state) {
@@ -345,5 +391,27 @@ void AnimationSenderNode::onEnBlocButtonClicked()
         // Start Streaming
         msgSender->setStreamAnimation(AnimHostMessageSender::ENBLOCK);
     }
+
+}
+
+void AnimationSenderNode::onStopButtonClicked()
+{
+    if (isStreaming) {
+        // Stop Streaming
+
+        _sendStreamButton->setText("Send Animation");
+        isStreaming = false;
+
+    }
+
+    qDebug() << "Stop Button Clicked";
+
+
+    msgSender->setStreamAnimation(AnimHostMessageSender::STREAMSTOP);
+
+    qDebug() << "Set new IP Address";
+
+    msgSender->setTargetIP(_connectIPAddress->text());
+
 
 }

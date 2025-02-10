@@ -29,12 +29,13 @@ CoordinateConverterPlugin::CoordinateConverterPlugin()
 {
     _animationOut = std::make_shared<AnimNodeData<Animation>>();
 
-
     presets.push_back({"AH<->Blender Default",glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix()), false, false, false, false, false });
 
     presets.push_back({"No Conversion", glm::mat4(1.0), false, false, false, false, false});
 
-    activePreset = presets[0];
+	presets.push_back({ "Unity", glm::scale(glm::mat4(1.0), glm::vec3(0.01f, 0.01f, 0.01f)), false, false, false, false, false });
+
+    activePreset = presets[2];
 }
 
 CoordinateConverterPlugin::~CoordinateConverterPlugin()
@@ -101,10 +102,9 @@ void CoordinateConverterPlugin::run()
             //Apply Transform to Root Bone
             for (int i = 0; i < animOut->mBones[1].mPositonKeys.size(); i++) {
 
-
-
                 animOut->mBones[1].mRotationKeys[i].orientation = glm::toQuat(activePreset.transformMatrix) * animOut->mBones[0].mRotationKeys[i].orientation * animOut->mBones[1].mRotationKeys[i].orientation;
-                animOut->mBones[1].mPositonKeys[i].position = glm::toQuat(activePreset.transformMatrix) * glm::vec3(animOut->mBones[1].mPositonKeys[i].position);
+                //animOut->mBones[1].mPositonKeys[i].position = glm::toQuat(activePreset.transformMatrix) * glm::vec3(animOut->mBones[1].mPositonKeys[i].position);
+                animOut->mBones[1].mPositonKeys[i].position = activePreset.transformMatrix * glm::vec4(animOut->mBones[1].mPositonKeys[i].position, 1.f);
 
             }
 
@@ -118,7 +118,11 @@ void CoordinateConverterPlugin::run()
                 numKeys = animOut->mBones[i].mNumKeysPosition;
                 for (int j = 0; j < numKeys; j++) {
                     animOut->mBones[i].mPositonKeys[j].position = ConvertToTargetSystem(animOut->mBones[i].mPositonKeys[j].position,
-                        swapYZ, negX, negY, negZ, negW);
+                        swapYZ, negX, negY, negZ, negW)  ;
+
+					//overwrite position with resting position if i< 2
+                    if (i > 2)
+                        animOut->mBones[i].mPositonKeys[j].position = animOut->mBones[i].mRestingTransform[3]; // / 100.f;
                 }
 
                 numKeys = animOut->mBones[i].mNumKeysScale;
@@ -361,6 +365,6 @@ glm::vec3 CoordinateConverterPlugin::ConvertToTargetSystem(const glm::vec3& vecI
 
 void CoordinateConverterPlugin::onChangedCheck(int check)
 {
+    qDebug() << "Quaternion Swizzel";
     run();
-	qDebug() << "Example Widget Clicked";
 }

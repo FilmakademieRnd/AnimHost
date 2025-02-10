@@ -183,7 +183,6 @@ def get_future_window_values(row, phaseValues, selected_columns, window_size=7):
         print(f"Progress: {seq_id}/{frame}", end='\r')
     return window[selected_columns].values.flatten()
 
-
 def get_window_values_(row, phaseValues, selected_columns, num_samples=13, fps=1, start_index=0, is_future=False):
     seq_id, frame = row.name
     
@@ -217,7 +216,7 @@ class MotionProcessor:
         self.num_phase_channel = 5
         self.input_feature_count = 403
         self.output_feature_count = 357
-        self.sample_count = 121727
+        self.sample_count = 92640
 
         self.dataset_path = r"C:\DEV\DATASETS\Survivor_Gen"
         self.trained_phase_param_file = r"C:\DEV\AI4Animation\AI4Animation\SIGGRAPH_2022\PyTorch\PAE\Training\Parameters_30.txt"
@@ -235,6 +234,11 @@ class MotionProcessor:
         end_time = time.time()
         print("Motion preprocessing completed in", round(end_time - start_time, 2), "seconds.")
         return 0
+    
+    
+    
+    # Usage Example:
+
     
     
     def input_preprocessing(self):
@@ -257,15 +261,13 @@ class MotionProcessor:
         df_phaseData[cols] = df_phaseData[cols].map(lambda t: repeat(t, 1.0))
         df_phaseData = pd.concat([phaseSequence, df_phaseData], axis=1)
 
-        
+        ## Generate Cloumn names for phase values
+        column_names = [f"Phase2D_X_{i+1}" for i in range(self.num_phase_channel)] + [f"Phase2D_Y_{i+1}" for i in range(self.num_phase_channel)]
+        phaseValues2D_header =  [column for pair in zip(column_names[:self.num_phase_channel], column_names[self.num_phase_channel:]) for column in pair]
 
         ## Calculate 2D phase values
         df_phaseValues2D = np.vstack(df_phaseData.apply(lambda row: calculate_2d_phase_values(row), axis=1).to_numpy())
         df_phaseValues2D = np.reshape(df_phaseValues2D, (phaseData.shape[0], self.num_phase_channel * 2))
-
-        ## Generate Cloumn names for phase values
-        column_names = [f"Phase2D_X_{i+1}" for i in range(self.num_phase_channel)] + [f"Phase2D_Y_{i+1}" for i in range(self.num_phase_channel)]
-        phaseValues2D_header =  [column for pair in zip(column_names[:self.num_phase_channel], column_names[self.num_phase_channel:]) for column in pair]
 
         df_phaseValues2D = pd.DataFrame(df_phaseValues2D, columns=phaseValues2D_header)
         df_phaseData = pd.concat([df_phaseData, df_phaseValues2D], axis=1)

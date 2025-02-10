@@ -25,6 +25,8 @@
 
 #include <QObject>
 #include <QString>
+#include <QVariant>
+#include <QVariantMap>
 #include <QQuaternion>
 #include <QMetaType>
 #include <QUuid>
@@ -163,6 +165,40 @@ public:
     COMMONDATA(skeleton, Skeleton)
 
 
+
+    /**
+    * @brief Get a bones parent bone.
+    *
+	* @param boneID The bone ID to get the parent bone for.
+	* @return The parent bone ID.
+    */
+	int getParentBone(int boneID) {
+		for (auto& bone : bone_hierarchy) {
+			for (auto& child : bone.second) {
+				if (child == boneID) {
+					return bone.first;
+				}
+			}
+		}
+		return -1;
+	}
+
+
+    /**
+	* @brief Get a bones parent bone name.
+    * 
+	* @param boneID The bone ID to get the parent bone name for.
+	* @return The parent bone name. Empty string if no parent bone.
+    */
+	std::string getParentBoneNamefromID(int boneID) {
+		int parentID = getParentBone(boneID);
+		if (parentID != -1) {
+			return bone_names_reverse[parentID];
+		}
+		return "";
+	}
+
+
     /**
      * @brief Creates a sub-skeleton from the current skeleton.
      *
@@ -228,6 +264,12 @@ private:
     }
 
 public:
+    /**
+    * @class Iterator
+    * @brief Depth-First Traversal (DFS) iterator for the Skeleton class.
+    *
+    * This iterator allows for traversing the Skeleton hierarchy using a depth-first approach.
+    */
     class Iterator {
         const Skeleton& skeleton;
         std::vector<int> stack;
@@ -239,17 +281,29 @@ public:
             }
         }
 
+        /**
+        * @brief Dereference operator to get the current bone ID.
+        *
+        * @return The current bone ID being pointed to.
+        */
         int operator*() const {
             return stack.back();
         }
 
+        /**
+        * @brief Pre-increment operator to move to the next bone in depth first order.
+        *
+        * This function removes the current bone from the stack and adds its children to continue traversal.
+        *
+        * @return Reference to the updated iterator.
+        */
         Iterator& operator++() {
             if (!stack.empty()) {
 				int currentBoneId = stack.back();
 				stack.pop_back();
 
 				const auto& children = skeleton.bone_hierarchy.at(currentBoneId);
-				stack.insert(stack.end(), children.rbegin(), children.rend());
+				stack.insert(stack.end(), children.rbegin(), children.rend()); // Push children in reverse order
 			}
 
             return *this;
@@ -558,8 +612,16 @@ class ANIMHOSTCORESHARED_EXPORT RunSignal
 {
 
 public:
+    QVariantMap metadata;
+
+public:
 
     RunSignal() {};
+
+	RunSignal(QVariantMap meta) : metadata(meta) {};
+
+	RunSignal(const RunSignal& o) : metadata(o.metadata) {};
+
 
     COMMONDATA(runSignal, Run)
 
@@ -606,6 +668,21 @@ class ANIMHOSTCORESHARED_EXPORT ControlPath : public Sequence {
     std::shared_ptr<std::vector<ControlPoint>> getPath() { return std::make_shared<std::vector<ControlPoint>>(mControlPath); };
 
     void CreateSpline();
+
+    //! Static function to create a ControlPath with incremental positions
+    static ControlPath CreateTestControlPath(int totalFrames, glm::vec3 startPosition, glm::vec3 positionIncrement, float velocity) {
+        ControlPath controlPath;
+        controlPath.frameCount = totalFrames;
+
+        glm::quat constantOrientation = glm::quat(1, 0, 0, 0); // Identity quaternion
+
+        for (int frame = 0; frame < totalFrames; ++frame) {
+            glm::vec3 currentPosition = startPosition + (positionIncrement * static_cast<float>(frame));
+            controlPath.mControlPath.emplace_back(currentPosition, constantOrientation, frame, velocity);
+        }
+
+        return controlPath;
+    }
 
     COMMONDATA(controlPath, ControlPath)
 
