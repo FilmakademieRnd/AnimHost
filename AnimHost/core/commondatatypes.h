@@ -165,6 +165,40 @@ public:
     COMMONDATA(skeleton, Skeleton)
 
 
+
+    /**
+    * @brief Get a bones parent bone.
+    *
+	* @param boneID The bone ID to get the parent bone for.
+	* @return The parent bone ID.
+    */
+	int getParentBone(int boneID) {
+		for (auto& bone : bone_hierarchy) {
+			for (auto& child : bone.second) {
+				if (child == boneID) {
+					return bone.first;
+				}
+			}
+		}
+		return -1;
+	}
+
+
+    /**
+	* @brief Get a bones parent bone name.
+    * 
+	* @param boneID The bone ID to get the parent bone name for.
+	* @return The parent bone name. Empty string if no parent bone.
+    */
+	std::string getParentBoneNamefromID(int boneID) {
+		int parentID = getParentBone(boneID);
+		if (parentID != -1) {
+			return bone_names_reverse[parentID];
+		}
+		return "";
+	}
+
+
     /**
      * @brief Creates a sub-skeleton from the current skeleton.
      *
@@ -230,6 +264,12 @@ private:
     }
 
 public:
+    /**
+    * @class Iterator
+    * @brief Depth-First Traversal (DFS) iterator for the Skeleton class.
+    *
+    * This iterator allows for traversing the Skeleton hierarchy using a depth-first approach.
+    */
     class Iterator {
         const Skeleton& skeleton;
         std::vector<int> stack;
@@ -241,17 +281,29 @@ public:
             }
         }
 
+        /**
+        * @brief Dereference operator to get the current bone ID.
+        *
+        * @return The current bone ID being pointed to.
+        */
         int operator*() const {
             return stack.back();
         }
 
+        /**
+        * @brief Pre-increment operator to move to the next bone in depth first order.
+        *
+        * This function removes the current bone from the stack and adds its children to continue traversal.
+        *
+        * @return Reference to the updated iterator.
+        */
         Iterator& operator++() {
             if (!stack.empty()) {
 				int currentBoneId = stack.back();
 				stack.pop_back();
 
 				const auto& children = skeleton.bone_hierarchy.at(currentBoneId);
-				stack.insert(stack.end(), children.rbegin(), children.rend());
+				stack.insert(stack.end(), children.rbegin(), children.rend()); // Push children in reverse order
 			}
 
             return *this;
