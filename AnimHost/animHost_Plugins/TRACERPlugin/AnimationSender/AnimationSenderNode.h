@@ -51,6 +51,7 @@
 #include <QPushButton>
 #include <QValidator>
 #include <QComboBox>
+#include <QLineEdit>
 #include <QCheckBox>
 #include <QHBoxLayout>
 #include <pluginnodeinterface.h>
@@ -69,10 +70,10 @@ private:
     // UI Elements
     QWidget* widget = nullptr;                                //!< UI container element
     QVBoxLayout* _mainLayout = nullptr;                        //!< UI layout element
-    ;
+
     QHBoxLayout* _ipAddressLayout = nullptr;                  //!< UI layout element
-    QComboBox* _selectIPAddress = nullptr;                    //!< UI drop down menu to select the IP address (and therefore the Client ID)
-    QRegularExpressionValidator* _ipValidator = nullptr;      //!< IP Address validation regex (to be removed)
+    QLineEdit* _connectIPAddress = nullptr;                           //!< IP Address text box element
+    QRegularExpressionValidator* _ipValidator;      //!< IP Address validation regex
 
     QCheckBox* _streamCheck = nullptr;                        //!< UI checkbox element to enable/disable streaming animation
 
@@ -85,8 +86,9 @@ private:
     QHBoxLayout* _enBlocLayout = nullptr;//!< UI container element for controlling on bolck animation (TRACER AnimatedParameterUpdate)
     QPushButton* _sendEnBlocButton = nullptr;               //!< UI button element, onClick starts the animation-sending sub-thread without iterating over whole animation sequence 
 
+	QPushButton* _stopButton = nullptr;                       //!< UI button element, onClick stops the animation-sending sub-thread
 
-    QString _ipAddress;                             //!< The selected IP Address
+    QString _ipTargetAddress;                             //!< The selected IP Address
 
     std::shared_ptr<zmq::context_t> _updateSenderContext = nullptr; //!< 0MQ context to establish connection and send messages
 
@@ -124,6 +126,10 @@ public:
     ~AnimationSenderNode();
     
     std::unique_ptr<NodeDelegateModel> Init() override { return  nullptr; };
+
+
+	QJsonObject save() const override;
+	void load(QJsonObject const& p) override;
 
     static QString Name() { return QString("AnimationSenderNode"); }
 
@@ -172,6 +178,9 @@ private Q_SLOTS:
 
     //! Slot called when the "Send EnBloc" button is clicked
     void onEnBlocButtonClicked();
+
+	//! Slot called when the "Stop" button is clicked
+	void onStopButtonClicked();
 
     //! Slot called when the "Loop" check gets clicked
     /*!

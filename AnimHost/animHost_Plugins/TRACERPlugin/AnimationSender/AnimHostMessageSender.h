@@ -66,9 +66,10 @@ class TRACERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMessageHandler
     //! \brief Constructor
     //! \param[in]  m_debugState    boolean inherited from [ZMQMessageHandler](@ref ZMQMessageHandler) indicating whether to print debug messages
     //! \param[in]  m_context       pointer to ZMQ Context instance
-    AnimHostMessageSender(bool m_debugState, zmq::context_t * m_context, std::shared_ptr<TRACERGlobalTimer> globalTimer) : _globalTimer(globalTimer) {
+    AnimHostMessageSender(bool m_debugState, zmq::context_t * m_context, std::shared_ptr<TRACERGlobalTimer> globalTimer, QString _receiverIP) : _globalTimer(globalTimer) {
         _debug = m_debugState;
         context = m_context;
+        _targetIP = _receiverIP;
         _stop = true;
         _working = false;
         _paused = false;
@@ -77,6 +78,16 @@ class TRACERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMessageHandler
     ~AnimHostMessageSender() {
         //sendSocket->close();
         qDebug() << "~AnimHostMessageSender()";
+    }
+
+
+	void setTargetIP(QString _receiverIP) { 
+
+		if (_receiverIP.compare(_targetIP) == 0) {
+			return;
+		}
+        _targetIP = _receiverIP; 
+		targetAddressChanged = true;
     }
 
     //! Request this process to start working
@@ -180,6 +191,8 @@ class TRACERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMessageHandler
 
     bool sendBlock = false; //!< Indicates whether the animation data has to be sent en bloc
 
+	bool targetAddressChanged = false; //!< Indicates whether the target address has been changed
+
     int animDataSize = 0; //!< The size of the animation data to be sent
 
     //! Set sending mode to stream animation frame by frame or send en bloc
@@ -238,6 +251,8 @@ class TRACERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMessageHandler
     private:
     //! ZeroMQ Socket used to send animation data
     zmq::socket_t* sendSocket = nullptr;
+
+	QString _targetIP; //!< The IP Address of the TRACER server to send the animation data to
 
     //syncMessage
     //byte syncMessage[3] = { targetHostID,0,MessageType::EMPTY };

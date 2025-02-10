@@ -20,8 +20,6 @@
  
 #include "AnimHostMessageSender.h"
 
-//targetHostID = _ipAddress.at(_ipAddress.size() - 1).digitValue();
-
 #include <QThread>
 #include <QDebug>
 #include <QDataStream>
@@ -33,8 +31,8 @@ void AnimHostMessageSender::requestStart() {
     _working = true;
     _stop = false;
     _paused = false;
-    //ZMQMessageHandler::localTick->start();
-    qDebug() << "AnimHost Message Sender requested to start";// in Thread "<<thread()->currentThreadId();
+
+    qDebug() << "AnimHost Message Sender requested to start";
 
     sendSocket = new zmq::socket_t(*context, zmq::socket_type::pub); // publisher socket
     mutex.unlock();
@@ -46,7 +44,7 @@ void AnimHostMessageSender::requestStop() {
         _stop = true;
         _paused = false;
         _working = false;
-        qDebug() << "AnimHost Message Sender stopping";// in Thread "<<thread()->currentThreadId();
+        qDebug() << "AnimHost Message Sender stopping";
     }
     mutex.unlock();
 }
@@ -58,37 +56,39 @@ void AnimHostMessageSender::resumeSendFrames() {
     //mutex.unlock();
 }
 
-//void AnimHostMessageSender::setMessage(QByteArray* msg) {
-//    //qDebug() << "Setting message of size " << msg->size();
-//    message = msg;
-//    //qDebug() << "Setting message of size " << message.size();
-//
-//}
-
 void AnimHostMessageSender::run() {
 
-    //ZMQMessageHandler::localTick->start(1000 / ZMQMessageHandler::getPlaybackFrameRate());
-    //sendSocket = new zmq::socket_t(*context, zmq::socket_type::pub); // publisher socket
-    sendSocket->connect(QString("tcp://127.0.0.1:5557").toLatin1().data());
+    sendSocket->connect(QString("tcp://" + _targetIP + ":5557").toLatin1().data());
 
     while (!_stop) { //loop until stop is requested (by calling requestStop(); on deletion of sender node in compute graph)
 
+        
+        if (targetAddressChanged) { //check if IP address has changed & reconnect
+            qDebug() << "Target IP Address changed to: " << _targetIP;
+            qDebug() << "Try opening socket to: " << _targetIP;
+            sendSocket->close();
+            sendSocket = new zmq::socket_t(*context, zmq::socket_type::pub);
+            sendSocket->connect(QString("tcp://" + _targetIP + ":5557").toLatin1().data());
+            targetAddressChanged = false;
+
+            qDebug() << "Connected to: " << _targetIP;
+        }
+
         if (streamAnimation) {  
-            
-            //measuring time for streaming
-			
+            			
             streamAnimationData(); // on completion of streaming the animation, the streamAnimation flag is set to false
 
         }
         else if (!streamAnimation && sendBlock) {
 
-            QElapsedTimer timer;
-            timer.start();
             sendAnimationDataBlock(); // on completion of sending the animation block, the sendBlock flag is set to false
-            qDebug() << "Time elapsed sending block: " << timer.elapsed() << "ms";
+
         }
 
+
     };
+
+	sendSocket->close();
 
     qDebug() << "AnimHost Message Sender process to be stopped";
 
@@ -98,13 +98,13 @@ void AnimHostMessageSender::run() {
 
 void AnimHostMessageSender::streamAnimationData()
 {
-    qDebug() << "Starting STREAM AnimHost Message Sender";// in Thread " << thread()->currentThreadId();
+    qDebug() << "Starting STREAM AnimHost Message Sender";
 
     //zmq::message_t* tempMsg = new zmq::message_t();
 
     // Allows up- and down-sampling of the animation in order to keep the perceived speed the same even though the playback framerate is not the same
     // w.r.t. the framerate, for which the animation was designed
-    deltaAnimFrame = (float) 1; //_globalTimer->getAnimFrameRate() / _globalTimer->getPlaybackFrameRate();
+    deltaAnimFrame = 1.f; //_globalTimer->getAnimFrameRate() / _globalTimer->getPlaybackFrameRate();
 
     QByteArray* msgBodyAnim = new QByteArray();
 
@@ -133,18 +133,6 @@ void AnimHostMessageSender::streamAnimationData()
 
 
         // Wait for TRACER Tick to send the next frame
-        //if (!sendFrameWaitCondition->wait(&m_pauseMutex, 100)) {
-
-        //    // If TRACER Tick is not received, stop the process.
-        //    // Currently occurs when UI Drawing is too slow & 
-        //    // message sender thread is destroyed, as aresult of deleting the sender node
-        //    // in the compute graph.
-       
-        //    qDebug() << "Timeout in AnimHost Message Sender";
-        //    m_pauseMutex.unlock();
-        //    break;
-        //}
-
         _globalTimer->waitOnTick();
   
 
@@ -154,15 +142,7 @@ void AnimHostMessageSender::streamAnimationData()
         mutex.unlock();
 
         // Create ZMQ Message
-        // -> implemented in parent class because the message header is the same for all messages emitted from same client (not unique to parameter update messages)
         createNewMessage(_globalTimer->getLocalTimeStamp(), ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
-
-        // Check message data
-        /*std::string debugOut;
-        char* debugDataArray = message->data();
-        for (int i = 0; i < message->size() / sizeof(char); i++) {
-            debugOut = debugOut + std::to_string(debugDataArray[i]) + " ";
-        }*/
 
         // Sending LOCK message to the character (necessary for applying root animations)
         if (!locked) {
@@ -199,6 +179,20 @@ void AnimHostMessageSender::streamAnimationData()
     int retunUnlockVal = sendSocket->send((void*)lockMessage->data(), lockMessage->size());
     locked = false;
 
+
+    //HOTFIX: Signal stream has finished by RPC, temporary adaption for compatibility with VPET
+    //{
+    //    qDebug() << "Sending PARAMETERUPDATE Stream Finished";
+    //    int rpcOffsetID = 3 + 3; // TRS + HOTFIXPARAMS
+    //    QByteArray msgStreamFinishedBody = CreateParameterUpdateBody<int>(targetSceneID, charObj->sceneObjectID, rpcOffsetID,
+    //        ZMQMessageHandler::ParameterType::INT, 5);
+
+    //    createNewMessage(_globalTimer->getLocalTimeStamp(), ZMQMessageHandler::MessageType::PARAMETERUPDATE, &msgStreamFinishedBody);
+    //    int retunVal = sendSocket->send((void*)message->data(), message->size());
+    //}
+	
+
+
     // Set _working to false -> process cannot be aborted anymore
     mutex.lock();
     streamAnimation = false;
@@ -207,20 +201,12 @@ void AnimHostMessageSender::streamAnimationData()
 
 void AnimHostMessageSender::sendAnimationDataBlock()
 {
-    qDebug() << "Starting BLOCK AnimHost Message Sender";// in Thread " << thread()->currentThreadId();
+    qDebug() << "Starting BLOCK AnimHost Message Sender";
 
-    //zmq::message_t* tempMsg = new zmq::message_t();
 
-    // Allows up- and down-sampling of the animation in order to keep the perceived speed the same even though the playback framerate is not the same
-    // w.r.t. the framerate, for which the animation was designed
     QByteArray* msgBodyAnim = new QByteArray();
-
-    // The length of the animation is defined by the bones that has the more frames
    
-
-
     bool locked = false;
-
 
     m_pauseMutex.lock();
 
@@ -288,27 +274,6 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
 
     // Target Scene ID
     int targetSceneID = ZMQMessageHandler::getTargetSceneID();
-
-    //  ELEMENT 0 IN THE ANIMATION DATA IS EMPTY AT THE MOMENT, SO WE CAN IGNORE THE FOLLOWING SECTION OF THE CODE
-    //Bone rootBone = animData->mBones.at(1);                 // The first bone in the animation data should be the root
-    
-    //glm::vec3 rootPos = rootBone.GetPosition(frame);        // Getting Root Bone Position Vector
-    //glm::quat rootRot = rootBone.GetOrientation(frame);     // Getting Root Bone Rotation Quaternion
-    //glm::vec3 rootPos = rootBone.GetPosition(frame);        // Getting Root Bone Position Vector
-    //glm::quat rootRot = rootBone.GetOrientation(frame);     // Getting Root Bone Rotation Quaternion
-    //glm::vec3 rootScl = rootBone.GetScale(frame);           // Getting Root Bone Scale    Vector
-
-    //std::vector<float> rootPosVector = { rootPos.x, rootPos.y, rootPos.z };             // converting glm::vec3 in vector<float>
-    //std::vector<float> rootRotVector = { rootRot.x, rootRot.y, rootRot.z, rootRot.w };  // converting glm::quat in vector<float>
-    //std::vector<float> rootSclVector = { rootScl.x, rootScl.y, rootScl.z };             // converting glm::quat in vector<float>
-
-    // Create messages for sending out the Character Root TRS and appending them to the byte array that is going to be sent to TRACER applications
-    //QByteArray msgRootPos = createMessageBody(targetSceneID, character->sceneObjectID, 0, ZMQMessageHandler::ParameterType::VECTOR3,    rootPosVector);
-    //byteArray->append(msgRootPos);
-    //QByteArray msgRootRot = createMessageBody(targetSceneID, character->sceneObjectID, 1, ZMQMessageHandler::ParameterType::QUATERNION, rootRotVector);
-    //byteArray->append(msgRootRot);
-    //QByteArray msgRootScl = createMessageBody(targetSceneID, character->sceneObjectID, 2, ZMQMessageHandler::ParameterType::VECTOR3,    rootSclVector);
-    //byteArray->append(msgRootScl);
     
     int charRootID = character->characterRootID;
     int nBones = character->skinnedMeshList.at(0).boneMapIDs.size();    // The number of Bones in the targeted character
@@ -322,6 +287,15 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
         // Getting boneName given the parameterID
         int boneID = character->skinnedMeshList.at(0).boneMapIDs.at(i);
         std::string boneName = sceneNodeList->mSceneNodeObjectSequence.at(boneID).objectName;
+
+
+        if (boneName.compare("heel_02_R") == 0 || boneName.compare("heel_02_L") == 0) {
+            qDebug() << "heel found";
+            continue;
+        }
+
+
+
         // boneName search (sequential...any ideas on how to make it faster?)
         int animDataBoneID = -1;
         for (int j = 0; j < animData->mBones.size(); j++) {
@@ -341,10 +315,10 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
             glm::vec3 bonePos = animData->mBones.at(animDataBoneID).GetPosition(frame);
 
 
-            QByteArray msgBoneQuat = CreateParameterUpdateBody<glm::quat>(targetSceneID, character->sceneObjectID, i + 3,
+            QByteArray msgBoneQuat = CreateParameterUpdateBody<glm::quat>(targetSceneID, character->sceneObjectID, i + 3, // + 5, // HOTFIX + 5 VPET DEMO
                 				ZMQMessageHandler::ParameterType::QUATERNION, boneQuat);
             
-            QByteArray msgBonePos = CreateParameterUpdateBody<glm::vec3>(targetSceneID, character->sceneObjectID, i + nBones + 3,
+            QByteArray msgBonePos = CreateParameterUpdateBody<glm::vec3>(targetSceneID, character->sceneObjectID, i + nBones + 3, // + 5,  // HOTFIX + 5 VPET DEMO
                                                       ZMQMessageHandler::ParameterType::VECTOR3, bonePos);
 
             byteArray->append(msgBonePos);
@@ -363,6 +337,8 @@ void AnimHostMessageSender::SerializeAnimation(std::shared_ptr<Animation> animDa
 
     int nBones = character->skinnedMeshList.at(0).boneMapIDs.size();    // The number of Bones in the targeted character
 
+	QString boneRotationMap = "";
+
     for (int i = 0; i < nBones; i++)
     {
 
@@ -377,13 +353,12 @@ void AnimHostMessageSender::SerializeAnimation(std::shared_ptr<Animation> animDa
 
         int animDataBoneID = -1;
         for (int j = 0; j < animData->mBones.size(); j++) {
-            if (boneName.compare(animData->mBones.at(j).mName) == 0) { //bone names compare equal (case sensitive)
+            if (boneName.compare(animData->mBones.at(j).mName) == 0) { // Bone names compare equal (case sensitive)
                 animDataBoneID = j;
                 break;
             }
         }
-        if (animDataBoneID < 0) {
-            //qDebug() << boneName << "not found in the Animation Data";
+		if (animDataBoneID < 0) { // Continue if bone name not found in the animation data
             continue;
         }
 
@@ -423,8 +398,14 @@ void AnimHostMessageSender::SerializeAnimation(std::shared_ptr<Animation> animDa
             ZMQMessageHandler::ParameterType::QUATERNION, ZMQMessageHandler::AnimationKeyType::STEP, rotationKeyPairs, tangentRotationKeyPairs, frame);
 
         byteArray->append(msgBoneQuat);
+        
+        boneRotationMap += QStringLiteral("{ % 1, \"%2\"},\n").arg((i + 3)).arg(QString::fromStdString(boneName));
+
+
 
     }
+
+    qDebug() << boneRotationMap;
 
 }
 
@@ -453,10 +434,8 @@ QByteArray AnimHostMessageSender::CreateParameterUpdateBody(byte sceneID, uint16
     msgStream << objectID;          // Object ID - 2 bytes
     msgStream << parameterID;       // Parameter ID - 2 bytes
     msgStream << parameterType;		// Parameter Type - 1 byte
-
     msgStream << messageSize;		// Message Size - 4 bytes
 
-    //msgStream.writeRawData(reinterpret_cast<const char*>(&payload), getParameterDimension(parameterType));
     serializeValue<T>(msgStream, payload);
 
     return newMessage;
@@ -485,11 +464,8 @@ QByteArray AnimHostMessageSender::CreateParameterUpdateBody<std::string>(byte sc
     msgStream << objectID;          // Object ID - 2 bytes
     msgStream << parameterID;       // Parameter ID - 2 bytes
     msgStream << parameterType;		// Parameter Type - 1 byte
-
-
     msgStream << messageSize;		// Message Size - 4 bytes
 
-    //msgStream.writeRawData(reinterpret_cast<const char*>(&payload), getParameterDimension(parameterType));
     serializeValue<std::string>(msgStream, payload);
 
     return newMessage;
@@ -516,7 +492,6 @@ QByteArray AnimHostMessageSender::createAnimationParameterUpdateBody(byte sceneI
         useTangentKeys = false;
 	}
   
-    //qDebug() << "Parameter Size:" << getParameterDimension(parameterType);
     uint32_t payloadSize = Keys.size();
     uint32_t payloadSizeBytes = payloadSize * (1 + 3 * sizeof(float) + 3 *  getParameterDimension(parameterType)); // number of frames * (keytype + (key and tangent l/r time) + (key and tangent l/r data))
     uint32_t messageSize = 10 + getParameterDimension(parameterType) + sizeof(short) + payloadSizeBytes; // HEADER + PARAMETER_Data + NUMBER OF KEYS + Animation Payload
@@ -535,19 +510,16 @@ QByteArray AnimHostMessageSender::createAnimationParameterUpdateBody(byte sceneI
     msgStream << static_cast<uint16_t>(parameterID);    // Parameter ID - 2 bytes
     msgStream << parameterType;						    // Parameter Type - 1 byte
 
-    //qDebug() << "Calc Message size: " << messageSize;
-    msgStream << messageSize;						   // Message Size - 4 bytes
+    msgStream << messageSize;						    // Message Size - 4 bytes
 
     debugSize = newMessage.size();
-
-    //msgStream.writeRawData(reinterpret_cast<const char*>(&Keys[frame].second), getParameterDimension(parameterType)); 
 
     serializeValue<T>(msgStream, Keys[frame].second);
 
     debugSize = newMessage.size();
 
     short numKeys = static_cast<uint16_t>(Keys.size());
-    msgStream << numKeys; // NUMBER OF KEYS - 2 bytes
+    msgStream << numKeys;                               // NUMBER OF KEYS - 2 bytes
 
     // TODO:  add quaternions from payload
     for (int i = 0; i < Keys.size(); i++) {
@@ -566,7 +538,6 @@ QByteArray AnimHostMessageSender::createAnimationParameterUpdateBody(byte sceneI
 
 			msgStream << defaultTime;
         }
-            
 
         // KEY DATA
         serializeValue<T>(msgStream, Keys[i].second);
@@ -585,6 +556,5 @@ QByteArray AnimHostMessageSender::createAnimationParameterUpdateBody(byte sceneI
             
     }
 
-    //qDebug() << "True Message size: " << newMessage.size();
     return newMessage;
 }
