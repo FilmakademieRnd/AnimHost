@@ -342,14 +342,9 @@ std::vector<glm::mat4> LocomotionPreprocessNode::prepareBipedRoot(std::shared_pt
 
 	std::vector<glm::quat> rootRot = prepareRootRotation(poseSequenceIn, skeleton);
 
-
-	//std::vector<glm::quat> smoothedRootRot = SmoothRootRotations(rootRot,120);
-
 	std::vector<glm::quat> smoothedRootRot = rootRot;
 
-	for (int i = 0; i < 5; i++) {
-		smoothedRootRot = GaussianFilterQuaternions(smoothedRootRot, 30);
-	}
+	//smoothedRootRot = GaussianFilterQuaternions(smoothedRootRot, 30);
 
 	std::vector<glm::vec3> rootPos = std::vector<glm::vec3>(numFrames);
 
