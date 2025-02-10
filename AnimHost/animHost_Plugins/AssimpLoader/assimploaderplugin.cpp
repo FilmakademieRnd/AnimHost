@@ -153,34 +153,37 @@ void AssimpLoaderPlugin::run() {
 
 		qDebug() << "Start processing " << file;
 
-		Q_EMIT emitDataInvalidated(0);
-		Q_EMIT emitDataInvalidated(1);
+		if (SourceFilePath.compare(file) != 0) {
 
-		SourceFilePath = file;
-		bDataValid = false;
+			Q_EMIT emitDataInvalidated(0);
+			Q_EMIT emitDataInvalidated(1);
 
-		QString shorty = AnimHostHelper::shortenFilePath(file, 10);
 
-		/*_label->setText(shorty);
-		_folderSelect->*/
+			SourceFilePath = file;
+			bDataValid = false;
 
-		importAssimpData();
+			QString shorty = AnimHostHelper::shortenFilePath(file, 10);
 
-		//Experimental.
-		// If character is our own "survivor" character, we need to adjust the skeleton and animation data
-		if (_subsamplingCheck->isChecked())
-		{
-			UseSubSkeleton("hip", { "hand_R", "hand_L", "head", "toe_L", "toe_R", "heel_02_L", "heel_02_R"});
-			_animation->getData()->ApplyChangeOfBasis();
+			/*_label->setText(shorty);
+			_folderSelect->*/
+
+			importAssimpData();
+
+			//Experimental.
+			// If character is our own "survivor" character, we need to adjust the skeleton and animation data
+			if (_subsamplingCheck->isChecked())
+			{
+				UseSubSkeleton("hip", { "hand_R", "hand_L", "head", "toe_L", "toe_R", "heel_02_L", "heel_02_R" });
+				_animation->getData()->ApplyChangeOfBasis();
+			}
+
+			emitDataUpdate(0);
+			emitDataUpdate(1);
+
+			qDebug() << "Processing " << shorty << " done.";
+
+			Q_EMIT embeddedWidgetSizeUpdated();
 		}
-
-		emitDataUpdate(0);
-		emitDataUpdate(1);
-
-		qDebug() << "Processing " << shorty << " done.";
-
-		Q_EMIT embeddedWidgetSizeUpdated();
-
 		emitRunNextNode();
 	}
 }
@@ -366,14 +369,14 @@ void AssimpLoaderPlugin::importAssimpData()
 
 
 	// Create a logger instance
-	Assimp::DefaultLogger::create("", Assimp::Logger::NORMAL);
+	Assimp::DefaultLogger::create("", Assimp::Logger::DEBUGGING);
 
 	// Now I am ready for logging my stuff
 	Assimp::DefaultLogger::get()->info("this is my info-call");
 
 
-	//const unsigned int severity =  Assimp::Logger::Info | Assimp::Logger::Err | Assimp::Logger::Warn;
-	const unsigned int severity =  Assimp::Logger::Err | Assimp::Logger::Warn;
+	const unsigned int severity =  Assimp::Logger::Info | Assimp::Logger::Err | Assimp::Logger::Warn;
+	//const unsigned int severity =  Assimp::Logger::Err | Assimp::Logger::Warn;
 	Assimp::DefaultLogger::get()->attachStream(new AssimpQTStream, severity);
 
 	const  aiScene* scene = importer.ReadFile(SourceFilePath.toStdString(),
