@@ -6,7 +6,6 @@
 # Docs generation
 doc/build/
 doc/doxygen/
-doc/doxygen/
 doc/generated/
 doc/source/api/
 
