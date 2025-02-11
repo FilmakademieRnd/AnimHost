@@ -1,5 +1,0 @@
-<map id="PoseSequence" name="PoseSequence">
-<area shape="rect" id="Node000001" title="Sequence of poses." alt="" coords="5,80,115,107"/>
-<area shape="rect" id="Node000002" href="$class_sequence.html" title="Datacontainer for identifing proccessed and saved sequences." alt="" coords="20,5,100,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="63,48,63,80,57,80,57,48"/>
-</map>

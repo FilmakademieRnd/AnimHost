@@ -1,5 +1,0 @@
-<map id="TracerSceneReceiverPlugin::run" name="TracerSceneReceiverPlugin::run">
-<area shape="rect" id="Node000001" title="It&#39;s called when the plugin is started." alt="" coords="5,5,211,32"/>
-<area shape="rect" id="Node000002" href="$class_scene_receiver.html#a1691a7d534569795c77f36f0097340d2" title="Request this process to start working." alt="" coords="259,5,445,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="211,16,243,16,243,21,211,21"/>
-</map>

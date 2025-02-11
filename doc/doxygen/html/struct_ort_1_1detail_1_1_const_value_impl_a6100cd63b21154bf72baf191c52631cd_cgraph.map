@@ -1,5 +1,0 @@
-<map id="Ort::detail::ConstValueImpl::GetSparseTensorIndicesData" name="Ort::detail::ConstValueImpl::GetSparseTensorIndicesData">
-<area shape="rect" id="Node000001" title="The API retrieves a pointer to the internal indices buffer. The API merely performs a convenience dat..." alt="" coords="5,5,204,48"/>
-<area shape="rect" id="Node000002" href="$namespace_ort.html#a296b5958479d9889218b17bdb08c1894" title="This returns a reference to the OrtApi interface in use." alt="" coords="252,13,339,40"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="204,24,236,24,236,29,204,29"/>
-</map>

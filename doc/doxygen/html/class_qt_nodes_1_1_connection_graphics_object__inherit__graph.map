@@ -1,6 +1,0 @@
-<map id="QtNodes::ConnectionGraphicsObject" name="QtNodes::ConnectionGraphicsObject">
-<area shape="rect" id="Node000001" title="Graphic Object for connection. Adds itself to scene." alt="" coords="5,80,203,123"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="43,5,165,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="98,48,99,80,93,80,93,48"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="115,48,115,80,109,80,110,48"/>
-</map>

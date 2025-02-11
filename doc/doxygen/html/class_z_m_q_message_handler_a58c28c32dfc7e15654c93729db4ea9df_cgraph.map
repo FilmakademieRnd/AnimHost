@@ -1,5 +1,0 @@
-<map id="ZMQMessageHandler::createNewMessage" name="ZMQMessageHandler::createNewMessage">
-<area shape="rect" id="Node000001" title="Creates a new 0MQ formatted message." alt="" coords="5,5,160,48"/>
-<area shape="rect" id="Node000002" href="$class_z_m_q_message_handler.html#a7c09e750f83c94cce01d20e4cd87f5e2" title="Returns the current Client ID of the AnimHost Qt Application." alt="" coords="208,5,362,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="160,24,192,24,192,29,160,29"/>
-</map>

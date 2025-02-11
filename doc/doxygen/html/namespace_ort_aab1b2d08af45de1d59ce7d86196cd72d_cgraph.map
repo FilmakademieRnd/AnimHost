@@ -1,7 +1,0 @@
-<map id="Ort::GetVersionString" name="Ort::GetVersionString">
-<area shape="rect" id="Node000001" title="This function returns the onnxruntime version string." alt="" coords="5,31,152,57"/>
-<area shape="rect" id="Node000002" href="$struct_ort_api_base.html#aeb8904ae59c4c48a2b739a3f330f3166" title="Returns a null terminated string of the version of the Onnxruntime library (eg: &quot;1...." alt="" coords="200,5,395,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="152,33,184,29,185,34,152,38"/>
-<area shape="rect" id="Node000003" href="$group___global.html#gaf542347444820afe571db318ffcc8101" title="The Onnxruntime library&#39;s entry point to access the C API." alt="" coords="243,56,352,83"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="152,50,228,59,227,64,152,55"/>
-</map>

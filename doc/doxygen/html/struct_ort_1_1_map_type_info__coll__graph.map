@@ -1,7 +1,0 @@
-<map id="Ort::MapTypeInfo" name="Ort::MapTypeInfo">
-<area shape="rect" id="Node000001" title="Wrapper around ::OrtMapTypeInfo." alt="" coords="25,171,146,197"/>
-<area shape="rect" id="Node000002" href="$struct_ort_1_1detail_1_1_map_type_info_impl.html" title=" " alt="" coords="5,80,166,123"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="88,139,88,170,83,170,83,139"/>
-<area shape="rect" id="Node000003" href="$struct_ort_1_1detail_1_1_base.html" title="Used internally by the C++ API. C++ wrapper types inherit from this. This is a zero cost abstraction ..." alt="" coords="12,5,159,32"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="88,48,88,80,83,80,83,48"/>
-</map>

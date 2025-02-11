@@ -36,77 +36,51 @@ Here is the interface definition:
 
 .. code-block:: cpp
 
-    #ifndef PLUGINNODEINTERFACE_H
-   #define PLUGINNODEINTERFACE_H
+    class ANIMHOSTCORESHARED_EXPORT PluginNodeInterface : public QtNodes::NodeDelegateModel {
+    private:
+        std::shared_ptr<AnimNodeData<RunSignal>> _runSignal = nullptr;
 
-   #include <QObject>
-   #include <QList>
-   #include <QString>
-   #include <QVariant>
-   #include "plugininterface.h"
-   #include <QtNodes/NodeDelegateModel>
-   #include <nodedatatypes.h>
+    public:
+        PluginNodeInterface() {};
+        PluginNodeInterface(const PluginNodeInterface& p) {};
 
-   //!
-   //! \brief Interface for plugins for the AnimHost
-   //!
-   class ANIMHOSTCORESHARED_EXPORT PluginNodeInterface : public QtNodes::NodeDelegateModel
-   {
+        virtual std::unique_ptr<NodeDelegateModel> Init() { throw; };
 
-   private:
-      std::shared_ptr<AnimNodeData<RunSignal>> _runSignal = nullptr;
+        QString name() const override { return metaObject()->className(); };
 
-   public:
+        virtual QString category() { throw; };
 
-      PluginNodeInterface() {};
-      PluginNodeInterface(const PluginNodeInterface& p) {};
+        QString caption() const override { return this->name(); }
+        bool captionVisible() const override { return true; }
 
-      virtual std::unique_ptr<NodeDelegateModel>  Init() { throw; };
+        virtual unsigned int nDataPorts(QtNodes::PortType portType) const = 0;
 
-      QString name() const override { return metaObject()->className(); };
-      virtual QString category() { throw; }; 
+        virtual bool hasInputRunSignal() const { return true; }
+        virtual bool hasOutputRunSignal() const { return true; }
 
-      QString caption() const override { return this->name(); }
-      bool captionVisible() const override { return true; }
+        virtual NodeDataType dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const = 0;
 
-      /**
-      * Return the number of data ports in- and output of the node. 
-      * By default +1 added for run signal port.
-      * 
-      * \param portType Selector of in- or output type
-      * \return 
-      */
-      virtual unsigned int nDataPorts(QtNodes::PortType portType) const = 0;
+        virtual std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) = 0;
 
-      virtual bool hasInputRunSignal() const { return true; }
-      virtual bool hasOutputRunSignal() const { return true; }
-      
-      /*! Return the data type of data in - or output on given port.*/
-      virtual NodeDataType dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const = 0;
+        virtual void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) = 0;
 
-      virtual std::shared_ptr<NodeData>  processOutData(QtNodes::PortIndex port) = 0;
+        void emitDataUpdate(QtNodes::PortIndex portIndex);
 
-      virtual void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) = 0;
+        void emitRunNextNode();
 
-      void emitDataUpdate(QtNodes::PortIndex portIndex);
+        void emitDataInvalidated(QtNodes::PortIndex portIndex);
 
-      void emitRunNextNode();
+        virtual bool isDataAvailable() = 0;
 
-      void emitDataInvalidated(QtNodes::PortIndex portIndex);
+        virtual void run() = 0;
 
-      virtual bool isDataAvailable() = 0;
+        QWidget* embeddedWidget() override { throw; };
+    };
 
-      virtual void run() = 0;
-
-      QWidget* embeddedWidget() override { throw; };
-
-   };
-
-   #endif // PLUGINNODEINTERFACE_H
 
 This base class requires you to implement several methods, including:
 - **Init()**: Initializes a new node and returns a unique pointer to the node.
-- **name()**: Returns the name of the node.
+- **name()**: Returns the name of the node. **Notice:** implementing the static method **Name()** is recommended. Prevents inplace construction of the node to access a name, on plugin registration.
 - **category()**: Returns the category of the node.
 - **caption()**: Returns the caption displayed on the node.
 - **save()**: Serializes the node's data to a `QJsonObject`.
@@ -134,15 +108,11 @@ To implement a custom node like `ToyAlphaNode`, you need to extend the `PluginNo
     #include "pluginnodeinterface.h"
     #include <QTimer>
 
-    class TOYCOLLECTIONPLUGINSHARED_EXPORT ToyAlphaNode : public PluginNodeInterface
-    {
+    class TOYCOLLECTIONPLUGINSHARED_EXPORT ToyAlphaNode : public PluginNodeInterface {
         Q_OBJECT
 
     private:
         QWidget* _widget;
-
-    private:
-
         std::weak_ptr<AnimNodeData<Animation>> _animationIn;
         std::shared_ptr<AnimNodeData<Animation>> _animationOut;
 
@@ -151,36 +121,17 @@ To implement a custom node like `ToyAlphaNode`, you need to extend the `PluginNo
         ~ToyAlphaNode();
 
         std::unique_ptr<NodeDelegateModel> Init() override { return nullptr; };
-
-        QString caption() const override { return this->name();}
-    
-        bool captionVisible() const override { return true; };
-
-        /*
-        * Implement the static Name() function to return the name of the node. Otherwise, name() will return the class name.
-        * Which requires the temorary creation of an object of the class.
-        */
+        QString caption() const override { return this->name(); }
+        bool captionVisible() const override { return true; }
         static QString Name() { return QString("ToyAlphaNode"); }
-
         unsigned int nDataPorts(QtNodes::PortType portType) const override;
-
         NodeDataType dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const override;
-
         std::shared_ptr<NodeData> processOutData(QtNodes::PortIndex port) override;
-
         void processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex) override;
-
         bool isDataAvailable() override;
-
         void run() override;
-
         QWidget* embeddedWidget() override;
-
-        /*
-        * Category sorts the node into a category in the node library. Affects the right click menu.
-        */
-        QString category() override { return "Operator"; };  // Returns a category for the node
-
+        QString category() override { return "Operator"; };
     };
 
     #endif // TOYALPHANODE_H
@@ -293,9 +244,7 @@ To implement a custom node like `ToyAlphaNode`, you need to extend the `PluginNo
 
         return nullptr;
     }
-
-
-This `ToyAlphaNode` implementation demonstrates the basic structure and methods required for a custom node in AnimHost. The node includes:
+    
 
 Step 3: Integrating the Node into a NodeCollection
 ===================================================
@@ -304,9 +253,10 @@ Once you have implemented your custom node, the next step is to integrate it int
 
 .. code-block:: cpp
 
-    void ToyCollectionPlugin::RegisterNodeCollection(NodeDelegateModelRegistry& nodeRegistry) override
-    {
-        nodeRegistry.registerModel<ToyAlphaNode>([this](){ return std::make_unique<ToyAlphaNode>(*localTick); });
+    void ToyCollectionPlugin::RegisterNodeCollection(NodeDelegateModelRegistry& nodeRegistry) override {
+
+        nodeRegistry.registerModel<ToyAlphaNode>([this]() { return std::make_unique<ToyAlphaNode>(*localTick); });
+
     }
 
 This registration process ensures that your custom node is recognized by AnimHost and can be used within the node editor environment.
@@ -317,3 +267,4 @@ Conclusion
 By following this guide, you should now be able to create and integrate a custom node into AnimHost. Customize and expand on this example to build more complex nodes that meet your specific requirements.
 
 For further assistance, refer to the AnimHost GitHub repository for more detailed examples of already existing nodes and community support.
+

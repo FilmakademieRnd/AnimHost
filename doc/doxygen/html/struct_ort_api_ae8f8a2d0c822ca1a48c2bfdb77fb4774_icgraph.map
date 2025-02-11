@@ -1,5 +1,0 @@
-<map id="OrtApi::GetBuildInfoString" name="OrtApi::GetBuildInfoString">
-<area shape="rect" id="Node000001" title="Returns a null terminated string of the build info including git info and cxx flags." alt="" coords="205,5,375,32"/>
-<area shape="rect" id="Node000002" href="$namespace_ort.html#a6b82de94ec0b5681e559a9697e485306" title="This function returns the onnxruntime build information: including git branch, git commit id,..." alt="" coords="5,5,157,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="189,21,157,21,157,16,189,16"/>
-</map>

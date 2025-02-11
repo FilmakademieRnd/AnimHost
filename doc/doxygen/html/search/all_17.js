@@ -1,8 +1,0 @@
-var searchData=
-[
-  ['value_0',['Value',['../struct_ort_1_1_value.html',1,'Ort::Value'],['../struct_ort_1_1_value.html#a233d9a9878a69295ad504ea2b22b4d1f',1,'Ort::Value::Value(std::nullptr_t)'],['../struct_ort_1_1_value.html#a4e744a54c1fe6c477cccbe33b580fe3b',1,'Ort::Value::Value(OrtValue *p)']]],
-  ['valueimpl_1',['ValueImpl',['../struct_ort_1_1detail_1_1_value_impl.html',1,'Ort::detail']]],
-  ['valueimpl_3c_20ortvalue_20_3e_2',['ValueImpl&lt; OrtValue &gt;',['../struct_ort_1_1detail_1_1_value_impl.html',1,'Ort::detail']]],
-  ['version_3',['version',['../struct_ort_allocator.html#a508b90a31a7aec4f3ccd3d875c750b64',1,'OrtAllocator']]],
-  ['void_4',['void',['../struct_ort_api.html#ac34937f8dea97d5f103cc4c059f36037',1,'OrtApi::void(ORT_API_CALL *ClearBoundInputs)(_Inout_ OrtIoBinding *binding_ptr) NO_EXCEPTION ORT_ALL_ARGS_NONNULL'],['../struct_ort_api.html#ac8aa786d3b7c3026981aa6bf6751b17d',1,'OrtApi::void(ORT_API_CALL *ClearBoundOutputs)(_Inout_ OrtIoBinding *binding_ptr) NO_EXCEPTION ORT_ALL_ARGS_NONNULL'],['../struct_ort_api.html#a01da3544af15d2d6b21f6444f7260df5',1,'OrtApi::void(ORT_API_CALL *ReleaseTensorRTProviderOptions)(_Frees_ptr_opt_ OrtTensorRTProviderOptionsV2 *input)'],['../struct_ort_api.html#afaa6640163e452b43f41f0ff12b73ec6',1,'OrtApi::void(ORT_API_CALL *ReleaseCUDAProviderOptions)(_Frees_ptr_opt_ OrtCUDAProviderOptionsV2 *input)'],['../struct_ort_api.html#a3f3aabee2936b28df8796ec80b241c96',1,'OrtApi::void(ORT_API_CALL *ReleaseCANNProviderOptions)(_Frees_ptr_opt_ OrtCANNProviderOptions *input)'],['../struct_ort_api.html#a87b7545feeacb2aa16b14d232a00ded6',1,'OrtApi::void(ORT_API_CALL *ReleaseDnnlProviderOptions)(_Frees_ptr_opt_ OrtDnnlProviderOptions *input)']]]
-];
