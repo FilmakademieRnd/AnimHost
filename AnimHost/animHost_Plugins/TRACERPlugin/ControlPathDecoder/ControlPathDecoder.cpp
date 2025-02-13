@@ -65,7 +65,7 @@ void ControlPathDecoderNode::processInData(std::shared_ptr<NodeData> data, QtNod
         if (auto spParamIn = _ParamIn.lock()) {
             auto paramInData = spParamIn->getData();
 
-            if (paramInData->objectID == _controlPathID && paramInData->paramID == _paramPointLocationID) {
+            if (paramInData->objectID == _characterID && paramInData->paramID == _paramPointLocationID) {
                 qDebug() << "Control Point Locations received." << "ObjectID: " << paramInData->objectID;
 
                 // Decode Raw Data
@@ -74,16 +74,10 @@ void ControlPathDecoderNode::processInData(std::shared_ptr<NodeData> data, QtNod
                 // Convert into concrete Parameter of 3D Vectors
                 auto pointLocationParam = dynamic_cast<ParameterPayload<glm::vec3>*>(paramPayload.release());
                 this->_pointLocation = pointLocationParam->getKeyList();
-                // Flip the values on the y-axis - DOESN'T WORK
-                /*for (int i = 0; i < this->_pointLocation.size(); i++) {
-                    this->_pointLocation.at(i).value.z *= -1;
-                    this->_pointLocation.at(i).inTangentValue.z *= -1;
-                    this->_pointLocation.at(i).outTangentValue.z *= -1;
-                }*/
 
                 _receivedControlPathPointLocation = true;
 
-            } else if (paramInData->objectID == _controlPathID && paramInData->paramID == _paramPointRotationID) {
+            } else if (paramInData->objectID == _characterID && paramInData->paramID == _paramPointRotationID) {
                 qDebug() << "Control Point Orientations recieved. " << "ObjectID: " << paramInData->objectID;
 
                 // Decode Raw Data
@@ -148,36 +142,63 @@ void ControlPathDecoderNode::run()
     /*
     * Run the main node logic here. run() is called through the incoming run signal of another node.
     * run() can also be called through another signal, like a button press or in our case a timer.
-    * But it is recommended to keep user interaction to a minimum. 
+    * But it is recommended to keep user interaction to a minimum.
     */
     qDebug() << "ControlPathDecoderNode run";
     auto spCharacterIn = _characterIn.lock();
-    if(spCharacterIn && isDataAvailable()){
+    if (spCharacterIn && isDataAvailable()) {
 
         std::vector<ControlPoint> path = {};
         //path->initializePath();
 
+        qDebug() << "Processing Control Path" << _controlPathID;
+        qDebug() << "Number of Control Points" << this->_pointLocation.size();
+        qDebug() << "Number of Control Rotations" << this->_pointRotation.size();
+
         //Construct the path
         for (int i = 0; i < this->_pointLocation.size() - 1; i++) {
             qDebug() << "Processing Control Point" << i;
-            glm::vec3   thisLoc     = this->_pointLocation.at(i).value;
-            glm::vec3   outTang     = this->_pointLocation.at(i).outTangentValue;
-            int         firstFrame  = this->_pointLocation.at(i).time;
-            int         easeOut     = this->_pointLocation.at(i).outTangentTime;
+            glm::vec3   thisLoc = this->_pointLocation.at(i).value;
+            glm::vec3   outTang = this->_pointLocation.at(i).outTangentValue;
+            int         firstFrame = this->_pointLocation.at(i).time;
+            int         easeOut = this->_pointLocation.at(i).outTangentTime;
 
-            glm::vec3   nextLoc     = this->_pointLocation.at(i + 1).value;
-            glm::vec3   inTang      = this->_pointLocation.at(i + 1).inTangentValue;
-            int         lastFrame   = this->_pointLocation.at(i + 1).time;
-            int         easeIn      = this->_pointLocation.at(i + 1).inTangentTime;
+            glm::vec3   nextLoc = this->_pointLocation.at(i + 1).value;
+            glm::vec3   inTang = this->_pointLocation.at(i + 1).inTangentValue;
+            int         lastFrame = this->_pointLocation.at(i + 1).time;
+            int         easeIn = this->_pointLocation.at(i + 1).inTangentTime;
 
             glm::quat thisRot = this->_pointRotation.at(i).value;
             glm::quat nextRot = this->_pointRotation.at(i + 1).value;
-            
+
             std::vector<ControlPoint>* sampledSegment = adaptiveSegmentSampling(thisLoc, outTang, inTang, nextLoc, easeOut, easeIn, thisRot, nextRot, firstFrame, lastFrame);
 
+            //linear interpolation thisLoc and nextLoc by amount of frames between thisFrame and nextFrame, create control points for each frame
+
+            // Linear interpolation for position and rotation
+            for (int frame = firstFrame; frame <= lastFrame; frame++) {
+                float t = (frame - firstFrame) / float(lastFrame - firstFrame); // Normalized time [0, 1]
+
+                // Linearly interpolate position and rotation
+                glm::vec3 interpolatedLoc = glm::mix(thisLoc, nextLoc, t);
+                glm::quat interpolatedRot = glm::slerp(thisRot, nextRot, t);
+
+                // Create and add a control point to the path
+                ControlPoint cp;
+                cp.position = interpolatedLoc;
+                cp.lookAt = interpolatedRot;
+                cp.frameTimestamp = frame;
+
+                path.push_back(cp);
+            }
+
+
+
+
+
             // Grow the control path associated with the selected character. This will be passed as control signal onto the GNN
-            path.insert(path.end(), sampledSegment->begin(), sampledSegment->end());
-            
+            //path.insert(path.end(), sampledSegment->begin(), sampledSegment->end());
+
             // For every segnment which is not the last one,
             // remove its last frame because the first element of the next segment will duplicate it
             /*if (path.size() > 0 && i < this->_pointLocation.size() - 2)
@@ -187,22 +208,31 @@ void ControlPathDecoderNode::run()
         // TODO: If path is cyclic, evaluate last-to-first segment
 
 
-        for (int i = 0; i < path.size(); i++) {
+        //for (int i = 0; i < path.size(); i++) {
             // Transform the control points to the global coordinate system
 
-            path[i].position = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(path[i].position, 1.0f);
+
+            //Default use with Blender
+            //path[i].position = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(path[i].position, 1.0f);
+
+            //Default use with Unity
+            //path[i].position = glm::scale(glm::mat4(1.0f), glm::vec3(100.f,100.f, 100.f)) * glm::vec4(path[i].position, 1.0f);
+
 
             // Rotate the control points to the global coordinate system
 
-			glm::vec3 lookAt = path[i].lookAt * glm::vec3(0, -1.f,0);
-		
-            lookAt = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(lookAt, 0.0f);
+            //glm::vec3 lookAt = path[i].lookAt * glm::vec3(0, -1.f, 0);
 
-            path[i].lookAt = glm::rotation(glm::vec3(0, 0, 1), lookAt);
+            //Use With UNITY
+            //glm::vec3 lookAt = path[i].lookAt * glm::vec3(0, 0, 1.f);
 
-			//path[i].lookAt = glm::toQuat(AnimHostHelper::GetCoordinateSystemTransformationMatrix()) * path[i].lookAt;
+            //lookAt = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(lookAt, 0.0f);
 
-		}
+            //path[i].lookAt = glm::rotation(glm::vec3(0, 0, 1), lookAt);
+
+
+
+       // }
 
         spCharacterIn->getData()->setPath(path);
         emitDataUpdate(0);
