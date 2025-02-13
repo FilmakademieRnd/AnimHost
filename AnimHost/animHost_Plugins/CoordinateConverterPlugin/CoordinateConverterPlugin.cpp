@@ -100,13 +100,42 @@ void CoordinateConverterPlugin::run()
 
 
             //Apply Transform to Root Bone
-            for (int i = 0; i < animOut->mBones[1].mPositonKeys.size(); i++) {
+            /*for (int i = 0; i < animOut->mBones[1].mPositonKeys.size(); i++) {
 
                 animOut->mBones[1].mRotationKeys[i].orientation = glm::toQuat(activePreset.transformMatrix) * animOut->mBones[0].mRotationKeys[i].orientation * animOut->mBones[1].mRotationKeys[i].orientation;
-                //animOut->mBones[1].mPositonKeys[i].position = glm::toQuat(activePreset.transformMatrix) * glm::vec3(animOut->mBones[1].mPositonKeys[i].position);
                 animOut->mBones[1].mPositonKeys[i].position = activePreset.transformMatrix * glm::vec4(animOut->mBones[1].mPositonKeys[i].position, 1.f);
 
-            }
+            }*/
+
+
+
+
+			std::transform(animOut->mBones[0].mPositonKeys.begin(), animOut->mBones[0].mPositonKeys.end(), animOut->mBones[0].mPositonKeys.begin(), [&](KeyPosition key) {
+				key.position = activePreset.transformMatrix * glm::vec4(key.position, 1.f);
+				return key;
+				});
+
+            glm::quat activeRotationTransform = glm::toQuat(activePreset.transformMatrix);
+
+			std::transform(animOut->mBones[0].mRotationKeys.begin(), animOut->mBones[0].mRotationKeys.end(), animOut->mBones[0].mRotationKeys.begin(), [&](KeyRotation key) {
+				key.orientation = activeRotationTransform * key.orientation;
+				return key;
+				});
+
+
+			//apply asset specific conversion
+            glm::quat assetSpecificConversion = glm::toQuat(glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix()));
+            
+			std::transform(animOut->mBones[1].mPositonKeys.begin(), animOut->mBones[1].mPositonKeys.end(), animOut->mBones[1].mPositonKeys.begin(), [&](KeyPosition key) {
+				key.position = assetSpecificConversion * glm::vec4(key.position, 1.f);
+				return key;
+				});
+
+            std::transform(animOut->mBones[1].mRotationKeys.begin(), animOut->mBones[1].mRotationKeys.end(), animOut->mBones[1].mRotationKeys.begin(), [&](KeyRotation key) {
+                key.orientation = assetSpecificConversion * key.orientation;
+                return key;
+                });
+
 
             for (int i = 0; i < animOut->mBones.size(); i++) {
                 int numKeys = animOut->mBones[i].mNumKeysRotation;
@@ -121,8 +150,11 @@ void CoordinateConverterPlugin::run()
                         swapYZ, negX, negY, negZ, negW)  ;
 
 					//overwrite position with resting position if i< 2
-                    if (i > 2)
-                        animOut->mBones[i].mPositonKeys[j].position = animOut->mBones[i].mRestingTransform[3]; // / 100.f;
+                    if(i == 1)
+                        animOut->mBones[i].mPositonKeys[j].position = animOut->mBones[i].mPositonKeys[j].position / 100.f;
+
+                    if (i > 1)
+                        animOut->mBones[i].mPositonKeys[j].position = animOut->mBones[i].mRestingTransform[3] / 100.f;
                 }
 
                 numKeys = animOut->mBones[i].mNumKeysScale;

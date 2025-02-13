@@ -480,7 +480,8 @@ void GNNController::BuildAnimationSequence(const std::vector<std::vector<glm::qu
 
 		glm::vec3 pos = genJointPos[frameIdx][0];
 		////get current root
-		animationOut->mBones[0].mPositonKeys.push_back(KeyPosition(frameIdx, glm::vec3(genRootPos[frameIdx].x, pos.y, genRootPos[frameIdx].y)));
+		//animationOut->mBones[0].mPositonKeys.push_back(KeyPosition(frameIdx, glm::vec3(genRootPos[frameIdx].x, pos.y, genRootPos[frameIdx].y)));
+		animationOut->mBones[0].mPositonKeys.push_back(KeyPosition(frameIdx, glm::vec3(pos.x, pos.y, pos.z)));
 
 		for (int i = 1; i < jointRotSequence[frameIdx].size(); i++) {
 			animationOut->mBones[i].mPositonKeys.push_back(KeyPosition(frameIdx, glm::vec3()));
@@ -501,8 +502,9 @@ void GNNController::BuildAnimationSequence(const std::vector<std::vector<glm::qu
 		glm::quat currentRootRot = genRootForward[frameIdx];
 
 
+
 		animationOut->mBones[0].mRotationKeys.push_back(KeyRotation(frameIdx, currentRootRot));
-		animationOut->mBones[0].mPositonKeys.push_back(KeyPosition(frameIdx, glm::vec3(currentRootPos.x, currentRootPos.y, 0.0)));
+		animationOut->mBones[0].mPositonKeys.push_back(KeyPosition(frameIdx, glm::vec3(currentRootPos.x, 0.0, currentRootPos.y)));
 
 	}
 

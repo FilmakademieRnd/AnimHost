@@ -274,9 +274,23 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
 
     // Target Scene ID
     int targetSceneID = ZMQMessageHandler::getTargetSceneID();
-    
     int charRootID = character->characterRootID;
     int nBones = character->skinnedMeshList.at(0).boneMapIDs.size();    // The number of Bones in the targeted character
+
+    // Root TRS
+    // Getting Bone Object Rotation Quaternion
+    glm::quat boneQuat = animData->mBones.at(0).GetOrientation(frame);
+    glm::vec3 bonePos = animData->mBones.at(0).GetPosition(frame);
+
+    QByteArray msgRootPos = CreateParameterUpdateBody<glm::vec3>(targetSceneID, character->sceneObjectID, 0, // + 5,  // HOTFIX + 5 VPET DEMO
+        ZMQMessageHandler::ParameterType::VECTOR3, bonePos);
+
+    QByteArray msgRootQuat = CreateParameterUpdateBody<glm::quat>(targetSceneID, character->sceneObjectID, 1, // + 5, // HOTFIX + 5 VPET DEMO
+        ZMQMessageHandler::ParameterType::QUATERNION, boneQuat);
+
+    byteArray->append(msgRootPos);
+    byteArray->append(msgRootQuat);
+
     for (ushort i = 0; i < nBones; i++) {
         // boneMapIDs contains the parameterID to boneID mapping
         //      parameterID (= i+3)                 id to be sent in the update message to the rendering application, the offset (+3) is necessary because the first 3 parameters are ALWAYS rootPos, rootRot, rootScl
@@ -315,10 +329,10 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
             glm::vec3 bonePos = animData->mBones.at(animDataBoneID).GetPosition(frame);
 
 
-            QByteArray msgBoneQuat = CreateParameterUpdateBody<glm::quat>(targetSceneID, character->sceneObjectID, i + 3, // + 5, // HOTFIX + 5 VPET DEMO
+            QByteArray msgBoneQuat = CreateParameterUpdateBody<glm::quat>(targetSceneID, character->sceneObjectID, i + 3 + 3, // + 5, // HOTFIX + 5 VPET DEMO
                 				ZMQMessageHandler::ParameterType::QUATERNION, boneQuat);
             
-            QByteArray msgBonePos = CreateParameterUpdateBody<glm::vec3>(targetSceneID, character->sceneObjectID, i + nBones + 3, // + 5,  // HOTFIX + 5 VPET DEMO
+            QByteArray msgBonePos = CreateParameterUpdateBody<glm::vec3>(targetSceneID, character->sceneObjectID, i + nBones + 3 + 3, // + 5,  // HOTFIX + 5 VPET DEMO
                                                       ZMQMessageHandler::ParameterType::VECTOR3, bonePos);
 
             byteArray->append(msgBonePos);
@@ -338,6 +352,46 @@ void AnimHostMessageSender::SerializeAnimation(std::shared_ptr<Animation> animDa
     int nBones = character->skinnedMeshList.at(0).boneMapIDs.size();    // The number of Bones in the targeted character
 
 	QString boneRotationMap = "";
+
+
+    // Root TRS
+    // Getting Bone Object Rotation Quaternion
+    std::vector<std::pair<float, glm::vec3>> positionRootKeyPairs;
+    std::vector<std::pair<float, glm::vec3>> tangentRootPositionKeyPairs;
+    positionRootKeyPairs.reserve(animData->mBones.at(0).mPositonKeys.size());
+
+    auto pKeysBegin = animData->mBones.at(0).mPositonKeys.begin();
+    auto pKeysEnd = animData->mBones.at(0).mPositonKeys.end();
+
+    std::transform(pKeysBegin, pKeysEnd, std::back_inserter(positionRootKeyPairs),
+        [](const KeyPosition& key) {
+            return std::make_pair(key.timeStamp / 60.f, key.position);
+        });
+
+    QByteArray msgRootPos = createAnimationParameterUpdateBody<glm::vec3>(targetSceneID, character->sceneObjectID, 0,
+        ZMQMessageHandler::ParameterType::VECTOR3, ZMQMessageHandler::AnimationKeyType::STEP, positionRootKeyPairs, tangentRootPositionKeyPairs, frame);
+
+    byteArray->append(msgRootPos);
+
+    std::vector<std::pair<float, glm::quat>> rotationRootKeyPairs;
+    std::vector<std::pair<float, glm::quat>> tangentRootRotationKeyPairs;
+    rotationRootKeyPairs.reserve(animData->mBones.at(0).mRotationKeys.size());
+
+    auto rKeysBegin = animData->mBones.at(0).mRotationKeys.begin();
+    auto rKeysEnd = animData->mBones.at(0).mRotationKeys.end();
+
+    std::transform(rKeysBegin, rKeysEnd, std::back_inserter(rotationRootKeyPairs),
+        [](const KeyRotation& key) {
+            return std::make_pair(key.timeStamp / 60.f, key.orientation);
+        });
+
+    QByteArray msgRootQuat = createAnimationParameterUpdateBody<glm::quat>(targetSceneID, character->sceneObjectID, 1,
+        ZMQMessageHandler::ParameterType::QUATERNION, ZMQMessageHandler::AnimationKeyType::STEP, rotationRootKeyPairs, tangentRootRotationKeyPairs, frame);
+
+    byteArray->append(msgRootQuat);
+
+
+
 
     for (int i = 0; i < nBones; i++)
     {
@@ -372,10 +426,10 @@ void AnimHostMessageSender::SerializeAnimation(std::shared_ptr<Animation> animDa
 
             std::transform(pKeysBegin, pKeysEnd, std::back_inserter(positionKeyPairs),
                 [](const KeyPosition& key) {
-                    return std::make_pair(key.timeStamp, key.position);
+                    return std::make_pair(key.timeStamp / 60.f , key.position);
                 });
 
-            QByteArray msgBonePos = createAnimationParameterUpdateBody<glm::vec3>(targetSceneID, character->sceneObjectID, i + nBones + 3,
+            QByteArray msgBonePos = createAnimationParameterUpdateBody<glm::vec3>(targetSceneID, character->sceneObjectID, i + nBones + 3 +3,
                 ZMQMessageHandler::ParameterType::VECTOR3, ZMQMessageHandler::AnimationKeyType::STEP, positionKeyPairs, tangentPositionKeyPairs, frame);
 
             byteArray->append(msgBonePos);
@@ -391,10 +445,10 @@ void AnimHostMessageSender::SerializeAnimation(std::shared_ptr<Animation> animDa
 
         std::transform(rKeysBegin, rKeysEnd, std::back_inserter(rotationKeyPairs),
             [](const KeyRotation& key) {
-                return std::make_pair(key.timeStamp, key.orientation);
+                return std::make_pair(key.timeStamp / 60.f, key.orientation);
             });
 
-        QByteArray msgBoneQuat = createAnimationParameterUpdateBody<glm::quat>(targetSceneID, character->sceneObjectID, i + 3,
+        QByteArray msgBoneQuat = createAnimationParameterUpdateBody<glm::quat>(targetSceneID, character->sceneObjectID, i + 3 +3,
             ZMQMessageHandler::ParameterType::QUATERNION, ZMQMessageHandler::AnimationKeyType::STEP, rotationKeyPairs, tangentRotationKeyPairs, frame);
 
         byteArray->append(msgBoneQuat);

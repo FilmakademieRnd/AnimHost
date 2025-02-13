@@ -66,6 +66,7 @@ class TRACERPLUGINSHARED_EXPORT AnimationSenderNode : public PluginNodeInterface
     Q_OBJECT
 
     Q_PROPERTY(int sendingMode MEMBER _sendingMode)
+
 private:
     // UI Elements
     QWidget* widget = nullptr;                                //!< UI container element
