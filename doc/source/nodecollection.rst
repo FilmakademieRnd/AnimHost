@@ -44,9 +44,9 @@ The node collection serves as a container for multiple nodes that can be used wi
 This allows you to group related nodes together and provide a cohesive set of functionality. 
 In addition to the nodes themselves, the collection allows you to define pre and post-registration steps,
 metadata, and other information about the collection.
-This mighbt be useful for nodes that require specific initialization, cleanup steps or access to shared resources.
+This might be useful for nodes that require specific initialization, cleanup steps or access to shared resources.
 Shared resources could be a timer, a database connection, or any other resource that needs to be shared among multiple nodes.
-These resources can be initialized insed the collection and passed to the nodes during their creation through dependency injection.
+These resources can be initialized inside the collection and passed to the nodes during their creation through dependency injection.
 
 Here's a breakdown of the interface:
 
