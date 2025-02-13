@@ -31,6 +31,8 @@ private:
 
     std::weak_ptr<AnimNodeData<RPCUpdate>> _RPCIn;
 
+	std::weak_ptr<AnimNodeData<CharacterObject>> _characterIn;
+
     AnimHostRPCType _filterType = AnimHostRPCType::BLOCK;
 
 

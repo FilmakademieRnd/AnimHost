@@ -80,7 +80,7 @@ RPCTriggerNode::~RPCTriggerNode()
 unsigned int RPCTriggerNode::nDataPorts(QtNodes::PortType portType) const
 {
     if (portType == QtNodes::PortType::In)
-        return 1;
+        return 2;
     else            
         return 0;
 }
@@ -88,10 +88,16 @@ unsigned int RPCTriggerNode::nDataPorts(QtNodes::PortType portType) const
 NodeDataType RPCTriggerNode::dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
 {
     NodeDataType type;
-    if (portType == QtNodes::PortType::In)
-        return AnimNodeData<RPCUpdate>::staticType();
-    else
-        return type;
+    if (portType == QtNodes::PortType::In) {
+		if (portIndex == 0) {
+			return AnimNodeData<RPCUpdate>::staticType();
+		}
+		else {
+			return AnimNodeData<CharacterObject>::staticType();
+		}
+	}
+
+    return type;
 }
 
 void RPCTriggerNode::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex)
@@ -101,8 +107,14 @@ void RPCTriggerNode::processInData(std::shared_ptr<NodeData> data, QtNodes::Port
         Q_EMIT dataInvalidated(0);
     }
 
-    _RPCIn = std::static_pointer_cast<AnimNodeData<RPCUpdate>>(data);
-    
+    if (portIndex == 0) {
+        _RPCIn = std::static_pointer_cast<AnimNodeData<RPCUpdate>>(data);
+    }
+    else {
+		_characterIn = std::static_pointer_cast<AnimNodeData<CharacterObject>>(data);
+    }
+
+ 
     run();
 
     qDebug() << "RPCTriggerNode setInData";
@@ -131,71 +143,77 @@ void RPCTriggerNode::run()
     if(isDataAvailable()){
         
         if(auto RPCData = _RPCIn.lock()){
-			//qDebug() << "RPCData Received";
+			if (auto CharacterInData = _characterIn.lock()) {
+			    //qDebug() << "RPCData Received";
 
-            auto sp_rpc = RPCData->getData();
+                auto sp_rpc = RPCData->getData();
 
-            
-			// AnimHost expects all RPCs to be sent to SceneID 255 and ObjectID 1
-            if (sp_rpc->sceneID == 255 && sp_rpc->objectID == 1) {
+                auto spCharacter = CharacterInData->getData();
 
-				// Check for the specific animation request
-				if (sp_rpc->paramID == 0 && sp_rpc->paramType == ZMQMessageHandler::INT) {
-					QByteArray data = sp_rpc->rawData;
-					uint32_t rpc;
-					//convert data to int
-					std::memcpy(&rpc, data.data(), sizeof(uint32_t));
-                    
-					_filterType = AnimHostRPCType(rpc);
 
-					if (_filterType <= AnimHostRPCType::BLOCK) {
-						qDebug() << "RPCData Received: " << rpc;
+			    // Check if RPC is matching the active character and the "Animation Generation" RPC PArameter ID
+                if (sp_rpc->objectID == spCharacter->sceneObjectID) {
 
-                        // create QVaraintMap for filtertype and _rpcMappings
-						QVariantMap parameter;
-						parameter["sendingMode"] = QVariant::fromValue(_filterType);
+				    // Check for the specific animation request
+                    if (sp_rpc->paramID == 5 && sp_rpc->paramType == ZMQMessageHandler::INT) {
+                        QByteArray data = sp_rpc->rawData;
+                        uint32_t rpc;
+                        //convert data to int
+                        std::memcpy(&rpc, data.data(), sizeof(uint32_t));
 
-						for (auto mapping : _rpcMappings) {
-							parameter[mapping.targetProperty] = mapping.value;
-						}
+                        _filterType = AnimHostRPCType(rpc);
 
-						emitRunNextNode(&parameter);
-					}
+                        if (_filterType <= AnimHostRPCType::BLOCK) {
+                            qDebug() << "RPCData Received: " << rpc;
+
+                            // create QVaraintMap for filtertype and _rpcMappings
+                            QVariantMap parameter;
+                            parameter["sendingMode"] = QVariant::fromValue(_filterType);
+
+                            for (auto mapping : _rpcMappings) {
+                                parameter[mapping.targetProperty] = mapping.value;
+                            }
+
+                            emitRunNextNode(&parameter);
+                        }
+                    }
 				}
-                else {
-					// Check for possible mapping of RPC to other properties
-
+                else if (sp_rpc->sceneID == 255 && sp_rpc->objectID == 1) {
+                    // Check for possible mapping of RPC to other properties
                     for (auto& mapping : _rpcMappings) {
-						if (mapping.parameterID == sp_rpc->paramID) {
-							
-							auto data = sp_rpc->decodeRawData();
+                        if (mapping.parameterID == sp_rpc->paramID) {
 
-							if (sp_rpc->paramType == ZMQMessageHandler::INT) {
-								auto intData = dynamic_cast<ParameterPayload<int>*>(data.get());
-								mapping.value = intData->getValue();
-							}
-							else if (sp_rpc->paramType == ZMQMessageHandler::FLOAT) {
-								auto floatData = dynamic_cast<ParameterPayload<float>*>(data.get());
-								mapping.value = floatData->getValue();
-							}
-							else if (sp_rpc->paramType == ZMQMessageHandler::VECTOR3) {
-								//auto vec3Data = dynamic_cast<ParameterPayload<glm::vec3>*>(data.get());
-								qWarning() << "Vector 3 parmaeter override currently not supported";
-							}
-							else if (sp_rpc->paramType == ZMQMessageHandler::VECTOR4) {
-								//auto vec4Data = dynamic_cast<ParameterPayload<glm::vec4>*>(data.get());
-								qWarning() << "Vector 4 parmaeter override currently not supported";
-							}
-							else if (sp_rpc->paramType == ZMQMessageHandler::QUATERNION) {
-								//auto quatData = dynamic_cast<ParameterPayload<glm::quat>*>(data.get());
-								qWarning() << "Quaternion parmaeter override currently not supported";
-							}
+                            auto data = sp_rpc->decodeRawData();
+
+                            if (sp_rpc->paramType == ZMQMessageHandler::INT) {
+                                auto intData = dynamic_cast<ParameterPayload<int>*>(data.get());
+                                mapping.value = intData->getValue();
+                            }
+                            else if (sp_rpc->paramType == ZMQMessageHandler::FLOAT) {
+                                auto floatData = dynamic_cast<ParameterPayload<float>*>(data.get());
+                                mapping.value = floatData->getValue();
+                            }
+                            else if (sp_rpc->paramType == ZMQMessageHandler::VECTOR3) {
+                                //auto vec3Data = dynamic_cast<ParameterPayload<glm::vec3>*>(data.get());
+                                qWarning() << "Vector 3 parmaeter override currently not supported";
+                            }
+                            else if (sp_rpc->paramType == ZMQMessageHandler::VECTOR4) {
+                                //auto vec4Data = dynamic_cast<ParameterPayload<glm::vec4>*>(data.get());
+                                qWarning() << "Vector 4 parmaeter override currently not supported";
+                            }
+                            else if (sp_rpc->paramType == ZMQMessageHandler::QUATERNION) {
+                                //auto quatData = dynamic_cast<ParameterPayload<glm::quat>*>(data.get());
+                                qWarning() << "Quaternion parmaeter override currently not supported";
+                            }
                             else {
                                 qDebug() << "Unsupported parameter type in RPC!";
                             }
-						}
+                        }
                     }
                 }
+				else {
+						qWarning() << "Invalid RPC Target";
+				}
             }
 		}
 		else{
