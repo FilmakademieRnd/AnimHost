@@ -112,32 +112,32 @@ void TRACERUpdateReceiver::deserializeMessage(QByteArray& rawMessageData)
     MessageType inMessageType = static_cast<MessageType>(rawMessageData[2]);
     //qDebug() << inClientID << " "  << inMessageType;
     if(inClientID != _clientID){
-	    
-        switch(inMessageType){
-			case MessageType::SYNC:
-				qDebug() << "SYNC message received";
+            switch (inMessageType) {
+            case MessageType::SYNC:
+                qDebug() << "SYNC message received";
                 _globalTimer->syncTimer(static_cast<int>(inTimeStamp));  // Sync the global timer with received sync time
-				break;
+                break;
             case MessageType::RPC:
                 qDebug() << "RPC message received";
                 emit receiverStatus(2);
-				rawMessageData.remove(0, 3);  // Remove the first 3 bytes (Header)
-				deserializeRPCMessage(rawMessageData);
+                rawMessageData.remove(0, 3);  // Remove the first 3 bytes (Header)
+                deserializeRPCMessage(rawMessageData);
                 break;
-			case MessageType::PARAMETERUPDATE:
-				qDebug() << "PARAMETERUPDATE message received";
+            case MessageType::PARAMETERUPDATE:
+                qDebug() << "PARAMETERUPDATE message received";
                 emit receiverStatus(1);
                 rawMessageData.remove(0, 3);  // Remove the first 3 bytes (Header)
                 deserializeParameterUpdateMessage(rawMessageData);
-				break;
+                break;
             case MessageType::LOCK:
-				qDebug() << "LOCKUPDATE message received";
-				break;
-			default:
-				qDebug() << "Unknown message type received";
-				break;
-		}
-	}
+                qDebug() << "LOCKUPDATE message received";
+                break;
+            default:
+                qDebug() << "Unknown message type received";
+                break;
+            }
+        }
+	
 }
 
 void TRACERUpdateReceiver::deserializeParameterUpdateMessage(const QByteArray& rawMessageData)
