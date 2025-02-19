@@ -332,116 +332,143 @@ void GNNController::BuildInputTensor(const TrajectoryFrameData& inTrajFrame,
 
 	std::vector<Rotation6D> jointRot6D = MathUtils::convertQuaternionsTo6DRotations(inJointFrame.jointRot);
 
+
+
+	// Preallocate memory to avoid dynamic resizing
+	size_t total_size = 2 * inTrajFrame.pos.size()   // pos
+		+ 2 * inTrajFrame.dir.size()  // dir
+		+ 2 * inTrajFrame.vel.size()  // vel
+		+ inTrajFrame.speed.size()  // speed
+		+ 3 * inJointFrame.jointPos.size()  // jointPos (x, y, z)
+		+ 6 * jointRot6D.size()  // 6D rotation
+		+ 3 * inJointFrame.jointVel.size()  // joint velocity (x, y, z)
+		+ 2 * phaseSequence.GetFlattenedPhaseSequence().size(); // phase sequence
+
+
+
 	input_values.clear();
+	input_values.reserve(total_size);
 
 	
 
 	for (int i = 0; i < inTrajFrame.pos.size(); i++) {
-		input_values.push_back(inTrajFrame.pos[i].x);
-		input_values.push_back(inTrajFrame.pos[i].y);
+		input_values.emplace_back(inTrajFrame.pos[i].x);
+		input_values.emplace_back(inTrajFrame.pos[i].y);
 
-		input_values.push_back(inTrajFrame.dir[i].x);
-		input_values.push_back(inTrajFrame.dir[i].y);
+		input_values.emplace_back(inTrajFrame.dir[i].x);
+		input_values.emplace_back(inTrajFrame.dir[i].y);
 
-		input_values.push_back(inTrajFrame.vel[i].x);
-		input_values.push_back(inTrajFrame.vel[i].y);
+		input_values.emplace_back(inTrajFrame.vel[i].x);
+		input_values.emplace_back(inTrajFrame.vel[i].y);
 
-		input_values.push_back(inTrajFrame.speed[i]);
-	}
-
-	//print max joint hight
-
-	float max = 0.f;
-	for (int i = 0; i < inJointFrame.jointPos.size(); i++) {
-		max = glm::max(max, inJointFrame.jointPos[i].y);
+		input_values.emplace_back(inTrajFrame.speed[i]);
 	}
 
 	for (int i = 0; i < inJointFrame.jointPos.size(); i++) {
-		input_values.push_back(inJointFrame.jointPos[i].x);
-		input_values.push_back(inJointFrame.jointPos[i].y);
-		input_values.push_back(inJointFrame.jointPos[i].z);
+		input_values.emplace_back(inJointFrame.jointPos[i].x);
+		input_values.emplace_back(inJointFrame.jointPos[i].y);
+		input_values.emplace_back(inJointFrame.jointPos[i].z);
 
-		input_values.push_back(jointRot6D[i][0]);
-		input_values.push_back(jointRot6D[i][1]);
-		input_values.push_back(jointRot6D[i][2]);
-		input_values.push_back(jointRot6D[i][3]);
-		input_values.push_back(jointRot6D[i][4]);
-		input_values.push_back(jointRot6D[i][5]);
+		input_values.emplace_back(jointRot6D[i][0]);
+		input_values.emplace_back(jointRot6D[i][1]);
+		input_values.emplace_back(jointRot6D[i][2]);
+		input_values.emplace_back(jointRot6D[i][3]);
+		input_values.emplace_back(jointRot6D[i][4]);
+		input_values.emplace_back(jointRot6D[i][5]);
 
-		input_values.push_back(inJointFrame.jointVel[i].x);
-		input_values.push_back(inJointFrame.jointVel[i].y);
-		input_values.push_back(inJointFrame.jointVel[i].z);
+		input_values.emplace_back(inJointFrame.jointVel[i].x);
+		input_values.emplace_back(inJointFrame.jointVel[i].y);
+		input_values.emplace_back(inJointFrame.jointVel[i].z);
 	}
 
 	for (auto p : phaseSequence.GetFlattenedPhaseSequence()) {
-		input_values.push_back(p.x);
-		input_values.push_back(p.y);
+		input_values.emplace_back(p.x);
+		input_values.emplace_back(p.y);
 	}
 }
 
-glm::vec3 GNNController::readOutput(const std::vector<float>& output_values,TrajectoryFrameData& outTrajectoryFrame, JointsFrameData& outJointFrame,
-	std::vector< std::vector<glm::vec2>>& outPhase2D, 
-	std::vector< std::vector<float>>& outAmplitude, std::vector< std::vector<float>>& outFrequency)
+glm::vec3 GNNController::readOutput(const std::vector<float>& output_values,
+									TrajectoryFrameData& outTrajectoryFrame, 
+									JointsFrameData& outJointFrame,
+									std::vector< std::vector<glm::vec2>>& outPhase2D, 
+									std::vector< std::vector<float>>& outAmplitude, 
+									std::vector< std::vector<float>>& outFrequency)
 {
-	int f_idx = 0; //feature index
+	int f_idx = 0; //Feature index
 	glm::vec3 delta_out = { output_values[f_idx], output_values[f_idx + 1], output_values[f_idx + 2] };
-
 	f_idx += 3;
 	
+	// Preallocate memory
+	size_t traj_size = totalKeys - pastKeys - 1;
+
+	outTrajectoryFrame.pos.reserve(traj_size);
+	outTrajectoryFrame.dir.reserve(traj_size);
+	outTrajectoryFrame.vel.reserve(traj_size);
+	outTrajectoryFrame.speed.reserve(traj_size);
+
 
 	for (int i = pastKeys + 1; i < totalKeys; i++) {
 		
-		outTrajectoryFrame.pos.push_back({ output_values[f_idx], output_values[f_idx+1] });
+		outTrajectoryFrame.pos.emplace_back( output_values[f_idx], output_values[f_idx+1] );
 
-		outTrajectoryFrame.dir.push_back({ output_values[f_idx + 2], output_values[f_idx + 3] });
+		outTrajectoryFrame.dir.emplace_back( output_values[f_idx + 2], output_values[f_idx + 3] );
 
-		outTrajectoryFrame.vel.push_back({ output_values[f_idx + 4], output_values[f_idx + 5] });
+		outTrajectoryFrame.vel.emplace_back( output_values[f_idx + 4], output_values[f_idx + 5] );
 
-		outTrajectoryFrame.speed.push_back( output_values[f_idx + 6]);
+		outTrajectoryFrame.speed.emplace_back( output_values[f_idx + 6]);
 
 		f_idx += 7;
 	}
+	
 
-	std::vector<glm::vec3> outJointPos;
+	// Preallocate memory for joint data
+	size_t joint_size = initJointPos.size();
+	outJointFrame.jointPos.reserve(joint_size);
+	outJointFrame.jointRot.reserve(joint_size);
+	outJointFrame.jointVel.reserve(joint_size);
+	
 	std::vector<Rotation6D> outJointRot;
-	std::vector<glm::vec3> outJointVel;
+	outJointRot.reserve(joint_size);
+
 
 	for (int i = 0; i < initJointPos.size(); i++) {
 
-		outJointFrame.jointPos.push_back({ output_values[f_idx], output_values[f_idx + 1], output_values[f_idx + 2] });
+		outJointFrame.jointPos.emplace_back( output_values[f_idx], output_values[f_idx + 1], output_values[f_idx + 2]);
 
-		outJointRot.push_back({ output_values[f_idx+3], output_values[f_idx+4], output_values[f_idx+5],
-					            output_values[f_idx+6], output_values[f_idx+7], output_values[f_idx+8]});
+		outJointRot.emplace_back(Rotation6D{ output_values[f_idx + 3], output_values[f_idx + 4], output_values[f_idx + 5],
+								output_values[f_idx + 6], output_values[f_idx + 7], output_values[f_idx + 8] });
 
-		outJointFrame.jointVel.push_back({output_values[f_idx+9], output_values[f_idx+10] , output_values[f_idx+11]});
+		outJointFrame.jointVel.emplace_back(output_values[f_idx+9], output_values[f_idx+10] , output_values[f_idx+11]);
 
 		f_idx += 12;
 		
 	}
 
+	// Preallocate memory for phase data
+	outPhase2D.resize(futureKeys + 1, std::vector<glm::vec2>(numPhaseChannel));
+	outAmplitude.resize(futureKeys + 1, std::vector<float>(numPhaseChannel));
+	outFrequency.resize(futureKeys + 1, std::vector<float>(numPhaseChannel));
+
+
 	for (int i = 0; i < futureKeys + 1 ; i++) {
 
-		outPhase2D.push_back(std::vector<glm::vec2>());
-		outAmplitude.push_back(std::vector<float>());
-		outFrequency.push_back(std::vector<float>());
-
 		for (int j = 0; j < numPhaseChannel; j++) {
-			outPhase2D[i].push_back({output_values[f_idx], output_values[f_idx + 1]});
+			outPhase2D[i][j] = {output_values[f_idx], output_values[f_idx + 1]};
 			f_idx += 2;
 		}
 
 		for (int j = 0; j < numPhaseChannel; j++) {
-			outAmplitude[i].push_back({output_values[f_idx]});
+			outAmplitude[i][j] = {output_values[f_idx]};
 			f_idx++;
 		}
 
 		for (int j = 0; j < numPhaseChannel; j++) {
-			outFrequency[i].push_back({output_values[f_idx]});
+			outFrequency[i][j] = {output_values[f_idx]};
 			f_idx++;
 		}
 	}
 
-    outJointFrame.jointRot = MathUtils::convert6DRotationToQuaternions(outJointRot);
+    outJointFrame.jointRot = MathUtils::convert6DRotationToQuaternions(std::move(outJointRot));
 
 	return delta_out;
 
@@ -480,8 +507,8 @@ void GNNController::BuildAnimationSequence(const std::vector<std::vector<glm::qu
 
 		glm::vec3 pos = genJointPos[frameIdx][0];
 		////get current root
-		//animationOut->mBones[0].mPositonKeys.push_back(KeyPosition(frameIdx, glm::vec3(genRootPos[frameIdx].x, pos.y, genRootPos[frameIdx].y)));
-		animationOut->mBones[0].mPositonKeys.push_back(KeyPosition(frameIdx, glm::vec3(pos.x, pos.y, pos.z)));
+		animationOut->mBones[0].mPositonKeys.push_back(KeyPosition(frameIdx, glm::vec3(genRootPos[frameIdx].x, pos.y, genRootPos[frameIdx].y)));
+		//animationOut->mBones[0].mPositonKeys.push_back(KeyPosition(frameIdx, glm::vec3(pos.x, pos.y, pos.z)));
 
 		for (int i = 1; i < jointRotSequence[frameIdx].size(); i++) {
 			animationOut->mBones[i].mPositonKeys.push_back(KeyPosition(frameIdx, glm::vec3()));
@@ -493,18 +520,19 @@ void GNNController::BuildAnimationSequence(const std::vector<std::vector<glm::qu
 	animationOut->mBones.insert(animationOut->mBones.begin(), Bone());
 	animationOut->mBones[0].mName = "Armature";
 
+	animationOut->mBones[0].mPositonKeys.reserve(jointRotSequence.size());
+	animationOut->mBones[0].mRotationKeys.reserve(jointRotSequence.size());
+
 	for (int frameIdx = 0; frameIdx < jointRotSequence.size(); frameIdx++) {
 
 
 
 		//get current root
-		glm::vec2 currentRootPos = genRootPos[frameIdx];
-		glm::quat currentRootRot = genRootForward[frameIdx];
+		glm::vec2& currentRootPos = genRootPos[frameIdx];
+		glm::quat& currentRootRot = genRootForward[frameIdx];
 
-
-
-		animationOut->mBones[0].mRotationKeys.push_back(KeyRotation(frameIdx, currentRootRot));
-		animationOut->mBones[0].mPositonKeys.push_back(KeyPosition(frameIdx, glm::vec3(currentRootPos.x, 0.0, currentRootPos.y)));
+		animationOut->mBones[0].mRotationKeys.emplace_back(frameIdx, currentRootRot);
+		animationOut->mBones[0].mPositonKeys.emplace_back(frameIdx, glm::vec3(currentRootPos.x, 0.0, currentRootPos.y));
 
 	}
 
@@ -523,6 +551,7 @@ std::vector<glm::quat> GNNController::ConvertRotationsToLocalSpace(const std::ve
 	//convert global rotations to local space
 
 	std::vector<glm::quat> localRots;
+	localRots.reserve(skeleton->mNumBones);
 
 	for (int idx = 0; idx < skeleton->mNumBones; idx++) {
 		
@@ -535,14 +564,11 @@ std::vector<glm::quat> GNNController::ConvertRotationsToLocalSpace(const std::ve
 			// parent bone rotation
 			glm::quat parentBoneRot = rootSpaceJointRots[parentBoneIdx];
 
-			// local rotation
-			glm::quat localRot = glm::conjugate(parentBoneRot) * rsJointRot ;
-
 			// set local rotation
-			localRots.push_back(localRot);
+			localRots.emplace_back(glm::conjugate(parentBoneRot) * rsJointRot);
 		}
 		else {
-			localRots.push_back(rsJointRot);
+			localRots.emplace_back(rsJointRot);
 		}
 	}
 
