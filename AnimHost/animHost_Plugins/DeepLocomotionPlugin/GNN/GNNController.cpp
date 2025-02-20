@@ -507,8 +507,8 @@ void GNNController::BuildAnimationSequence(const std::vector<std::vector<glm::qu
 
 		glm::vec3 pos = genJointPos[frameIdx][0];
 		////get current root
-		animationOut->mBones[0].mPositonKeys.push_back(KeyPosition(frameIdx, glm::vec3(genRootPos[frameIdx].x, pos.y, genRootPos[frameIdx].y)));
-		//animationOut->mBones[0].mPositonKeys.push_back(KeyPosition(frameIdx, glm::vec3(pos.x, pos.y, pos.z)));
+		//animationOut->mBones[0].mPositonKeys.push_back(KeyPosition(frameIdx, glm::vec3(genRootPos[frameIdx].x, pos.y, genRootPos[frameIdx].y)));
+		animationOut->mBones[0].mPositonKeys.push_back(KeyPosition(frameIdx, glm::vec3(pos.x, pos.y, pos.z)));
 
 		for (int i = 1; i < jointRotSequence[frameIdx].size(); i++) {
 			animationOut->mBones[i].mPositonKeys.push_back(KeyPosition(frameIdx, glm::vec3()));

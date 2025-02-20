@@ -29,13 +29,13 @@ CoordinateConverterPlugin::CoordinateConverterPlugin()
 {
     _animationOut = std::make_shared<AnimNodeData<Animation>>();
 
-    presets.push_back({"AH<->Blender Default",glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix()), false, false, false, false, false });
+    presets.push_back({"AH<->Blender Default",glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix()) * glm::scale(glm::mat4(1.0), glm::vec3(0.01f, 0.01f, 0.01f)), false, false, false, false, false });
 
     presets.push_back({"No Conversion", glm::mat4(1.0), false, false, false, false, false});
 
 	presets.push_back({ "Unity", glm::scale(glm::mat4(1.0), glm::vec3(0.01f, 0.01f, 0.01f)), false, false, false, false, false });
 
-    activePreset = presets[2];
+    activePreset = presets[0];
 }
 
 CoordinateConverterPlugin::~CoordinateConverterPlugin()
@@ -98,46 +98,49 @@ void CoordinateConverterPlugin::run()
             negW = wButton->isChecked();
             swapYZ = swapYzButton->isChecked();
 
+            // Apply Transforms to Character Object Root
 
-            //Apply Transform to Root Bone
-            /*for (int i = 0; i < animOut->mBones[1].mPositonKeys.size(); i++) {
+            for (int i = 0; i < animOut->mBones[0].mPositonKeys.size(); i++) {
+                
+				glm::vec3 pos = animOut->mBones[0].mPositonKeys[i].position;
+				glm::quat rot = animOut->mBones[0].mRotationKeys[i].orientation;
 
-                animOut->mBones[1].mRotationKeys[i].orientation = glm::toQuat(activePreset.transformMatrix) * animOut->mBones[0].mRotationKeys[i].orientation * animOut->mBones[1].mRotationKeys[i].orientation;
-                animOut->mBones[1].mPositonKeys[i].position = activePreset.transformMatrix * glm::vec4(animOut->mBones[1].mPositonKeys[i].position, 1.f);
+				glm::mat4 transform = glm::translate(glm::mat4(1.0), pos) * glm::toMat4(rot);
 
-            }*/
+				// Transform to target system
+				transform = activePreset.transformMatrix * transform * glm::inverse(activePreset.transformMatrix);
 
+				// Extract position and rotation
+				animOut->mBones[0].mPositonKeys[i].position = glm::vec3(transform[3]);
+				animOut->mBones[0].mRotationKeys[i].orientation = glm::toQuat(transform);
 
-
-
-			std::transform(animOut->mBones[0].mPositonKeys.begin(), animOut->mBones[0].mPositonKeys.end(), animOut->mBones[0].mPositonKeys.begin(), [&](KeyPosition key) {
-				key.position = activePreset.transformMatrix * glm::vec4(key.position, 1.f);
-				return key;
-				});
-
-            glm::quat activeRotationTransform = glm::toQuat(activePreset.transformMatrix);
-
-			std::transform(animOut->mBones[0].mRotationKeys.begin(), animOut->mBones[0].mRotationKeys.end(), animOut->mBones[0].mRotationKeys.begin(), [&](KeyRotation key) {
-				key.orientation = activeRotationTransform * key.orientation;
-				return key;
-				});
+            }
 
 
-			//apply asset specific conversion
-            glm::quat assetSpecificConversion = glm::toQuat(glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix()));
-            
-			std::transform(animOut->mBones[1].mPositonKeys.begin(), animOut->mBones[1].mPositonKeys.end(), animOut->mBones[1].mPositonKeys.begin(), [&](KeyPosition key) {
-				key.position = assetSpecificConversion * glm::vec4(key.position, 1.f);
-				return key;
-				});
+			// Revert Asset specific conversion applied to character "root" bone (Usually Hip)
+            glm::mat4 conversion = AnimHostHelper::GetCoordinateSystemTransformationMatrix();
+            for (int i = 0; i < animOut->mBones[1].mPositonKeys.size(); i++) {
 
-            std::transform(animOut->mBones[1].mRotationKeys.begin(), animOut->mBones[1].mRotationKeys.end(), animOut->mBones[1].mRotationKeys.begin(), [&](KeyRotation key) {
-                key.orientation = assetSpecificConversion * key.orientation;
-                return key;
-                });
+                glm::vec3 pos = glm::vec4(animOut->mBones[1].mPositonKeys[i].position, 1.f);
+                glm::quat rot = animOut->mBones[1].mRotationKeys[i].orientation  ;
+
+                glm::mat4 transform =glm::translate(glm::mat4(1.0), pos) * glm::toMat4(rot);
+
+                // Transform to target system
+                transform = conversion * transform;
+
+                // Extract position and rotation
+                animOut->mBones[1].mPositonKeys[i].position = glm::vec3(transform[3]);
+                animOut->mBones[1].mRotationKeys[i].orientation = glm::toQuat(transform);
+
+            }
 
 
+
+			//Apply bone specific transformations to the rest of the bones
             for (int i = 0; i < animOut->mBones.size(); i++) {
+
+				//Iterate over T, R, S Keys individually, might contain different amount of keys
                 int numKeys = animOut->mBones[i].mNumKeysRotation;
                 for (int j = 0; j < numKeys; j++) {
                     animOut->mBones[i].mRotationKeys[j].orientation = ConvertToTargetSystem(animOut->mBones[i].mRotationKeys[j].orientation,
@@ -149,10 +152,11 @@ void CoordinateConverterPlugin::run()
                     animOut->mBones[i].mPositonKeys[j].position = ConvertToTargetSystem(animOut->mBones[i].mPositonKeys[j].position,
                         swapYZ, negX, negY, negZ, negW)  ;
 
-					//overwrite position with resting position if i< 2
+					// Transorm Hip from cm to m
                     if(i == 1)
-                        animOut->mBones[i].mPositonKeys[j].position = animOut->mBones[i].mPositonKeys[j].position / 100.f;
+                        animOut->mBones[i].mPositonKeys[j].position = animOut->mBones[i].mPositonKeys[j].position;
 
+					// Fill other position keys with rest translation, no animation expected but prevent empty keys
                     if (i > 1)
                         animOut->mBones[i].mPositonKeys[j].position = animOut->mBones[i].mRestingTransform[3] / 100.f;
                 }

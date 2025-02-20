@@ -207,32 +207,19 @@ void ControlPathDecoderNode::run()
 
         // TODO: If path is cyclic, evaluate last-to-first segment
 
+        // Apply transforms to controllpath if source is Blender
+        if (true) {
+            for (int i = 0; i < path.size(); i++) {
+				// Transform the control points to the global coordinate system
+				path[i].position = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(path[i].position, 1.0f);
 
-        //for (int i = 0; i < path.size(); i++) {
-            // Transform the control points to the global coordinate system
+				// Rotate the control points to the global coordinate system
+				glm::vec3 lookAt = path[i].lookAt * glm::vec3(0, -1.f, 0);
+				lookAt = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(lookAt, 0.0f);
+				path[i].lookAt = glm::rotation(glm::vec3(0, 0, 1), lookAt);
+            }
 
-
-            //Default use with Blender
-            //path[i].position = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(path[i].position, 1.0f);
-
-            //Default use with Unity
-            //path[i].position = glm::scale(glm::mat4(1.0f), glm::vec3(100.f,100.f, 100.f)) * glm::vec4(path[i].position, 1.0f);
-
-
-            // Rotate the control points to the global coordinate system
-
-            //glm::vec3 lookAt = path[i].lookAt * glm::vec3(0, -1.f, 0);
-
-            //Use With UNITY
-            //glm::vec3 lookAt = path[i].lookAt * glm::vec3(0, 0, 1.f);
-
-            //lookAt = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(lookAt, 0.0f);
-
-            //path[i].lookAt = glm::rotation(glm::vec3(0, 0, 1), lookAt);
-
-
-
-       // }
+        }
 
         spCharacterIn->getData()->setPath(path);
         emitDataUpdate(0);
