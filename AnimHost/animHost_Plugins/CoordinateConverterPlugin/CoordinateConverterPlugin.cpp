@@ -118,7 +118,7 @@ void CoordinateConverterPlugin::run()
 
 
 			// Revert Asset specific conversion applied to character "root" bone (Usually Hip)
-            glm::mat4 conversion = AnimHostHelper::GetCoordinateSystemTransformationMatrix();
+            glm::mat4 conversion = glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix());
             for (int i = 0; i < animOut->mBones[1].mPositonKeys.size(); i++) {
 
                 glm::vec3 pos = glm::vec4(animOut->mBones[1].mPositonKeys[i].position, 1.f);
@@ -152,9 +152,6 @@ void CoordinateConverterPlugin::run()
                     animOut->mBones[i].mPositonKeys[j].position = ConvertToTargetSystem(animOut->mBones[i].mPositonKeys[j].position,
                         swapYZ, negX, negY, negZ, negW)  ;
 
-					// Transorm Hip from cm to m
-                    if(i == 1)
-                        animOut->mBones[i].mPositonKeys[j].position = animOut->mBones[i].mPositonKeys[j].position;
 
 					// Fill other position keys with rest translation, no animation expected but prevent empty keys
                     if (i > 1)
