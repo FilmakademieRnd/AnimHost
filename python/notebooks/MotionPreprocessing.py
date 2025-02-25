@@ -100,6 +100,12 @@ def read_csv_data(file_path, delimiter=' '):
         return None
     
 
+def count_lines(file_path):
+    """Return the number of non-empty lines in a file."""
+    with open(file_path, 'r') as f:
+        return sum(1 for line in f if line.strip())
+    
+
 def write_dataframe_to_cpp_vector_file(dataframe, file_path):
     """
     Example usage:
@@ -205,23 +211,38 @@ def get_window_values_(row, phaseValues, selected_columns, num_samples=13, fps=1
     
     return window[selected_columns].values.flatten()
 
+def parse_input_output_features(metadata_file):
+    """
+    If your metadata.txt looks like:
+       InCol1,InCol2,InCol3, ...
+       OutCol1,OutCol2,OutCol3, ...
+    then the number of columns in the first line is your input_feature_count,
+    and the second line is your output_feature_count.
+    """
+    df = pd.read_csv(metadata_file, header=None)  # or use read_csv_data
+    if len(df) < 2:
+        raise ValueError("metadata.txt does not have at least two lines.")
 
+    # Each line is a list of columns. The length is your feature count.
+    input_feature_count = df.iloc[0][0]
+    output_feature_count = df.iloc[1][0]
+    return input_feature_count, output_feature_count
 
 
 def run_motion_preprocessing(num_phase_channel,dataset_path, phase_param_file, phase_sequence_file):
     return 0
 
 class MotionProcessor:
-    def __init__(self):
+    def __init__(self, dataset_path, ai4animation_path):
+        
+        self.dataset_path = dataset_path
+        self.trained_phase_param_file =  ai4animation_path + r"\PAE\Training\Parameters_30.txt"
+        self.trained_phase_sequence_file = r"\PAE\Dataset\Sequences.txt"
+        
+        self.input_feature_count, self.output_feature_count = parse_input_output_features(dataset_path + "/metadata.txt")
+
         self.num_phase_channel = 5
-        self.input_feature_count = 403
-        self.output_feature_count = 357
-        self.sample_count = 92640
-
-        self.dataset_path = r"C:\DEV\DATASETS\Survivor_Gen"
-        self.trained_phase_param_file = r"C:\DEV\AI4Animation\AI4Animation\SIGGRAPH_2022\PyTorch\PAE\Training\Parameters_30.txt"
-        self.trained_phase_sequence_file = r"C:\DEV\AI4Animation\AI4Animation\SIGGRAPH_2022\PyTorch\PAE\Dataset\Sequences.txt"
-
+        self.sample_count = count_lines(dataset_path + "/sequences_mann.txt")
         self.PhaseData = None
         self.InputData = None
         self.OutputData = None
@@ -234,12 +255,6 @@ class MotionProcessor:
         end_time = time.time()
         print("Motion preprocessing completed in", round(end_time - start_time, 2), "seconds.")
         return 0
-    
-    
-    
-    # Usage Example:
-
-    
     
     def input_preprocessing(self):
         print("Running input preprocessing...")
