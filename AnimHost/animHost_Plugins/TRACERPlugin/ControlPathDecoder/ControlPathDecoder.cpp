@@ -208,7 +208,7 @@ void ControlPathDecoderNode::run()
         // TODO: If path is cyclic, evaluate last-to-first segment
 
         // Apply transforms to controllpath if source is Blender
-        if (true) {
+        if (_pathFromBlenderChecked) {
             for (int i = 0; i < path.size(); i++) {
 				// Transform the control points to the global coordinate system
 				path[i].position = AnimHostHelper::GetCoordinateSystemTransformationMatrix() * glm::vec4(path[i].position, 1.0f);
@@ -308,14 +308,25 @@ QWidget* ControlPathDecoderNode::embeddedWidget()
 
         _comboBox = new QComboBox();
 
-        _mainLayout->addWidget(_comboBox);
+		_pathFromBlender = new QCheckBox("Path from Blender");
 
+        _mainLayout->addWidget(_comboBox);
+		_mainLayout->addWidget(_pathFromBlender);
         
 
         _pushButton = new QPushButton("Run");
         _mainLayout->addWidget(_pushButton);
 
 		connect(_pushButton, &QPushButton::released, this, &ControlPathDecoderNode::onButtonClicked);
+
+		connect(_pathFromBlender, &QCheckBox::stateChanged, this, [&](int state) {
+			if (state == Qt::Checked) {
+				_pathFromBlenderChecked = true;
+			}
+			else {
+				_pathFromBlenderChecked = false;
+			}
+			});
 
         _widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
             "QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"

@@ -46,6 +46,8 @@ public:
     struct CoordinateConversionPreset {
         QString name;
         glm::mat4 transformMatrix = glm::mat4(1.0f);
+		glm::mat4 characterRootTransform = glm::mat4(1.0f);
+		bool applyScaleOnCharacter = false;
         bool flipYZ = false;
         bool negX = false;
         bool negY = false;
