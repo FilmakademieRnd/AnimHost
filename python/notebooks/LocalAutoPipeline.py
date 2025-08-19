@@ -21,8 +21,8 @@ from MotionPreprocessing import MotionProcessor, count_lines, read_csv_data, Rea
 
 def main():
     # common config
-    dataset_path = r"C:\DEV\DATASETS\Survivor_Gen"
-    path_to_ai4anim = r"C:\DEV\AI4Animation\AI4Animation\SIGGRAPH_2022\PyTorch"
+    dataset_path = r"C:\anim-ws\Handover_AnimHost\Handover AnimHost Implementation\DEMO_Package\DEMO_Package\datasets\Survivor_Gen"
+    path_to_ai4anim = r"C:\anim-ws\Handover_AnimHost\Handover AnimHost Implementation\AI4Animation_Siggraph2022_Starke\PyTorch"
     mp = MotionProcessor(dataset_path, path_to_ai4anim)   
     # count number of velcocity samples
     num_samples_total = count_lines(dataset_path + "/sequences_velocity.txt")
@@ -48,9 +48,13 @@ def main():
     #buttered = scipy.signal.filtfilt(b, a, sequence["out_jvel_y_hand_L"]) 
     result_sequences = []
 
-    for n in range(num_sequences):
+    # Get the actual unique sequence IDs instead of assuming 1-40
+    unique_seq_ids = df_velocities.index.get_level_values('SeqId').unique()
+    print(f"Actual sequence IDs: {unique_seq_ids[:10]}...")  # Debug: show first 10
+
+    for seq_id in unique_seq_ids:
         #select sequence by index
-        sequence = df_velocities.xs(key=n+1, level="SeqId")
+        sequence = df_velocities.xs(key=seq_id, level="SeqId")
         butterw_combined = []
         #apply butterworth to every column
         for col in range(num_features_velocity):

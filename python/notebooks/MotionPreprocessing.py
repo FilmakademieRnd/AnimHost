@@ -6,7 +6,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import math
 import time
-
+import os
 
 class FrameRange:
     def __init__(self, num_samples, fps, reference_frame, start_index):
@@ -273,7 +273,7 @@ class MotionProcessor:
 
         df_phaseData = pd.DataFrame(phaseData, columns=phaseData_header)
         cols = [f"PhaseValue{i+1}" for i in range(self.num_phase_channel)]
-        df_phaseData[cols] = df_phaseData[cols].map(lambda t: repeat(t, 1.0))
+        df_phaseData[cols] = df_phaseData[cols].apply(lambda t: repeat(t, 1.0))
         df_phaseData = pd.concat([phaseSequence, df_phaseData], axis=1)
 
         ## Generate Cloumn names for phase values
@@ -385,6 +385,14 @@ class MotionProcessor:
         return self.OutputData
     
     def export_data(self, folder_path= "../data/"):
+        # Create directory if it doesn't exist
+        os.makedirs(folder_path, exist_ok=True)
+
+        # Check if Input.bin already exists
+        input_bin_path = os.path.join(folder_path, 'Input.bin')
+        if os.path.exists(input_bin_path):
+            print(f"Warning: {input_bin_path} already exists and will be overwritten.")
+
         # Export input data
         print("Exporting data...")
         in_dropped = self.InputData.drop(["Type", "File","SeqUUID"], axis=1)
