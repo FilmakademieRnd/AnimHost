@@ -237,7 +237,7 @@ class MotionProcessor:
         
         self.dataset_path = dataset_path
         self.trained_phase_param_file =  ai4animation_path + r"\PAE\Training\Parameters_30.txt"
-        self.trained_phase_sequence_file = r"\PAE\Dataset\Sequences.txt"
+        self.trained_phase_sequence_file = ai4animation_path + r"\PAE\Dataset\Sequences.txt"
         
         self.input_feature_count, self.output_feature_count = parse_input_output_features(dataset_path + "/metadata.txt")
 
