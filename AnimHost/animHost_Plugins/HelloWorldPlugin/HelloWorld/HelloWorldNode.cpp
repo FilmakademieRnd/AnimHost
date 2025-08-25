@@ -1,9 +1,30 @@
+/*
+ ***************************************************************************************
+
+ *   Copyright (c) 2024 Filmakademie Baden-Wuerttemberg, Animationsinstitut R&D Labs
+ *   https://research.animationsinstitut.de/animhost
+ *   https://github.com/FilmakademieRnd/AnimHost
+ *    
+ *   AnimHost is a development by Filmakademie Baden-Wuerttemberg, Animationsinstitut
+ *   R&D Labs in the scope of the EU funded project MAX-R (101070072).
+ *    
+ *   This program is distributed in the hope that it will be useful, but WITHOUT
+ *   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *   FOR A PARTICULAR PURPOSE. See the MIT License for more details.
+ *   You should have received a copy of the MIT License along with this program; 
+ *   if not go to https://opensource.org/licenses/MIT
+
+ ***************************************************************************************
+ */
+
 #include "HelloWorldNode.h"
 #include <QPushButton>
 
 HelloWorldNode::HelloWorldNode()
 {
     _pushButton = nullptr;
+    _widget = nullptr;
+    
     qDebug() << "HelloWorldNode created";
 }
 
@@ -15,67 +36,55 @@ HelloWorldNode::~HelloWorldNode()
 unsigned int HelloWorldNode::nDataPorts(QtNodes::PortType portType) const
 {
     if (portType == QtNodes::PortType::In)
-        return 0;
-    else            
-        return 0;
+        return 0;  // No custom input ports
+    else
+        return 0;  // No output ports
 }
 
 NodeDataType HelloWorldNode::dataPortType(QtNodes::PortType portType, QtNodes::PortIndex portIndex) const
 {
-    NodeDataType type;
-    if (portType == QtNodes::PortType::In)
-        return type;
-    else
-        return type;
+    return NodeDataType{};
 }
 
 void HelloWorldNode::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIndex portIndex)
 {
-    qDebug() << "HelloWorldNode setInData";
+    // No custom input ports - framework handles RunSignal automatically
+    // This method won't be called since nDataPorts returns 0 for input
+    qDebug() << "HelloWorldNode processInData called unexpectedly";
 }
 
 std::shared_ptr<NodeData> HelloWorldNode::processOutData(QtNodes::PortIndex port)
 {
-	return nullptr;
+    return nullptr;  // No output data
 }
 
-bool HelloWorldNode::isDataAvailable() {
-    /*
-    * Use this function to check if the inbound data is available and can be processed.
-    */
-    return false;
+bool HelloWorldNode::isDataAvailable() 
+{
+    // We can always run - either from button click or run signal
+    return true;
 }
 
 void HelloWorldNode::run()
 {
-    /*
-    * Run the main node logic here. run() is called through the incoming run signal of another node.
-    * run() can also be called through another signal, like a button press or in our case a timer.
-    * But it is recommended to keep user interaction to a minimum. 
-    */
-    qDebug() << "HelloWorldNode run";
-    if(isDataAvailable()){
-        /*
-        * Do Stuff
-        */
-    }
+    qDebug() << "HelloWorldNode run - Hello World!";
 }
-
-
 
 QWidget* HelloWorldNode::embeddedWidget()
 {
-	if (!_pushButton) {
-		_pushButton = new QPushButton("Example Widget");
-		_pushButton->resize(QSize(100, 50));
-
-		connect(_pushButton, &QPushButton::released, this, &HelloWorldNode::onButtonClicked);
-	}
-
-	return _pushButton;
+    if (!_pushButton) {
+        _pushButton = new QPushButton("Say Hello");
+        _pushButton->resize(QSize(120, 40));
+        
+        connect(_pushButton, &QPushButton::released, this, &HelloWorldNode::onButtonClicked);
+    }
+    
+    return _pushButton;
 }
 
 void HelloWorldNode::onButtonClicked()
 {
-	qDebug() << "Example Widget Clicked";
+    qDebug() << "Hello World button clicked!";
+    
+    // Run the node when button is clicked
+    run();
 }

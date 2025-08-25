@@ -29,7 +29,7 @@
 #include <commondatatypes.h>
 #include <nodedatatypes.h>
 
-//#include "YourNodeHeader.h"
+#include "HelloWorld/HelloWorldNode.h"
 
 
 class HELLOWORLDPLUGINSHARED_EXPORT HelloWorldPlugin : public PluginNodeCollectionInterface
@@ -41,10 +41,10 @@ class HELLOWORLDPLUGINSHARED_EXPORT HelloWorldPlugin : public PluginNodeCollecti
 
         CollectionMetaData _collectionMetaData = {
             "HelloWorld",
-            "Collection description",
+            "Tutorial plugin demonstrating basic AnimHost node concepts",
             "0.1",
-            "AUTHOR",
-            "LICENSE"
+            "Filmakademie Baden-Wuerttemberg, Animationsinstitut R&D Labs",
+            "MIT"
         };
 
     // Add shared data here
@@ -61,7 +61,7 @@ class HELLOWORLDPLUGINSHARED_EXPORT HelloWorldPlugin : public PluginNodeCollecti
 
        void RegisterNodeCollection(NodeDelegateModelRegistry& nodeRegistry) override {
            // Register nodes here
-           //nodeRegistry.registerModel<YourNode>([this](){ return  std::make_unique<YourNode>(YourSharedResources); });
+           nodeRegistry.registerModel<HelloWorldNode>([this](){ return std::make_unique<HelloWorldNode>(); });
        };
 
        void PostNodeCollectionRegistration() override {};

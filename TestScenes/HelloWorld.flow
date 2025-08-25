@@ -1,0 +1,32 @@
+{
+    "connections": [
+        {
+            "inPortIndex": 0,
+            "intNodeId": 1,
+            "outNodeId": 0,
+            "outPortIndex": 0
+        }
+    ],
+    "nodes": [
+        {
+            "id": 0,
+            "internal-data": {
+                "model-name": "RunTriggerPlugin"
+            },
+            "position": {
+                "x": -200,
+                "y": -100
+            }
+        },
+        {
+            "id": 1,
+            "internal-data": {
+                "model-name": "HelloWorldNode"
+            },
+            "position": {
+                "x": 100,
+                "y": -100
+            }
+        }
+    ]
+}
