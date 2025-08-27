@@ -388,11 +388,6 @@ class MotionProcessor:
         # Create directory if it doesn't exist
         os.makedirs(folder_path, exist_ok=True)
 
-        # Check if Input.bin already exists
-        input_bin_path = os.path.join(folder_path, 'Input.bin')
-        if os.path.exists(input_bin_path):
-            print(f"Warning: {input_bin_path} already exists and will be overwritten.")
-
         # Export input data
         print("Exporting data...")
         in_dropped = self.InputData.drop(["Type", "File","SeqUUID"], axis=1)
