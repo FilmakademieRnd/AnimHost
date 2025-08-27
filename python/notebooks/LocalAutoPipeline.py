@@ -21,8 +21,8 @@ from MotionPreprocessing import MotionProcessor, count_lines, read_csv_data, Rea
 
 def main():
     # common config
-    dataset_path = r"C:\anim-ws\Handover_AnimHost\Handover AnimHost Implementation\DEMO_Package\DEMO_Package\datasets\Survivor_Gen"
-    path_to_ai4anim = r"C:\anim-ws\Handover_AnimHost\Handover AnimHost Implementation\AI4Animation_Siggraph2022_Starke\PyTorch"
+    dataset_path = r"C:\DEV\DATASETS\Survivor_Gen"
+    path_to_ai4anim = r"C:\DEV\AI4Animation\AI4Animation\SIGGRAPH_2022\PyTorch"
     mp = MotionProcessor(dataset_path, path_to_ai4anim)   
     # count number of velcocity samples
     num_samples_total = count_lines(dataset_path + "/sequences_velocity.txt")
@@ -38,8 +38,8 @@ def main():
     df_velocities = pd.concat([velocity_ids, df_velocities], axis=1)
     df_velocities.set_index(["SeqId","Frame"],inplace = True)
 
-    num_sequences = df_velocities.index.get_level_values('SeqId').nunique()
-    print(num_sequences)
+    unique_seq_ids = df_velocities.index.get_level_values('SeqId').unique()
+    print(f"Applying Butterworth filter to {len(unique_seq_ids)} sequences. First sequence ID: {unique_seq_ids[0]}.")
     #prepare filter
     fc = 4.5
     w = fc / (60/2) 
@@ -47,10 +47,6 @@ def main():
     b, a = scipy.signal.butter(5, w, 'low')
     #buttered = scipy.signal.filtfilt(b, a, sequence["out_jvel_y_hand_L"]) 
     result_sequences = []
-
-    # Get the actual unique sequence IDs instead of assuming 1-40
-    unique_seq_ids = df_velocities.index.get_level_values('SeqId').unique()
-    print(f"Actual sequence IDs: {unique_seq_ids[:10]}...")  # Debug: show first 10
 
     for seq_id in unique_seq_ids:
         #select sequence by index
