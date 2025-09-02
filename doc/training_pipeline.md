@@ -5,17 +5,15 @@ graph TD
     %% Training Pipeline Nodes
     A["<b>Run Control</b><br/>▶ RUN Button"]
     B["<b>Data Config</b><br/>Data Path: /data/maxr<br/>Train/Eval Split: 80/20<br/>Random Seed: 42"]
-    C["<b>Starke 2022 Model Config</b><br/>PAE Epochs: 100<br/>GNN Epochs: 50"]
-    D["<b>Starke 2022 Model</b><br/>Submodule Path:<br/>/models/starke2022/pytorch"]
+    C["<b>Starke 2022 Model Config</b><br/>PAE Epochs: 100<br/>GNN Epochs: 50<br/>Submodule Path:<br/>/models/starke2022/pytorch"]
     E["<b>Train</b><br/>Training Loop<br/>Model Output Path:<br/>/output/trained_model.onnx<br/>Progress: 60%"]
-    F["<b>Evaluation</b><br/>Model Testing<br/>Progress: 0%<br/>Figure Output Path:<br/>/output/eval_results.png"]
+    F["<b>Evaluation</b><br/>Model Testing<br/>Figure Output Path:<br/>/output/eval_results.png"]
     
     %% Training Pipeline Connections
     A -->|run_signal| E
     B -->|train_data| E
     B -->|eval_data| F
-    C -->|model_config| D
-    D -->|model_definition| E
+    C -->|model_definition| E
     E -->|run_signal| F
     E -->|trained_model| F
     
@@ -28,7 +26,7 @@ graph TD
     
     class A runNode
     class B dataNode
-    class C,D modelNode
+    class C modelNode
     class E trainNode
     class F evalNode
 ```
