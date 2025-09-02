@@ -6,23 +6,23 @@ graph TD
     A2["<b>Run Control</b><br/>▶ RUN Button"]
     B2["<b>Data Config</b><br/>Data Path: /data/maxr<br/>Train/Eval Split: 80/20<br/>Random Seed: 42"]
     G["<b>Model Loader</b><br/>Load ONNX<br/>Pre-trained Model Path:<br/>/models/pretrained.onnx"]
-    H["<b>Evaluation</b><br/>Inference Testing<br/>Progress: 100%<br/>Figure Output Path:<br/>/output/inference_results.png"]
+    H["<b>Evaluation</b><br/>Inference Testing<br/>Figure Output Path:<br/>/output/inference_results.png"]
     
     %% Second Evaluation Pipeline Nodes
     I["<b>Second Model Loader</b><br/>Load ONNX<br/>Pre-trained Model Path:<br/>/models/second_pretrained.onnx"]
-    J["<b>Second Evaluation</b><br/>Inference Testing<br/>Progress: 0%<br/>Figure Output Path:<br/>/output/second_inference_results.png"]
+    J["<b>Second Evaluation</b><br/>Inference Testing<br/>Figure Output Path:<br/>/output/second_inference_results.png"]
     
     %% Evaluation Pipeline Connections
     A2 -->|run_signal| G
     G -->|run_signal| H
-    G -->|loaded_model| H
-    B2 -->|test_data| H
+    G -->|load_config| H
+    B2 -->|data_config| H
     
     %% Second Evaluation Pipeline Connections
     H -->|run_signal| I
     I -->|run_signal| J
-    I -->|loaded_model| J
-    B2 -->|test_data| J
+    I -->|load_config| J
+    B2 -->|data_config| J
     
     %% Node Styling
     classDef runNode fill:#ffebea,stroke:#e74c3c,stroke-width:3px,color:#2c3e50
