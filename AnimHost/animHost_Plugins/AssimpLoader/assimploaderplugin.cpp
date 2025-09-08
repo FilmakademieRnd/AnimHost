@@ -148,6 +148,8 @@ void AssimpLoaderPlugin::run() {
 	//ToDo Move Processing
 	QStringList files = loadFilesFromDir();
 
+	// Reset the sequence counter for each run
+	sequenceCounter = 1;
 	for (auto file : files) {
 		//QString file_name = QFileDialog::getOpenFileName(nullptr, "Import Animation", "C://", "(*.bvh *.fbx)");
 

@@ -38,8 +38,8 @@ def main():
     df_velocities = pd.concat([velocity_ids, df_velocities], axis=1)
     df_velocities.set_index(["SeqId","Frame"],inplace = True)
 
-    num_sequences = df_velocities.index.get_level_values('SeqId').nunique()
-    print(num_sequences)
+    unique_seq_ids = df_velocities.index.get_level_values('SeqId').unique()
+    print(f"Applying Butterworth filter to {len(unique_seq_ids)} sequences. First sequence ID: {unique_seq_ids[0]}.")
     #prepare filter
     fc = 4.5
     w = fc / (60/2) 
@@ -48,9 +48,9 @@ def main():
     #buttered = scipy.signal.filtfilt(b, a, sequence["out_jvel_y_hand_L"]) 
     result_sequences = []
 
-    for n in range(num_sequences):
+    for seq_id in unique_seq_ids:
         #select sequence by index
-        sequence = df_velocities.xs(key=n+1, level="SeqId")
+        sequence = df_velocities.xs(key=seq_id, level="SeqId")
         butterw_combined = []
         #apply butterworth to every column
         for col in range(num_features_velocity):

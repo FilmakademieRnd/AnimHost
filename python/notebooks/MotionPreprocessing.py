@@ -6,7 +6,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import math
 import time
-
+import os
 
 class FrameRange:
     def __init__(self, num_samples, fps, reference_frame, start_index):
@@ -237,7 +237,7 @@ class MotionProcessor:
         
         self.dataset_path = dataset_path
         self.trained_phase_param_file =  ai4animation_path + r"\PAE\Training\Parameters_30.txt"
-        self.trained_phase_sequence_file = r"\PAE\Dataset\Sequences.txt"
+        self.trained_phase_sequence_file = ai4animation_path + r"\PAE\Dataset\Sequences.txt"
         
         self.input_feature_count, self.output_feature_count = parse_input_output_features(dataset_path + "/metadata.txt")
 
@@ -273,7 +273,7 @@ class MotionProcessor:
 
         df_phaseData = pd.DataFrame(phaseData, columns=phaseData_header)
         cols = [f"PhaseValue{i+1}" for i in range(self.num_phase_channel)]
-        df_phaseData[cols] = df_phaseData[cols].map(lambda t: repeat(t, 1.0))
+        df_phaseData[cols] = df_phaseData[cols].apply(lambda t: repeat(t, 1.0))
         df_phaseData = pd.concat([phaseSequence, df_phaseData], axis=1)
 
         ## Generate Cloumn names for phase values
@@ -385,6 +385,9 @@ class MotionProcessor:
         return self.OutputData
     
     def export_data(self, folder_path= "../data/"):
+        # Create directory if it doesn't exist
+        os.makedirs(folder_path, exist_ok=True)
+
         # Export input data
         print("Exporting data...")
         in_dropped = self.InputData.drop(["Type", "File","SeqUUID"], axis=1)
