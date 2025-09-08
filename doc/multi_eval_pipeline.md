@@ -6,11 +6,11 @@ graph TD
     A2["<b>Run Control</b><br/>▶ RUN Button"]
     B2["<b>Data Config</b><br/>Data Path: /data/maxr<br/>Train/Eval Split: 80/20<br/>Random Seed: 42"]
     G["<b>Model Loader</b><br/>Load ONNX<br/>Pre-trained Model Path:<br/>/models/pretrained.onnx"]
-    H["<b>Evaluation</b><br/>Inference Testing<br/>Figure Output Path:<br/>/output/inference_results.png"]
+    H["<b>Eval</b><br/>Inference Testing<br/>Figure Output Path:<br/>/output/inference_results.png"]
     
     %% Second Evaluation Pipeline Nodes
-    I["<b>Second Model Loader</b><br/>Load ONNX<br/>Pre-trained Model Path:<br/>/models/second_pretrained.onnx"]
-    J["<b>Second Evaluation</b><br/>Inference Testing<br/>Figure Output Path:<br/>/output/second_inference_results.png"]
+    I["<b>Model Loader (1)</b><br/>Load ONNX<br/>Pre-trained Model Path:<br/>/models/second_pretrained.onnx"]
+    J["<b>Eval (1)</b><br/>Inference Testing<br/>Figure Output Path:<br/>/output/second_inference_results.png"]
     
     %% Evaluation Pipeline Connections
     A2 -->|run_signal| G
