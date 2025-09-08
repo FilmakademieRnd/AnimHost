@@ -17,16 +17,4 @@
  ***************************************************************************************
  */
 
- 
-#ifndef HELLOWORLDPLUGINSHARED_GLOBAL_H
-#define HELLOWORLDPLUGINSHARED_GLOBAL_H
-
-#include <QtCore/qglobal.h>
-
-#if defined(HELLOWORLDPLUGIN_LIBRARY)
-#define HELLOWORLDPLUGINSHARED_EXPORT Q_DECL_EXPORT
-#else
-#define HELLOWORLDPLUGINSHARED_EXPORT Q_DECL_IMPORT
-#endif
-
-#endif // HELLOWORLDPLUGINSHARED_GLOBAL_H
+#include "TrainFrameworkPlugin.h"

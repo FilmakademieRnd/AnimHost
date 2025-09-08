@@ -336,3 +336,111 @@ void SignalLightWidget::drawLight(QPainter& painter)
 	painter.setPen(Qt::NoPen);
 	painter.drawEllipse(center, radius, radius);
 }
+
+// ProgressWidgetBase Implementation
+ProgressWidgetBase::ProgressWidgetBase(QWidget* parent)
+	: QWidget(parent), _progressBar(nullptr), _nameLabel(nullptr), _valueLabel(nullptr)
+{
+	setupUI();
+}
+
+void ProgressWidgetBase::setupUI()
+{
+	_progressBar = new QProgressBar(this);
+	_progressBar->setRange(0, 100);
+	_progressBar->setValue(0);
+
+	_nameLabel = new QLabel(this);
+	_valueLabel = new QLabel(this);
+
+	// Create left/right aligned labels above progress bar
+	_nameLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+	_valueLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+	auto labelsLayout = new QHBoxLayout();
+	labelsLayout->addWidget(_nameLabel);
+	labelsLayout->addStretch();
+	labelsLayout->addWidget(_valueLabel);
+
+	// Main vertical layout
+	auto mainLayout = new QVBoxLayout(this);
+	mainLayout->addLayout(labelsLayout);
+	mainLayout->addWidget(_progressBar);
+}
+
+// ProgressWidget Implementation
+template<typename T>
+ProgressWidget<T>::ProgressWidget(const QString& valueName, T maxValue, QWidget* parent)
+	: ProgressWidgetBase(parent), _maxValue(maxValue)
+{
+	if (_maxValue <= T(0)) {
+		qWarning() << "ProgressWidget: maxValue must be > 0, got:" << _maxValue;
+		_maxValue = T(1); // Set to safe default
+	}
+
+	setValueName(valueName);
+	updateDisplay(T(0));
+}
+
+template<typename T>
+ProgressWidget<T>::~ProgressWidget()
+{
+}
+
+template<typename T>
+bool ProgressWidget<T>::updateValue(T value)
+{
+	if (value > _maxValue) {
+		qWarning() << "ProgressWidget: value" << value << "exceeds maxValue" << _maxValue;
+		return false;
+	}
+	
+	updateDisplay(value);
+	return true;
+}
+
+template<typename T>
+QString ProgressWidget<T>::getValueName() const
+{
+	return _valueName;
+}
+
+template<typename T>
+void ProgressWidget<T>::setValueName(const QString& name)
+{
+	_valueName = name;
+	_nameLabel->setText(_valueName);
+}
+
+template<typename T>
+T ProgressWidget<T>::getMaxValue() const
+{
+	return _maxValue;
+}
+
+template<typename T>
+void ProgressWidget<T>::setMaxValue(T maxValue)
+{
+	if (maxValue <= T(0)) {
+		qWarning() << "ProgressWidget: maxValue must be > 0, got:" << maxValue;
+		return;
+	}
+	
+	_maxValue = maxValue;
+	updateDisplay(T(0));
+}
+
+template<typename T>
+void ProgressWidget<T>::updateDisplay(T currentValue)
+{
+	// Update progress bar (0-100%)
+	int percentage = static_cast<int>((static_cast<double>(currentValue) / static_cast<double>(_maxValue)) * 100.0);
+	_progressBar->setValue(percentage);
+	
+	// Update value label with fraction format
+	_valueLabel->setText(QString("%1/%2").arg(currentValue).arg(_maxValue));
+}
+
+// Explicit template instantiations
+template class ProgressWidget<int>;
+template class ProgressWidget<float>;
+template class ProgressWidget<double>;

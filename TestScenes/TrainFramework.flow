@@ -21,7 +21,7 @@
         {
             "id": 1,
             "internal-data": {
-                "model-name": "HelloWorldNode"
+                "model-name": "TrainFrameworkNode"
             },
             "position": {
                 "x": 100,

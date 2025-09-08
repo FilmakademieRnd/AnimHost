@@ -18,10 +18,10 @@
  */
 
 
-#ifndef HELLOWORLDPLUGIN_H
-#define HELLOWORLDPLUGIN_H
+#ifndef TRAINFRAMEWORKPLUGIN_H
+#define TRAINFRAMEWORKPLUGIN_H
 
-#include "HelloWorldPlugin_global.h"
+#include "TrainFrameworkPlugin_global.h"
 
 #include <QMetaType>
 #include <QtCore/QObject>
@@ -29,19 +29,19 @@
 #include <commondatatypes.h>
 #include <nodedatatypes.h>
 
-#include "HelloWorld/HelloWorldNode.h"
+#include "TrainFramework/TrainFrameworkNode.h"
 
 
-class HELLOWORLDPLUGINSHARED_EXPORT HelloWorldPlugin : public PluginNodeCollectionInterface
+class TRAINFRAMEWORKPLUGINSHARED_EXPORT TrainFrameworkPlugin : public PluginNodeCollectionInterface
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "de.animhost.PluginNodeCollectionInterface" FILE "HelloWorldPlugin.json")
+    Q_PLUGIN_METADATA(IID "de.animhost.PluginNodeCollectionInterface" FILE "TrainFrameworkPlugin.json")
     Q_INTERFACES(PluginNodeCollectionInterface)
 
 
         CollectionMetaData _collectionMetaData = {
-            "HelloWorld",
-            "Tutorial plugin demonstrating basic AnimHost node concepts",
+            "TrainFramework",
+            "Plugin for Python training framework integration",
             "0.1",
             "Filmakademie Baden-Wuerttemberg, Animationsinstitut R&D Labs",
             "MIT"
@@ -50,10 +50,10 @@ class HELLOWORLDPLUGINSHARED_EXPORT HelloWorldPlugin : public PluginNodeCollecti
     // Add shared data here
 
     public:
-        HelloWorldPlugin() { qDebug() << "HelloWorldPlugin created"; };
-        HelloWorldPlugin(const HelloWorldPlugin& p) {};
+        TrainFrameworkPlugin() {};
+        TrainFrameworkPlugin(const TrainFrameworkPlugin& p) {};
 
-        ~HelloWorldPlugin() { qDebug() << "~HelloWorldPlugin()"; };
+        ~TrainFrameworkPlugin() {};
 
        void PreNodeCollectionRegistration() override {
             // Initialize here
@@ -61,7 +61,7 @@ class HELLOWORLDPLUGINSHARED_EXPORT HelloWorldPlugin : public PluginNodeCollecti
 
        void RegisterNodeCollection(NodeDelegateModelRegistry& nodeRegistry) override {
            // Register nodes here
-           nodeRegistry.registerModel<HelloWorldNode>([this](){ return std::make_unique<HelloWorldNode>(); });
+           nodeRegistry.registerModel<TrainFrameworkNode>([this](){ return std::make_unique<TrainFrameworkNode>(); });
        };
 
        void PostNodeCollectionRegistration() override {};
@@ -81,4 +81,4 @@ class HELLOWORLDPLUGINSHARED_EXPORT HelloWorldPlugin : public PluginNodeCollecti
 
 };
 
-#endif // HELLOWORLDPLUGIN_H
+#endif // TRAINFRAMEWORKPLUGIN_H

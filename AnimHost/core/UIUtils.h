@@ -37,7 +37,7 @@ namespace UIUtils {
 
 
 class ANIMHOSTCORESHARED_EXPORT StyleSheet {
-
+public:
 	const QString mainStyleSheet = ""
 		"QHeaderView::section {"
 		"background-color:rgba(64, 64, 64, 0%);"
@@ -214,6 +214,49 @@ Q_SIGNALS:
 
 };
 
+class ANIMHOSTCORESHARED_EXPORT ProgressWidgetBase : public QWidget
+{
+public:
+	explicit ProgressWidgetBase(QWidget* parent = nullptr);
+	virtual ~ProgressWidgetBase() = default;
+
+	virtual QString getValueName() const = 0;
+	virtual void setValueName(const QString& name) = 0;
+
+protected:
+	QProgressBar* _progressBar;
+	QLabel* _nameLabel;
+	QLabel* _valueLabel;
+	QString _valueName;
+	
+	void setupUI();
+};
+
+template<typename T>
+class ANIMHOSTCORESHARED_EXPORT ProgressWidget : public ProgressWidgetBase
+{
+public:
+	explicit ProgressWidget(const QString& valueName, T maxValue, QWidget* parent = nullptr);
+	~ProgressWidget();
+
+	bool updateValue(T value);
+	
+	QString getValueName() const override;
+	void setValueName(const QString& name) override;
+	T getMaxValue() const;
+	void setMaxValue(T maxValue);
+
+private:
+	T _maxValue;
+	
+	void updateDisplay(T currentValue);
+};
+
+// Explicit template instantiations
+extern template class ProgressWidget<int>;
+extern template class ProgressWidget<float>;
+extern template class ProgressWidget<double>;
+
 class ANIMHOSTCORESHARED_EXPORT SignalLightWidget : public QWidget
 {
 	Q_OBJECT
@@ -240,6 +283,5 @@ private:
 
 	void drawLight(QPainter& painter);
 };
-
 
 #endif // ANIMHOST_UI_UTIL_H

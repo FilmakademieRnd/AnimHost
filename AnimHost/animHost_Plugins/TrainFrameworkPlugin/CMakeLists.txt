@@ -1,9 +1,9 @@
-set(target_name HelloWorldPlugin)
+set(target_name TrainFrameworkPlugin)
 
 qt_add_library(${target_name}
-    HelloWorldPlugin.cpp HelloWorldPlugin.h
-    HelloWorldPlugin_global.h
-    HelloWorld/HelloWorldNode.h HelloWorld/HelloWorldNode.cpp
+    TrainFrameworkPlugin.cpp TrainFrameworkPlugin.h
+    TrainFrameworkPlugin_global.h
+    TrainFramework/TrainFrameworkNode.h TrainFramework/TrainFrameworkNode.cpp
 
 )
 
@@ -16,7 +16,7 @@ target_include_directories(${target_name} PUBLIC
 )
 
 target_compile_definitions(${target_name} PRIVATE
-    HELLOWORLDPLUGIN_LIBRARY
+    TRAINFRAMEWORKPLUGIN_LIBRARY
 )
 
 target_link_libraries(${target_name} PUBLIC

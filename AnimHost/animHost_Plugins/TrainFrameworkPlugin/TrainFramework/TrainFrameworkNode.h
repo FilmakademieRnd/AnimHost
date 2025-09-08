@@ -18,34 +18,38 @@
  */
 
 
-#ifndef HELLOWORLDNODE_H
-#define HELLOWORLDNODE_H
+#ifndef TRAINFRAMEWORKNODE_H
+#define TRAINFRAMEWORKNODE_H
 
-#include "../HelloWorldPlugin_global.h"
+#include "../TrainFrameworkPlugin_global.h"
 #include <QMetaType>
 #include <QtWidgets>
+#include <QTimer>
 #include <pluginnodeinterface.h>
 #include <nodedatatypes.h>
+#include <UIUtils.h>
 
 class QPushButton;
 
-class HELLOWORLDPLUGINSHARED_EXPORT HelloWorldNode : public PluginNodeInterface
+class TRAINFRAMEWORKPLUGINSHARED_EXPORT TrainFrameworkNode : public PluginNodeInterface
 {
     Q_OBJECT
 
 private:
-    QPushButton* _pushButton;
     QWidget* _widget;
+    ProgressWidget<int>* _progressWidget;
+    QTimer* _timer;
+    int _currentStep;
     
     // Framework automatically provides RunSignal input at port 0
 
 public:
-    HelloWorldNode();
-    ~HelloWorldNode();
+    TrainFrameworkNode();
+    ~TrainFrameworkNode();
     
-    std::unique_ptr<NodeDelegateModel> Init() override { return std::unique_ptr<HelloWorldNode>(new HelloWorldNode()); };
+    std::unique_ptr<NodeDelegateModel> Init() override { return std::unique_ptr<TrainFrameworkNode>(new TrainFrameworkNode()); };
 
-    static QString Name() { return QString("HelloWorldNode"); }
+    static QString Name() { return QString("TrainFrameworkNode"); }
 
     QString category() override { return "Examples"; };
     QString caption() const override { return this->name(); }
@@ -64,8 +68,8 @@ public:
     QWidget* embeddedWidget() override;
 
 private Q_SLOTS:
-    void onButtonClicked();
+    void onTimerTimeout();
 
 };
 
-#endif // HELLOWORLDNODE_H
+#endif // TRAINFRAMEWORKNODE_H
