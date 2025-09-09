@@ -1,9 +1,10 @@
-set(target_name TrainFrameworkPlugin)
+set(target_name TrainingPlugin)
 
 qt_add_library(${target_name}
-    TrainFrameworkPlugin.cpp TrainFrameworkPlugin.h
-    TrainFrameworkPlugin_global.h
-    TrainFramework/TrainFrameworkNode.h TrainFramework/TrainFrameworkNode.cpp
+    TrainingPlugin.cpp TrainingPlugin.h
+    TrainingPlugin_global.h
+    Training/TrainingNode.h Training/TrainingNode.cpp
+    Training/TrainingNodeWidget.h Training/TrainingNodeWidget.cpp
 
 )
 
@@ -16,7 +17,7 @@ target_include_directories(${target_name} PUBLIC
 )
 
 target_compile_definitions(${target_name} PRIVATE
-    TRAINFRAMEWORKPLUGIN_LIBRARY
+    TRAININGPLUGIN_LIBRARY
 )
 
 target_link_libraries(${target_name} PUBLIC

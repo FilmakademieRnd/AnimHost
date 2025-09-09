@@ -17,16 +17,4 @@
  ***************************************************************************************
  */
 
- 
-#ifndef TRAINFRAMEWORKPLUGINSHARED_GLOBAL_H
-#define TRAINFRAMEWORKPLUGINSHARED_GLOBAL_H
-
-#include <QtCore/qglobal.h>
-
-#if defined(TRAINFRAMEWORKPLUGIN_LIBRARY)
-#define TRAINFRAMEWORKPLUGINSHARED_EXPORT Q_DECL_EXPORT
-#else
-#define TRAINFRAMEWORKPLUGINSHARED_EXPORT Q_DECL_IMPORT
-#endif
-
-#endif // TRAINFRAMEWORKPLUGINSHARED_GLOBAL_H
+#include "TrainingPlugin.h"

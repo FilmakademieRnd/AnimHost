@@ -18,40 +18,44 @@
  */
 
 
-#ifndef TRAINFRAMEWORKNODE_H
-#define TRAINFRAMEWORKNODE_H
+#ifndef TRAININGNODE_H
+#define TRAININGNODE_H
 
-#include "../TrainFrameworkPlugin_global.h"
+#include "../TrainingPlugin_global.h"
 #include <QMetaType>
 #include <QtWidgets>
 #include <QTimer>
+#include <QProcess>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <pluginnodeinterface.h>
 #include <nodedatatypes.h>
-#include <UIUtils.h>
 
-class QPushButton;
+class TrainingNodeWidget;
 
-class TRAINFRAMEWORKPLUGINSHARED_EXPORT TrainFrameworkNode : public PluginNodeInterface
+class TRAININGPLUGINSHARED_EXPORT TrainingNode : public PluginNodeInterface
 {
     Q_OBJECT
 
 private:
-    QWidget* _widget;
-    ProgressWidget<int>* _progressWidget;
-    QTimer* _timer;
-    int _currentStep;
+    // UI
+    TrainingNodeWidget* _widget;
+    
+    // Process management
+    QProcess* _trainingProcess;
+    QString _pythonScriptPath;
     
     // Framework automatically provides RunSignal input at port 0
 
 public:
-    TrainFrameworkNode();
-    ~TrainFrameworkNode();
+    TrainingNode();
+    ~TrainingNode();
     
-    std::unique_ptr<NodeDelegateModel> Init() override { return std::unique_ptr<TrainFrameworkNode>(new TrainFrameworkNode()); };
+    std::unique_ptr<NodeDelegateModel> Init() override { return std::unique_ptr<TrainingNode>(new TrainingNode()); };
 
-    static QString Name() { return QString("TrainFrameworkNode"); }
+    static QString Name() { return QString("TrainingNode"); }
 
-    QString category() override { return "Examples"; };
+    QString category() override { return "Training"; };
     QString caption() const override { return this->name(); }
     bool captionVisible() const override { return true; }
 
@@ -68,8 +72,14 @@ public:
     QWidget* embeddedWidget() override;
 
 private Q_SLOTS:
-    void onTimerTimeout();
+    void onTrainingOutput();
+    void onTrainingFinished(int exitCode, QProcess::ExitStatus exitStatus);
+    void onTrainingError(QProcess::ProcessError error);
+
+private:
+    void updateConnectionStatus(const QString& status, const QColor& lightColor);
+    void updateFromMessage(const QJsonObject& obj);
 
 };
 
-#endif // TRAINFRAMEWORKNODE_H
+#endif // TRAININGNODE_H

@@ -18,10 +18,10 @@
  */
 
 
-#ifndef TRAINFRAMEWORKPLUGIN_H
-#define TRAINFRAMEWORKPLUGIN_H
+#ifndef TRAININGPLUGIN_H
+#define TRAININGPLUGIN_H
 
-#include "TrainFrameworkPlugin_global.h"
+#include "TrainingPlugin_global.h"
 
 #include <QMetaType>
 #include <QtCore/QObject>
@@ -29,18 +29,18 @@
 #include <commondatatypes.h>
 #include <nodedatatypes.h>
 
-#include "TrainFramework/TrainFrameworkNode.h"
+#include "Training/TrainingNode.h"
 
 
-class TRAINFRAMEWORKPLUGINSHARED_EXPORT TrainFrameworkPlugin : public PluginNodeCollectionInterface
+class TRAININGPLUGINSHARED_EXPORT TrainingPlugin : public PluginNodeCollectionInterface
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "de.animhost.PluginNodeCollectionInterface" FILE "TrainFrameworkPlugin.json")
+    Q_PLUGIN_METADATA(IID "de.animhost.PluginNodeCollectionInterface" FILE "TrainingPlugin.json")
     Q_INTERFACES(PluginNodeCollectionInterface)
 
 
         CollectionMetaData _collectionMetaData = {
-            "TrainFramework",
+            "Training",
             "Plugin for Python training framework integration",
             "0.1",
             "Filmakademie Baden-Wuerttemberg, Animationsinstitut R&D Labs",
@@ -50,10 +50,10 @@ class TRAINFRAMEWORKPLUGINSHARED_EXPORT TrainFrameworkPlugin : public PluginNode
     // Add shared data here
 
     public:
-        TrainFrameworkPlugin() {};
-        TrainFrameworkPlugin(const TrainFrameworkPlugin& p) {};
+        TrainingPlugin() {};
+        TrainingPlugin(const TrainingPlugin& p) {};
 
-        ~TrainFrameworkPlugin() {};
+        ~TrainingPlugin() {};
 
        void PreNodeCollectionRegistration() override {
             // Initialize here
@@ -61,7 +61,7 @@ class TRAINFRAMEWORKPLUGINSHARED_EXPORT TrainFrameworkPlugin : public PluginNode
 
        void RegisterNodeCollection(NodeDelegateModelRegistry& nodeRegistry) override {
            // Register nodes here
-           nodeRegistry.registerModel<TrainFrameworkNode>([this](){ return std::make_unique<TrainFrameworkNode>(); });
+           nodeRegistry.registerModel<TrainingNode>([this](){ return std::make_unique<TrainingNode>(); });
        };
 
        void PostNodeCollectionRegistration() override {};
@@ -81,4 +81,4 @@ class TRAINFRAMEWORKPLUGINSHARED_EXPORT TrainFrameworkPlugin : public PluginNode
 
 };
 
-#endif // TRAINFRAMEWORKPLUGIN_H
+#endif // TRAININGPLUGIN_H

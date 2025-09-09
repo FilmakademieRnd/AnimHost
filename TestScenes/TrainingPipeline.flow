@@ -21,7 +21,7 @@
         {
             "id": 1,
             "internal-data": {
-                "model-name": "TrainFrameworkNode"
+                "model-name": "TrainingNode"
             },
             "position": {
                 "x": 100,
