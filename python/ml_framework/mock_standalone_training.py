@@ -22,7 +22,6 @@ def main():
     
     # Simulate training epochs
     for epoch in range(1, total_epochs + 1):
-        # Simulate 2-min epoch with progress updates every 200ms
         epoch_duration = 3  # 3 seconds
         update_interval = 0.2  # 200ms
         total_updates = int(epoch_duration / update_interval)
@@ -35,7 +34,7 @@ def main():
         # Brief pause before epoch completion
         time.sleep(0.1)
         
-        # Mock training loss with realistic decreasing values
+        # Mock training loss
         train_loss = 1.0 - (epoch * 0.15) + random.uniform(-0.05, 0.05)
         
         print(f"Epoch {epoch} {train_loss:.11f}")

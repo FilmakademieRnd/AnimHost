@@ -101,7 +101,7 @@ void TrainingNodeWidget::updateFromMessage(const QJsonObject& obj)
         QString status = obj["status"].toString();
         
         if (status == "starting") {
-            updateConnectionStatus("Starting", QColor(255, 200, 50)); // Orange (like TRACER)
+            updateConnectionStatus("Training started", QColor(50, 255, 50)); // Bright green (like TRACER)
         }
         else if (status == "training") {
             updateConnectionStatus("Training", QColor(50, 255, 50)); // Bright green (like TRACER)

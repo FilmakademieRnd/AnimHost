@@ -36,10 +36,10 @@ def integrated_training():
     for epoch in range(1, total_epochs + 1):
         time.sleep(0.5)  # Simulate processing time
         
-        # Mock training metrics with realistic values
-        train_loss = 1.0 - (epoch * 0.15) + random.uniform(-0.05, 0.05)  # Decreasing loss
-        val_loss = train_loss + random.uniform(0.01, 0.1)  # Val loss slightly higher
-        learning_rate = 0.001 * (0.9 ** (epoch - 1))  # Decaying learning rate
+        # Mock training metrics
+        train_loss = 1.0 - (epoch * 0.15) + random.uniform(-0.05, 0.05)
+        val_loss = train_loss + random.uniform(0.01, 0.1)
+        learning_rate = 0.001 * (0.9 ** (epoch - 1))
         
         progress = {
             "status": "training",
@@ -81,11 +81,11 @@ def standalone_training():
     try:
         # Launch subprocess with real-time output parsing
         process = subprocess.Popen(
-            [sys.executable, "-u", standalone_script],
+            [sys.executable, "-u", standalone_script], # -u for unbuffered output
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             universal_newlines=True,
-            bufsize=1  # Line buffered
+            bufsize=1  # Flush line by line
         )
         
         total_epochs = 5

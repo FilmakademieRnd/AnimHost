@@ -29,7 +29,7 @@ TrainingNode::TrainingNode()
     // Initialize process management
     _trainingProcess = new QProcess(this);
     
-    // Set the path to the Python script (relative to AnimHost root)
+    // Set the path to the Python source script relative to the AnimHost executable location
     _pythonScriptPath = QApplication::applicationDirPath() + "/../../python/ml_framework/mock_training.py";
     
     // Connect process signals
