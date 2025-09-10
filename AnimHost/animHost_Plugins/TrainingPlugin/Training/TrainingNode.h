@@ -55,7 +55,7 @@ public:
 
     static QString Name() { return QString("TrainingNode"); }
 
-    QString category() override { return "Training"; };
+    QString category() override { return "MLFramework"; };
     QString caption() const override { return this->name(); }
     bool captionVisible() const override { return true; }
 
