@@ -42,18 +42,16 @@ def starke_training():
     
     # Initial status
     status = {
-        "status": "stage update",
-        "stage": "Initializing",
-        "message": "Initializing Starke training pipeline..."
+        "status": "Initializing",
+        "text": "Initializing Starke training pipeline..."
     }
     print(json.dumps(status), flush=True)
     
     try:
         # Data preprocessing phase
         preprocessing_status = {
-            "status": "stage update",
-            "stage": "Data Preprocessing",
-            "message": "Data preprocessing phase..."
+            "status": "Data Preprocessing",
+            "text": "Starting data preprocessing phase..."
         }
         print(json.dumps(preprocessing_status), flush=True)
         
@@ -75,16 +73,15 @@ def starke_training():
         
         # Final completion status
         completion_status = {
-            "status": "stage update",
-            "stage": "Completed",
-            "message": "Starke training pipeline completed successfully"
+            "status": "Completed Training",
+            "text": "Starke training pipeline completed successfully"
         }
         print(json.dumps(completion_status), flush=True)
         
     except Exception as e:
         error_status = {
-            "status": "error",
-            "message": f"Starke training pipeline failed: {str(e)}"
+            "status": "Error",
+            "text": f"Starke training pipeline failed: {str(e)}"
         }
         print(json.dumps(error_status), flush=True)
         sys.exit(1)
@@ -140,9 +137,8 @@ def run_pae_training(dataset_path, path_to_ai4anim):
     """
     
     pae_status = {
-        "status": "stage update",
-        "stage": "Starting training...",
-        "message": "Starting PAE training phase..."
+        "status": "Starting training 1/2 ...",
+        "text": "Starting PAE training phase..."
     }
     print(json.dumps(pae_status), flush=True)
     
@@ -190,8 +186,8 @@ def run_pae_training(dataset_path, path_to_ai4anim):
             
     except Exception as e:
         error_status = {
-            "status": "error",
-            "message": f"PAE preprocessing/training failed: {str(e)}"
+            "status": "Error",
+            "text": f"PAE preprocessing/training failed: {str(e)}"
         }
         print(json.dumps(error_status), flush=True)
         raise
@@ -202,9 +198,8 @@ def run_gnn_training(path_to_ai4anim, mp):
     """
     
     gnn_status = {
-        "status": "stage update",
-        "stage": "Starting training...",
-        "message": "Starting GNN training phase..."
+        "status": "Starting training 2/2 ...",
+        "text": "Starting GNN training phase..."
     }
     print(json.dumps(gnn_status), flush=True)
     
@@ -256,8 +251,8 @@ def run_gnn_training(path_to_ai4anim, mp):
             
     except Exception as e:
         error_status = {
-            "status": "error",
-            "message": f"GNN preprocessing/training failed: {str(e)}"
+            "status": "Error",
+            "text": f"GNN preprocessing/training failed: {str(e)}"
         }
         print(json.dumps(error_status), flush=True)
         raise
@@ -285,8 +280,11 @@ def parse_training_output(line, phase_name):
         loss = float(match.group(2))
         return {
             "status": f"{phase_name} training",
-            "epoch": epoch,
-            "train_loss": round(loss, 4)
+            "text": f"{phase_name} epoch {epoch} completed",
+            "metrics": {
+                "epoch": epoch,
+                "train_loss": round(loss, 4)
+            }
         }
     
     # Pattern 2: "Progress 23.42 %" (configurable progress updates)
@@ -297,7 +295,10 @@ def parse_training_output(line, phase_name):
             progress = float(match.group(1))
             return {
                 "status": f"{phase_name} training",
-                "message": f"{phase_name} Progress: {progress}%"
+                "text": f"{phase_name} Progress: {progress}%",
+                "metrics": {
+                    "progress_percent": round(progress, 2)
+                }
             }
         else:
             # Don't emit JSON for progress updates as they overwrite each other
@@ -308,7 +309,7 @@ def parse_training_output(line, phase_name):
         # Emit the full line as a message if verbose mode is enabled
         return {
             "status": f"{phase_name} verbose",
-            "message": f"{phase_name}: {line}"
+            "text": f"{phase_name}: {line}"
         }
     
     # Return None for lines that don't match expected patterns
@@ -318,13 +319,13 @@ def parse_pae_output(line):
     """
     Parse PAE Network.py output - wrapper for parse_training_output
     """
-    return parse_training_output(line, "encoder")
+    return parse_training_output(line, "Encoder")
 
 def parse_gnn_output(line):
     """
     Parse GNN Network.py output - wrapper for parse_training_output
     """
-    return parse_training_output(line, "controller")
+    return parse_training_output(line, "Controller")
 
 def main():
     """
@@ -334,15 +335,15 @@ def main():
         starke_training()
     except KeyboardInterrupt:
         error_status = {
-            "status": "interrupted",
-            "message": "Starke training interrupted by user"
+            "status": "Interrupted",
+            "text": "Starke training interrupted by user"
         }
         print(json.dumps(error_status), flush=True)
         sys.exit(1)
     except Exception as e:
         error_status = {
-            "status": "error",
-            "message": f"Starke training failed: {str(e)}"
+            "status": "Error",
+            "text": f"Starke training failed: {str(e)}"
         }
         print(json.dumps(error_status), flush=True)
         sys.exit(1)

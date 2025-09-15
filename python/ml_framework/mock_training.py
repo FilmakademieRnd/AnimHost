@@ -25,8 +25,8 @@ def integrated_training():
     
     # Initial status, to confirm script start
     status = {
-        "status": "starting",
-        "message": "Initializing training process..."
+        "status": "Starting",
+        "text": "Initializing training process..."
     }
     print(json.dumps(status), flush=True)
     
@@ -42,22 +42,28 @@ def integrated_training():
         learning_rate = 0.001 * (0.9 ** (epoch - 1))
         
         progress = {
-            "status": "training",
-            "epoch": epoch,
-            "total_epochs": total_epochs,
-            "train_loss": round(train_loss, 4),
-            "val_loss": round(val_loss, 4),
-            "learning_rate": round(learning_rate, 6)
+            "status": "Training",
+            "text": f"Training epoch {epoch}/{total_epochs}",
+            "metrics": {
+                "epoch": epoch,
+                "total_epochs": total_epochs,
+                "train_loss": round(train_loss, 4),
+                "val_loss": round(val_loss, 4),
+                "learning_rate": round(learning_rate, 6)
+            }
         }
         
         print(json.dumps(progress), flush=True)
     
     # Final completion status
     completion_status = {
-        "status": "completed",
-        "message": f"Training completed successfully after {total_epochs} epochs",
-        "final_train_loss": round(train_loss, 4),
-        "final_val_loss": round(val_loss, 4)
+        "status": "Completed",
+        "text": f"Training completed successfully after {total_epochs} epochs",
+        "metrics": {
+            "final_train_loss": round(train_loss, 4),
+            "final_val_loss": round(val_loss, 4),
+            "total_epochs": total_epochs
+        }
     }
     print(json.dumps(completion_status), flush=True)
 
@@ -69,8 +75,8 @@ def standalone_training():
     
     # Initial status
     status = {
-        "status": "starting",
-        "message": "Launching standalone training process..."
+        "status": "Starting",
+        "text": "Launching standalone training process..."
     }
     print(json.dumps(status), flush=True)
     
@@ -111,10 +117,13 @@ def standalone_training():
                 train_loss = float(epoch_match.group(2))
 
                 epoch_status = {
-                    "status": "training",
-                    "epoch": current_epoch,
-                    "total_epochs": total_epochs,
-                    "train_loss": round(train_loss, 4),
+                    "status": "Training",
+                    "text": f"Standalone training epoch {current_epoch}/{total_epochs}",
+                    "metrics": {
+                        "epoch": current_epoch,
+                        "total_epochs": total_epochs,
+                        "train_loss": round(train_loss, 4)
+                    }
                 }
                 print(json.dumps(epoch_status), flush=True)
         
@@ -124,30 +133,32 @@ def standalone_training():
         if return_code == 0:
             # Success status
             completion_status = {
-                "status": "completed",
-                "message": f"Standalone training completed successfully after {total_epochs} epochs",
-                "total_epochs": total_epochs
+                "status": "Completed",
+                "text": f"Standalone training completed successfully after {total_epochs} epochs",
+                "metrics": {
+                    "total_epochs": total_epochs
+                }
             }
             print(json.dumps(completion_status), flush=True)
         else:
             # Process failed
             stderr_output = process.stderr.read()
             error_status = {
-                "status": "error",
-                "message": f"Standalone training failed with return code {return_code}: {stderr_output}"
+                "status": "Error",
+                "text": f"Standalone training failed with return code {return_code}: {stderr_output}"
             }
             print(json.dumps(error_status), flush=True)
             
     except FileNotFoundError:
         error_status = {
-            "status": "error",
-            "message": f"Standalone training script not found: {standalone_script}"
+            "status": "Error",
+            "text": f"Standalone training script not found: {standalone_script}"
         }
         print(json.dumps(error_status), flush=True)
     except Exception as e:
         error_status = {
-            "status": "error",
-            "message": f"Failed to launch standalone training: {str(e)}"
+            "status": "Error",
+            "text": f"Failed to launch standalone training: {str(e)}"
         }
         print(json.dumps(error_status), flush=True)
 
@@ -165,15 +176,15 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         error_status = {
-            "status": "interrupted",
-            "message": "Training interrupted by user"
+            "status": "Interrupted",
+            "text": "Training interrupted by user"
         }
         print(json.dumps(error_status), flush=True)
         sys.exit(1)
     except Exception as e:
         error_status = {
-            "status": "error",
-            "message": f"Training failed: {str(e)}"
+            "status": "Error",
+            "text": f"Training failed: {str(e)}"
         }
         print(json.dumps(error_status), flush=True)
         sys.exit(1)

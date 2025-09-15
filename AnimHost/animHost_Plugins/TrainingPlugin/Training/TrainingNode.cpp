@@ -147,7 +147,8 @@ void TrainingNode::onTrainingOutput()
                 continue;
             }
             
-            updateFromMessage(doc.object());
+            MLFramework::TrainingMessage msg = MLFramework::TrainingMessage::fromJson(doc.object());
+            updateFromMessage(msg);
         }
     }
 }
@@ -202,9 +203,9 @@ void TrainingNode::updateConnectionStatus(const QString& status, const QColor& l
     }
 }
 
-void TrainingNode::updateFromMessage(const QJsonObject& obj)
+void TrainingNode::updateFromMessage(const MLFramework::TrainingMessage& msg)
 {
     if (_widget) {
-        _widget->updateFromMessage(obj);
+        _widget->updateFromMessage(msg);
     }
 }

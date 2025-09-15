@@ -30,6 +30,7 @@
 #include <QJsonObject>
 #include <pluginnodeinterface.h>
 #include <nodedatatypes.h>
+#include "MLFrameworkTypes.h"
 
 class TrainingNodeWidget;
 
@@ -79,7 +80,7 @@ private Q_SLOTS:
 
 private:
     void updateConnectionStatus(const QString& status, const QColor& lightColor);
-    void updateFromMessage(const QJsonObject& obj);
+    void updateFromMessage(const MLFramework::TrainingMessage& msg);
 
 };
 
