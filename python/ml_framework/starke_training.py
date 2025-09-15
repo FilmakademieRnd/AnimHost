@@ -152,14 +152,17 @@ def run_pae_training(dataset_path, path_to_ai4anim):
         shutil.copyfile(dataset_path + "/sequences_velocity.txt", pae_dataset_path + "/Sequences.txt")
 
         # Launch PAE Network.py subprocess
-        # Run with --no-display until plotting is fixed
+        # Use MPLBACKEND=Agg to suppress matplotlib windows because they don't show anything
+        env = os.environ.copy()
+        env['MPLBACKEND'] = 'Agg'
         process = subprocess.Popen(
-            [sys.executable, "-u", "Network.py", '--no-display'],
+            [sys.executable, "-u", "Network.py"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             universal_newlines=True,
             bufsize=1,
-            cwd=pae_path
+            cwd=pae_path,
+            env=env
         )
         
         # Read output line by line and parse

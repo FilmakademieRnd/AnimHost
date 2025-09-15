@@ -98,11 +98,10 @@ void TrainingNodeWidget::updateConnectionStatus(const QString& status, const QCo
 {
     if (_signalLight) {
         _signalLight->setColor(lightColor);
-        if (!statusText.isEmpty()) _statusLabel->setToolTip(statusText);
     }
     if (_statusLabel) {
         _statusLabel->setText(status);
-        if (!statusText.isEmpty()) _statusLabel->setToolTip(statusText);
+        _statusLabel->setToolTip(statusText);
     }
 }
 
