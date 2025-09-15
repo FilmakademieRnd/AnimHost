@@ -65,7 +65,7 @@ def starke_training():
         mp = MotionProcessor(dataset_path, path_to_ai4anim)   
         
         # Data preprocessing (velocity filtering and export)
-        _perform_data_preprocessing(dataset_path, mp)
+        _perform_data_preprocessing(dataset_path)
         
         # Run PAE training phase
         run_pae_training(dataset_path, path_to_ai4anim)
@@ -89,7 +89,7 @@ def starke_training():
         print(json.dumps(error_status), flush=True)
         sys.exit(1)
 
-def _perform_data_preprocessing(dataset_path, mp):
+def _perform_data_preprocessing(dataset_path):
     """Internal function to handle data preprocessing phase"""
     
     try:

@@ -74,7 +74,8 @@ public:
 private Q_SLOTS:
     void onTrainingOutput();
     void onTrainingFinished(int exitCode, QProcess::ExitStatus exitStatus);
-    void onTrainingError(QProcess::ProcessError error);
+    void onTrainingError();
+    void onTrainingProcessError(QProcess::ProcessError error);
 
 private:
     void updateConnectionStatus(const QString& status, const QColor& lightColor);

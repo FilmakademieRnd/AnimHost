@@ -35,10 +35,12 @@ TrainingNode::TrainingNode()
     // Connect process signals
     connect(_trainingProcess, &QProcess::readyReadStandardOutput, 
             this, &TrainingNode::onTrainingOutput);
+    connect(_trainingProcess, &QProcess::readyReadStandardError,
+            this, &TrainingNode::onTrainingError);
     connect(_trainingProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
             this, &TrainingNode::onTrainingFinished);
     connect(_trainingProcess, &QProcess::errorOccurred,
-            this, &TrainingNode::onTrainingError);
+            this, &TrainingNode::onTrainingProcessError);
     
     qDebug() << "TrainingNode created with Python script path:" << _pythonScriptPath;
 }
@@ -136,10 +138,7 @@ void TrainingNode::onTrainingOutput()
     QStringList lines = output.split('\n', Qt::SkipEmptyParts);
     for (const QString& line : lines) {
         QString trimmedLine = line.trimmed();
-        if (!trimmedLine.isEmpty()) {
-            qDebug() << "Received JSON:" << trimmedLine;
-            
-            // Parse JSON document
+        if (!trimmedLine.isEmpty()) {         
             QJsonParseError parseError;
             QJsonDocument doc = QJsonDocument::fromJson(trimmedLine.toUtf8(), &parseError);
             
@@ -164,7 +163,17 @@ void TrainingNode::onTrainingFinished(int exitCode, QProcess::ExitStatus exitSta
     }
 }
 
-void TrainingNode::onTrainingError(QProcess::ProcessError error)
+void TrainingNode::onTrainingError()
+{
+    QByteArray data = _trainingProcess->readAllStandardError();
+    QString errorOutput = QString::fromUtf8(data);
+    
+    if (!errorOutput.isEmpty()) {
+        qDebug() << "Python error output:" << errorOutput.trimmed();
+    }
+}
+
+void TrainingNode::onTrainingProcessError(QProcess::ProcessError error)
 {
     QString errorString;
     switch (error) {
