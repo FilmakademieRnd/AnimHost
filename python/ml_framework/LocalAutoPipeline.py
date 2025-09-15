@@ -15,7 +15,7 @@ import time
 import scipy.signal
 import git
 
-from MotionPreprocessing import MotionProcessor, count_lines, read_csv_data, ReadBinary 
+from python.ml_framework.data.MotionPreprocessing import MotionProcessor, count_lines, read_csv_data, ReadBinary 
 
 def get_git_root():
     """Returns the root directory of the git repository containing the current working directory."""

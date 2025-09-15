@@ -14,81 +14,19 @@ import os
 import array
 import struct
 import shutil
+
 import numpy as np
 import pandas as pd
 import scipy.signal
-import git
-
-from MotionPreprocessing import MotionProcessor, count_lines, read_csv_data, ReadBinary
+from data.MotionPreprocessing import MotionProcessor, count_lines, read_csv_data, ReadBinary
 
 #  Set to True to emit JSON for progress updates, False to ignore them
 EMIT_PROGRESS_UPDATES = False 
 # Set to True for verbose output from GNN training phase
 VERBOSE = False
 
-def get_git_root():
-    """Returns the root directory of the git repository containing the current working directory."""
-    try:
-        repo = git.Repo(search_parent_directories=True)
-        return repo.working_tree_dir
-    except git.exc.InvalidGitRepositoryError:
-        raise RuntimeError("Not in a git repository - cannot determine project root")
-
-def starke_training():
-    """
-    Main training pipeline - coordinates PAE and GNN training phases
-    Converts LocalAutoPipeline.py workflow to standalone format with JSON output
-    """
-    
-    # Initial status
-    status = {
-        "status": "Initializing",
-        "text": "Initializing Starke training pipeline..."
-    }
-    print(json.dumps(status), flush=True)
-    
-    try:
-        # Data preprocessing phase
-        preprocessing_status = {
-            "status": "Data Preprocessing",
-            "text": "Starting data preprocessing phase..."
-        }
-        print(json.dumps(preprocessing_status), flush=True)
-        
-        # Common configuration
-        dataset_path = get_git_root() + r"\datasets\Survivor_Gen"
-        path_to_ai4anim = get_git_root() + r"\AI4Animation\AI4Animation\SIGGRAPH_2022\PyTorch"
-        
-        # Initialize motion processor
-        mp = MotionProcessor(dataset_path, path_to_ai4anim)   
-        
-        # Data preprocessing (velocity filtering and export)
-        _perform_data_preprocessing(dataset_path)
-        
-        # Run PAE training phase
-        run_pae_training(dataset_path, path_to_ai4anim)
-        
-        # Run GNN training phase  
-        run_gnn_training(path_to_ai4anim, mp)
-        
-        # Final completion status
-        completion_status = {
-            "status": "Completed Training",
-            "text": "Starke training pipeline completed successfully"
-        }
-        print(json.dumps(completion_status), flush=True)
-        
-    except Exception as e:
-        error_status = {
-            "status": "Error",
-            "text": f"Starke training pipeline failed: {str(e)}"
-        }
-        print(json.dumps(error_status), flush=True)
-        sys.exit(1)
-
-def _perform_data_preprocessing(dataset_path):
-    """Internal function to handle data preprocessing phase"""
-    
+def perform_data_preprocessing(dataset_path):
+    """Internal function to handle data preprocessing phase"""    
     try:
         # Count number of velocity samples
         num_samples_total = count_lines(dataset_path + "/sequences_velocity.txt")
@@ -195,7 +133,7 @@ def run_pae_training(dataset_path, path_to_ai4anim):
         print(json.dumps(error_status), flush=True)
         raise
 
-def run_gnn_training(path_to_ai4anim, mp):
+def run_gnn_training(dataset_path, path_to_ai4anim, pae_epochs):
     """
     GNN (Graph Neural Network) training subprocess with real-time parsing
     """
@@ -207,6 +145,9 @@ def run_gnn_training(path_to_ai4anim, mp):
     print(json.dumps(gnn_status), flush=True)
     
     try:
+        # Initialize motion processor
+        mp = MotionProcessor(dataset_path, path_to_ai4anim, pae_epochs)   
+
         # GNN preprocessing - prepare training data for generator
         df_input_data = mp.input_preprocessing()
         df_output_data = mp.output_preprocessing()
@@ -286,7 +227,7 @@ def parse_training_output(line, phase_name):
             "text": f"{phase_name} epoch {epoch} completed",
             "metrics": {
                 "epoch": epoch,
-                "train_loss": round(loss, 4)
+                "train_loss": loss
             }
         }
     
@@ -300,7 +241,7 @@ def parse_training_output(line, phase_name):
                 "status": f"{phase_name} training",
                 "text": f"{phase_name} Progress: {progress}%",
                 "metrics": {
-                    "progress_percent": round(progress, 2)
+                    "progress_percent": progress
                 }
             }
         else:
@@ -329,27 +270,3 @@ def parse_gnn_output(line):
     Parse GNN Network.py output - wrapper for parse_training_output
     """
     return parse_training_output(line, "Controller")
-
-def main():
-    """
-    Main entry point for starke_training script
-    """
-    try:
-        starke_training()
-    except KeyboardInterrupt:
-        error_status = {
-            "status": "Interrupted",
-            "text": "Starke training interrupted by user"
-        }
-        print(json.dumps(error_status), flush=True)
-        sys.exit(1)
-    except Exception as e:
-        error_status = {
-            "status": "Error",
-            "text": f"Starke training failed: {str(e)}"
-        }
-        print(json.dumps(error_status), flush=True)
-        sys.exit(1)
-
-if __name__ == "__main__":
-    main()

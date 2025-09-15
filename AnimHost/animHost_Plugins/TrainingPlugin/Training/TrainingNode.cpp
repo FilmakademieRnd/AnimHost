@@ -30,7 +30,7 @@ TrainingNode::TrainingNode()
     _trainingProcess = new QProcess(this);
     
     // Set the path to the Python source script relative to the AnimHost executable location
-    _pythonScriptPath = QApplication::applicationDirPath() + "/../../python/ml_framework/starke_training.py";
+    _pythonScriptPath = QApplication::applicationDirPath() + "/../../python/ml_framework/mock_training.py";
     
     // Connect process signals
     connect(_trainingProcess, &QProcess::readyReadStandardOutput, 

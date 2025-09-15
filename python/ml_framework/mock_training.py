@@ -12,8 +12,11 @@ import subprocess
 import re
 import os
 
-# Feature flag: True for integrated mode, False for standalone subprocess mode
-USE_INTEGRATED_TRAINING = False
+# Add current directory to path for clean imports
+sys.path.insert(0, os.path.dirname(__file__))
+from config.config_manager import ConfigManager
+from external.starke_training import run_pae_training, run_gnn_training, perform_data_preprocessing
+
 
 def integrated_training():
     """
@@ -162,14 +165,63 @@ def standalone_training():
         }
         print(json.dumps(error_status), flush=True)
 
+def starke_training():
+    """
+    Main training pipeline - coordinates PAE and GNN training phases
+    Converts LocalAutoPipeline.py workflow to standalone format with JSON output
+    """
+    
+    # Initial status
+    status = {
+        "status": "Initializing",
+        "text": "Initializing Starke training pipeline..."
+    }
+    print(json.dumps(status), flush=True)
+    
+    try:
+        config = ConfigManager.load_config('starke_model_config.json')
+        dataset_path = config.dataset_path
+        path_to_ai4anim = config.path_to_ai4anim
+        pae_epochs = config.pae_epochs
+
+        # Data preprocessing phase
+        preprocessing_status = {
+            "status": "Data Preprocessing",
+            "text": "Starting data preprocessing phase..."
+        }
+        print(json.dumps(preprocessing_status), flush=True)
+        
+        # Data preprocessing (velocity filtering and export)
+        perform_data_preprocessing(dataset_path)
+        
+        # Run PAE training phase
+        run_pae_training(dataset_path, path_to_ai4anim)
+        
+        # Run GNN training phase  
+        run_gnn_training(dataset_path, path_to_ai4anim, pae_epochs)
+        
+        # Final completion status
+        completion_status = {
+            "status": "Completed Training",
+            "text": "Starke training pipeline completed successfully"
+        }
+        print(json.dumps(completion_status), flush=True)
+        
+    except Exception as e:
+        error_status = {
+            "status": "Error",
+            "text": f"Starke training pipeline failed: {str(e)}"
+        }
+        print(json.dumps(error_status), flush=True)
+
 def main():
     """
     Main entry point - routes to integrated or standalone training based on feature flag
     """
-    if USE_INTEGRATED_TRAINING:
-        integrated_training()
-    else:
-        standalone_training()
+    config = ConfigManager.load_config('starke_model_config.json')
+    starke_training()
+    # integrated_training()
+    # standalone_training()
 
 if __name__ == "__main__":
     try:

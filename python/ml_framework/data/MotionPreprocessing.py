@@ -233,11 +233,10 @@ def run_motion_preprocessing(num_phase_channel,dataset_path, phase_param_file, p
     return 0
 
 class MotionProcessor:
-    def __init__(self, dataset_path, ai4animation_path):
+    def __init__(self, dataset_path, ai4animation_path, pae_epochs=30):
         
         self.dataset_path = dataset_path
-        # self.trained_phase_param_file =  ai4animation_path + r"\PAE\Training\Parameters_30.txt"
-        self.trained_phase_param_file =  ai4animation_path + r"\PAE\Training\Parameters_2.txt"
+        self.trained_phase_param_file =  ai4animation_path + r"\PAE\Training\Parameters_{}.txt".format(pae_epochs)
         self.trained_phase_sequence_file = ai4animation_path + r"\PAE\Dataset\Sequences.txt"
         
         self.input_feature_count, self.output_feature_count = parse_input_output_features(dataset_path + "/metadata.txt")
