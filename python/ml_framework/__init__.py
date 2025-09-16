@@ -1,4 +1,13 @@
-# ML Framework package for AnimHost training pipeline
+"""
+ML Framework package for AnimHost training pipeline.
+
+Provides machine learning training capabilities for the AnimHost animation system,
+including configuration management, training orchestration, and external process
+integration.
+
+This package automatically configures the Python import path to ensure proper
+access to all ml_framework modules.
+"""
 
 import sys
 import os
