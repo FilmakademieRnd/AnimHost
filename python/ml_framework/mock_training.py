@@ -13,7 +13,6 @@ import subprocess
 import re
 import os
 from pathlib import Path
-from typing import Dict, Any
 
 # Add current directory to path for clean imports
 sys.path.insert(0, os.path.dirname(__file__))
@@ -213,11 +212,7 @@ def starke_training(config: StarkeModelConfig) -> None:
         )
 
         # Run GNN training phase
-        run_gnn_training(
-            dataset_path=config.dataset_path,
-            path_to_ai4anim=config.path_to_ai4anim,
-            pae_epochs=config.pae_epochs,
-        )
+        run_gnn_training(config)
 
         # Final completion status
         completion_status = {
