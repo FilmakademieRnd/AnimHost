@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 class StarkeModelConfig:
     """
     Configuration for Starke model training pipeline.
-    
+
     Contains all necessary parameters for configuring the Starke training pipeline,
     including dataset paths, AI4Animation framework location, and training parameters.
     """
@@ -30,10 +30,10 @@ class StarkeModelConfig:
     def validate(self) -> Optional[str]:
         """
         Validates the configuration parameters.
-        
+
         Checks that all required directories exist and parameters are within
         valid ranges.
-        
+
         :returns: None if valid, error message string if invalid
         """
         # Validate dataset path exists

@@ -1,6 +1,5 @@
 """
 External training modules and integrations.
 
-Contains training scripts and utilities for integrating with external
-training processes, including the Starke training pipeline.
+Contains utilities and per external process files for running external training scripts and parsing their output.
 """

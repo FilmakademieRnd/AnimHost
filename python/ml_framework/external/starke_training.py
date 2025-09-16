@@ -7,24 +7,19 @@ Handles both PAE (Phase Autoencoder) and GNN (Graph Neural Network) training pha
 """
 
 import json
-import time
-import sys
-import subprocess
-import re
 import os
+import re
 import shutil
 from pathlib import Path
-from typing import Dict, Any, Optional
 
-from python.ml_framework.data.motion_preprocessing import MotionProcessor
-from data.velocity_preprocessing import preprocess_velocity_data
+from data.motion_preprocessing import MotionProcessor
+from .script_subprocess import run_script_subprocess
 
+# TODO(PR): Make this configurable in new ExperimentLogger
 #  Set to True to emit JSON for progress updates, False to ignore them
 EMIT_PROGRESS_UPDATES = False
 # Set to True for verbose output from GNN training phase
 VERBOSE = False
-
-
 
 
 def run_pae_training(dataset_path: str, path_to_ai4anim: str) -> None:
@@ -50,54 +45,24 @@ def run_pae_training(dataset_path: str, path_to_ai4anim: str) -> None:
         ai4anim_path = Path(path_to_ai4anim)
         pae_path = ai4anim_path / "PAE"
         pae_dataset_path = pae_path / "Dataset"
-        dataset_dir = Path(dataset_path)
+        input_data_dir = Path(dataset_path)
 
         # Copy files: p_velocity.bin -> Data.bin, sequences_velocity.txt -> Sequences.txt
+        shutil.copyfile(input_data_dir / "p_velocity.bin", pae_dataset_path / "Data.bin")
         shutil.copyfile(
-            dataset_dir / "p_velocity.bin", pae_dataset_path / "Data.bin"
-        )
-        shutil.copyfile(
-            dataset_dir / "sequences_velocity.txt",
+            input_data_dir / "sequences_velocity.txt",
             pae_dataset_path / "Sequences.txt",
         )
 
         # Launch PAE Network.py subprocess
         # Use MPLBACKEND=Agg to suppress matplotlib windows because they don't show anything
-        env = os.environ.copy()
-        env["MPLBACKEND"] = "Agg"
-        process = subprocess.Popen(
-            [sys.executable, "-u", "Network.py"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True,
-            bufsize=1,
-            cwd=pae_path,
-            env=env,
+        run_script_subprocess(
+            script_name="Network.py",
+            working_dir=pae_path,
+            model_name="Encoder",
+            line_parser=parse_training_output,
+            env_overrides={"MPLBACKEND": "Agg"},
         )
-
-        # Read output line by line and parse
-        while True:
-            line = process.stdout.readline()
-            if not line and process.poll() is not None:
-                break
-
-            line = line.strip()
-            if not line:
-                continue
-
-            # Parse PAE output and emit JSON if relevant
-            parsed_output = _parse_pae_output(line)
-            if parsed_output:
-                print(json.dumps(parsed_output), flush=True)
-
-        # Wait for process completion
-        return_code = process.wait()
-
-        if return_code != 0:
-            stderr_output = process.stderr.read()
-            raise RuntimeError(
-                f"PAE training subprocess failed with return code {return_code}: {stderr_output}"
-            )
 
     except Exception as e:
         error_status = {
@@ -132,52 +97,27 @@ def run_gnn_training(dataset_path: str, path_to_ai4anim: str, pae_epochs: int) -
         mp = MotionProcessor(dataset_path, path_to_ai4anim, pae_epochs)
 
         # GNN preprocessing - prepare training data for generator
-        df_input_data = mp.input_preprocessing()
-        df_output_data = mp.output_preprocessing()
+        mp.input_preprocessing()
+        mp.output_preprocessing()
         mp.export_data()
 
         # Copy training data to GNN folder
-        processed_path = Path("../data")
+        # TODO(jasper2xf): Make this more robust - use temp dirs or explicit paths
+        processed_data_dir = Path("../data")
         ai4anim_path = Path(path_to_ai4anim)
         gnn_path = ai4anim_path / "GNN"
 
         # Copy all files from processed folder to GNN folder
-        for file in os.listdir(processed_path):
-            shutil.copyfile(processed_path / file, gnn_path / "Data" / file)
+        for file in os.listdir(processed_data_dir):
+            shutil.copyfile(processed_data_dir / file, gnn_path / "Data" / file)
 
         # Launch GNN Network.py subprocess
-        process = subprocess.Popen(
-            [sys.executable, "-u", "Network.py"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True,
-            bufsize=1,
-            cwd=gnn_path,
+        run_script_subprocess(
+            script_name="Network.py",
+            working_dir=gnn_path,
+            model_name="Controller",
+            line_parser=parse_training_output,
         )
-
-        # Read output line by line and parse
-        while True:
-            line = process.stdout.readline()
-            if not line and process.poll() is not None:
-                break
-
-            line = line.strip()
-            if not line:
-                continue
-
-            # Parse GNN output and emit JSON if relevant
-            parsed_output = _parse_gnn_output(line)
-            if parsed_output:
-                print(json.dumps(parsed_output), flush=True)
-
-        # Wait for process completion
-        return_code = process.wait()
-
-        if return_code != 0:
-            stderr_output = process.stderr.read()
-            raise RuntimeError(
-                f"GNN training subprocess failed with return code {return_code}: {stderr_output}"
-            )
 
     except Exception as e:
         error_status = {
@@ -188,11 +128,10 @@ def run_gnn_training(dataset_path: str, path_to_ai4anim: str, pae_epochs: int) -
         raise
 
 
-def _parse_training_output(line: str, phase_name: str) -> Optional[Dict[str, Any]]:
+def parse_training_output(line: str, model_name: str) -> None:
     """
-    Parse Network.py output (both PAE and GNN) and convert to JSON format.
+    Parse Network.py output (both PAE and GNN) and emit JSON to stdout.
 
-    Returns JSON dict for relevant lines, None for irrelevant lines.
     Handles consistent output format:
 
     - "Epoch 1 0.32931875690483264" (epoch + loss)
@@ -200,9 +139,9 @@ def _parse_training_output(line: str, phase_name: str) -> Optional[Dict[str, Any
     - All other lines go through optional VERBOSE mode
 
     :param line: Output line from Network.py
-    :param phase_name: "PAE" or "GNN" for prefixing messages
-    :returns: JSON dict for relevant lines, None for irrelevant lines
+    :param model_name: "PAE" or "GNN" for prefixing messages
     """
+    parsed_output = None
 
     # Pattern 1: "Epoch 1 0.32931875690483264"
     epoch_pattern = re.compile(r"^Epoch\s+(\d+)\s+([\d.]+)$")
@@ -210,9 +149,9 @@ def _parse_training_output(line: str, phase_name: str) -> Optional[Dict[str, Any
     if match:
         epoch = int(match.group(1))
         loss = float(match.group(2))
-        return {
-            "status": f"{phase_name} training",
-            "text": f"{phase_name} epoch {epoch} completed",
+        parsed_output = {
+            "status": f"{model_name} training",
+            "text": f"{model_name} epoch {epoch} completed",
             "metrics": {"epoch": epoch, "train_loss": loss},
         }
 
@@ -222,39 +161,20 @@ def _parse_training_output(line: str, phase_name: str) -> Optional[Dict[str, Any
     if match:
         if EMIT_PROGRESS_UPDATES:
             progress = float(match.group(1))
-            return {
-                "status": f"{phase_name} training",
-                "text": f"{phase_name} Progress: {progress}%",
+            parsed_output = {
+                "status": f"{model_name} training",
+                "text": f"{model_name} Progress: {progress}%",
                 "metrics": {"progress_percent": progress},
             }
-        else:
-            # Don't emit JSON for progress updates as they overwrite each other
-            return None
 
     # Pattern 3: All other lines go through VERBOSE mode
-    if VERBOSE:
+    if VERBOSE and not parsed_output:
         # Emit the full line as a message if verbose mode is enabled
-        return {"status": f"{phase_name} verbose", "text": f"{phase_name}: {line}"}
+        parsed_output = {
+            "status": f"{model_name} verbose",
+            "text": f"{model_name}: {line}",
+        }
 
-    # Return None for lines that don't match expected patterns
-    return None
-
-
-def _parse_pae_output(line: str) -> Optional[Dict[str, Any]]:
-    """
-    Parse PAE Network.py output - wrapper for parse_training_output.
-
-    :param line: Output line from PAE Network.py
-    :returns: Parsed output as JSON dict or None
-    """
-    return _parse_training_output(line, "Encoder")
-
-
-def _parse_gnn_output(line: str) -> Optional[Dict[str, Any]]:
-    """
-    Parse GNN Network.py output - wrapper for parse_training_output.
-
-    :param line: Output line from GNN Network.py
-    :returns: Parsed output as JSON dict or None
-    """
-    return _parse_training_output(line, "Controller")
+    # Emit JSON if we have parsed output
+    if parsed_output:
+        print(json.dumps(parsed_output), flush=True)
