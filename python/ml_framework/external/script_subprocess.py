@@ -12,6 +12,7 @@ import sys
 import os
 from pathlib import Path
 from typing import Dict, Optional, Callable
+from experiment_logger import get_experiment_logger
 
 
 def run_script_subprocess(
@@ -79,5 +80,6 @@ def run_script_subprocess(
             "status": "Error",
             "text": f"{model_name} subprocess failed with exception: {str(e)}",
         }
-        print(json.dumps(error_status), flush=True)
+        exp_logger = get_experiment_logger()
+        exp_logger.log_ui_status(error_status)
         raise

@@ -22,6 +22,7 @@ from external.starke_training import (
     run_gnn_training,
 )
 from data.velocity_preprocessing import preprocess_velocity_data
+from experiment_logger import get_experiment_logger
 
 
 def integrated_training() -> None:
@@ -36,10 +37,11 @@ def integrated_training() -> None:
 
     :returns: None
     """
+    exp_logger = get_experiment_logger()
 
     # Initial status, to confirm script start
     status = {"status": "Starting", "text": "Initializing training process..."}
-    print(json.dumps(status), flush=True)
+    exp_logger.log_ui_status(status)
 
     total_epochs = 5
 
@@ -64,7 +66,7 @@ def integrated_training() -> None:
             },
         }
 
-        print(json.dumps(progress), flush=True)
+        exp_logger.log_progress(progress)
 
     # Final completion status
     completion_status = {
@@ -76,7 +78,7 @@ def integrated_training() -> None:
             "total_epochs": total_epochs,
         },
     }
-    print(json.dumps(completion_status), flush=True)
+    exp_logger.log_ui_status(completion_status)
 
 
 def standalone_training() -> None:
@@ -89,10 +91,11 @@ def standalone_training() -> None:
 
     :returns: None
     """
+    exp_logger = get_experiment_logger()
 
     # Initial status
     status = {"status": "Starting", "text": "Launching standalone training process..."}
-    print(json.dumps(status), flush=True)
+    exp_logger.log_ui_status(status)
 
     # Get path to standalone_training.py
     script_dir = Path(__file__).parent
@@ -139,7 +142,7 @@ def standalone_training() -> None:
                         "train_loss": round(train_loss, 4),
                     },
                 }
-                print(json.dumps(epoch_status), flush=True)
+                exp_logger.log_progress(epoch_status)
 
         # Wait for process completion
         return_code = process.wait()
@@ -151,7 +154,7 @@ def standalone_training() -> None:
                 "text": f"Standalone training completed successfully after {total_epochs} epochs",
                 "metrics": {"total_epochs": total_epochs},
             }
-            print(json.dumps(completion_status), flush=True)
+            exp_logger.log_ui_status(completion_status)
         else:
             # Process failed
             stderr_output = process.stderr.read()
@@ -159,20 +162,20 @@ def standalone_training() -> None:
                 "status": "Error",
                 "text": f"Standalone training failed with return code {return_code}: {stderr_output}",
             }
-            print(json.dumps(error_status), flush=True)
+            exp_logger.log_ui_status(error_status)
 
     except FileNotFoundError:
         error_status = {
             "status": "Error",
             "text": f"Standalone training script not found: {standalone_script}",
         }
-        print(json.dumps(error_status), flush=True)
+        exp_logger.log_ui_status(error_status)
     except Exception as e:
         error_status = {
             "status": "Error",
             "text": f"Failed to launch standalone training: {str(e)}",
         }
-        print(json.dumps(error_status), flush=True)
+        exp_logger.log_ui_status(error_status)
 
 
 def starke_training(config: StarkeModelConfig) -> None:
@@ -187,13 +190,14 @@ def starke_training(config: StarkeModelConfig) -> None:
     :returns: None
     :raises RuntimeError: If any training phase fails
     """
+    exp_logger = get_experiment_logger()
 
     # Initial status
     status = {
         "status": "Initializing",
         "text": "Initializing Starke training pipeline...",
     }
-    print(json.dumps(status), flush=True)
+    exp_logger.log_ui_status(status)
 
     try:
         # Data preprocessing phase
@@ -201,7 +205,7 @@ def starke_training(config: StarkeModelConfig) -> None:
             "status": "Data Preprocessing",
             "text": "Starting data preprocessing phase...",
         }
-        print(json.dumps(preprocessing_status), flush=True)
+        exp_logger.log_ui_status(preprocessing_status)
 
         # Data preprocessing (velocity filtering and export)
         preprocess_velocity_data(dataset_path=config.dataset_path)
@@ -219,14 +223,14 @@ def starke_training(config: StarkeModelConfig) -> None:
             "status": "Completed Training",
             "text": "Starke training pipeline completed successfully",
         }
-        print(json.dumps(completion_status), flush=True)
+        exp_logger.log_ui_status(completion_status)
 
     except Exception as e:
         error_status = {
             "status": "Error",
             "text": f"Starke training pipeline failed: {str(e)}",
         }
-        print(json.dumps(error_status), flush=True)
+        exp_logger.log_ui_status(error_status)
 
 
 def main() -> None:
@@ -249,10 +253,12 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
+        exp_logger = get_experiment_logger()
         error_status = {"status": "Interrupted", "text": "Training interrupted by user"}
-        print(json.dumps(error_status), flush=True)
+        exp_logger.log_ui_status(error_status)
         sys.exit(1)
     except Exception as e:
+        exp_logger = get_experiment_logger()
         error_status = {"status": "Error", "text": f"Training failed: {str(e)}"}
-        print(json.dumps(error_status), flush=True)
+        exp_logger.log_ui_status(error_status)
         sys.exit(1)

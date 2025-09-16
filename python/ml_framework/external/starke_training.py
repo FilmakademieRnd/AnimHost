@@ -15,6 +15,7 @@ from pathlib import Path
 from data.motion_preprocessing import MotionProcessor
 from .script_subprocess import run_script_subprocess
 from config.model_configs import StarkeModelConfig
+from experiment_logger import get_experiment_logger
 
 logger = logging.getLogger(__name__)
 
@@ -74,11 +75,12 @@ def run_pae_training(dataset_path: Path, path_to_ai4anim: Path) -> None:
     :raises RuntimeError: If PAE training subprocess fails
     """
 
+    exp_logger = get_experiment_logger()
     pae_status = {
         "status": "Starting training 1/2 ...",
         "text": "Starting PAE training phase...",
     }
-    print(json.dumps(pae_status), flush=True)
+    exp_logger.log_ui_status(pae_status)
 
     # Validate AI4Animation PAE structure
     if not validate_ai4animation_structure(path_to_ai4anim, "PAE"):
@@ -116,7 +118,8 @@ def run_pae_training(dataset_path: Path, path_to_ai4anim: Path) -> None:
         )
 
     except Exception as e:
-        logger.error(f"PAE preprocessing/training failed: {str(e)}")
+        exp_logger = get_experiment_logger()
+        exp_logger.log_exception("PAE preprocessing/training failed", e)
         raise
 
 
@@ -131,11 +134,12 @@ def run_gnn_training(config: StarkeModelConfig) -> None:
     :raises RuntimeError: If GNN training subprocess fails
     """
 
+    exp_logger = get_experiment_logger()
     gnn_status = {
         "status": "Starting training 2/2 ...",
         "text": "Starting GNN training phase...",
     }
-    print(json.dumps(gnn_status), flush=True)
+    exp_logger.log_ui_status(gnn_status)
 
     # Validate AI4Animation GNN structure
     if not validate_ai4animation_structure(config.path_to_ai4anim, "GNN"):
@@ -144,7 +148,7 @@ def run_gnn_training(config: StarkeModelConfig) -> None:
     try:
         # Initialize motion processor
         mp = MotionProcessor(
-            config.dataset_path, config.path_to_ai4anim, config.pae_epochs
+            str(config.dataset_path), str(config.path_to_ai4anim), config.pae_epochs
         )
 
         # GNN preprocessing - prepare training data for generator
@@ -166,7 +170,8 @@ def run_gnn_training(config: StarkeModelConfig) -> None:
             line_parser=parse_training_output,
         )
     except Exception as e:
-        logger.error(f"GNN preprocessing/training failed: {str(e)}")
+        exp_logger = get_experiment_logger()
+        exp_logger.log_exception("GNN preprocessing/training failed", e)
         raise
 
 
@@ -201,22 +206,16 @@ def parse_training_output(line: str, model_name: str) -> None:
     progress_pattern = re.compile(r"^Progress\s+([\d.]+)\s*%+$")
     match = progress_pattern.search(line)
     if match:
-        if EMIT_PROGRESS_UPDATES:
-            progress = float(match.group(1))
-            parsed_output = {
-                "status": f"{model_name} training",
-                "text": f"{model_name} Progress: {progress}%",
-                "metrics": {"progress_percent": progress},
-            }
-
-    # Pattern 3: All other lines go through VERBOSE mode
-    if VERBOSE and not parsed_output:
-        # Emit the full line as a message if verbose mode is enabled
+        progress = float(match.group(1))
         parsed_output = {
-            "status": f"{model_name} verbose",
-            "text": f"{model_name}: {line}",
+            "status": f"{model_name} training",
+            "text": f"{model_name} Progress: {progress}%",
+            "metrics": {"progress_percent": progress},
         }
 
     # Emit JSON if we have parsed output
     if parsed_output:
-        print(json.dumps(parsed_output), flush=True)
+        exp_logger = get_experiment_logger()
+        exp_logger.log_progress(parsed_output)
+    else:
+        logger.info(f"{model_name} output: {line.strip()}")
