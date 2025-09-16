@@ -16,7 +16,7 @@ import shutil
 from pathlib import Path
 from typing import Dict, Any, Optional
 
-from data.MotionPreprocessing import MotionProcessor
+from python.ml_framework.data.motion_preprocessing import MotionProcessor
 from data.velocity_preprocessing import preprocess_velocity_data
 
 #  Set to True to emit JSON for progress updates, False to ignore them
