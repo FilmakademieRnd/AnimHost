@@ -7,8 +7,9 @@ Defines configuration dataclasses with validation for different training models.
 
 import logging
 from dataclasses import dataclass
+import os
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional
 
 
 logger = logging.getLogger(__name__)
@@ -49,17 +50,17 @@ class StarkeModelConfig:
         # Validate dataset path exists
         if not self.dataset_path.exists():
             return f"Dataset path does not exist: {self.dataset_path}"
-
         if not self.dataset_path.is_dir():
             return f"Dataset path is not a directory: {self.dataset_path}"
 
         # Validate AI4Animation path exists
         if not self.path_to_ai4anim.exists():
             return f"AI4Animation path does not exist: {self.path_to_ai4anim}"
-
         if not self.path_to_ai4anim.is_dir():
             return f"AI4Animation path is not a directory: {self.path_to_ai4anim}"
-
+        if not os.access(self.path_to_ai4anim, os.R_OK):
+            return f"AI4Animation path is not readable: {self.path_to_ai4anim}"
+        
         # Validate epochs > 0
         if self.pae_epochs <= 0:
             return f"PAE epochs must be greater than 0, got: {self.pae_epochs}"
@@ -67,8 +68,9 @@ class StarkeModelConfig:
         # Validate processed data path exists
         if not self.processed_data_path.exists():
             return f"Processed data path does not exist: {self.processed_data_path}"
-
         if not self.processed_data_path.is_dir():
             return f"Processed data path is not a directory: {self.processed_data_path}"
+        if not os.access(self.processed_data_path, os.W_OK):
+            return f"Processed data path is not writable: {self.processed_data_path}"
 
         return None

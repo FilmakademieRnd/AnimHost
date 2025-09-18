@@ -33,6 +33,11 @@ struct TrainingMessage {
      * @note: This function is responsible for ensuring consistency with the Python ExperimentLogger output.
      */
     static TrainingMessage fromJson(const QJsonObject& obj) {
+        if (obj.isEmpty()) {
+            qWarning() << "Empty JSON object received";
+            return TrainingMessage{};
+        }
+        
         TrainingMessage msg;
         msg.status = obj["status"].toString();
         msg.text = obj["text"].toString();
@@ -41,4 +46,4 @@ struct TrainingMessage {
     }
 };
 
-}
+} // namespace MLFramework

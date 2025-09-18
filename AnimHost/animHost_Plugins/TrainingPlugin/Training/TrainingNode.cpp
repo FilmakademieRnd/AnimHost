@@ -196,10 +196,10 @@ void TrainingNode::onTrainingProcessError(QProcess::ProcessError error)
     updateConnectionStatus("Error", Qt::red);
 }
 
-void TrainingNode::updateConnectionStatus(const QString& status, const QColor& lightColor)
+void TrainingNode::updateConnectionStatus(const QString& status, const QColor& signalColor)
 {
     if (_widget) {
-        _widget->updateConnectionStatus(status, lightColor);
+        _widget->updateConnectionStatus(status, signalColor);
     }
 }
 

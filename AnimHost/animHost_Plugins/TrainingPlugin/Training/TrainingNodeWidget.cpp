@@ -94,10 +94,10 @@ void TrainingNodeWidget::applyStyles()
     setStyleSheet(customStyleSheet);
 }
 
-void TrainingNodeWidget::updateConnectionStatus(const QString& status, const QColor& lightColor, const QString& statusText)
+void TrainingNodeWidget::updateConnectionStatus(const QString& status, const QColor& signalColor, const QString& statusText)
 {
     if (_signalLight) {
-        _signalLight->setColor(lightColor);
+        _signalLight->setColor(signalColor);
     }
     if (_statusLabel) {
         _statusLabel->setText(status);

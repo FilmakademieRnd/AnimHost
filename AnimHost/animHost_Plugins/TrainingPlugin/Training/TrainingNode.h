@@ -79,7 +79,7 @@ private Q_SLOTS:
     void onTrainingProcessError(QProcess::ProcessError error);
 
 private:
-    void updateConnectionStatus(const QString& status, const QColor& lightColor);
+    void updateConnectionStatus(const QString& status, const QColor& signalColor);
     void updateFromMessage(const MLFramework::TrainingMessage& msg);
 
 };

@@ -38,8 +38,8 @@ class ConfigManager:
         :param config_name: Name of the config file to load
         :returns: Loaded and validated configuration
         :raises FileNotFoundError: If config file doesn't exist
-        :raises ValueError: If config is invalid
         :raises json.JSONDecodeError: If config file is malformed
+        :raises ValueError: If config is invalid
         """
         config_path = ConfigManager.config_dir / config_name
         logger.info(f"Loading configuration from: {config_path}")
