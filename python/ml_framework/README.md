@@ -1,4 +1,40 @@
-# ML Framework Developer Documentation
+# How to run
+
+## Option 1: Direct Python execution
+```bash
+cd python/ml_framework
+python training.py
+```
+
+Or from the AnimHost root directory:
+```bash
+python python/ml_framework/training.py
+```
+(training.py adds the module to path automatically)
+
+## Option 2: AnimHost GUI
+1. Launch AnimHost application
+2. Load `TestScenes/TrainingPipeline.flow`
+3. Execute the training pipeline through the node interface
+
+# How to test
+
+## Run all tests
+```bash
+cd python/ml_framework/tests
+pytest tests/ -v
+```
+
+## Run specific test modules
+```bash
+# Test experiment tracker only
+pytest tests/test_experiment_tracker.py -v
+
+# Test external training integration
+pytest tests/test_external/test_example_training.py -v
+```
+
+# Developer Documentation
 
 ```mermaid
 graph TB

@@ -80,7 +80,7 @@ class ExperimentTracker:
                 f"Epoch data '{status}' without epoch field, metrics: {metrics}",
             )
             return
-
+        
         if text is None:
             text = f"Epoch {metrics['epoch']} completed"
 

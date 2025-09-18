@@ -2,7 +2,7 @@
 """
 Standalone Training Script - Simulates external training process.
 
-Outputs text-based progress updates that will be parsed by mock_training.py.
+Outputs text-based progress updates that will be parsed by training.py.
 """
 
 import time
@@ -20,7 +20,7 @@ def main() -> None:
     - Progress percentage updates during epochs
     - Epoch completion with train loss
 
-    The output format is designed to be parsed by the mock_training.py script
+    The output format is designed to be parsed by the training.py script
     for integration with the AnimHost TrainingNode.
 
     :returns: None
