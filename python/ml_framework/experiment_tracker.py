@@ -124,7 +124,7 @@ class ExperimentTracker:
         if level < self.log_level:
             return
 
-        self.log_ui_status(status=logging.getLogger().getLevelName(level), text=message)
+        self.log_ui_status(status=logging.getLevelName(level), text=message)
 
     def log_exception(self, context: str, exception: Exception) -> None:
         """
