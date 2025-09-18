@@ -14,15 +14,15 @@ import math
 import time
 import scipy.signal
 
-from MotionPreprocessing import MotionProcessor, count_lines, read_csv_data, ReadBinary 
-
+from data.motion_preprocessing import MotionProcessor, count_lines, read_csv_data, ReadBinary 
 
     
-
 def main():
     # common config
-    dataset_path = r"C:\DEV\DATASETS\Survivor_Gen"
-    path_to_ai4anim = r"C:\DEV\AI4Animation\AI4Animation\SIGGRAPH_2022\PyTorch"
+    # dataset_path = r"C:\DEV\DATASETS\Survivor_Gen"
+    dataset_path = r"C:\anim-ws\AnimHost\datasets\Survivor_Gen"
+    # path_to_ai4anim = r"C:\anim-ws\Handover_AnimHost\Handover AnimHost Implementation\AI4Animation_Siggraph2022_Starke\PyTorch"
+    path_to_ai4anim = r"C:\anim-ws\AnimHost\AI4Animation\AI4Animation\SIGGRAPH_2022\PyTorch"
     mp = MotionProcessor(dataset_path, path_to_ai4anim)   
     # count number of velcocity samples
     num_samples_total = count_lines(dataset_path + "/sequences_velocity.txt")
