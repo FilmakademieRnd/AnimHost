@@ -54,7 +54,7 @@ class ConfigManager:
         try:
             with open(config_path, "r") as f:
                 config_data = json.load(f)
-            logger.info("Configuration file loaded successfully")
+            logger.debug("Configuration file loaded successfully")
         except json.JSONDecodeError as e:
             error_msg = f"Invalid JSON in config file {config_path}: {e}"
             logger.error(error_msg)
@@ -63,7 +63,7 @@ class ConfigManager:
         # Create config object
         try:
             config = StarkeModelConfig(**config_data)
-            logger.info("StarkeModelConfig created successfully")
+            logger.debug("StarkeModelConfig created successfully")
         except TypeError as e:
             error_msg = f"Invalid config structure: {e}"
             logger.error(error_msg)

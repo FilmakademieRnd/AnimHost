@@ -14,7 +14,7 @@ import math
 import time
 import scipy.signal
 
-from python.ml_framework.data.motion_preprocessing import MotionProcessor, count_lines, read_csv_data, ReadBinary 
+from data.motion_preprocessing import MotionProcessor, count_lines, read_csv_data, ReadBinary 
 
     
 def main():

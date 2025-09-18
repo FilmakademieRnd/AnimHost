@@ -15,11 +15,11 @@ from pathlib import Path
 from data.motion_preprocessing import MotionProcessor
 from .script_subprocess import run_script_subprocess
 from config.model_configs import StarkeModelConfig
-from experiment_logger import get_experiment_logger
+from experiment_tracker import get_experiment_tracker
 
 logger = logging.getLogger(__name__)
 
-# TODO(PR): Make this configurable in new ExperimentLogger
+# TODO(PR): Make this configurable in new ExperimentTracker
 #  Set to True to emit JSON for progress updates, False to ignore them
 EMIT_PROGRESS_UPDATES = False
 # Set to True for verbose output from GNN training phase
@@ -75,12 +75,10 @@ def run_pae_training(dataset_path: Path, path_to_ai4anim: Path) -> None:
     :raises RuntimeError: If PAE training subprocess fails
     """
 
-    exp_logger = get_experiment_logger()
-    pae_status = {
-        "status": "Starting training 1/2 ...",
-        "text": "Starting PAE training phase...",
-    }
-    exp_logger.log_ui_status(pae_status)
+    exp_tracker = get_experiment_tracker()
+    exp_tracker.log_ui_status(
+        "Starting training 1/2 ...", "Starting PAE training phase..."
+    )
 
     # Validate AI4Animation PAE structure
     if not validate_ai4animation_structure(path_to_ai4anim, "PAE"):
@@ -118,8 +116,8 @@ def run_pae_training(dataset_path: Path, path_to_ai4anim: Path) -> None:
         )
 
     except Exception as e:
-        exp_logger = get_experiment_logger()
-        exp_logger.log_exception("PAE preprocessing/training failed", e)
+        exp_tracker = get_experiment_tracker()
+        exp_tracker.log_exception("PAE preprocessing/training failed", e)
         raise
 
 
@@ -134,12 +132,10 @@ def run_gnn_training(config: StarkeModelConfig) -> None:
     :raises RuntimeError: If GNN training subprocess fails
     """
 
-    exp_logger = get_experiment_logger()
-    gnn_status = {
-        "status": "Starting training 2/2 ...",
-        "text": "Starting GNN training phase...",
-    }
-    exp_logger.log_ui_status(gnn_status)
+    exp_tracker = get_experiment_tracker()
+    exp_tracker.log_ui_status(
+        "Starting training 2/2 ...", "Starting GNN training phase..."
+    )
 
     # Validate AI4Animation GNN structure
     if not validate_ai4animation_structure(config.path_to_ai4anim, "GNN"):
@@ -170,8 +166,8 @@ def run_gnn_training(config: StarkeModelConfig) -> None:
             line_parser=parse_training_output,
         )
     except Exception as e:
-        exp_logger = get_experiment_logger()
-        exp_logger.log_exception("GNN preprocessing/training failed", e)
+        exp_tracker = get_experiment_tracker()
+        exp_tracker.log_exception("GNN preprocessing/training failed", e)
         raise
 
 
@@ -196,26 +192,23 @@ def parse_training_output(line: str, model_name: str) -> None:
     if match:
         epoch = int(match.group(1))
         loss = float(match.group(2))
-        parsed_output = {
-            "status": f"{model_name} training",
-            "text": f"{model_name} epoch {epoch} completed",
-            "metrics": {"epoch": epoch, "train_loss": loss},
-        }
+        exp_tracker = get_experiment_tracker()
+        exp_tracker.log_epoch(
+            status=f"{model_name} training",
+            metrics={"epoch": epoch, "train_loss": loss},
+            text=f"{model_name} epoch {epoch} completed",
+        )
+        return None
 
     # Pattern 2: "Progress 23.42 %" (configurable progress updates)
     progress_pattern = re.compile(r"^Progress\s+([\d.]+)\s*%+$")
     match = progress_pattern.search(line)
     if match:
         progress = float(match.group(1))
-        parsed_output = {
-            "status": f"{model_name} training",
-            "text": f"{model_name} Progress: {progress}%",
-            "metrics": {"progress_percent": progress},
-        }
+        exp_tracker = get_experiment_tracker()
+        exp_tracker.log_percentage_progress(
+            f"{model_name} training", progress, f"{model_name} Progress: {progress}%"
+        )
+        return None
 
-    # Emit JSON if we have parsed output
-    if parsed_output:
-        exp_logger = get_experiment_logger()
-        exp_logger.log_progress(parsed_output)
-    else:
-        logger.info(f"{model_name} output: {line.strip()}")
+    logger.debug(f"{model_name} output: {line.strip()}")

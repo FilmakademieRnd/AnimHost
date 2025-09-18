@@ -22,7 +22,7 @@ from external.starke_training import (
     run_gnn_training,
 )
 from data.velocity_preprocessing import preprocess_velocity_data
-from experiment_logger import get_experiment_logger
+from experiment_tracker import get_experiment_tracker
 
 
 def integrated_training() -> None:
@@ -37,11 +37,10 @@ def integrated_training() -> None:
 
     :returns: None
     """
-    exp_logger = get_experiment_logger()
+    exp_tracker = get_experiment_tracker()
 
     # Initial status, to confirm script start
-    status = {"status": "Starting", "text": "Initializing training process..."}
-    exp_logger.log_ui_status(status)
+    exp_tracker.log_ui_status("Starting", "Initializing training process...")
 
     total_epochs = 5
 
@@ -54,31 +53,32 @@ def integrated_training() -> None:
         val_loss = train_loss + random.uniform(0.01, 0.1)
         learning_rate = 0.001 * (0.9 ** (epoch - 1))
 
-        progress = {
-            "status": "Training",
-            "text": f"Training epoch {epoch}/{total_epochs}",
-            "metrics": {
-                "epoch": epoch,
-                "total_epochs": total_epochs,
-                "train_loss": round(train_loss, 4),
-                "val_loss": round(val_loss, 4),
-                "learning_rate": round(learning_rate, 6),
-            },
+        # Log epoch data with metrics
+        metrics = {
+            "epoch": epoch,
+            "total_epochs": total_epochs,
+            "train_loss": round(train_loss, 4),
+            "val_loss": round(val_loss, 4),
+            "learning_rate": round(learning_rate, 6),
         }
+        exp_tracker.log_epoch(
+            status="Training",
+            metrics=metrics,
+            text=f"Training epoch {epoch}/{total_epochs}",
+        )
 
-        exp_logger.log_progress(progress)
+        # Log percentage progress
+        percentage = (epoch / total_epochs) * 100
+        exp_tracker.log_percentage_progress(
+            status="Training",
+            percentage=percentage,
+            text=f"Training epoch {epoch}/{total_epochs}",
+        )
 
     # Final completion status
-    completion_status = {
-        "status": "Completed",
-        "text": f"Training completed successfully after {total_epochs} epochs",
-        "metrics": {
-            "final_train_loss": round(train_loss, 4),
-            "final_val_loss": round(val_loss, 4),
-            "total_epochs": total_epochs,
-        },
-    }
-    exp_logger.log_ui_status(completion_status)
+    exp_tracker.log_ui_status(
+        "Completed", f"Training completed successfully after {total_epochs} epochs"
+    )
 
 
 def standalone_training() -> None:
@@ -91,11 +91,10 @@ def standalone_training() -> None:
 
     :returns: None
     """
-    exp_logger = get_experiment_logger()
+    exp_tracker = get_experiment_tracker()
 
     # Initial status
-    status = {"status": "Starting", "text": "Launching standalone training process..."}
-    exp_logger.log_ui_status(status)
+    exp_tracker.log_ui_status("Starting", "Launching standalone training process...")
 
     # Get path to standalone_training.py
     script_dir = Path(__file__).parent
@@ -133,49 +132,42 @@ def standalone_training() -> None:
                 current_epoch = int(epoch_match.group(1))
                 train_loss = float(epoch_match.group(2))
 
-                epoch_status = {
-                    "status": "Training",
-                    "text": f"Standalone training epoch {current_epoch}/{total_epochs}",
-                    "metrics": {
-                        "epoch": current_epoch,
-                        "total_epochs": total_epochs,
-                        "train_loss": round(train_loss, 4),
-                    },
+                metrics = {
+                    "epoch": current_epoch,
+                    "total_epochs": total_epochs,
+                    "train_loss": round(train_loss, 4),
                 }
-                exp_logger.log_progress(epoch_status)
+                exp_tracker.log_epoch(
+                    "Training",
+                    metrics,
+                    f"Standalone training epoch {current_epoch}/{total_epochs}",
+                )
 
         # Wait for process completion
         return_code = process.wait()
 
         if return_code == 0:
             # Success status
-            completion_status = {
-                "status": "Completed",
-                "text": f"Standalone training completed successfully after {total_epochs} epochs",
-                "metrics": {"total_epochs": total_epochs},
-            }
-            exp_logger.log_ui_status(completion_status)
+            exp_tracker.log_ui_status(
+                "Completed",
+                f"Standalone training completed successfully after {total_epochs} epochs",
+            )
         else:
             # Process failed
             stderr_output = process.stderr.read()
-            error_status = {
-                "status": "Error",
-                "text": f"Standalone training failed with return code {return_code}: {stderr_output}",
-            }
-            exp_logger.log_ui_status(error_status)
+            exp_tracker.log_ui_status(
+                "Error",
+                f"Standalone training failed with return code {return_code}: {stderr_output}",
+            )
 
     except FileNotFoundError:
-        error_status = {
-            "status": "Error",
-            "text": f"Standalone training script not found: {standalone_script}",
-        }
-        exp_logger.log_ui_status(error_status)
+        exp_tracker.log_ui_status(
+            "Error", f"Standalone training script not found: {standalone_script}"
+        )
     except Exception as e:
-        error_status = {
-            "status": "Error",
-            "text": f"Failed to launch standalone training: {str(e)}",
-        }
-        exp_logger.log_ui_status(error_status)
+        exp_tracker.log_ui_status(
+            "Error", f"Failed to launch standalone training: {str(e)}"
+        )
 
 
 def starke_training(config: StarkeModelConfig) -> None:
@@ -190,22 +182,18 @@ def starke_training(config: StarkeModelConfig) -> None:
     :returns: None
     :raises RuntimeError: If any training phase fails
     """
-    exp_logger = get_experiment_logger()
+    exp_tracker = get_experiment_tracker()
 
     # Initial status
-    status = {
-        "status": "Initializing",
-        "text": "Initializing Starke training pipeline...",
-    }
-    exp_logger.log_ui_status(status)
+    exp_tracker.log_ui_status(
+        "Initializing", "Initializing Starke training pipeline..."
+    )
 
     try:
         # Data preprocessing phase
-        preprocessing_status = {
-            "status": "Data Preprocessing",
-            "text": "Starting data preprocessing phase...",
-        }
-        exp_logger.log_ui_status(preprocessing_status)
+        exp_tracker.log_ui_status(
+            "Data Preprocessing", "Starting data preprocessing phase..."
+        )
 
         # Data preprocessing (velocity filtering and export)
         preprocess_velocity_data(dataset_path=config.dataset_path)
@@ -219,18 +207,12 @@ def starke_training(config: StarkeModelConfig) -> None:
         run_gnn_training(config)
 
         # Final completion status
-        completion_status = {
-            "status": "Completed Training",
-            "text": "Starke training pipeline completed successfully",
-        }
-        exp_logger.log_ui_status(completion_status)
+        exp_tracker.log_ui_status(
+            "Completed Training", "Starke training pipeline completed successfully"
+        )
 
     except Exception as e:
-        error_status = {
-            "status": "Error",
-            "text": f"Starke training pipeline failed: {str(e)}",
-        }
-        exp_logger.log_ui_status(error_status)
+        exp_tracker.log_ui_status("Error", f"Starke training pipeline failed: {str(e)}")
 
 
 def main() -> None:
@@ -253,12 +235,10 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        exp_logger = get_experiment_logger()
-        error_status = {"status": "Interrupted", "text": "Training interrupted by user"}
-        exp_logger.log_ui_status(error_status)
+        exp_tracker = get_experiment_tracker()
+        exp_tracker.log_ui_status("Interrupted", "Training interrupted by user")
         sys.exit(1)
     except Exception as e:
-        exp_logger = get_experiment_logger()
-        error_status = {"status": "Error", "text": f"Training failed: {str(e)}"}
-        exp_logger.log_ui_status(error_status)
+        exp_tracker = get_experiment_tracker()
+        exp_tracker.log_ui_status("Error", f"Training failed: {str(e)}")
         sys.exit(1)

@@ -12,7 +12,7 @@ import sys
 import os
 from pathlib import Path
 from typing import Dict, Optional, Callable
-from experiment_logger import get_experiment_logger
+from experiment_tracker import get_experiment_tracker
 
 
 def run_script_subprocess(
@@ -76,10 +76,6 @@ def run_script_subprocess(
             )
 
     except Exception as e:
-        error_status = {
-            "status": "Error",
-            "text": f"{model_name} subprocess failed with exception: {str(e)}",
-        }
-        exp_logger = get_experiment_logger()
-        exp_logger.log_ui_status(error_status)
+        exp_tracker = get_experiment_tracker()
+        exp_tracker.log_ui_status("Error", f"{model_name} subprocess failed with exception: {str(e)}")
         raise
