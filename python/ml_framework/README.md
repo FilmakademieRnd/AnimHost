@@ -62,9 +62,9 @@ graph TB
     C --> |"updateFromMessage(*)"| A
     
     %% Styling
-    classDef cppLayer fill:#90EE90,stroke:#2c3e50,stroke-width:2px
-    classDef interfaceNode fill:#f8f9fa,stroke:#6c757d,stroke-width:2px
-    classDef pythonLayer fill:#FFFF00,stroke:#3498db,stroke-width:2px
+    classDef cppLayer fill:#065f46,stroke:#10b981,stroke-width:2px,color:#ffffff
+    classDef interfaceNode fill:#374151,stroke:#6b7280,stroke-width:2px,color:#ffffff
+    classDef pythonLayer fill:#1e40af,stroke:#3b82f6,stroke-width:2px,color:#ffffff
     
     class A,B,C cppLayer
     class D interfaceNode
