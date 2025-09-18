@@ -6,13 +6,11 @@ Provides utilities for launching Python scripts in subprocesses with real-time
 output parsing and monitoring capabilities.
 """
 
-import json
 import subprocess
 import sys
 import os
 from pathlib import Path
 from typing import Dict, Optional, Callable
-from experiment_tracker import get_experiment_tracker
 
 
 def run_script_subprocess(
@@ -34,48 +32,41 @@ def run_script_subprocess(
     :param model_name: Display name for progress updates ("Encoder", "Controller", etc.)
     :param line_parser: Function to process each output line (line, model_name) -> None
     :param env_overrides: Optional environment variable overrides
-    :raises RuntimeError: If subprocess fails
     """
-    try:
-        # Setup environment
-        env = os.environ.copy()
-        if env_overrides:
-            env.update(env_overrides)
+    # Setup environment
+    env = os.environ.copy()
+    if env_overrides:
+        env.update(env_overrides)
 
-        # Launch subprocess
-        process = subprocess.Popen(
-            [sys.executable, "-u", script_name],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True,
-            bufsize=1,
-            cwd=working_dir,
-            env=env,
+    # Launch subprocess
+    process = subprocess.Popen(
+        [sys.executable, "-u", script_name],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        universal_newlines=True,
+        bufsize=1,
+        cwd=working_dir,
+        env=env,
+    )
+
+    # Read output line by line and parse
+    while True:
+        line = process.stdout.readline()
+        if not line and process.poll() is not None:
+            break
+
+        line = line.strip()
+        if not line:
+            continue
+
+        # Process line with provided parser
+        line_parser(line, model_name)
+
+    # Wait for process completion
+    return_code = process.wait()
+
+    if return_code != 0:
+        stderr_output = process.stderr.read()
+        raise RuntimeError(
+            f"{model_name} subprocess failed with return code {return_code}: {stderr_output}"
         )
-
-        # Read output line by line and parse
-        while True:
-            line = process.stdout.readline()
-            if not line and process.poll() is not None:
-                break
-
-            line = line.strip()
-            if not line:
-                continue
-
-            # Process line with provided parser
-            line_parser(line, model_name)
-
-        # Wait for process completion
-        return_code = process.wait()
-
-        if return_code != 0:
-            stderr_output = process.stderr.read()
-            raise RuntimeError(
-                f"{model_name} subprocess failed with return code {return_code}: {stderr_output}"
-            )
-
-    except Exception as e:
-        exp_tracker = get_experiment_tracker()
-        exp_tracker.log_ui_status("Error", f"{model_name} subprocess failed with exception: {str(e)}")
-        raise

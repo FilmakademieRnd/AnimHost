@@ -212,29 +212,3 @@ class ExperimentLogHandler(logging.Handler):
             pass
 
 
-# Global instance for easy access
-_global_logger: Optional[ExperimentTracker] = None
-
-
-def get_experiment_tracker() -> ExperimentTracker:
-    """
-    Get or create the global ExperimentTracker instance.
-
-    :returns: Global ExperimentTracker instance
-    """
-    global _global_logger
-    if _global_logger is None:
-        _global_logger = ExperimentTracker()
-    return _global_logger
-
-
-def init_experiment_logger(**kwargs) -> ExperimentTracker:
-    """
-    Initialize the global ExperimentTracker with custom configuration.
-
-    :param kwargs: Configuration arguments for ExperimentTracker
-    :returns: Initialized ExperimentTracker instance
-    """
-    global _global_logger
-    _global_logger = ExperimentTracker(**kwargs)
-    return _global_logger

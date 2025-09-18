@@ -22,10 +22,10 @@ from external.starke_training import (
     run_gnn_training,
 )
 from data.velocity_preprocessing import preprocess_velocity_data
-from experiment_tracker import get_experiment_tracker
+from experiment_tracker import ExperimentTracker
 
 
-def integrated_training() -> None:
+def integrated_training(tracker: ExperimentTracker) -> None:
     """
     Mock training script that outputs JSON progress updates.
 
@@ -35,12 +35,12 @@ def integrated_training() -> None:
     - Updates every 0.5 seconds
     - Outputs: epoch, train_loss, val_loss, learning_rate
 
+    :param tracker: ExperimentTracker instance for logging
     :returns: None
     """
-    exp_tracker = get_experiment_tracker()
 
     # Initial status, to confirm script start
-    exp_tracker.log_ui_status("Starting", "Initializing training process...")
+    tracker.log_ui_status("Starting", "Initializing training process...")
 
     total_epochs = 5
 
@@ -61,7 +61,7 @@ def integrated_training() -> None:
             "val_loss": round(val_loss, 4),
             "learning_rate": round(learning_rate, 6),
         }
-        exp_tracker.log_epoch(
+        tracker.log_epoch(
             status="Training",
             metrics=metrics,
             text=f"Training epoch {epoch}/{total_epochs}",
@@ -69,19 +69,19 @@ def integrated_training() -> None:
 
         # Log percentage progress
         percentage = (epoch / total_epochs) * 100
-        exp_tracker.log_percentage_progress(
+        tracker.log_percentage_progress(
             status="Training",
             percentage=percentage,
             text=f"Training epoch {epoch}/{total_epochs}",
         )
 
     # Final completion status
-    exp_tracker.log_ui_status(
+    tracker.log_ui_status(
         "Completed", f"Training completed successfully after {total_epochs} epochs"
     )
 
 
-def standalone_training() -> None:
+def standalone_training(tracker: ExperimentTracker) -> None:
     """
     Runs mock_standalone_training.py as subprocess and parses its text output.
 
@@ -89,12 +89,12 @@ def standalone_training() -> None:
     Launches the standalone training script in a subprocess and monitors
     its output in real-time.
 
+    :param tracker: ExperimentTracker instance for logging
     :returns: None
     """
-    exp_tracker = get_experiment_tracker()
 
     # Initial status
-    exp_tracker.log_ui_status("Starting", "Launching standalone training process...")
+    tracker.log_ui_status("Starting", "Launching standalone training process...")
 
     # Get path to standalone_training.py
     script_dir = Path(__file__).parent
@@ -137,7 +137,7 @@ def standalone_training() -> None:
                     "total_epochs": total_epochs,
                     "train_loss": round(train_loss, 4),
                 }
-                exp_tracker.log_epoch(
+                tracker.log_epoch(
                     "Training",
                     metrics,
                     f"Standalone training epoch {current_epoch}/{total_epochs}",
@@ -148,29 +148,25 @@ def standalone_training() -> None:
 
         if return_code == 0:
             # Success status
-            exp_tracker.log_ui_status(
+            tracker.log_ui_status(
                 "Completed",
                 f"Standalone training completed successfully after {total_epochs} epochs",
             )
         else:
             # Process failed
             stderr_output = process.stderr.read()
-            exp_tracker.log_ui_status(
+            tracker.log_ui_status(
                 "Error",
                 f"Standalone training failed with return code {return_code}: {stderr_output}",
             )
 
     except FileNotFoundError:
-        exp_tracker.log_ui_status(
-            "Error", f"Standalone training script not found: {standalone_script}"
-        )
+        tracker.log_exception("Standalone training script not found", FileNotFoundError())
     except Exception as e:
-        exp_tracker.log_ui_status(
-            "Error", f"Failed to launch standalone training: {str(e)}"
-        )
+        tracker.log_exception("Standalone training failed", e)
 
 
-def starke_training(config: StarkeModelConfig) -> None:
+def starke_training(config: StarkeModelConfig, tracker: ExperimentTracker) -> None:
     """
     Main training pipeline - coordinates PAE and GNN training phases.
 
@@ -179,19 +175,19 @@ def starke_training(config: StarkeModelConfig) -> None:
     PAE training, and GNN training phases.
 
     :param config: Configuration object containing training parameters
+    :param tracker: ExperimentTracker instance for logging
     :returns: None
     :raises RuntimeError: If any training phase fails
     """
-    exp_tracker = get_experiment_tracker()
 
     # Initial status
-    exp_tracker.log_ui_status(
+    tracker.log_ui_status(
         "Initializing", "Initializing Starke training pipeline..."
     )
 
     try:
         # Data preprocessing phase
-        exp_tracker.log_ui_status(
+        tracker.log_ui_status(
             "Data Preprocessing", "Starting data preprocessing phase..."
         )
 
@@ -200,19 +196,19 @@ def starke_training(config: StarkeModelConfig) -> None:
 
         # Run PAE training phase
         run_pae_training(
-            dataset_path=config.dataset_path, path_to_ai4anim=config.path_to_ai4anim
+            dataset_path=config.dataset_path, path_to_ai4anim=config.path_to_ai4anim, tracker=tracker
         )
 
         # Run GNN training phase
-        run_gnn_training(config)
+        run_gnn_training(config, tracker=tracker)
 
         # Final completion status
-        exp_tracker.log_ui_status(
+        tracker.log_ui_status(
             "Completed Training", "Starke training pipeline completed successfully"
         )
 
     except Exception as e:
-        exp_tracker.log_ui_status("Error", f"Starke training pipeline failed: {str(e)}")
+        tracker.log_ui_status("Error", f"Starke training pipeline failed: {str(e)}")
 
 
 def main() -> None:
@@ -225,20 +221,26 @@ def main() -> None:
     :returns: None
     :raises Exception: If configuration loading or training fails
     """
+    # Create experiment tracker with default configuration
+    tracker = ExperimentTracker(
+        capture_stdlib_logging=True,
+        emit_percent_progress=False
+    )
+    
     config = ConfigManager.load_config("starke_model_config.json")
-    starke_training(config)
-    # integrated_training()
-    # standalone_training()
+    starke_training(config, tracker)
+    # integrated_training(tracker)
+    # standalone_training(tracker)
 
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        exp_tracker = get_experiment_tracker()
-        exp_tracker.log_ui_status("Interrupted", "Training interrupted by user")
+        tracker = ExperimentTracker()
+        tracker.log_exception("Training interrupted by user", KeyboardInterrupt())
         sys.exit(1)
     except Exception as e:
-        exp_tracker = get_experiment_tracker()
-        exp_tracker.log_ui_status("Error", f"Training failed: {str(e)}")
+        tracker = ExperimentTracker()
+        tracker.log_exception("Training failed", e)
         sys.exit(1)
