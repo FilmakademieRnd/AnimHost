@@ -65,8 +65,4 @@ def run_script_subprocess(
     # Wait for process completion
     return_code = process.wait()
 
-    if return_code != 0:
-        stderr_output = process.stderr.read()
-        raise RuntimeError(
-            f"{model_name} subprocess failed with return code {return_code}: {stderr_output}"
-        )
+    return return_code

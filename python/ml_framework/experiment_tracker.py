@@ -25,6 +25,8 @@ class ExperimentTracker:
     with existing JSON output format. Captures standard Python logging and routes
     through structured protocols.
     """
+    
+    _active_handler = None  # Class variable to track current logging handler
 
     def __init__(
         self,
@@ -48,20 +50,30 @@ class ExperimentTracker:
         self.enable_file_logging = enable_file_logging
         self.log_file_path = log_file_path
 
-        # Setup logging handler redirection if requested
+        # Clean up any previous handler and setup new one if requested
         if self.capture_stdlib_logging:
+            self._cleanup_previous_handler()
             self._setup_logging_capture()
 
+    def _cleanup_previous_handler(self) -> None:
+        """Remove any existing ExperimentLogHandler from root logger."""
+        if ExperimentTracker._active_handler:
+            logging.getLogger().removeHandler(ExperimentTracker._active_handler)
+            ExperimentTracker._active_handler = None
+    
     def _setup_logging_capture(self) -> None:
         """Setup custom handler to capture standard logging calls."""
         # Create custom handler that routes to our JSON protocols
         handler = ExperimentLogHandler(self)
-        handler.setLevel(logging.INFO)
+        handler.setLevel(logging.DEBUG)
 
         # Get root logger and add our handler
         root_logger = logging.getLogger()
         root_logger.addHandler(handler)
-        root_logger.setLevel(logging.INFO)
+        root_logger.setLevel(logging.DEBUG)
+        
+        # Track the active handler
+        ExperimentTracker._active_handler = handler
 
     def log_epoch(
         self, status: str, metrics: Dict[str, Any], text: Optional[str] = None

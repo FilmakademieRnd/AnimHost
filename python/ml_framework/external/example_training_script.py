@@ -32,8 +32,8 @@ def main() -> None:
 
     # Simulate training epochs
     for epoch in range(1, total_epochs + 1):
-        epoch_duration = 3  # 3 seconds
-        update_interval = 0.2  # 200ms
+        epoch_duration = 0.5  # 0.5 seconds
+        update_interval = 0.1  # 100ms
         total_updates = int(epoch_duration / update_interval)
 
         for i in range(total_updates):

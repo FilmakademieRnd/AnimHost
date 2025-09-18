@@ -22,7 +22,7 @@ def main():
     # dataset_path = r"C:\DEV\DATASETS\Survivor_Gen"
     dataset_path = r"C:\anim-ws\AnimHost\datasets\Survivor_Gen"
     # path_to_ai4anim = r"C:\anim-ws\Handover_AnimHost\Handover AnimHost Implementation\AI4Animation_Siggraph2022_Starke\PyTorch"
-    path_to_ai4anim = r"C:\anim-ws\AI4Animation\AI4Animation\SIGGRAPH_2022\PyTorch"
+    path_to_ai4anim = r"C:\anim-ws\AnimHost\AI4Animation\AI4Animation\SIGGRAPH_2022\PyTorch"
     mp = MotionProcessor(dataset_path, path_to_ai4anim)   
     # count number of velcocity samples
     num_samples_total = count_lines(dataset_path + "/sequences_velocity.txt")

@@ -70,16 +70,9 @@ def example_training(tracker: ExperimentTracker) -> None:
             model_name="Encoder",
             line_parser=parse_training_output
         )
-        
-        # Success status
-        tracker.log_ui_status(
-            "Completed",
-            f"Standalone training completed successfully after {total_epochs} epochs",
-        )
-        
     except FileNotFoundError:
         tracker.log_exception("Standalone training script not found", FileNotFoundError())
-    except RuntimeError as e:
-        tracker.log_ui_status("Error", str(e))
     except Exception as e:
         tracker.log_exception("Standalone training failed", e)
+
+    tracker.log_ui_status("Completed", f"Training completed successfully after {total_epochs} epochs")

@@ -91,7 +91,7 @@ def test_log_exception(capsys):
         raise ValueError("Test error")
     except ValueError as e:
         tracker.log_exception("Test context", e)
-    
+
     captured = capsys.readouterr()
     
     # Check JSON output
@@ -107,37 +107,75 @@ def test_log_exception(capsys):
     assert "ValueError: Test error" in captured.err
 
 
-def test_logging_capture_debug():
-    """Verify logging.debug() calls are captured."""
+def test_logging_capture_debug(capsys):
+    """Verify logging.debug() calls are captured and produce JSON output."""
     tracker = ExperimentTracker(capture_stdlib_logging=True, log_level=logging.DEBUG)
     
     # Create a logger and emit debug message
     logger = logging.getLogger("test_logger")
     logger.debug("Debug message")
     
-    # Note: This test verifies the handler is setup; actual capture testing
-    # would require more complex mocking of stdout
+    captured = capsys.readouterr()
+    data = json.loads(captured.out.strip())
+    assert data["status"] == "DEBUG"
+    assert data["text"] == "Debug message"
 
 
-def test_logging_capture_info():
-    """Verify logging.info() calls are captured."""
+def test_logging_capture_info(capsys):
+    """Verify logging.info() calls are captured and produce JSON output."""
     tracker = ExperimentTracker(capture_stdlib_logging=True, log_level=logging.INFO)
     
     logger = logging.getLogger("test_logger")  
     logger.info("Info message")
+    
+    captured = capsys.readouterr()
+    data = json.loads(captured.out.strip())
+    assert data["status"] == "INFO"
+    assert data["text"] == "Info message"
 
 
-def test_logging_capture_warning():
-    """Verify logging.warning() calls are captured."""
+def test_logging_capture_warning(capsys):
+    """Verify logging.warning() calls are captured and produce JSON output."""
     tracker = ExperimentTracker(capture_stdlib_logging=True, log_level=logging.WARNING)
     
     logger = logging.getLogger("test_logger")
     logger.warning("Warning message")
+    
+    captured = capsys.readouterr()
+    data = json.loads(captured.out.strip())
+    assert data["status"] == "WARNING"
+    assert data["text"] == "Warning message"
 
 
-def test_logging_capture_error():
-    """Verify logging.error() calls are captured."""
+def test_logging_capture_error(capsys):
+    """Verify logging.error() calls are captured and produce JSON output."""
     tracker = ExperimentTracker(capture_stdlib_logging=True, log_level=logging.ERROR)
     
     logger = logging.getLogger("test_logger")
     logger.error("Error message")
+    
+    captured = capsys.readouterr()
+    data = json.loads(captured.out.strip())
+    assert data["status"] == "ERROR"
+    assert data["text"] == "Error message"
+
+
+def test_multiple_tracker_instances_no_duplication(capsys):
+    """Verify creating multiple trackers doesn't cause message duplication."""
+    # Create first tracker
+    tracker1 = ExperimentTracker(capture_stdlib_logging=True, log_level=logging.INFO)
+    
+    # Create second tracker (should clean up first)
+    tracker2 = ExperimentTracker(capture_stdlib_logging=True, log_level=logging.INFO)
+    
+    logger = logging.getLogger("test_logger")
+    logger.info("Test message")
+    
+    captured = capsys.readouterr()
+    lines = captured.out.strip().split('\n')
+    assert len(lines) == 1, f"Expected 1 JSON line with multiple trackers, got {len(lines)}: {lines}"
+    
+    # Verify it's valid JSON
+    data = json.loads(lines[0])
+    assert data["status"] == "INFO"
+    assert data["text"] == "Test message"

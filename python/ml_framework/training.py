@@ -35,9 +35,7 @@ def starke_training(config: StarkeModelConfig, tracker: ExperimentTracker) -> No
     """
 
     # Initial status
-    tracker.log_ui_status(
-        "Initializing", "Initializing Starke training pipeline..."
-    )
+    tracker.log_ui_status("Initializing", "Initializing Starke training pipeline...")
 
     try:
         # Data preprocessing phase
@@ -50,7 +48,9 @@ def starke_training(config: StarkeModelConfig, tracker: ExperimentTracker) -> No
 
         # Run PAE training phase
         run_pae_training(
-            dataset_path=config.dataset_path, path_to_ai4anim=config.path_to_ai4anim, tracker=tracker
+            dataset_path=config.dataset_path,
+            path_to_ai4anim=config.path_to_ai4anim,
+            tracker=tracker,
         )
 
         # Run GNN training phase
@@ -77,13 +77,11 @@ def main() -> None:
     """
     # Create experiment tracker with default configuration
     tracker = ExperimentTracker(
-        capture_stdlib_logging=True,
-        emit_percent_progress=False
+        capture_stdlib_logging=True, emit_percent_progress=False
     )
-    
-    # config = ConfigManager.load_config("starke_model_config.json")
-    # starke_training(config, tracker)
-    example_training(tracker)
+
+    config = ConfigManager.load_config("starke_model_config.json")
+    starke_training(config, tracker)
 
 
 if __name__ == "__main__":
