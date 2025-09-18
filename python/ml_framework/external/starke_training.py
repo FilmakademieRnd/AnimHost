@@ -102,7 +102,7 @@ def run_pae_training(
             script_name="Network.py",
             working_dir=pae_path,
             model_name="Encoder",
-            line_parser=lambda line, model: parse_training_output(line, model, tracker),
+            line_parser=lambda line, model_name: parse_training_output(line, model_name, tracker),
             env_overrides={"MPLBACKEND": "Agg"},
         )
 
@@ -150,7 +150,7 @@ def run_gnn_training(config: StarkeModelConfig, tracker: ExperimentTracker) -> N
             script_name="Network.py",
             working_dir=gnn_path,
             model_name="Controller",
-            line_parser=lambda line, model: parse_training_output(line, model, tracker),
+            line_parser=lambda line, model_name: parse_training_output(line, model_name, tracker),
         )
     except Exception as e:
         tracker.log_exception("GNN preprocessing/training failed", e)
