@@ -1,6 +1,0 @@
-{
-  "dataset_path": "C:/anim-ws/AnimHost/datasets/Survivor_Gen",
-  "path_to_ai4anim": "C:/anim-ws/AnimHost/AI4Animation/AI4Animation/SIGGRAPH_2022/PyTorch",
-  "pae_epochs": 2,
-  "processed_data_path": "C:/anim-ws/AnimHost/data"
-}
