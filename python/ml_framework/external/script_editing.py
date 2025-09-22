@@ -36,12 +36,14 @@ def read_script_variables(script_path: Path, variable_names: List[str]) -> Dict[
         tree = ast.parse(content)
         variables = {}
 
+        # Walk through all nodes, including those inside functions
         for node in ast.walk(tree):
             if isinstance(node, ast.Assign):
                 for target in node.targets:
                     if isinstance(target, ast.Name) and target.id in variable_names:
                         try:
                             value = ast.literal_eval(node.value)
+                            # For multiple assignments, use the last one found
                             variables[target.id] = value
                         except (ValueError, TypeError):
                             variables[target.id] = None
@@ -124,10 +126,14 @@ def write_script_variables(script_path: Path, updates: Dict[str, Any]) -> Option
                             line = lines[line_num]
                             # Simple replacement for basic assignments
                             if '=' in line and target.id in line:
+                                # Handle both top-level and indented assignments
                                 parts = line.split('=', 1)
-                                if parts[0].strip() == target.id:
+                                var_part = parts[0].strip()
+                                if var_part == target.id:
                                     new_value = repr(updates[target.id])
-                                    lines[line_num] = f"{parts[0]}= {new_value}"
+                                    # Preserve original indentation
+                                    indent = line[:line.index(target.id)]
+                                    lines[line_num] = f"{indent}{target.id} = {new_value}"
 
         # Write modified content
         modified_content = '\n'.join(lines)
@@ -164,7 +170,7 @@ def validate_script_variables(script_path: Path, variable_names: List[str]) -> O
         except SyntaxError as e:
             return f"Invalid Python syntax: {e}"
 
-        # Check for variables
+        # Check for variables (including inside functions)
         found_vars = set()
         for node in ast.walk(tree):
             if isinstance(node, ast.Assign):

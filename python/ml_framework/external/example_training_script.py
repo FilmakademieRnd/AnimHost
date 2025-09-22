@@ -24,7 +24,7 @@ def main() -> None:
 
     print("Training Phases")
 
-    epochs = 2
+    epochs = 3
     batch_size = 32
 
     # Simulate training epochs
