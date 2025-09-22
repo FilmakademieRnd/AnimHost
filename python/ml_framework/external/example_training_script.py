@@ -24,10 +24,11 @@ def main() -> None:
 
     print("Training Phases")
 
-    total_epochs = 2
+    epochs = 2
+    batch_size = 32
 
     # Simulate training epochs
-    for epoch in range(1, total_epochs + 1):
+    for epoch in range(1, epochs + 1):
         epoch_duration = 0.5  # 0.5 seconds
         update_interval = 0.1  # 100ms
         total_updates = int(epoch_duration / update_interval)
@@ -47,7 +48,7 @@ def main() -> None:
         print("Saving Parameters")
 
         # Brief pause before next epoch
-        if epoch < total_epochs:
+        if epoch < epochs:
             time.sleep(0.1)
 
     print("Training completed successfully")

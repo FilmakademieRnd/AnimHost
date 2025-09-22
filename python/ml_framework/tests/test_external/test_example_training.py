@@ -5,7 +5,6 @@ Tests real subprocess execution and parsing.
 """
 
 import json
-from pathlib import Path
 
 from external.example_training import example_training
 from experiment_tracker import ExperimentTracker
