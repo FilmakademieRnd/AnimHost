@@ -10,7 +10,7 @@ Or from the AnimHost root directory:
 ```bash
 python python/ml_framework/training.py
 ```
-(training.py adds the module to path automatically)
+(__init__.py adds the module to sys.path automatically to allow execution from outside the ml_framework dir)
 
 ## Option 2: AnimHost GUI
 1. Launch AnimHost application
@@ -39,17 +39,17 @@ pytest tests/test_external/test_example_training.py -v
 ```mermaid
 graph TB
     subgraph "AnimHost Node Framework (Qt/C++)"
-        A["TrainingNodeWidget<br/><small>Qt UI widget displaying training progress and status</small>"]   
-        C["MLFramework::TrainingMessage<br/><small>C++ struct parsing JSON from Python (from_json method)</small>"]
-        B["TrainingNode<br/><small>C++ node managing QProcess to launch Python training</small>"]
+        A["**TrainingNodeWidget**<br/><small>Qt UI widget displaying training progress and status</small>"]
+        C["**MLFramework::TrainingMessage**<br/><small>C++ struct parsing JSON from Python (from_json method)</small>"]
+        B["**TrainingNode**<br/><small>C++ node managing QProcess to launch Python training</small>"]
     end
-    
-    D["JSON Message<br/>"]
-    
+
+    D["**JSON Message**<br/>"]
+
     subgraph "Python ML Framework"
-        E["ExperimentTracker<br/><small>Captures and outputs training progress and std logger</small>"]
-        F["Training Script<br/><small>Entry point coordinating training pipeline</small>"]
-        G["Starke Training Functions<br/><small>Actual ML training implementation</small>"]
+        E["**ExperimentTracker**<br/><small>Captures and outputs training progress and std logger</small>"]
+        F["**Training Script**<br/><small>Entry point coordinating training pipeline</small>"]
+        G["**Starke Training Functions**<br/><small>Actual ML training implementation</small>"]
     end
     
     %% Connections
@@ -73,13 +73,13 @@ graph TB
 
 ## Integration Overview
 
-The TrainingPlugin bridges AnimHost's C++ node framework with Python ML training scripts via JSON inter-process communication. TrainingNode launches Python processes using QProcess, while ExperimentTracker provides structured logging from Python back to the UI.
+The TrainingPlugin bridges AnimHost's C++ node framework with Python ML training scripts via JSON inter-process communication. The TrainingNode launches a Python training processes using QProcess. The training process will launch an additional subprocess when using an external experiment script. The ExperimentTracker provides structured logging from Python back to the UI. The ExperimentTracker also captures and shares external training script output and standard logger.
 
 **Critical Interface Requirement**: Any changes to the JSON protocol must be synchronized between:
 - `ExperimentTracker._emit_json()` method in Python (emits JSON with status, text, metrics fields)
 - `MLFramework::TrainingMessage.from_json()` method in C++ (parses the same JSON structure)
 
-This ensures consistent communication between the Python training pipeline and AnimHost's UI components. At this point, this implicit interface is preferred over an explicit message structure for ease of iteration.
+This ensures consistent communication between the Python training pipeline and AnimHost's UI components. At this point, this implicit interface is preferred over a strictly enforced message structure for ease of iteration.
 
 ## External Training Script Integration
 
