@@ -15,7 +15,7 @@ def test_example_training_success(capsys):
     """Verify successful training outputs expected JSON messages with real subprocess."""
     tracker = ExperimentTracker()
     
-    # Run the actual training (no mocking)
+    # Run the example training script with subprocess and output capture
     example_training(tracker)
     
     captured = capsys.readouterr()

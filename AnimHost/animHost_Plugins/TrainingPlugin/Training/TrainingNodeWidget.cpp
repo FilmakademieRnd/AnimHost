@@ -148,16 +148,10 @@ void TrainingNodeWidget::updateFromMessage(const MLFramework::TrainingMessage& m
             qDebug() << "Train loss:" << trainLoss;
         }
     }
-    else if (msg.status == "Error" || msg.status == "Interrupted") {
+    else if (msg.status == "Error") {
         updateConnectionStatus("Error", Qt::red);
         if (!msg.text.isEmpty()) {
             qDebug() << "Training error:" << msg.text;
-        }
-    }
-    else if (msg.status.contains("verbose")) {
-        // Handle verbose messages
-        if (!msg.text.isEmpty()) {
-            qDebug() << "Training verbose:" << msg.text;
         }
     }
 }

@@ -2,9 +2,9 @@
 """
 ExperimentTracker - Centralized logging for AnimHost training experiments.
 
-Handles communication between Python training scripts and C++ AnimHost. Supports 
-messages about training progress, epoch metrics, and system status. Captures standard 
-logging and routes through structured JSON messages.
+Handles JSON communication between Python training scripts and C++ AnimHost. Supports
+messages about training progress, epoch metrics, and system status. Captures standard
+logging and reroutes it to structured JSON messages.
 
 NOTE: The _emit_json function in this class is solely responsible for ensuring the
 implicit JSON interface is consistent with AnimHost MLFrameworkTypes.h json parsing.
@@ -21,11 +21,10 @@ class ExperimentTracker:
     """
     Centralized logger for training experiments with JSON protocol support.
 
-    Provides structured logging protocols while maintaining backward compatibility
-    with existing JSON output format. Captures standard Python logging and routes
-    through structured protocols.
+    Outputs logging messages as structured JSON to stdout for parsing by AnimHost.
+    Has an init flag to capture standard logging calls and reroute them to JSON stdout.
     """
-    
+
     _active_handler = None  # Class variable to track current logging handler
 
     def __init__(
@@ -33,22 +32,17 @@ class ExperimentTracker:
         capture_stdlib_logging: bool = True,
         log_level: int = logging.ERROR,
         emit_percent_progress: bool = False,
-        enable_file_logging: bool = False,
-        log_file_path: Optional[str] = None,
     ):
         """
         Initialize ExperimentTracker.
 
         :param capture_stdlib_logging: Whether to capture standard logging calls
         :param log_level: Minimum logging level to output to json
-        :param enable_file_logging: Enable file logging (placeholder for future)
-        :param log_file_path: Path for log file (placeholder for future)
+        :param emit_percent_progress: Whether to emit percentage progress updates
         """
         self.capture_stdlib_logging = capture_stdlib_logging
         self.log_level = log_level
         self.emit_percent_progress = emit_percent_progress
-        self.enable_file_logging = enable_file_logging
-        self.log_file_path = log_file_path
 
         # Clean up any previous handler and setup new one if requested
         if self.capture_stdlib_logging:
@@ -56,11 +50,16 @@ class ExperimentTracker:
             self._setup_logging_capture()
 
     def _cleanup_previous_handler(self) -> None:
-        """Remove any existing ExperimentLogHandler from root logger."""
+        """
+        Remove any existing ExperimentLogHandler from root logger.
+
+        This is necessary to avoid duplicate logging if multiple ExperimentTracker
+        instances are created with capture_stdlib_logging enabled.
+        """
         if ExperimentTracker._active_handler:
             logging.getLogger().removeHandler(ExperimentTracker._active_handler)
             ExperimentTracker._active_handler = None
-    
+
     def _setup_logging_capture(self) -> None:
         """Setup custom handler to capture standard logging calls."""
         # Create custom handler that routes to our JSON protocols
@@ -71,7 +70,7 @@ class ExperimentTracker:
         root_logger = logging.getLogger()
         root_logger.addHandler(handler)
         root_logger.setLevel(logging.DEBUG)
-        
+
         # Track the active handler
         ExperimentTracker._active_handler = handler
 
@@ -92,7 +91,7 @@ class ExperimentTracker:
                 f"Epoch data '{status}' without epoch field, metrics: {metrics}",
             )
             return
-        
+
         if text is None:
             text = f"Epoch {metrics['epoch']} completed"
 
@@ -189,15 +188,6 @@ class ExperimentTracker:
             error_msg = f"ExperimentTracker emit failed: {e}"
             print(error_msg, file=sys.stderr, flush=True)
 
-    def _log_to_file(self, message: str) -> None:
-        """
-        Placeholder for file logging functionality.
-
-        :param message: Message to log to file
-        """
-        # TODO: Implement file logging when needed
-        pass
-
 
 class ExperimentLogHandler(logging.Handler):
     """Custom logging handler that routes messages through ExperimentTracker."""
@@ -219,8 +209,7 @@ class ExperimentLogHandler(logging.Handler):
             # Route through the ExperimentTracker's log_std_record method
             self.experiment_logger.log_std_record(record.levelno, message)
 
-        except Exception:
+        except Exception as e:
             # Avoid recursive logging errors
+            self.experiment_logger.log_exception("Logging handler emit error", e)
             pass
-
-

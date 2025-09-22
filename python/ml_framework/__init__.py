@@ -5,8 +5,8 @@ Provides machine learning training capabilities for the AnimHost animation syste
 including configuration management, training orchestration, and external process
 integration.
 
-This package automatically configures the Python import path to ensure proper
-access to all ml_framework modules.
+This package automatically configures the Python import path to allow python
+run commands from outside the ml_framework directory.
 """
 
 import sys

@@ -7,12 +7,8 @@ using the script_subprocess utility.
 """
 
 import re
-import os
-import sys
 from pathlib import Path
 
-# Add parent directory to path for clean imports
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from .script_subprocess import run_script_subprocess
 from experiment_tracker import ExperimentTracker
 

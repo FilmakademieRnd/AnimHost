@@ -16,12 +16,8 @@ def main() -> None:
 
     Simulates a training process with the following characteristics:
 
-    - 5 epochs total
     - Progress percentage updates during epochs
     - Epoch completion with train loss
-
-    The output format is designed to be parsed by the training.py script
-    for integration with the AnimHost TrainingNode.
 
     :returns: None
     """

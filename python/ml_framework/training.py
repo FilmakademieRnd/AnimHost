@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
 """
-Mock Training Script for AnimHost TrainingNode Integration.
+Entry point for AnimHost TrainingNode Integration or standalone script execution.
 
-Supports both integrated (original) and standalone (subprocess) training modes.
+Runs the selected experiment and outputs JSON status messages for real-time tracking.
 """
 
 import sys
-import os
 
-# Add current directory to path for clean imports
-sys.path.insert(0, os.path.dirname(__file__))
 from external.example_training import example_training
 from experiment_tracker import ExperimentTracker
 

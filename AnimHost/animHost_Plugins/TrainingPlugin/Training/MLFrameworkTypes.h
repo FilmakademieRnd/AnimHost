@@ -30,7 +30,7 @@ struct TrainingMessage {
     
     /**
      * Parse a TrainingMessage from a Python ML Framework json message.
-     * @note: This function is responsible for ensuring consistency with the Python ExperimentLogger output.
+     * @note: This function is responsible for ensuring consistency with the Python ExperimentTracker output.
      */
     static TrainingMessage fromJson(const QJsonObject& obj) {
         if (obj.isEmpty()) {
