@@ -8,65 +8,17 @@ Runs the selected experiment and outputs JSON status messages for real-time trac
 import sys
 
 from config.config_manager import ConfigManager, StarkeModelConfig
-from external.starke_training import (
-    run_pae_training,
-    run_gnn_training,
-)
-from data.velocity_preprocessing import preprocess_velocity_data
+from experiments.starke_experiment import StarkeExperiment
 from experiment_tracker import ExperimentTracker
-
-
-def starke_training(config: StarkeModelConfig, tracker: ExperimentTracker) -> None:
-    """
-    Main training pipeline - coordinates PAE and GNN training phases.
-
-    Converts LocalAutoPipeline.py workflow to standalone format with JSON output.
-    Manages the complete Starke training pipeline including data preprocessing,
-    PAE training, and GNN training phases.
-
-    :param config: Configuration object containing training parameters
-    :param tracker: ExperimentTracker instance for logging
-    :returns: None
-    :raises RuntimeError: If any training phase fails
-    """
-
-    # Initial status
-    tracker.log_ui_status("Initializing", "Initializing Starke training pipeline...")
-
-    try:
-        # Data preprocessing phase
-        tracker.log_ui_status(
-            "Data Preprocessing", "Starting data preprocessing phase..."
-        )
-
-        # Data preprocessing (velocity filtering and export)
-        preprocess_velocity_data(dataset_path=config.dataset_path)
-
-        # Run PAE training phase
-        run_pae_training(
-            dataset_path=config.dataset_path,
-            path_to_ai4anim=config.path_to_ai4anim,
-            tracker=tracker,
-        )
-
-        # Run GNN training phase
-        run_gnn_training(config, tracker=tracker)
-
-        # Final completion status
-        tracker.log_ui_status(
-            "Completed Training", "Starke training pipeline completed successfully"
-        )
-
-    except Exception as e:
-        tracker.log_ui_status("Error", f"Starke training pipeline failed: {str(e)}")
 
 
 def main() -> None:
     """
-    Main entry point - routes to integrated or standalone training based on feature flag.
+    Main entry point for StarkeExperiment training.
 
-    Loads configuration from the starke_model_config.json file and initiates
-    the Starke training pipeline.
+    Loads configuration from starke_model_config.json and runs the complete
+    Starke training pipeline using the StarkeExperiment class with proper
+    initialization, execution, and cleanup phases.
 
     :returns: None
     :raises Exception: If configuration loading or training fails
@@ -76,8 +28,18 @@ def main() -> None:
         capture_stdlib_logging=True, emit_percent_progress=False
     )
 
-    config = ConfigManager.load_config("starke_model_config.json")
-    starke_training(config, tracker)
+    experiment = None
+    try:
+        config = ConfigManager.load_config("starke_model_config.json")
+        experiment = StarkeExperiment(config, tracker)
+        experiment.init()
+        experiment.run()
+    except Exception as e:
+        tracker.log_exception("Starke training failed", e)
+        raise
+    finally:
+        if experiment is not None:
+            experiment.cleanup()
 
 
 if __name__ == "__main__":

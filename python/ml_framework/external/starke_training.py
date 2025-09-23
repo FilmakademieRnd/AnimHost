@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 """
-Starke Training Script - Converts LocalAutoPipeline.py to standalone training format.
+Starke training script functions. Orchestration logic is separated into experiment classes.
 
-Supports real-time JSON progress updates for AnimHost TrainingNode integration.
-Handles both PAE (Phase Autoencoder) and GNN (Graph Neural Network) training phases.
+Supports starke repo validation, python script parameter adjustements, and subprocess 
+training script calls with real-time output parsing.
+
+Function-based Design Rationale:
+- Functions provide clear, testable building blocks for training operations
+- Easy to restructure and compose functions into potential PAE-only, GNN-only experiments
+- Stateless functions are simpler to debug and reason about
 """
 import logging
 import re
@@ -12,10 +17,67 @@ from pathlib import Path
 
 from data.motion_preprocessing import MotionProcessor
 from .script_subprocess import run_script_subprocess
+from .script_editing import read_script_variables, write_script_variables, reset_script
 from config.model_configs import StarkeModelConfig
 from experiment_tracker import ExperimentTracker
 
 logger = logging.getLogger(__name__)
+
+
+def init_model(path_to_ai4anim: Path, pae_epochs: int, gnn_epochs: int) -> None:
+    """
+    Initialize model by adjusting epochs in PAE and GNN Network.py files.
+
+    :param path_to_ai4anim: Path to AI4Animation framework
+    :param pae_epochs: Number of epochs for PAE training
+    :param gnn_epochs: Number of epochs for GNN training
+    :raises RuntimeError: If script editing fails
+    """
+    # Update PAE epochs
+    pae_network_path = path_to_ai4anim / "PAE" / "Network.py"
+    current_pae_values = read_script_variables(pae_network_path, ["epochs"])
+    current_pae_epochs = current_pae_values.get("epochs")
+
+    error = write_script_variables(pae_network_path, {"epochs": pae_epochs})
+    if error:
+        logger.error(f"Failed to update PAE epochs: {error}")
+        raise RuntimeError(f"Failed to update PAE epochs: {error}")
+    logger.info(f"Updated PAE epochs from {current_pae_epochs} to {pae_epochs}")
+
+    # Update GNN epochs
+    gnn_network_path = path_to_ai4anim / "GNN" / "Network.py"
+    current_gnn_values = read_script_variables(gnn_network_path, ["epochs"])
+    current_gnn_epochs = current_gnn_values.get("epochs")
+
+    error = write_script_variables(gnn_network_path, {"epochs": gnn_epochs})
+    if error:
+        logger.error(f"Failed to update GNN epochs: {error}")
+        raise RuntimeError(f"Failed to update GNN epochs: {error}")
+    logger.info(f"Updated GNN epochs from {current_gnn_epochs} to {gnn_epochs}")
+
+
+def reset_model(path_to_ai4anim: Path) -> None:
+    """
+    Reset PAE and GNN Network.py files from their backup copies.
+
+    :param path_to_ai4anim: Path to AI4Animation framework
+    :raises RuntimeError: If reset fails
+    """
+    # Reset PAE Network.py
+    pae_network_path = path_to_ai4anim / "PAE" / "Network.py"
+    error = reset_script(pae_network_path)
+    if error:
+        logger.error(f"Failed to reset PAE Network.py: {error}")
+        raise RuntimeError(f"Failed to reset PAE Network.py: {error}")
+        logger.info("Reset PAE Network.py from backup")
+
+    # Reset GNN Network.py
+    gnn_network_path = path_to_ai4anim / "GNN" / "Network.py"
+    error = reset_script(gnn_network_path)
+    if error:
+        logger.error(f"Failed to reset GNN Network.py: {error}")
+        raise RuntimeError(f"Failed to reset GNN Network.py: {error}")
+    logger.info("Reset GNN Network.py from backup")
 
 
 def validate_ai4animation_structure(path_to_ai4anim: Path, phase: str) -> bool:
@@ -55,6 +117,20 @@ def validate_ai4animation_structure(path_to_ai4anim: Path, phase: str) -> bool:
     return True
 
 
+def validate_starke_structure(path_to_ai4anim: Path) -> None:
+    """
+    Validate AI4Animation framework structure for both PAE and GNN phases.
+
+    :param path_to_ai4anim: Path to AI4Animation framework
+    :raises RuntimeError: If validation fails for either phase
+    """
+    if not validate_ai4animation_structure(path_to_ai4anim, "PAE"):
+        raise RuntimeError("PAE training structure validation failed")
+
+    if not validate_ai4animation_structure(path_to_ai4anim, "GNN"):
+        raise RuntimeError("GNN training structure validation failed")
+
+
 def run_pae_training(
     dataset_path: Path, path_to_ai4anim: Path, tracker: ExperimentTracker
 ) -> None:
@@ -70,10 +146,6 @@ def run_pae_training(
     :raises RuntimeError: If PAE training subprocess fails
     """
     tracker.log_ui_status("Starting training 1/2 ...", "Starting PAE training phase...")
-
-    # Validate AI4Animation PAE structure
-    if not validate_ai4animation_structure(path_to_ai4anim, "PAE"):
-        raise RuntimeError("PAE training structure validation failed")
 
     # Validate input files exist
     p_velocity_file = dataset_path / "p_velocity.bin"
@@ -91,24 +163,21 @@ def run_pae_training(
     pae_path = path_to_ai4anim / "PAE"
     pae_dataset_path = pae_path / "Dataset"
 
-    try:
-        # Copy files: p_velocity.bin -> Data.bin, sequences_velocity.txt -> Sequences.txt
-        shutil.copyfile(p_velocity_file, pae_dataset_path / "Data.bin")
-        shutil.copyfile(sequences_file, pae_dataset_path / "Sequences.txt")
+    # Copy files: p_velocity.bin -> Data.bin, sequences_velocity.txt -> Sequences.txt
+    shutil.copyfile(p_velocity_file, pae_dataset_path / "Data.bin")
+    shutil.copyfile(sequences_file, pae_dataset_path / "Sequences.txt")
 
-        # Launch PAE Network.py subprocess
-        # Use MPLBACKEND=Agg to suppress matplotlib windows because they don't show anything
-        run_script_subprocess(
-            script_name="Network.py",
-            working_dir=pae_path,
-            model_name="Encoder",
-            line_parser=lambda line, model_name: parse_training_output(line, model_name, tracker),
-            env_overrides={"MPLBACKEND": "Agg"},
-        )
-
-    except Exception as e:
-        tracker.log_exception("PAE preprocessing/training failed", e)
-        raise
+    # Launch PAE Network.py subprocess
+    # Use MPLBACKEND=Agg to suppress matplotlib windows because they don't show anything
+    run_script_subprocess(
+        script_name="Network.py",
+        working_dir=pae_path,
+        model_name="Encoder",
+        line_parser=lambda line, model_name: parse_training_output(
+            line, model_name, tracker
+        ),
+        env_overrides={"MPLBACKEND": "Agg"},
+    )
 
 
 def run_gnn_training(config: StarkeModelConfig, tracker: ExperimentTracker) -> None:
@@ -124,37 +193,31 @@ def run_gnn_training(config: StarkeModelConfig, tracker: ExperimentTracker) -> N
     """
     tracker.log_ui_status("Starting training 2/2 ...", "Starting GNN training phase...")
 
-    # Validate AI4Animation GNN structure
-    if not validate_ai4animation_structure(config.path_to_ai4anim, "GNN"):
-        raise RuntimeError("GNN training structure validation failed")
+    # Initialize motion processor
+    mp = MotionProcessor(
+        str(config.dataset_path), str(config.path_to_ai4anim), config.pae_epochs
+    )
 
-    try:
-        # Initialize motion processor
-        mp = MotionProcessor(
-            str(config.dataset_path), str(config.path_to_ai4anim), config.pae_epochs
-        )
+    # GNN preprocessing - prepare training data for generator
+    mp.input_preprocessing()
+    mp.output_preprocessing()
+    mp.export_data()
 
-        # GNN preprocessing - prepare training data for generator
-        mp.input_preprocessing()
-        mp.output_preprocessing()
-        mp.export_data()
+    # Copy all files from processed folder to GNN folder
+    gnn_path = config.path_to_ai4anim / "GNN"
+    for file_path in config.processed_data_path.iterdir():
+        if file_path.is_file():  # Only copy files, not directories
+            shutil.copyfile(file_path, gnn_path / "Data" / file_path.name)
 
-        # Copy all files from processed folder to GNN folder
-        gnn_path = config.path_to_ai4anim / "GNN"
-        for file_path in config.processed_data_path.iterdir():
-            if file_path.is_file():  # Only copy files, not directories
-                shutil.copyfile(file_path, gnn_path / "Data" / file_path.name)
-
-        # Launch GNN Network.py subprocess
-        run_script_subprocess(
-            script_name="Network.py",
-            working_dir=gnn_path,
-            model_name="Controller",
-            line_parser=lambda line, model_name: parse_training_output(line, model_name, tracker),
-        )
-    except Exception as e:
-        tracker.log_exception("GNN preprocessing/training failed", e)
-        raise
+    # Launch GNN Network.py subprocess
+    run_script_subprocess(
+        script_name="Network.py",
+        working_dir=gnn_path,
+        model_name="Controller",
+        line_parser=lambda line, model_name: parse_training_output(
+            line, model_name, tracker
+        ),
+    )
 
 
 def parse_training_output(
