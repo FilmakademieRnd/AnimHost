@@ -16,7 +16,7 @@ def main() -> None:
 
     Simulates a training process with the following characteristics:
 
-    - Progress percentage updates during epochs
+    - Progress percentage updates during total_epochs
     - Epoch completion with train loss
 
     :returns: None
@@ -24,11 +24,10 @@ def main() -> None:
 
     print("Training Phases")
 
-    epochs = 3
-    batch_size = 32
+    total_epochs = 3
 
     # Simulate training epochs
-    for epoch in range(1, epochs + 1):
+    for epoch in range(1, total_epochs + 1):
         epoch_duration = 0.5  # 0.5 seconds
         update_interval = 0.1  # 100ms
         total_updates = int(epoch_duration / update_interval)
@@ -48,7 +47,7 @@ def main() -> None:
         print("Saving Parameters")
 
         # Brief pause before next epoch
-        if epoch < epochs:
+        if epoch < total_epochs:
             time.sleep(0.1)
 
     print("Training completed successfully")

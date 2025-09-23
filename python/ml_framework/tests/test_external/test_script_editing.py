@@ -11,8 +11,9 @@ from pathlib import Path
 from external.script_editing import (
     read_script_variables,
     write_script_variables,
-    validate_script_variables,
     reset_script,
+    read_script_variable,
+    write_script_variable,
 )
 
 
@@ -75,13 +76,13 @@ def complex_script():
 def test_read_existing_variables(temp_script):
     """Test reading existing variables."""
     result = read_script_variables(temp_script, ["epochs", "batch_size"])
-    assert result == {"epochs": 10, "batch_size": 32}
+    assert result == {"epochs": "10", "batch_size": "32"}
 
 
 def test_read_missing_variables(temp_script):
     """Test reading non-existent variables."""
     result = read_script_variables(temp_script, ["epochs", "missing_var"])
-    assert result == {"epochs": 10, "missing_var": None}
+    assert result == {"epochs": "10", "missing_var": None}
 
 
 def test_read_nonexistent_file():
@@ -92,12 +93,12 @@ def test_read_nonexistent_file():
 
 def test_write_variables_success(temp_script):
     """Test successful variable writing."""
-    error = write_script_variables(temp_script, {"epochs": 20, "batch_size": 64})
+    error = write_script_variables(temp_script, {"epochs": "20", "batch_size": "64"})
     assert error is None
 
     # Verify changes
     result = read_script_variables(temp_script, ["epochs", "batch_size"])
-    assert result == {"epochs": 20, "batch_size": 64}
+    assert result == {"epochs": "20", "batch_size": "64"}
 
 
 def test_write_creates_backup(temp_script):
@@ -124,35 +125,6 @@ def test_write_nonexistent_file():
     assert error is not None
     assert "not found" in error
 
-
-def test_validate_valid_script(temp_script):
-    """Test validating a valid script."""
-    error = validate_script_variables(temp_script, ["epochs", "batch_size"])
-    assert error is None
-
-
-def test_validate_missing_variables(temp_script):
-    """Test validating with missing variables."""
-    error = validate_script_variables(temp_script, ["epochs", "missing_var"])
-    assert error is not None
-    assert "not found" in error
-
-
-def test_validate_invalid_syntax():
-    """Test validating script with invalid syntax."""
-    content = "invalid python syntax ="
-    with tempfile.NamedTemporaryFile(
-        mode="w", suffix=".py", delete=False, encoding="utf-8"
-    ) as f:
-        f.write(content)
-        temp_path = Path(f.name)
-
-    try:
-        error = validate_script_variables(temp_path, ["epochs"])
-        assert error is not None
-        assert "syntax" in error.lower()
-    finally:
-        temp_path.unlink(missing_ok=True)
 
 
 def test_reset_script_success(temp_script):
@@ -220,38 +192,80 @@ def test_multiple_assignments_different_values():
         temp_path.unlink(missing_ok=True)
 
 
-def test_example_training_script_integration():
-    """Test with actual example_training_script.py."""
-    script_path = (
-        Path(__file__).parent.parent.parent / "external" / "example_training_script.py"
-    )
-
-    if not script_path.exists():
-        pytest.skip("example_training_script.py not found")
-
-    # Read current values
-    result = read_script_variables(script_path, ["epochs", "batch_size"])
-    original_epochs = result["epochs"]
-    original_batch_size = result["batch_size"]
+def test_write_complex_expressions():
+    """Test writing complex expressions and mixed data types."""
+    content = textwrap.dedent("""
+        epochs = 10
+        batch_size = 32
+        tensor = None
+        device = None
+    """).strip()
+    with tempfile.NamedTemporaryFile(
+        mode="w", suffix=".py", delete=False, encoding="utf-8"
+    ) as f:
+        f.write(content)
+        temp_path = Path(f.name)
 
     try:
-        # Validate
-        error = validate_script_variables(script_path, ["epochs", "batch_size"])
+        error = write_script_variables(temp_path, {
+            "epochs": 20,  # number
+            "batch_size": 64,  # number
+            "tensor": "torch.zeros([2, 4], dtype=torch.int32)",  # expression
+            "device": "'cuda'",  # string expression
+        })
         assert error is None
 
-        # Modify
-        error = write_script_variables(script_path, {"epochs": 99, "batch_size": 128})
-        assert error is None
-
-        # Verify changes
-        result = read_script_variables(script_path, ["epochs", "batch_size"])
-        assert result == {"epochs": 99, "batch_size": 128}
-
+        # Verify all values were written correctly
+        result = read_script_variables(temp_path, ["epochs", "batch_size", "tensor", "device"])
+        assert result["epochs"] == "20"
+        assert result["batch_size"] == "64"
+        assert result["tensor"] == "torch.zeros([2, 4], dtype=torch.int32)"
+        assert result["device"] == "'cuda'"
     finally:
-        # Always reset
-        reset_script(script_path)
+        temp_path.unlink(missing_ok=True)
+        backup_path = temp_path.with_suffix(temp_path.suffix + ".animhost_backup")
+        backup_path.unlink(missing_ok=True)
 
-        # Verify reset
-        result = read_script_variables(script_path, ["epochs", "batch_size"])
-        assert result["epochs"] == original_epochs
-        assert result["batch_size"] == original_batch_size
+
+def test_read_validates_duplicates():
+    """Test that read now validates duplicate assignments."""
+    content = textwrap.dedent("""
+        epochs = 10
+        batch_size = 32
+        epochs = 15  # Different value - should error
+    """).strip()
+    with tempfile.NamedTemporaryFile(
+        mode="w", suffix=".py", delete=False, encoding="utf-8"
+    ) as f:
+        f.write(content)
+        temp_path = Path(f.name)
+
+    try:
+        # Read should return None for epochs due to validation error
+        result = read_script_variables(temp_path, ["epochs", "batch_size"])
+        assert result["epochs"] is None  # Should be None due to duplicate validation
+        assert result["batch_size"] == "32"  # Should work fine
+    finally:
+        temp_path.unlink(missing_ok=True)
+
+
+def test_single_variable_functions(temp_script):
+    """Test new single-variable functions."""
+    # Test read_script_variable
+    value, error = read_script_variable(temp_script, "epochs")
+    assert error is None
+    assert value == "10"
+
+    # Test read non-existent variable
+    value, error = read_script_variable(temp_script, "missing_var")
+    assert error is None
+    assert value is None
+
+    # Test write_script_variable
+    error = write_script_variable(temp_script, "epochs", 42)
+    assert error is None
+
+    # Verify the write
+    value, error = read_script_variable(temp_script, "epochs")
+    assert error is None
+    assert value == "42"

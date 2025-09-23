@@ -69,7 +69,7 @@ def reset_model(path_to_ai4anim: Path) -> None:
     if error:
         logger.error(f"Failed to reset PAE Network.py: {error}")
         raise RuntimeError(f"Failed to reset PAE Network.py: {error}")
-        logger.info("Reset PAE Network.py from backup")
+    logger.info("Reset PAE Network.py from backup")
 
     # Reset GNN Network.py
     gnn_network_path = path_to_ai4anim / "GNN" / "Network.py"
@@ -115,20 +115,6 @@ def validate_ai4animation_structure(path_to_ai4anim: Path, phase: str) -> bool:
             return False
 
     return True
-
-
-def validate_starke_structure(path_to_ai4anim: Path) -> None:
-    """
-    Validate AI4Animation framework structure for both PAE and GNN phases.
-
-    :param path_to_ai4anim: Path to AI4Animation framework
-    :raises RuntimeError: If validation fails for either phase
-    """
-    if not validate_ai4animation_structure(path_to_ai4anim, "PAE"):
-        raise RuntimeError("PAE training structure validation failed")
-
-    if not validate_ai4animation_structure(path_to_ai4anim, "GNN"):
-        raise RuntimeError("GNN training structure validation failed")
 
 
 def run_pae_training(

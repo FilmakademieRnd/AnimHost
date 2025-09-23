@@ -20,15 +20,15 @@ def test_end_to_end_training_example(capsys):
     script_path = Path(__file__).parent.parent.parent / "external" / "example_training_script.py"
 
     # Verify original script has 3 epochs
-    original_values = read_script_variables(script_path, ["epochs"])
-    assert original_values["epochs"] == 3, f"Script should originally have 3 epochs, got {original_values}"
+    original_values = read_script_variables(script_path, ["total_epochs"])
+    assert original_values["total_epochs"] == "3", f"Script should originally have 3 epochs, got {original_values}"
 
     # Run the example training script with subprocess and output capture
     example_training(tracker)
 
     # Verify script is restored to 3 epochs after training
-    final_values = read_script_variables(script_path, ["epochs"])
-    assert final_values["epochs"] == 3, "Script should be restored to 3 epochs after training"
+    final_values = read_script_variables(script_path, ["total_epochs"])
+    assert final_values["total_epochs"] == "3", "Script should be restored to 3 epochs after training"
 
     captured = capsys.readouterr()
     output_lines = [line for line in captured.out.strip().split('\n') if line]

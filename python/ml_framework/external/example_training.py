@@ -66,7 +66,7 @@ def example_training(tracker: ExperimentTracker) -> None:
 
     try:
         # Temporarily modify script to use 2 epochs instead of 3
-        error = write_script_variables(script_path, {"epochs": total_epochs})
+        error = write_script_variables(script_path, {"total_epochs": total_epochs})
         if error:
             tracker.log_ui_status("Error", error)
             return
