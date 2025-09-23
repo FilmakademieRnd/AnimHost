@@ -30,15 +30,17 @@ TrainingNode::TrainingNode()
     _trainingProcess = new QProcess(this);
     
     // Set the path to the Python source script relative to the AnimHost executable location
-    _pythonScriptPath = QApplication::applicationDirPath() + "/../../python/ml_framework/mock_training.py";
+    _pythonScriptPath = QApplication::applicationDirPath() + "/../../python/ml_framework/training.py";
     
     // Connect process signals
     connect(_trainingProcess, &QProcess::readyReadStandardOutput, 
             this, &TrainingNode::onTrainingOutput);
+    connect(_trainingProcess, &QProcess::readyReadStandardError,
+            this, &TrainingNode::onTrainingError);
     connect(_trainingProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
             this, &TrainingNode::onTrainingFinished);
     connect(_trainingProcess, &QProcess::errorOccurred,
-            this, &TrainingNode::onTrainingError);
+            this, &TrainingNode::onTrainingProcessError);
     
     qDebug() << "TrainingNode created with Python script path:" << _pythonScriptPath;
 }
@@ -136,10 +138,7 @@ void TrainingNode::onTrainingOutput()
     QStringList lines = output.split('\n', Qt::SkipEmptyParts);
     for (const QString& line : lines) {
         QString trimmedLine = line.trimmed();
-        if (!trimmedLine.isEmpty()) {
-            qDebug() << "Received JSON:" << trimmedLine;
-            
-            // Parse JSON document
+        if (!trimmedLine.isEmpty()) {         
             QJsonParseError parseError;
             QJsonDocument doc = QJsonDocument::fromJson(trimmedLine.toUtf8(), &parseError);
             
@@ -148,7 +147,8 @@ void TrainingNode::onTrainingOutput()
                 continue;
             }
             
-            updateFromMessage(doc.object());
+            MLFramework::TrainingMessage msg = MLFramework::TrainingMessage::fromJson(doc.object());
+            updateFromMessage(msg);
         }
     }
 }
@@ -164,7 +164,17 @@ void TrainingNode::onTrainingFinished(int exitCode, QProcess::ExitStatus exitSta
     }
 }
 
-void TrainingNode::onTrainingError(QProcess::ProcessError error)
+void TrainingNode::onTrainingError()
+{
+    QByteArray data = _trainingProcess->readAllStandardError();
+    QString errorOutput = QString::fromUtf8(data);
+    
+    if (!errorOutput.isEmpty()) {
+        qDebug() << "Python error output:" << errorOutput.trimmed();
+    }
+}
+
+void TrainingNode::onTrainingProcessError(QProcess::ProcessError error)
 {
     QString errorString;
     switch (error) {
@@ -186,16 +196,16 @@ void TrainingNode::onTrainingError(QProcess::ProcessError error)
     updateConnectionStatus("Error", Qt::red);
 }
 
-void TrainingNode::updateConnectionStatus(const QString& status, const QColor& lightColor)
+void TrainingNode::updateConnectionStatus(const QString& status, const QColor& signalColor)
 {
     if (_widget) {
-        _widget->updateConnectionStatus(status, lightColor);
+        _widget->updateConnectionStatus(status, signalColor);
     }
 }
 
-void TrainingNode::updateFromMessage(const QJsonObject& obj)
+void TrainingNode::updateFromMessage(const MLFramework::TrainingMessage& msg)
 {
     if (_widget) {
-        _widget->updateFromMessage(obj);
+        _widget->updateFromMessage(msg);
     }
 }

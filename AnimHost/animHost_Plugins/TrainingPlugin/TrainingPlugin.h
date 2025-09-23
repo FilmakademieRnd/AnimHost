@@ -60,8 +60,7 @@ class TRAININGPLUGINSHARED_EXPORT TrainingPlugin : public PluginNodeCollectionIn
        };
 
        void RegisterNodeCollection(NodeDelegateModelRegistry& nodeRegistry) override {
-           // Register nodes here
-           nodeRegistry.registerModel<TrainingNode>([this](){ return std::make_unique<TrainingNode>(); });
+           nodeRegistry.registerModel<TrainingNode>([this](){ return std::make_unique<TrainingNode>();}, "MLFramework");
        };
 
        void PostNodeCollectionRegistration() override {};

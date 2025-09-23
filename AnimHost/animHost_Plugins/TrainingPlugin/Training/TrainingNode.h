@@ -30,6 +30,7 @@
 #include <QJsonObject>
 #include <pluginnodeinterface.h>
 #include <nodedatatypes.h>
+#include "MLFrameworkTypes.h"
 
 class TrainingNodeWidget;
 
@@ -55,7 +56,7 @@ public:
 
     static QString Name() { return QString("TrainingNode"); }
 
-    QString category() override { return "Training"; };
+    QString category() override { return "MLFramework"; };
     QString caption() const override { return this->name(); }
     bool captionVisible() const override { return true; }
 
@@ -74,11 +75,12 @@ public:
 private Q_SLOTS:
     void onTrainingOutput();
     void onTrainingFinished(int exitCode, QProcess::ExitStatus exitStatus);
-    void onTrainingError(QProcess::ProcessError error);
+    void onTrainingError();
+    void onTrainingProcessError(QProcess::ProcessError error);
 
 private:
-    void updateConnectionStatus(const QString& status, const QColor& lightColor);
-    void updateFromMessage(const QJsonObject& obj);
+    void updateConnectionStatus(const QString& status, const QColor& signalColor);
+    void updateFromMessage(const MLFramework::TrainingMessage& msg);
 
 };
 

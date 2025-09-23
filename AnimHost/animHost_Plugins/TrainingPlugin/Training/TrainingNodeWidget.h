@@ -24,6 +24,7 @@
 #include <QtWidgets>
 #include <QJsonObject>
 #include <UIUtils.h>
+#include "MLFrameworkTypes.h"
 
 class QGroupBox;
 class QVBoxLayout;
@@ -37,8 +38,21 @@ public:
     explicit TrainingNodeWidget(QWidget* parent = nullptr);
     ~TrainingNodeWidget() = default;
 
-    void updateConnectionStatus(const QString& status, const QColor& lightColor);
-    void updateFromMessage(const QJsonObject& obj);
+    /**
+     * Update the connection status display.
+     * @param status The status text to display.
+     * @param signalColor The color of the status light.
+     * @param statusMessage An optional detailed status message.
+     */
+    void updateConnectionStatus(const QString& status, const QColor& signalColor, const QString& statusText = "");
+    /**
+     * Update the widget based on a training message.
+     * @param msg The training message containing status and metrics.
+     */
+    void updateFromMessage(const MLFramework::TrainingMessage& msg);
+    /**
+     * Reset progress bars to initial state.
+     */
     void resetProgress();
 
 private:
@@ -51,12 +65,16 @@ private:
     SignalLightWidget* _signalLight;
     QLabel* _statusLabel;
     
-    // Training status components  
-    QGroupBox* _trainingGroupBox;
-    QVBoxLayout* _trainingLayout;
-    ProgressWidget<int>* _progressWidget;
-    QLabel* _trainLossLabel;
-    
+    // Encoder status components  
+    QGroupBox* _encoderGroupBox;
+    ProgressWidget<int>* _encoderProgressBar;
+    QLabel* _encoderTrainLossLabel;
+
+    // Controller status components
+    QGroupBox* _controllerGroupBox;
+    ProgressWidget<int>* _controllerProgressBar;
+    QLabel* _controllerTrainLossLabel;
+
     void setupUI();
     void applyStyles();
 };

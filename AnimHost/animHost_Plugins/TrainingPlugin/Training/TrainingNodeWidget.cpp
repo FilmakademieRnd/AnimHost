@@ -30,10 +30,12 @@ TrainingNodeWidget::TrainingNodeWidget(QWidget* parent)
     , _connectionLayout(nullptr)
     , _signalLight(nullptr)
     , _statusLabel(nullptr)
-    , _trainingGroupBox(nullptr)
-    , _trainingLayout(nullptr)
-    , _progressWidget(nullptr)
-    , _trainLossLabel(nullptr)
+    , _encoderGroupBox(nullptr)
+    , _encoderProgressBar(nullptr)
+    , _encoderTrainLossLabel(nullptr)
+    , _controllerGroupBox(nullptr)
+    , _controllerProgressBar(nullptr)
+    , _controllerTrainLossLabel(nullptr)
 {
     setupUI();
     applyStyles();
@@ -58,19 +60,30 @@ void TrainingNodeWidget::setupUI()
     _connectionLayout->addWidget(_statusLabel);
     _connectionLayout->addStretch();
     
-    // Create Training Status Group Box
-    _trainingGroupBox = new QGroupBox("Training Status", this);
-    _trainingLayout = new QVBoxLayout(_trainingGroupBox);
+    // Create Encoder Status Group Box
+    _encoderGroupBox = new QGroupBox("Encoder Status", this);
+    auto* trainingLayout = new QVBoxLayout(_encoderGroupBox);
     
-    _progressWidget = new ProgressWidget<int>("Epoch", 5, _trainingGroupBox);
-    _trainLossLabel = new QLabel("Train Loss: --", _trainingGroupBox);
+    _encoderProgressBar = new ProgressWidget<int>("Epoch", 2, _encoderGroupBox);
+    _encoderTrainLossLabel = new QLabel("Training Loss: --", _encoderGroupBox);
     
-    _trainingLayout->addWidget(_progressWidget);
-    _trainingLayout->addWidget(_trainLossLabel);
-    
+    trainingLayout->addWidget(_encoderProgressBar);
+    trainingLayout->addWidget(_encoderTrainLossLabel);
+
+    // Create Controller Status Group Box
+    _controllerGroupBox = new QGroupBox("Controller Status", this);
+    auto* controllerLayout = new QVBoxLayout(_controllerGroupBox);
+
+    _controllerProgressBar = new ProgressWidget<int>("Epoch", 2, _controllerGroupBox);
+    _controllerTrainLossLabel = new QLabel("Training Loss: --", _controllerGroupBox);
+
+    controllerLayout->addWidget(_controllerProgressBar);
+    controllerLayout->addWidget(_controllerTrainLossLabel);
+
     // Add group boxes to main layout
     _mainLayout->addWidget(_connectionGroupBox);
-    _mainLayout->addWidget(_trainingGroupBox);
+    _mainLayout->addWidget(_encoderGroupBox);
+    _mainLayout->addWidget(_controllerGroupBox);
     _mainLayout->addStretch();
 }
 
@@ -81,65 +94,71 @@ void TrainingNodeWidget::applyStyles()
     setStyleSheet(customStyleSheet);
 }
 
-void TrainingNodeWidget::updateConnectionStatus(const QString& status, const QColor& lightColor)
+void TrainingNodeWidget::updateConnectionStatus(const QString& status, const QColor& signalColor, const QString& statusText)
 {
     if (_signalLight) {
-        _signalLight->setColor(lightColor);
+        _signalLight->setColor(signalColor);
     }
     if (_statusLabel) {
         _statusLabel->setText(status);
+        _statusLabel->setToolTip(statusText);
     }
 }
 
-void TrainingNodeWidget::updateFromMessage(const QJsonObject& obj)
+void TrainingNodeWidget::updateFromMessage(const MLFramework::TrainingMessage& msg)
 {
-    // Process valid JSON object from training process and update UI components
-    // Expects object with "status" field and optional training metrics (epoch, train_loss, etc.)
-    
-    // Handle different message types based on "status" field
-    if (obj.contains("status")) {
-        QString status = obj["status"].toString();
+    // Default status display with green light (can be overridden)
+    updateConnectionStatus(msg.status, QColor(50, 255, 50), msg.text);
+
+    if (msg.status == "Encoder training") {
+        // Update progress if epoch information is available
+        if (msg.metrics.contains("epoch")) {
+            int epoch = msg.metrics["epoch"].toInt();
+            if (_encoderProgressBar) {
+                _encoderProgressBar->updateValue(epoch);
+            }
+            qDebug() << "Training epoch:" << epoch;
+        }
         
-        if (status == "starting") {
-            updateConnectionStatus("Training started", QColor(50, 255, 50)); // Bright green (like TRACER)
-        }
-        else if (status == "training") {
-            updateConnectionStatus("Training", QColor(50, 255, 50)); // Bright green (like TRACER)
-            
-            // Update progress if epoch information is available
-            if (obj.contains("epoch")) {
-                int epoch = obj["epoch"].toInt();
-                if (_progressWidget) {
-                    _progressWidget->updateValue(epoch);
-                }
-                qDebug() << "Training epoch:" << epoch;
+        // Update train loss if available
+        if (msg.metrics.contains("train_loss")) {
+            double trainLoss = msg.metrics["train_loss"].toDouble();
+            if (_encoderTrainLossLabel) {
+                _encoderTrainLossLabel->setText(QString("Train Loss: %1").arg(trainLoss, 0, 'f', 4));
             }
-            
-            // Update train loss if available
-            if (obj.contains("train_loss")) {
-                double trainLoss = obj["train_loss"].toDouble();
-                if (_trainLossLabel) {
-                    _trainLossLabel->setText(QString("Train Loss: %1").arg(trainLoss, 0, 'f', 4));
-                }
-                qDebug() << "Train loss:" << trainLoss;
-            }
+            qDebug() << "Train loss:" << trainLoss;
         }
-        else if (status == "completed") {
-            updateConnectionStatus("Completed", QColor(50, 255, 50)); // Bright green (like TRACER)
-            qDebug() << "Training completed successfully";
-        }
-        else if (status == "error" || status == "interrupted") {
-            updateConnectionStatus("Error", Qt::red);
-            if (obj.contains("message")) {
-                qDebug() << "Training error:" << obj["message"].toString();
+    }
+    else if (msg.status == "Controller training") {
+        // Update progress if epoch information is available
+        if (msg.metrics.contains("epoch")) {
+            int epoch = msg.metrics["epoch"].toInt();
+            if (_controllerProgressBar) {
+                _controllerProgressBar->updateValue(epoch);
             }
+            qDebug() << "Training epoch:" << epoch;
+        }
+        
+        // Update train loss if available
+        if (msg.metrics.contains("train_loss")) {
+            double trainLoss = msg.metrics["train_loss"].toDouble();
+            if (_controllerTrainLossLabel) {
+                _controllerTrainLossLabel->setText(QString("Train Loss: %1").arg(trainLoss, 0, 'f', 4));
+            }
+            qDebug() << "Train loss:" << trainLoss;
+        }
+    }
+    else if (msg.status == "Error") {
+        updateConnectionStatus("Error", Qt::red);
+        if (!msg.text.isEmpty()) {
+            qDebug() << "Training error:" << msg.text;
         }
     }
 }
 
 void TrainingNodeWidget::resetProgress()
 {
-    if (_progressWidget) {
-        _progressWidget->updateValue(0);
+    if (_encoderProgressBar) {
+        _encoderProgressBar->updateValue(0);
     }
 }
