@@ -269,3 +269,48 @@ def test_single_variable_functions(temp_script):
     value, error = read_script_variable(temp_script, "epochs")
     assert error is None
     assert value == "42"
+
+
+def test_self_assignment_ignored():
+    """Test that self-assignments (foo = foo) are ignored during read/write operations."""
+    content = textwrap.dedent("""
+        #!/usr/bin/env python3
+        # Script with self-assignments
+        foo = 10
+        bar = bar  # Self-assignment should be ignored
+        foo = foo  # Self-assignment should be ignored
+        baz = 20
+        foo = foo,  # Self-assignment with comma should be ignored
+    """).strip()
+
+    with tempfile.NamedTemporaryFile(
+        mode="w", suffix=".py", delete=False, encoding="utf-8"
+    ) as f:
+        f.write(content)
+        temp_path = Path(f.name)
+
+    try:
+        # Test reading - should only find the real assignment
+        result = read_script_variables(temp_path, ["foo", "bar", "baz"])
+        assert result["foo"] == "10"  # Should find the real assignment
+        assert result["bar"] is None  # Self-assignment should be ignored, no real assignment found
+        assert result["baz"] == "20"  # Should find the real assignment
+
+        # Test writing - should work without conflicts
+        error = write_script_variables(temp_path, {"foo": 42})
+        assert error is None  # Should succeed despite self-assignments
+
+        # Verify the write worked
+        updated_result = read_script_variables(temp_path, ["foo"])
+        assert updated_result["foo"] == "42"
+
+        # Verify self-assignments are still in the file but ignored
+        content_after = temp_path.read_text(encoding="utf-8")
+        assert "bar = bar" in content_after  # Self-assignment should still be there
+        assert "foo = foo" in content_after  # Self-assignment should still be there
+        assert "foo = 42" in content_after   # New assignment should be there
+
+    finally:
+        temp_path.unlink(missing_ok=True)
+        backup_path = temp_path.with_suffix(temp_path.suffix + ".animhost_backup")
+        backup_path.unlink(missing_ok=True)
