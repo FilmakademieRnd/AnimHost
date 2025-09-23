@@ -21,8 +21,6 @@ from data.motion_preprocessing import MotionProcessor, count_lines, read_csv_dat
 
 def main():
     # common config
-    # dataset_path = r"C:\DEV\DATASETS\Survivor_Gen"
-    # path_to_ai4anim = r"C:\DEV\AI4Animation\AI4Animation\SIGGRAPH_2022\PyTorch"
     dataset_path = r"C:/anim-ws/AnimHost/datasets/Survivor_Gen"
     path_to_ai4anim = r"C:/anim-ws/AI4Animation/AI4Animation/SIGGRAPH_2022/PyTorch"
     mp = MotionProcessor(dataset_path, path_to_ai4anim)   
