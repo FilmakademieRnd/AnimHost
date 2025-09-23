@@ -2,7 +2,7 @@
 """
 Starke training script functions. Orchestration logic is separated into experiment classes.
 
-Supports starke repo validation, python script parameter adjustements, and subprocess 
+Supports starke repo validation, python script parameter adjustements, and subprocess
 training script calls with real-time output parsing.
 
 Function-based Design Rationale:
@@ -14,8 +14,13 @@ import logging
 import re
 import shutil
 from pathlib import Path
+from typing import Dict, Union
 
-from data.motion_preprocessing import MotionProcessor
+from data.motion_preprocessing import (
+    MotionProcessor,
+    count_lines,
+    parse_input_output_features,
+)
 from .script_subprocess import run_script_subprocess
 from .script_editing import read_script_variables, write_script_variables, reset_script
 from config.model_configs import StarkeModelConfig
@@ -24,16 +29,74 @@ from experiment_tracker import ExperimentTracker
 logger = logging.getLogger(__name__)
 
 
-def init_model(path_to_ai4anim: Path, pae_epochs: int, gnn_epochs: int) -> None:
+def init_model(config: StarkeModelConfig) -> None:
     """
-    Initialize model by adjusting epochs in PAE and GNN Network.py files.
+    Initialize model by setting hyperparameters and parameters inferred from input data.
+
+    :param config: Starke model configuration
+    """
+    # PAE data loading requires input feature metadata
+    _init_pae_data_shape(config.dataset_path, config.path_to_ai4anim)
+
+    # Initialize PAE network with epochs
+    _init_pae_network_script(config.path_to_ai4anim, config.pae_epochs)
+
+    # Initialize GNN network with epochs and input feature-based parameters
+    gnn_updates = _init_gnn_feature_count(config.dataset_path)
+    gnn_updates["epochs"] = config.gnn_epochs
+    _init_gnn_network_script(config.path_to_ai4anim, gnn_updates)
+
+
+def _init_pae_data_shape(dataset_path: Path, path_to_ai4anim: Path) -> None:
+    """
+    Initialize PAE data shape by reading sequence count and writing to DataShape.txt.
+
+    :param dataset_path: Path to the dataset directory containing sequences_velocity.txt
+    :param path_to_ai4anim: Path to AI4Animation framework
+    :raises RuntimeError: If sequence file not found or writing fails
+    """
+    sequences_file = dataset_path / "sequences_velocity.txt"
+
+    if not sequences_file.exists():
+        logger.error(f"Sequences file not found: {sequences_file}")
+        raise RuntimeError(f"Sequences file not found: {sequences_file}")
+
+    # Count lines in sequences_velocity.txt
+    velocity_samples = count_lines(str(sequences_file))
+    logger.info(f"Found {velocity_samples} velocity samples in sequences file")
+
+    # Write to PAE DataShape.txt
+    pae_data_shapes_path = path_to_ai4anim / "PAE" / "Dataset" / "DataShape.txt"
+
+    # Create backup if original exists
+    if pae_data_shapes_path.exists():
+        backup_path = pae_data_shapes_path.with_suffix(pae_data_shapes_path.suffix + '.animhost_backup')
+        try:
+            backup_content = pae_data_shapes_path.read_text(encoding='utf-8')
+            backup_path.write_text(backup_content, encoding='utf-8')
+            logger.info(f"Created backup: {backup_path}")
+        except Exception as e:
+            logger.error(f"Failed to create backup: {e}")
+            raise RuntimeError(f"Failed to create backup: {e}")
+
+    # Write new DataShape.txt content
+    data_shapes_content = f"{velocity_samples}\n78"
+
+    try:
+        pae_data_shapes_path.write_text(data_shapes_content, encoding='utf-8')
+        logger.info(f"Successfully wrote PAE DataShape.txt: {velocity_samples} samples, 78 features")
+    except Exception as e:
+        logger.error(f"Failed to write DataShape.txt: {e}")
+        raise RuntimeError(f"Failed to write DataShape.txt: {e}")
+
+def _init_pae_network_script(path_to_ai4anim: Path, pae_epochs: int) -> None:
+    """
+    Initialize PAE Network.py with epochs.
 
     :param path_to_ai4anim: Path to AI4Animation framework
     :param pae_epochs: Number of epochs for PAE training
-    :param gnn_epochs: Number of epochs for GNN training
     :raises RuntimeError: If script editing fails
     """
-    # Update PAE epochs
     pae_network_path = path_to_ai4anim / "PAE" / "Network.py"
     current_pae_values = read_script_variables(pae_network_path, ["epochs"])
     current_pae_epochs = current_pae_values.get("epochs")
@@ -44,21 +107,71 @@ def init_model(path_to_ai4anim: Path, pae_epochs: int, gnn_epochs: int) -> None:
         raise RuntimeError(f"Failed to update PAE epochs: {error}")
     logger.info(f"Updated PAE epochs from {current_pae_epochs} to {pae_epochs}")
 
-    # Update GNN epochs
-    gnn_network_path = path_to_ai4anim / "GNN" / "Network.py"
-    current_gnn_values = read_script_variables(gnn_network_path, ["epochs"])
-    current_gnn_epochs = current_gnn_values.get("epochs")
 
-    error = write_script_variables(gnn_network_path, {"epochs": gnn_epochs})
+def _init_gnn_network_script(path_to_ai4anim: Path, updates: Dict[str, Union[str, int]]) -> None:
+    """
+    Initialize GNN Network.py with all parameter updates in a single operation.
+
+    :param path_to_ai4anim: Path to AI4Animation framework
+    :param updates: Dictionary of parameter updates (epochs, gating_indices, main_indices)
+    :raises RuntimeError: If script editing fails
+    """
+    gnn_network_path = path_to_ai4anim / "GNN" / "Network.py"
+
+    # Read current values for logging
+    current_values = read_script_variables(gnn_network_path, list(updates.keys()))
+
+    # Apply all updates in a single operation
+    error = write_script_variables(gnn_network_path, updates)
     if error:
-        logger.error(f"Failed to update GNN epochs: {error}")
-        raise RuntimeError(f"Failed to update GNN epochs: {error}")
-    logger.info(f"Updated GNN epochs from {current_gnn_epochs} to {gnn_epochs}")
+        logger.error(f"Failed to update GNN Network.py: {error}")
+        raise RuntimeError(f"Failed to update GNN Network.py: {error}")
+
+    # Log all changes
+    logger.info(f"Successfully updated GNN Network.py with:")
+    for key, new_value in updates.items():
+        old_value = current_values.get(key)
+        logger.info(f"  {key}: {old_value} -> {new_value}")
+
+
+def _init_gnn_feature_count(dataset_path: Path) -> Dict[str, str]:
+    """
+    Read dataset metadata and return GNN Network.py parameter updates.
+
+    :param dataset_path: Path to the dataset directory containing metadata.txt
+    :return: Dictionary of parameter updates for GNN Network.py
+    :raises RuntimeError: If parsing metadata fails
+    """
+    metadata_file = dataset_path / "metadata.txt"
+
+    if not metadata_file.exists():
+        logger.error(f"Metadata file not found: {metadata_file}")
+        raise RuntimeError(f"Metadata file not found: {metadata_file}")
+
+    # Parse input/output features from metadata.txt
+    input_feature_count, output_feature_count = parse_input_output_features(
+        str(metadata_file)
+    )
+    logger.info(
+        f"Parsed features - Input: {input_feature_count}, Output: {output_feature_count}"
+    )
+
+    # Generate gating_indices and main_indices tensors
+    gating_indices_expr = (
+        f"torch.tensor([({input_feature_count} + i) for i in range(130)])"
+    )
+    main_indices_expr = f"torch.tensor([(0 + i) for i in range({input_feature_count})])"
+
+    logger.info(f"Generated GNN parameter updates:")
+    logger.info(f"  gating_indices = {gating_indices_expr}")
+    logger.info(f"  main_indices = {main_indices_expr}")
+
+    return {"gating_indices": gating_indices_expr, "main_indices": main_indices_expr}
 
 
 def reset_model(path_to_ai4anim: Path) -> None:
     """
-    Reset PAE and GNN Network.py files from their backup copies.
+    Reset PAE and GNN Network.py files and PAE DataShape.txt from their backup copies.
 
     :param path_to_ai4anim: Path to AI4Animation framework
     :raises RuntimeError: If reset fails
@@ -70,6 +183,22 @@ def reset_model(path_to_ai4anim: Path) -> None:
         logger.error(f"Failed to reset PAE Network.py: {error}")
         raise RuntimeError(f"Failed to reset PAE Network.py: {error}")
     logger.info("Reset PAE Network.py from backup")
+
+    # Reset PAE DataShape.txt
+    pae_data_shapes_path = path_to_ai4anim / "PAE" / "Dataset" / "DataShape.txt"
+    backup_path = pae_data_shapes_path.with_suffix(pae_data_shapes_path.suffix + '.animhost_backup')
+
+    if backup_path.exists():
+        try:
+            backup_content = backup_path.read_text(encoding='utf-8')
+            pae_data_shapes_path.write_text(backup_content, encoding='utf-8')
+            backup_path.unlink()
+            logger.info("Reset PAE DataShape.txt from backup")
+        except Exception as e:
+            logger.error(f"Failed to reset PAE DataShape.txt: {e}")
+            raise RuntimeError(f"Failed to reset PAE DataShape.txt: {e}")
+    else:
+        logger.warning("No backup found for PAE DataShape.txt")
 
     # Reset GNN Network.py
     gnn_network_path = path_to_ai4anim / "GNN" / "Network.py"

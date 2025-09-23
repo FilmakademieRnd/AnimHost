@@ -17,11 +17,11 @@ logger = logging.getLogger(__name__)
 
 def _find_variable_assignments(content: str, variable_name: str) -> List[Tuple[int, str, str]]:
     """
-    Find all assignments of a variable in script content.
+    Find all assignments of a variable in script content, excluding self-assignments.
 
     :param content: Script content as string
     :param variable_name: Variable name to search for
-    :return: List of (line_index, indent, value_string) tuples
+    :return: List of (line_index, indent, value_string) tuples, excluding self-assignments
     """
     lines = content.splitlines()
     assignments = []
@@ -34,6 +34,11 @@ def _find_variable_assignments(content: str, variable_name: str) -> List[Tuple[i
         if match:
             indent = match.group(1)
             value_str = match.group(2).strip()
+
+            # Exclude self-assignments (e.g., var_name = var_name)
+            if value_str == variable_name or value_str.rstrip(',') == variable_name:
+                continue
+            
             assignments.append((i, indent, value_str))
 
     return assignments
@@ -55,7 +60,7 @@ def _validate_unique_assignments(variable_name: str, assignments: List[Tuple[int
     unique_values = list(set(values))
 
     if len(unique_values) > 1:
-        return f"Multiple assignments with different values for '{variable_name}': {unique_values[0]} and {unique_values[1]}"
+        return f"Multiple assignments with different values for '{variable_name}' in script: {unique_values}"
     elif len(assignments) > 1:
         logger.warning(f"Multiple assignments with same value for '{variable_name}': {unique_values[0]}")
 

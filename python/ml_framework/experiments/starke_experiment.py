@@ -13,7 +13,6 @@ from config.model_configs import StarkeModelConfig
 from experiment_tracker import ExperimentTracker
 from external.starke_training import (
     validate_ai4animation_structure,
-    validate_starke_structure,
     init_model,
     reset_model,
     run_pae_training,
@@ -60,8 +59,8 @@ class StarkeExperiment(Experiment):
         if not validate_ai4animation_structure(self.config.path_to_ai4anim, "GNN"):
             raise RuntimeError("GNN training structure validation failed")
 
-        # Initialize model with configured epochs for both phases
-        init_model(self.config.path_to_ai4anim, self.config.pae_epochs, self.config.gnn_epochs)
+        # Initialize model hyperparameters and dataset parameters
+        init_model(self.config)
 
         self._initialized = True
         self.tracker.log_ui_status("Initialized", "Starke training pipeline initialized successfully.")
