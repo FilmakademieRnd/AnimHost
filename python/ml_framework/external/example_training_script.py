@@ -16,7 +16,7 @@ def main() -> None:
 
     Simulates a training process with the following characteristics:
 
-    - Progress percentage updates during total_epochs
+    - Progress percentage updates during epochs
     - Epoch completion with train loss
 
     :returns: None

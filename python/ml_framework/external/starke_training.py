@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Starke training script functions. Orchestration logic is separated into experiment classes.
+Starke training script functions. Orchestration logic is in an experiment classes.
 
 Supports starke repo validation, python script parameter adjustements, and subprocess
 training script calls with real-time output parsing.

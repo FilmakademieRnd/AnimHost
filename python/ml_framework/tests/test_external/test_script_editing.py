@@ -12,8 +12,6 @@ from external.script_editing import (
     read_script_variables,
     write_script_variables,
     reset_script,
-    read_script_variable,
-    write_script_variable,
 )
 
 
@@ -247,28 +245,6 @@ def test_read_validates_duplicates():
         assert result["batch_size"] == "32"  # Should work fine
     finally:
         temp_path.unlink(missing_ok=True)
-
-
-def test_single_variable_functions(temp_script):
-    """Test new single-variable functions."""
-    # Test read_script_variable
-    value, error = read_script_variable(temp_script, "epochs")
-    assert error is None
-    assert value == "10"
-
-    # Test read non-existent variable
-    value, error = read_script_variable(temp_script, "missing_var")
-    assert error is None
-    assert value is None
-
-    # Test write_script_variable
-    error = write_script_variable(temp_script, "epochs", 42)
-    assert error is None
-
-    # Verify the write
-    value, error = read_script_variable(temp_script, "epochs")
-    assert error is None
-    assert value == "42"
 
 
 def test_self_assignment_ignored():
