@@ -26,8 +26,9 @@ class StarkeModelConfig:
 
     dataset_path: Path
     path_to_ai4anim: Path
-    pae_epochs: int
     processed_data_path: Path
+    pae_epochs: int
+    gnn_epochs: int
 
     def __post_init__(self) -> None:
         """Convert string paths to Path objects if needed."""
@@ -60,10 +61,6 @@ class StarkeModelConfig:
             return f"AI4Animation path is not a directory: {self.path_to_ai4anim}"
         if not os.access(self.path_to_ai4anim, os.R_OK):
             return f"AI4Animation path is not readable: {self.path_to_ai4anim}"
-        
-        # Validate epochs > 0
-        if self.pae_epochs <= 0:
-            return f"PAE epochs must be greater than 0, got: {self.pae_epochs}"
 
         # Validate processed data path exists
         if not self.processed_data_path.exists():
@@ -72,5 +69,11 @@ class StarkeModelConfig:
             return f"Processed data path is not a directory: {self.processed_data_path}"
         if not os.access(self.processed_data_path, os.W_OK):
             return f"Processed data path is not writable: {self.processed_data_path}"
+        
+        # Validate epochs > 0
+        if self.pae_epochs <= 0:
+            return f"PAE epochs must be greater than 0, got: {self.pae_epochs}"
+        if self.gnn_epochs <= 0:
+            return f"GNN epochs must be greater than 0, got: {self.gnn_epochs}"
 
         return None

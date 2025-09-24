@@ -24,7 +24,7 @@ def main() -> None:
 
     print("Training Phases")
 
-    total_epochs = 2
+    total_epochs = 3
 
     # Simulate training epochs
     for epoch in range(1, total_epochs + 1):
