@@ -191,7 +191,13 @@ def write_script_variables(script_path: Path, updates: Dict[str, Union[str, int,
 
         # Create backup
         backup_path = script_path.with_suffix(script_path.suffix + '.animhost_backup')
-        backup_path.write_text(content, encoding='utf-8')
+        try:
+            backup_path.write_text(content, encoding='utf-8')
+            # Verify backup was written correctly
+            if not backup_path.exists() or backup_path.stat().st_size == 0:
+                return f"Failed to create valid backup file: {backup_path}"
+        except Exception as e:
+            return f"Failed to create backup: {e}"
 
         # Apply all updates to content
         modified_content = content
