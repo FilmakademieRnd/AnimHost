@@ -1,18 +1,26 @@
 # How to run
 
-## Option 1: Direct Python execution
+## Option 1: Automated launcher (Recommended)
 ```bash
 cd python/ml_framework
-python training.py
+launch_training.bat
 ```
 
 Or from the AnimHost root directory:
 ```bash
-python python/ml_framework/training.py
+python\ml_framework\launch_training.bat
 ```
-(__init__.py adds the module to sys.path automatically to allow execution from outside the ml_framework dir)
 
-## Option 2: AnimHost GUI
+This automatically activates the `animhost-ml-starke22` conda environment, runs training with real-time output streaming, and cleanly deactivates the environment when complete.
+
+## Option 2: Direct Python execution (Legacy)
+```bash
+cd python/ml_framework
+python training.py
+```
+Note: Requires manual activation of `animhost-ml-starke22` conda environment first.
+
+## Option 3: AnimHost GUI
 1. Launch AnimHost application
 2. Load `TestScenes/TrainingPipeline.flow`
 3. Execute the training pipeline through the node interface
