@@ -1,0 +1,30 @@
+name: animhost-ml-starke22
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9.23
+  - pytorch=1.10.0=py3.9_cuda11.3_cudnn8_0
+  - torchvision=0.11.1=py39_cu113
+  - torchaudio=0.10.0=py39_cu113
+  - cudatoolkit=11.3.1
+  - numpy=1.21.6
+  - matplotlib=3.8.4
+  - scipy=1.11.4
+  - pandas=1.5.3
+  - scikit-learn=1.6.1
+  - plotly=6.0.1
+  - pyqt=6.7.1
+  - pip=25.1
+  - setuptools=72.1.0
+  - wheel=0.45.1
+  - pip:
+    - pytest==8.4.2
+    - requests==2.32.5
+    - lxml==6.0.1
+    - beautifulsoup4==4.13.5
+    - gitpython==3.1.45
+    - sphinx-rtd-theme==3.0.2
+    - pygments==2.19.2
+    - colorama==0.4.6
