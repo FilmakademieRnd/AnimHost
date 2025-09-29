@@ -27,8 +27,8 @@
 /**
  * @brief Specialized config node for StarkeConfig
  *
- * This is a thin wrapper around ConfigNode<MLFramework::StarkeConfig>
- * that provides the concrete class needed for plugin registration.
+ * This is a thin wrapper around ConfigNode<MLFramework::StarkeConfig>.
+ * It provides the concrete class needed for plugin registration.
  */
 class TRAININGPLUGINSHARED_EXPORT StarkeConfigNode : public ConfigNode<MLFramework::StarkeConfig>
 {

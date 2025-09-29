@@ -41,7 +41,7 @@ ConfigWidget<ConfigStruct>::ConfigWidget(QWidget* parent)
  * @brief Sets configuration values and updates all widgets
  *
  * Updates the internal config and refreshes all UI widgets to reflect
- * the new values. This is typically called when loading saved configs.
+ * the new values. Typically called with loaded or default config data.
  */
 template<typename ConfigStruct>
 void ConfigWidget<ConfigStruct>::setConfig(const ConfigStruct& config) {
@@ -134,22 +134,22 @@ QWidget* ConfigWidget<ConfigStruct>::createWidgetForField(const QString& fieldNa
     // Template type checking - compiler chooses the right branch at compile time
     if constexpr (std::is_same_v<std::decay_t<FieldType>, QString>) {
         if (ConfigUtils::isPathField(fieldName.toStdString())) {
-            return createPathWidget(displayName, field);
+            return createPathWidget(displayName);
         } else {
-            return createLineEditWidget(displayName, field);
+            return createLineEditWidget(displayName);
         }
     }
     else if constexpr (std::is_same_v<std::decay_t<FieldType>, int>) {
-        return createSpinBoxWidget(displayName, field);
+        return createSpinBoxWidget(displayName);
     }
     else if constexpr (std::is_same_v<std::decay_t<FieldType>, double>) {
-        return createDoubleSpinBoxWidget(displayName, field);
+        return createDoubleSpinBoxWidget(displayName);
     }
     else if constexpr (std::is_same_v<std::decay_t<FieldType>, float>) {
-        return createDoubleSpinBoxWidget(displayName, static_cast<double>(field));
+        return createDoubleSpinBoxWidget(displayName);
     }
     else if constexpr (std::is_same_v<std::decay_t<FieldType>, bool>) {
-        return createCheckBoxWidget(displayName, field);
+        return createCheckBoxWidget(displayName);
     }
     else {
         static_assert(std::is_same_v<std::decay_t<FieldType>, void>, "Unsupported field type for ConfigWidget");
@@ -158,17 +158,24 @@ QWidget* ConfigWidget<ConfigStruct>::createWidgetForField(const QString& fieldNa
 }
 
 template<typename ConfigStruct>
-QWidget* ConfigWidget<ConfigStruct>::createPathWidget(const QString& displayName, const QString& /*value*/) {
-    auto* pathWidget = new FolderSelectionWidget(this, FolderSelectionWidget::SelectionType::Directory);
+QWidget* ConfigWidget<ConfigStruct>::createPathWidget(const QString& displayName) {
+    auto* groupBox = new QGroupBox(displayName, this);
+    auto* layout = new QVBoxLayout(groupBox);
+
+    auto* pathWidget = new FolderSelectionWidget(groupBox, FolderSelectionWidget::SelectionType::Directory);
     pathWidget->setObjectName(displayName);
     connect(pathWidget, &FolderSelectionWidget::directoryChanged, [this]() {
         emitConfigChanged();
     });
-    return pathWidget;
+
+    layout->addWidget(pathWidget);
+    groupBox->setLayout(layout);
+
+    return groupBox;
 }
 
 template<typename ConfigStruct>
-QWidget* ConfigWidget<ConfigStruct>::createLineEditWidget(const QString& displayName, const QString& /*value*/) {
+QWidget* ConfigWidget<ConfigStruct>::createLineEditWidget(const QString& displayName) {
     auto* containerWidget = new QWidget(this);
     auto* layout = new QHBoxLayout(containerWidget);
 
@@ -189,7 +196,7 @@ QWidget* ConfigWidget<ConfigStruct>::createLineEditWidget(const QString& display
 }
 
 template<typename ConfigStruct>
-QWidget* ConfigWidget<ConfigStruct>::createSpinBoxWidget(const QString& displayName, int /*value*/) {
+QWidget* ConfigWidget<ConfigStruct>::createSpinBoxWidget(const QString& displayName) {
     auto* containerWidget = new QWidget(this);
     auto* layout = new QHBoxLayout(containerWidget);
 
@@ -198,7 +205,7 @@ QWidget* ConfigWidget<ConfigStruct>::createSpinBoxWidget(const QString& displayN
 
     auto* spinBox = new QSpinBox(containerWidget);
     spinBox->setObjectName(displayName);
-    spinBox->setRange(0, 10000);
+    spinBox->setRange(0, INT_MAX);
     connect(spinBox, QOverload<int>::of(&QSpinBox::valueChanged), [this]() {
         emitConfigChanged();
     });
@@ -211,7 +218,7 @@ QWidget* ConfigWidget<ConfigStruct>::createSpinBoxWidget(const QString& displayN
 }
 
 template<typename ConfigStruct>
-QWidget* ConfigWidget<ConfigStruct>::createDoubleSpinBoxWidget(const QString& displayName, double /*value*/) {
+QWidget* ConfigWidget<ConfigStruct>::createDoubleSpinBoxWidget(const QString& displayName) {
     auto* containerWidget = new QWidget(this);
     auto* layout = new QHBoxLayout(containerWidget);
 
@@ -220,7 +227,7 @@ QWidget* ConfigWidget<ConfigStruct>::createDoubleSpinBoxWidget(const QString& di
 
     auto* doubleSpinBox = new QDoubleSpinBox(containerWidget);
     doubleSpinBox->setObjectName(displayName);
-    doubleSpinBox->setRange(0.0, 10000.0);
+    doubleSpinBox->setRange(0.0, DBL_MAX);
     doubleSpinBox->setDecimals(3);
     connect(doubleSpinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), [this]() {
         emitConfigChanged();
@@ -234,7 +241,7 @@ QWidget* ConfigWidget<ConfigStruct>::createDoubleSpinBoxWidget(const QString& di
 }
 
 template<typename ConfigStruct>
-QWidget* ConfigWidget<ConfigStruct>::createCheckBoxWidget(const QString& displayName, bool /*value*/) {
+QWidget* ConfigWidget<ConfigStruct>::createCheckBoxWidget(const QString& displayName) {
     auto* checkBox = new QCheckBox(displayName, this);
     checkBox->setObjectName(displayName);
     connect(checkBox, &QCheckBox::toggled, [this]() {
@@ -292,7 +299,7 @@ void ConfigWidget<ConfigStruct>::updateWidgetValue(const FieldType& field, const
 
     if constexpr (std::is_same_v<std::decay_t<FieldType>, QString>) {
         if (ConfigUtils::isPathField(fieldName.toStdString())) {
-            auto* pathWidget = qobject_cast<FolderSelectionWidget*>(widget);
+            auto* pathWidget = widget->findChild<FolderSelectionWidget*>(displayName);
             if (pathWidget) {
                 pathWidget->SetDirectory(field);
             }
@@ -357,7 +364,7 @@ void ConfigWidget<ConfigStruct>::updateConfigField(FieldType& field, const QStri
 
     if constexpr (std::is_same_v<std::decay_t<FieldType>, QString>) {
         if (ConfigUtils::isPathField(fieldName.toStdString())) {
-            auto* pathWidget = qobject_cast<FolderSelectionWidget*>(widget);
+            auto* pathWidget = widget->findChild<FolderSelectionWidget*>(displayName);
             if (pathWidget) {
                 field = pathWidget->GetSelectedDirectory();
             }

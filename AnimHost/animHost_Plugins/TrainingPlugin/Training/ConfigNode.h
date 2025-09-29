@@ -48,12 +48,10 @@
  * class MyConfigNode : public ConfigNode<MyConfig> {
  *     Q_OBJECT
  * public:
- *     QString getDisplayName() const override { return "My Config"; }
- *     QString getNodeCategory() const override { return "Configuration"; }
+ *     QString category() override { return "My Category"; }
  *     std::unique_ptr<NodeDelegateModel> Init() override {
  *         return std::make_unique<MyConfigNode>();
  *     }
- *     static QString Name() { return "MyConfigNode"; }
  * };
  * @endcode
  */

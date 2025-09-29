@@ -27,33 +27,6 @@
 #include <type_traits>
 #include <string_view>
 
-/**
- * @brief Macro to generate both const and non-const tie() methods for config structs
- *
- * This macro eliminates boilerplate by generating both const and non-const versions
- * of the tie() method that binds all struct fields into a std::tuple. This enables
- * automatic widget generation and JSON serialization.
- *
- * **Usage:**
- * @code
- * struct MyConfig {
- *     QString name;
- *     int value;
- *     bool enabled;
- *
- *     GENERATE_TIE_METHODS(name, value, enabled)
- *
- *     static constexpr auto field_names() {
- *         return std::array{"name", "value", "enabled"};
- *     }
- * };
- * @endcode
- *
- * @param ... Comma-separated list of all struct field names
- */
-#define GENERATE_TIE_METHODS(...) \
-    auto tie() const { return std::tie(__VA_ARGS__); } \
-    auto tie()       { return std::tie(__VA_ARGS__); }
 
 namespace ConfigUtils {
 

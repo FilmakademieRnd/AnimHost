@@ -27,6 +27,7 @@
 #include <QDoubleSpinBox>
 #include <QCheckBox>
 #include <QLineEdit>
+#include <QGroupBox>
 #include <tuple>
 #include <array>
 #include <type_traits>
@@ -122,11 +123,11 @@ private:
     template<std::size_t I, typename FieldType>
     QWidget* createWidgetForField(const QString& fieldName, const QString& displayName, FieldType& field);
 
-    QWidget* createPathWidget(const QString& displayName, const QString& value);
-    QWidget* createLineEditWidget(const QString& displayName, const QString& value);
-    QWidget* createSpinBoxWidget(const QString& displayName, int value);
-    QWidget* createDoubleSpinBoxWidget(const QString& displayName, double value);
-    QWidget* createCheckBoxWidget(const QString& displayName, bool value);
+    QWidget* createPathWidget(const QString& displayName);
+    QWidget* createLineEditWidget(const QString& displayName);
+    QWidget* createSpinBoxWidget(const QString& displayName);
+    QWidget* createDoubleSpinBoxWidget(const QString& displayName);
+    QWidget* createCheckBoxWidget(const QString& displayName);
 
     // Widget update methods
     template<std::size_t I, typename FieldType>

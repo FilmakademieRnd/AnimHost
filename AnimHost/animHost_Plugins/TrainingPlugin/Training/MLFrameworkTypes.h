@@ -67,12 +67,6 @@ struct TrainingMessage {
  * Supports auto-generated Qt widgets and JSON serialization.
  *
  * @note To add fields: update the field, tie() methods, field_names(), display_names()
- *
- * @code
- * StarkeConfig config;
- * QJsonObject json = config.toJson();
- * ConfigWidget<StarkeConfig> widget;
- * @endcode
  */
 struct StarkeConfig {
     QString dataset_path = "C:/anim-ws/AnimHost/datasets/Survivor_Gen";
@@ -100,8 +94,8 @@ struct StarkeConfig {
         return ConfigUtils::jsonToStruct<StarkeConfig>(obj);
     }
 
-    // Required for AnimNodeData
-    COMMONDATA(StarkeConfig, Starke Configuration)
+    // Required for AnimNodeData node inputs/outputs
+    COMMONDATA(StarkeConfig, Starke Config)
 };
 
 } // namespace MLFramework

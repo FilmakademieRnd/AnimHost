@@ -1,6 +1,3 @@
 {
-    "cmake.configureOnOpen": false,
-    "files.associations": {
-        "memory": "cpp"
-    }
+    "cmake.configureOnOpen": false
 }
