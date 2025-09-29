@@ -80,6 +80,14 @@ void TrainingNode::processInData(std::shared_ptr<NodeData> data, QtNodes::PortIn
         _configIn = std::static_pointer_cast<AnimNodeData<MLFramework::StarkeConfig>>(data);
         if (!_configIn.expired()) {
             qDebug() << "TrainingNode received StarkeConfig";
+
+            // Update widget with new configuration
+            if (_widget) {
+                auto configData = _configIn.lock();
+                if (configData && configData->getData()) {
+                    _widget->setConfiguration(*configData->getData());
+                }
+            }
         } else {
             qDebug() << "TrainingNode: Invalid StarkeConfig data";
         }
@@ -136,7 +144,7 @@ void TrainingNode::run()
     MLFramework::StarkeConfig currentConfig = *configPtr;
 
     // Save config to temporary file for Python script
-    QString configPath = QApplication::applicationDirPath() + "/../../python/ml_framework/temp_training_config.json";
+    QString configPath = QApplication::applicationDirPath() + "/../../python/ml_framework/starke_model_config.json";
     QJsonObject configJson = currentConfig.toJson();
     QJsonDocument doc(configJson);
     QFile configFile(configPath);
@@ -164,8 +172,16 @@ QWidget* TrainingNode::embeddedWidget()
 {
     if (!_widget) {
         _widget = new TrainingNodeWidget();
+
+        // Apply current configuration if available
+        if (!_configIn.expired()) {
+            auto configData = _configIn.lock();
+            if (configData && configData->getData()) {
+                _widget->setConfiguration(*configData->getData());
+            }
+        }
     }
-    
+
     return _widget;
 }
 
