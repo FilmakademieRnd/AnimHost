@@ -5,6 +5,12 @@
             "intNodeId": 1,
             "outNodeId": 0,
             "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 1,
+            "outNodeId": 3,
+            "outPortIndex": 1
         }
     ],
     "nodes": [
@@ -24,8 +30,18 @@
                 "model-name": "TrainingNode"
             },
             "position": {
-                "x": 100,
+                "x": 350,
                 "y": -100
+            }
+        },
+        {
+            "id": 3,
+            "internal-data": {
+                "model-name": "StarkeConfigNode"
+            },
+            "position": {
+                "x": -200,
+                "y": 0
             }
         }
     ]

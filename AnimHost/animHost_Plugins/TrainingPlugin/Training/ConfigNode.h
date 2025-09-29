@@ -74,14 +74,9 @@ public:
     virtual ~ConfigNode() = default;
 
     // Mandatory overrides for derived classes
-    virtual QString getDisplayName() const = 0;
-    virtual QString getNodeCategory() const = 0;
+    virtual QString category() override = 0;
     virtual std::unique_ptr<NodeDelegateModel> Init() override = 0;
 
-    // Base implementation uses derived methods
-    QString name() const override { return getDisplayName(); }
-    QString category() override { return getNodeCategory(); }
-    QString caption() const override { return this->name(); }
     bool captionVisible() const override { return true; }
 
     unsigned int nDataPorts(QtNodes::PortType portType) const override {

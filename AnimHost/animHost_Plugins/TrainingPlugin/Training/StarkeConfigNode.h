@@ -38,14 +38,9 @@ public:
     StarkeConfigNode() = default;
     virtual ~StarkeConfigNode() = default;
 
-    // Mandatory overrides from ConfigNode template
-    QString getDisplayName() const override { return "Starke Config"; }
-    QString getNodeCategory() const override { return "ML Configuration"; }
+    QString category() override { return "ML Configuration"; }
 
     std::unique_ptr<NodeDelegateModel> Init() override {
         return std::make_unique<StarkeConfigNode>();
     }
-
-    // Static method for plugin registration
-    static QString Name() { return "StarkeConfigNode"; }
 };
