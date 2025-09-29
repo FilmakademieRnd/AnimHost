@@ -41,11 +41,14 @@ class TRAININGPLUGINSHARED_EXPORT TrainingNode : public PluginNodeInterface
 private:
     // UI
     TrainingNodeWidget* _widget;
-    
+
     // Process management
     QProcess* _trainingProcess;
     QString _pythonScriptPath;
-    
+
+    // Configuration input
+    std::weak_ptr<AnimNodeData<MLFramework::StarkeConfig>> _configIn;
+
     // Framework automatically provides RunSignal input at port 0
 
 public:

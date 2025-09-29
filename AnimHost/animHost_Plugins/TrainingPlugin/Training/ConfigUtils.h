@@ -157,8 +157,14 @@ inline bool isPathField(std::string_view name) {
         return str.length() >= suffix.length() &&
                str.substr(str.length() - suffix.length()) == suffix;
     };
+    auto startsWith = [](std::string_view str, std::string_view prefix) {
+        return str.length() >= prefix.length() &&
+               str.substr(0, prefix.length()) == prefix;
+    };
+    const bool hasPathPrefix = startsWith(name, "path_") || startsWith(name, "dir_") || startsWith(name, "folder_");
+    const bool hasPathSuffix = endsWith(name, "_path") || endsWith(name, "_dir") || endsWith(name, "_folder");
 
-    return endsWith(name, "_path") || endsWith(name, "_dir") || endsWith(name, "_folder");
+    return hasPathPrefix || hasPathSuffix;
 }
 
 } // namespace ConfigUtils

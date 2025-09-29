@@ -30,7 +30,7 @@ def main() -> None:
 
     experiment = None
     try:
-        config = ConfigManager.load_config("starke_model_config.json")
+        config = ConfigManager.load_config("temp_training_config.json")
         experiment = StarkeExperiment(config, tracker)
         experiment.init()
         experiment.run()

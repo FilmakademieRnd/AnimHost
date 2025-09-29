@@ -22,6 +22,7 @@
 #include <QJsonObject>
 #include <tuple>
 #include <array>
+#include <commondatatypes.h>
 #include "ConfigUtils.h"
 
 namespace MLFramework {
@@ -65,7 +66,7 @@ struct TrainingMessage {
  *
  * Supports auto-generated Qt widgets and JSON serialization.
  *
- * @note To add fields: update the field, GENERATE_TIE_METHODS(), field_names(), display_names()
+ * @note To add fields: update the field, tie() methods, field_names(), display_names()
  *
  * @code
  * StarkeConfig config;
@@ -80,7 +81,8 @@ struct StarkeConfig {
     int pae_epochs = 2;
     int gnn_epochs = 2;
 
-    GENERATE_TIE_METHODS(dataset_path, path_to_ai4anim, processed_data_path, pae_epochs, gnn_epochs)
+    auto tie() const { return std::tie(dataset_path, path_to_ai4anim, processed_data_path, pae_epochs, gnn_epochs); }
+    auto tie()       { return std::tie(dataset_path, path_to_ai4anim, processed_data_path, pae_epochs, gnn_epochs); }
 
     static constexpr auto field_names() {
         return std::array{"dataset_path", "path_to_ai4anim", "processed_data_path", "pae_epochs", "gnn_epochs"};
@@ -97,6 +99,9 @@ struct StarkeConfig {
     static StarkeConfig fromJson(const QJsonObject& obj) {
         return ConfigUtils::jsonToStruct<StarkeConfig>(obj);
     }
+
+    // Required for AnimNodeData
+    COMMONDATA(StarkeConfig, Starke Configuration)
 };
 
 } // namespace MLFramework
