@@ -72,8 +72,8 @@ struct StarkeConfig {
     QString dataset_path = "C:/anim-ws/AnimHost/datasets/Survivor_Gen";
     QString path_to_ai4anim = "C:/anim-ws/AI4Animation/AI4Animation/SIGGRAPH_2022/PyTorch";
     QString processed_data_path = "C:/anim-ws/AnimHost/data";
-    int pae_epochs = 2;
-    int gnn_epochs = 2;
+    int pae_epochs = 30;
+    int gnn_epochs = 300;
 
     auto tie() const { return std::tie(dataset_path, path_to_ai4anim, processed_data_path, pae_epochs, gnn_epochs); }
     auto tie()       { return std::tie(dataset_path, path_to_ai4anim, processed_data_path, pae_epochs, gnn_epochs); }
