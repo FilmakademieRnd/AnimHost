@@ -1,0 +1,274 @@
+{
+    "connections": [
+        {
+            "inPortIndex": 1,
+            "intNodeId": 8,
+            "outNodeId": 9,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 6,
+            "outNodeId": 2,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 5,
+            "outNodeId": 10,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 5,
+            "outNodeId": 10,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 3,
+            "intNodeId": 3,
+            "outNodeId": 8,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 9,
+            "outNodeId": 4,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 10,
+            "outNodeId": 3,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 10,
+            "outNodeId": 3,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 8,
+            "outNodeId": 9,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 3,
+            "outNodeId": 8,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 9,
+            "outNodeId": 4,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 2,
+            "intNodeId": 9,
+            "outNodeId": 4,
+            "outPortIndex": 2
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 7,
+            "outNodeId": 6,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 2,
+            "intNodeId": 8,
+            "outNodeId": 4,
+            "outPortIndex": 2
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 11,
+            "outNodeId": 6,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 2,
+            "intNodeId": 3,
+            "outNodeId": 4,
+            "outPortIndex": 2
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 4,
+            "outNodeId": 11,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 4,
+            "intNodeId": 3,
+            "outNodeId": 7,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 6,
+            "outNodeId": 2,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 3,
+            "intNodeId": 5,
+            "outNodeId": 2,
+            "outPortIndex": 2
+        },
+        {
+            "inPortIndex": 2,
+            "intNodeId": 5,
+            "outNodeId": 6,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 7,
+            "outNodeId": 1,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 11,
+            "outNodeId": 1,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 3,
+            "outNodeId": 4,
+            "outPortIndex": 1
+        }
+    ],
+    "nodes": [
+        {
+            "id": 1,
+            "internal-data": {
+                "autoStart": true,
+                "ipAddress": "127.0.0.1",
+                "model-name": "UpdateReceiverNode"
+            },
+            "position": {
+                "x": -786.1999999999999,
+                "y": -132.30446979745665
+            }
+        },
+        {
+            "id": 2,
+            "internal-data": {
+                "autoStart": true,
+                "ipAddress": "127.0.0.1",
+                "model-name": "SceneReceiverNode"
+            },
+            "position": {
+                "x": -1334.6263119227544,
+                "y": 164.35792401343403
+            }
+        },
+        {
+            "id": 3,
+            "internal-data": {
+                "fileSelection": "../../../../Users/m5940/Desktop/DEMO_Package/ResourcesAnimHost/GNN_2025_01_30_Eddy_NoMirror_E290.onnx",
+                "mixControlPathRotation": 0.4,
+                "mixControlPathTranslation": 0.9,
+                "mixRootRotation": 0.5,
+                "mixRootTranslation": 0.5,
+                "model-name": "GNNNode",
+                "networkControlBias": 0.33000001311302185,
+                "networkPhaseBias": 0.5
+            },
+            "position": {
+                "x": 1274,
+                "y": -280.4
+            }
+        },
+        {
+            "id": 4,
+            "internal-data": {
+                "check": true,
+                "dir": "../../../../Users/m5940/Desktop/DEMO_Package/ResourcesAnimHost/fbx_source/",
+                "model-name": "Animation Import"
+            },
+            "position": {
+                "x": 169.59999999999997,
+                "y": -254.79999999999998
+            }
+        },
+        {
+            "id": 5,
+            "internal-data": {
+                "ipAddress": "127.0.0.1",
+                "model-name": "AnimationSenderNode"
+            },
+            "position": {
+                "x": 2572.666666666667,
+                "y": 106.66666666666667
+            }
+        },
+        {
+            "id": 6,
+            "internal-data": {
+                "model-name": "CharacterSelectorNode"
+            },
+            "position": {
+                "x": -844.4126679261128,
+                "y": 164.26858732157848
+            }
+        },
+        {
+            "id": 7,
+            "internal-data": {
+                "model-name": "ControlPathDecoderNode"
+            },
+            "position": {
+                "x": 746.8847292191435,
+                "y": -128.26359151973128
+            }
+        },
+        {
+            "id": 8,
+            "internal-data": {
+                "model-name": "JointVelocityPlugin"
+            },
+            "position": {
+                "x": 899.2069164567591,
+                "y": -491.10143786733835
+            }
+        },
+        {
+            "id": 9,
+            "internal-data": {
+                "model-name": "Global Joint Positions"
+            },
+            "position": {
+                "x": 616.8276658270361,
+                "y": -486.2397670025189
+            }
+        },
+        {
+            "id": 10,
+            "internal-data": {
+                "model-name": "CoordinateConverterPlugin"
+            },
+            "position": {
+                "x": 2037.7484734014406,
+                "y": -292.5559828452521
+            }
+        },
+        {
+            "id": 11,
+            "internal-data": {
+                "model-name": "RPCTriggerNode"
+            },
+            "position": {
+                "x": -292.1333333333333,
+                "y": -380.26666666666665
+            }
+        }
+    ]
+}
