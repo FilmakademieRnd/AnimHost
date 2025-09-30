@@ -271,24 +271,23 @@ def validate_ai4animation_structure(path_to_ai4anim: Path, phase: str) -> bool:
 
 
 def run_pae_training(
-    dataset_path: Path, path_to_ai4anim: Path, tracker: ExperimentTracker
-) -> None:
+    config: StarkeModelConfig, tracker: ExperimentTracker
+) -> bool:
     """
     PAE (Phase Autoencoder) training subprocess with real-time parsing.
 
     Copies training data to PAE directory and launches the PAE Network.py subprocess
     with real-time output parsing for progress updates.
 
-    :param dataset_path: Path to the dataset directory
-    :param path_to_ai4anim: Path to the AI4Animation framework directory
+    :param config: StarkeModelConfig containing all training parameters
     :param tracker: ExperimentTracker instance for logging
-    :raises RuntimeError: If PAE training subprocess fails
+    :return: True on success, False on failure
     """
     tracker.log_ui_status("Starting training 1/2 ...", "Starting PAE training phase...")
 
     # Validate input files exist
-    p_velocity_file = dataset_path / "p_velocity.bin"
-    sequences_file = dataset_path / "sequences_velocity.txt"
+    p_velocity_file = config.dataset_path / "p_velocity.bin"
+    sequences_file = config.dataset_path / "sequences_velocity.txt"
 
     if not p_velocity_file.exists() or not p_velocity_file.is_file():
         suggestion = (
@@ -315,7 +314,7 @@ def run_pae_training(
         )
 
     # PAE preprocessing - copy training data to PAE folder
-    pae_path = path_to_ai4anim / "PAE"
+    pae_path = config.path_to_ai4anim / "PAE"
     pae_dataset_path = pae_path / "Dataset"
 
     # Copy files: p_velocity.bin -> Data.bin, sequences_velocity.txt -> Sequences.txt
@@ -324,7 +323,7 @@ def run_pae_training(
 
     # Launch PAE Network.py subprocess
     # Use MPLBACKEND=Agg to suppress matplotlib windows because they don't show anything
-    run_script_subprocess(
+    return_code, stderr = run_script_subprocess(
         script_name="Network.py",
         working_dir=pae_path,
         model_name="Encoder",
@@ -334,8 +333,27 @@ def run_pae_training(
         env_overrides={"MPLBACKEND": "Agg"},
     )
 
+    if return_code != 0:
+        error_msg = f"PAE training subprocess failed with return code {return_code}"
+        if stderr:
+            error_msg += f"\nStderr output:\n{stderr}"
+        tracker.log_exception("PAE Training Failed", RuntimeError(error_msg))
+        return False
 
-def run_gnn_training(config: StarkeModelConfig, tracker: ExperimentTracker) -> None:
+    # Validate expected output file exists
+    expected_params_file = pae_path / "Training" / f"Parameters_{config.pae_epochs}.txt"
+    if not expected_params_file.exists():
+        error_msg = f"PAE training completed but expected output file not found: {expected_params_file}"
+        if stderr:
+            error_msg += f"\nStderr output:\n{stderr}"
+        tracker.log_exception("PAE Training Validation Failed", RuntimeError(error_msg))
+        return False
+
+    logger.info(f"PAE training completed successfully. Output validated: {expected_params_file}")
+    return True
+
+
+def run_gnn_training(config: StarkeModelConfig, tracker: ExperimentTracker) -> bool:
     """
     GNN (Graph Neural Network) training subprocess with real-time parsing.
 
@@ -344,7 +362,7 @@ def run_gnn_training(config: StarkeModelConfig, tracker: ExperimentTracker) -> N
 
     :param config: StarkeModelConfig containing all training parameters
     :param tracker: ExperimentTracker instance for logging
-    :raises RuntimeError: If GNN training subprocess fails
+    :return: True on success, False on failure
     """
     tracker.log_ui_status("Starting training 2/2 ...", "Starting GNN training phase...")
 
@@ -365,7 +383,7 @@ def run_gnn_training(config: StarkeModelConfig, tracker: ExperimentTracker) -> N
             shutil.copyfile(file_path, gnn_path / "Data" / file_path.name)
 
     # Launch GNN Network.py subprocess
-    run_script_subprocess(
+    return_code, stderr = run_script_subprocess(
         script_name="Network.py",
         working_dir=gnn_path,
         model_name="Controller",
@@ -373,6 +391,16 @@ def run_gnn_training(config: StarkeModelConfig, tracker: ExperimentTracker) -> N
             line, model_name, tracker
         ),
     )
+
+    if return_code != 0:
+        error_msg = f"GNN training subprocess failed with return code {return_code}"
+        if stderr:
+            error_msg += f"\nStderr output:\n{stderr}"
+        tracker.log_exception("GNN Training Failed", RuntimeError(error_msg))
+        return False
+
+    logger.info("GNN training completed successfully")
+    return True
 
 
 def parse_training_output(

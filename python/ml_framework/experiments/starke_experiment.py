@@ -84,14 +84,19 @@ class StarkeExperiment(Experiment):
         preprocess_velocity_data(dataset_path=self.config.dataset_path)
 
         # Run PAE training phase
-        run_pae_training(
-            dataset_path=self.config.dataset_path,
-            path_to_ai4anim=self.config.path_to_ai4anim,
+        pae_success = run_pae_training(
+            config=self.config,
             tracker=self.tracker,
         )
 
+        if not pae_success:
+            raise RuntimeError("PAE training failed. See logs for details.")
+
         # Run GNN training phase
-        run_gnn_training(self.config, tracker=self.tracker)
+        gnn_success = run_gnn_training(self.config, tracker=self.tracker)
+
+        if not gnn_success:
+            raise RuntimeError("GNN training failed. See logs for details.")
 
         # Final completion status
         self.tracker.log_ui_status(
