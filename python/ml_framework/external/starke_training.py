@@ -333,7 +333,6 @@ def run_pae_training(
         env_overrides={"MPLBACKEND": "Agg"},
     )
 
-
     if return_code != 0:
         error_msg = f"PAE training subprocess failed with return code {return_code}"
         if stderr:
