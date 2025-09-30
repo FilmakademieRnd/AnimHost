@@ -30,6 +30,7 @@
 #include <nodedatatypes.h>
 
 #include "Training/TrainingNode.h"
+#include "Training/StarkeConfigNode.h"
 
 
 class TRAININGPLUGINSHARED_EXPORT TrainingPlugin : public PluginNodeCollectionInterface
@@ -61,6 +62,7 @@ class TRAININGPLUGINSHARED_EXPORT TrainingPlugin : public PluginNodeCollectionIn
 
        void RegisterNodeCollection(NodeDelegateModelRegistry& nodeRegistry) override {
            nodeRegistry.registerModel<TrainingNode>([this](){ return std::make_unique<TrainingNode>();}, "MLFramework");
+           nodeRegistry.registerModel<StarkeConfigNode>([this](){ return std::make_unique<StarkeConfigNode>();}, "MLFramework");
        };
 
        void PostNodeCollectionRegistration() override {};

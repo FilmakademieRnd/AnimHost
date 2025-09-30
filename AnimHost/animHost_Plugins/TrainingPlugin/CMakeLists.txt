@@ -1,9 +1,13 @@
 set(target_name TrainingPlugin)
 
 qt_add_library(${target_name}
-    TrainingPlugin_global.h    
+    TrainingPlugin_global.h
     TrainingPlugin.cpp TrainingPlugin.h
+    Training/ConfigNode.h
+    Training/ConfigUtils.h
+    Training/ConfigWidget.h Training/ConfigWidget.cpp
     Training/MLFrameworkTypes.h
+    Training/StarkeConfigNode.h
     Training/TrainingNode.h Training/TrainingNode.cpp
     Training/TrainingNodeWidget.h Training/TrainingNodeWidget.cpp
 

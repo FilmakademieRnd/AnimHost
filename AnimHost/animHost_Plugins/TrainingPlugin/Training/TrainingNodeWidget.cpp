@@ -64,7 +64,7 @@ void TrainingNodeWidget::setupUI()
     _encoderGroupBox = new QGroupBox("Encoder Status", this);
     auto* trainingLayout = new QVBoxLayout(_encoderGroupBox);
     
-    _encoderProgressBar = new ProgressWidget<int>("Epoch", 2, _encoderGroupBox);
+    _encoderProgressBar = new ProgressWidget<int>("Epoch", 1, _encoderGroupBox);
     _encoderTrainLossLabel = new QLabel("Training Loss: --", _encoderGroupBox);
     
     trainingLayout->addWidget(_encoderProgressBar);
@@ -74,7 +74,7 @@ void TrainingNodeWidget::setupUI()
     _controllerGroupBox = new QGroupBox("Controller Status", this);
     auto* controllerLayout = new QVBoxLayout(_controllerGroupBox);
 
-    _controllerProgressBar = new ProgressWidget<int>("Epoch", 2, _controllerGroupBox);
+    _controllerProgressBar = new ProgressWidget<int>("Epoch", 1, _controllerGroupBox);
     _controllerTrainLossLabel = new QLabel("Training Loss: --", _controllerGroupBox);
 
     controllerLayout->addWidget(_controllerProgressBar);
@@ -160,5 +160,18 @@ void TrainingNodeWidget::resetProgress()
 {
     if (_encoderProgressBar) {
         _encoderProgressBar->updateValue(0);
+    }
+    if (_controllerProgressBar) {
+        _controllerProgressBar->updateValue(0);
+    }
+}
+
+void TrainingNodeWidget::setConfiguration(const MLFramework::StarkeConfig& config)
+{
+    if (_encoderProgressBar) {
+        _encoderProgressBar->setMaxValue(config.pae_epochs);
+    }
+    if (_controllerProgressBar) {
+        _controllerProgressBar->setMaxValue(config.gnn_epochs);
     }
 }

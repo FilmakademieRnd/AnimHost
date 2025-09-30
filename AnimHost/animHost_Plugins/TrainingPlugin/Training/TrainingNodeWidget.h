@@ -54,6 +54,11 @@ public:
      * Reset progress bars to initial state.
      */
     void resetProgress();
+    /**
+     * Set the configuration for the widget, updating progress bar maximums.
+     * @param config The StarkeConfig containing epoch settings.
+     */
+    void setConfiguration(const MLFramework::StarkeConfig& config);
 
 private:
     // UI components
