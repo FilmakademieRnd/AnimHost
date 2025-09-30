@@ -1,7 +1,6 @@
 name: animhost-ml-starke22
 channels:
   - pytorch
-  - conda-forge
   - defaults
 dependencies:
   - python=3.9.23
