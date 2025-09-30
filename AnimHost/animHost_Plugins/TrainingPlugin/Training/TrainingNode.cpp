@@ -30,7 +30,7 @@ TrainingNode::TrainingNode()
     _trainingProcess = new QProcess(this);
     
     // Set the path to the PowerShell launcher script relative to the AnimHost executable location
-    _pythonScriptPath = QApplication::applicationDirPath() + "/../../python/ml_framework/launch_training.ps1";
+    _trainingScriptPath = QApplication::applicationDirPath() + "/../../python/ml_framework/launch_training.ps1";
     
     // Connect process signals
     connect(_trainingProcess, &QProcess::readyReadStandardOutput, 
@@ -42,7 +42,7 @@ TrainingNode::TrainingNode()
     connect(_trainingProcess, &QProcess::errorOccurred,
             this, &TrainingNode::onTrainingProcessError);
     
-    qDebug() << "TrainingNode created with Python script path:" << _pythonScriptPath;
+    qDebug() << "TrainingNode created with Python script path:" << _trainingScriptPath;
 }
 
 TrainingNode::~TrainingNode()
@@ -162,7 +162,7 @@ void TrainingNode::run()
     // Start the PowerShell launcher script
     QString program = "powershell";
     QStringList arguments;
-    arguments << "-ExecutionPolicy" << "Bypass" << "-File" << _pythonScriptPath;
+    arguments << "-ExecutionPolicy" << "Bypass" << "-File" << _trainingScriptPath;
 
     qDebug() << "Starting process:" << program << arguments;
     _trainingProcess->start(program, arguments);

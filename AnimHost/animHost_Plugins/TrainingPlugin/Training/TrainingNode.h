@@ -44,7 +44,7 @@ private:
 
     // Process management
     QProcess* _trainingProcess;
-    QString _pythonScriptPath;
+    QString _trainingScriptPath;
 
     // Configuration input
     std::weak_ptr<AnimNodeData<MLFramework::StarkeConfig>> _configIn;

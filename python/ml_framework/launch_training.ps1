@@ -10,11 +10,9 @@ param(
 $TARGET_ENV = "animhost-ml-starke22"
 $TRAINING_SCRIPT = Join-Path $PSScriptRoot "training.py"
 $ENV_FILE = Join-Path $PSScriptRoot "environments\$TARGET_ENV.yml"
-$MAX_RETRIES = 10
-$RETRY_DELAY = 2
 
 function Write-JsonStatus($status, $text) {
-    $json = @{
+    $json = [ordered]@{
         status = $status
         text = $text
     } | ConvertTo-Json -Compress
@@ -30,10 +28,10 @@ try {
 }
 
 # Check if target environment exists by attempting activation
-Write-JsonStatus "Checking Environment" "Checking if environment '$TARGET_ENV' exists..."
+Write-JsonStatus "Checking Environment" "Checking if environment $TARGET_ENV exists..."
 $activateResult = & conda activate $TARGET_ENV 2>$null
 if ($LASTEXITCODE -ne 0) {
-    Write-JsonStatus "Environment Missing" "Conda environment '$TARGET_ENV' not found"
+    Write-JsonStatus "Environment Missing" "Conda environment $TARGET_ENV not found"
 
     # Check if environment YAML file exists
     if (-not (Test-Path $ENV_FILE)) {
@@ -45,13 +43,17 @@ if ($LASTEXITCODE -ne 0) {
     # Create environment automatically
     Write-JsonStatus "One-time Env Setup" "Creating environment from $TARGET_ENV.yml - this may take 2-5 minutes..."
     & conda env create -f $ENV_FILE -n $TARGET_ENV
+    if ($LASTEXITCODE -ne 0) {
+        Write-JsonStatus "Environment Error" "Failed to create environment $TARGET_ENV. Removing incomplete environment."
+        & conda env remove -n $TARGET_ENV
+        Write-JsonStatus "Environment Error" "Please try running the script again or manually create the environment with: conda env create -f $ENV_FILE -n $TARGET_ENV"
+        exit 1
+    }
 
     Write-JsonStatus "Verifying Environment" "Waiting for environment to be registered..."
 
-    # Retry verification with increasing delays
+    # Verify environment creation by attempting activation
     $verified = $false
-
-    # First attempt - no wait
     $testResult = & conda activate $TARGET_ENV 2>$null
     if ($LASTEXITCODE -eq 0) {
         $verified = $true
@@ -69,13 +71,13 @@ if ($LASTEXITCODE -ne 0) {
     }
 
     if (-not $verified) {
-        Write-JsonStatus "Environment Error" "Failed to verify newly created environment '$TARGET_ENV'. Removeing incomplete environment."
-        Write-JsonStatus "Environment Error" "Please try running the script again or manually create the environment with: conda env create -f $ENV_FILE -n $TARGET_ENV"
+        Write-JsonStatus "Environment Error" "Failed to verify newly created environment $TARGET_ENV. Removing incomplete environment."
         & conda env remove -n $TARGET_ENV
+        Write-JsonStatus "Environment Error" "Please try running the script again or manually create the environment with: conda env create -f $ENV_FILE -n $TARGET_ENV"
         exit 1
     }
 
-    Write-JsonStatus "Environment Ready" "Environment '$TARGET_ENV' created successfully"
+    Write-JsonStatus "Environment Ready" "Environment $TARGET_ENV created successfully"
 }
 
 # Run training with unbuffered output for real-time streaming
