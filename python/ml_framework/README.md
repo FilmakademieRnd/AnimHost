@@ -1,20 +1,20 @@
 # How to run
 
 ## Option 1: Automated launcher (Recommended)
-```bash
+```powershell
 cd python/ml_framework
-launch_training.bat
+launch_training.ps1
 ```
 
 Or from the AnimHost root directory:
-```bash
+```powershell
 python\ml_framework\launch_training.bat
 ```
 
 This automatically activates the `animhost-ml-starke22` conda environment, runs training with real-time output streaming, and cleanly deactivates the environment when complete.
 
 ## Option 2: Direct Python execution (Legacy)
-```bash
+```powershell
 cd python/ml_framework
 python training.py
 ```

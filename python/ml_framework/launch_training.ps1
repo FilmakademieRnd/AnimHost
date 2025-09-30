@@ -51,73 +51,31 @@ if ($LASTEXITCODE -ne 0) {
     # Retry verification with increasing delays
     $verified = $false
 
-    # First attempt - 2 second wait
-    Start-Sleep 2
-    $testResult = & conda run -n $TARGET_ENV python --version 2>$null
+    # First attempt - no wait
+    $testResult = & conda activate $TARGET_ENV 2>$null
     if ($LASTEXITCODE -eq 0) {
         $verified = $true
     }
 
-    # Retry 1 - 3 second wait with cache refresh
+    # Retry - 3 second wait with cache refresh
     if (-not $verified) {
-        Write-JsonStatus "Verification Retry" "Retry 1/3: Environment not ready, waiting 3 seconds..."
+        Write-JsonStatus "Verification Retry" "Retry: Environment not ready, waiting 3 seconds..."
         Start-Sleep 3
         $null = & conda info --envs 2>$null
-        $testResult = & conda run -n $TARGET_ENV python --version 2>$null
+        $testResult = & conda activate $TARGET_ENV 2>$null
         if ($LASTEXITCODE -eq 0) {
             $verified = $true
         }
     }
 
-    # Retry 2 - 5 second wait with cache refresh
     if (-not $verified) {
-        Write-JsonStatus "Verification Retry" "Retry 2/3: Environment not ready, waiting 5 seconds..."
-        Start-Sleep 5
-        $null = & conda info --envs 2>$null
-        $testResult = & conda run -n $TARGET_ENV python --version 2>$null
-        if ($LASTEXITCODE -eq 0) {
-            $verified = $true
-        }
-    }
-
-    # Final fallback - check conda env list
-    if (-not $verified) {
-        Write-JsonStatus "Verification Retry" "Retry 3/3: Environment not ready, trying fallback..."
-        Write-JsonStatus "Debug" "Checking conda env list output..."
-        $envList = & conda env list
-        Write-Host $envList
-        Write-Host ""
-
-        Write-JsonStatus "Debug" "Testing conda run command..."
-        $testResult = & conda run -n $TARGET_ENV python --version
-        Write-Host ""
-
-        Write-JsonStatus "Debug" "Testing manual activation..."
-        $activateTest = & conda activate $TARGET_ENV 2>$null
-        if ($LASTEXITCODE -eq 0) {
-            Write-JsonStatus "Environment Ready" "Manual activation successful - environment exists"
-            & conda deactivate 2>$null
-            $verified = $true
-        }
-    }
-
-    if (-not $verified) {
-        Write-JsonStatus "Environment Error" "Failed to verify newly created environment '$TARGET_ENV'"
-        Write-JsonStatus "Environment Error" "Environment may have been created but not detected. Try: conda activate $TARGET_ENV"
+        Write-JsonStatus "Environment Error" "Failed to verify newly created environment '$TARGET_ENV'. Removeing incomplete environment."
+        Write-JsonStatus "Environment Error" "Please try running the script again or manually create the environment with: conda env create -f $ENV_FILE -n $TARGET_ENV"
+        & conda env remove -n $TARGET_ENV
         exit 1
     }
 
     Write-JsonStatus "Environment Ready" "Environment '$TARGET_ENV' created successfully"
-}
-
-# Deactivate environment from initial check if it was activated
-& conda deactivate 2>$null
-
-# Activate conda environment for training
-& conda activate $TARGET_ENV
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "Error: Failed to activate conda environment '$TARGET_ENV'"
-    exit 1
 }
 
 # Run training with unbuffered output for real-time streaming
