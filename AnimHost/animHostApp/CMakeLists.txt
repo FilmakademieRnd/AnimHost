@@ -72,3 +72,19 @@ add_custom_command(TARGET AnimHost POST_BUILD
         ${CMAKE_SOURCE_DIR}/animHost_Plugins/BasicOnnxPlugin/onnxruntime/lib/onnxruntime.dll
         $<TARGET_FILE_DIR:AnimHost>
 )
+
+# Copy Python ML framework for training
+add_custom_command(TARGET AnimHost POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/../python/ml_framework
+        $<TARGET_FILE_DIR:AnimHost>/python/ml_framework
+    COMMENT "Copying Python ML framework to build output..."
+)
+
+# Copy TestScenes for distribution
+add_custom_command(TARGET AnimHost POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/../TestScenes
+        $<TARGET_FILE_DIR:AnimHost>/TestScenes
+    COMMENT "Copying TestScenes to build output..."
+)
