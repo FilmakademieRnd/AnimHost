@@ -2,7 +2,7 @@
 
 ## Requirements & First Run
 
-**Options 1 & 2:** Require Windows with PowerShell and winget
+**Options 1 & 2:** Require Windows with PowerShell and winget or conda
 - First run automatically installs Miniconda if not present (handled by launcher script)
 - Everything else (conda environments, dependencies) is automatically configured
 - By using the automated launcher, you accept [Anaconda Terms of Service](https://www.anaconda.com/terms-of-service)
