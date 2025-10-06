@@ -1,9 +1,13 @@
 # How to run
 
-## Platform Requirements
+## Requirements & First Run
 
-**Options 1 & 2:** Require Windows with PowerShell
-**Option 3:** Works on all platforms with conda environment activated
+**Options 1 & 2:** Require Windows with PowerShell and winget
+- First run automatically installs Miniconda if not present (handled by launcher script)
+- Everything else (conda environments, dependencies) is automatically configured
+- By using the automated launcher, you accept [Anaconda Terms of Service](https://www.anaconda.com/terms-of-service)
+
+**Option 3:** Requires manual conda/miniconda installation and environment activation (works on all platforms)
 
 ## Option 1: AnimHost GUI (Windows only, Recommended)
 1. Launch AnimHost application
