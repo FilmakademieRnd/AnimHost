@@ -374,11 +374,12 @@ def run_gnn_training(config: StarkeModelConfig, tracker: ExperimentTracker) -> b
     # GNN preprocessing - prepare training data for generator
     mp.input_preprocessing()
     mp.output_preprocessing()
-    mp.export_data()
+    processed_data_path = config.dataset_path / "processed"
+    mp.export_data(processed_data_path)
 
     # Copy all files from processed folder to GNN folder
     gnn_path = config.path_to_ai4anim / "GNN"
-    for file_path in config.processed_data_path.iterdir():
+    for file_path in processed_data_path.iterdir():
         if file_path.is_file():  # Only copy files, not directories
             shutil.copyfile(file_path, gnn_path / "Data" / file_path.name)
 
