@@ -3,5 +3,4 @@
     "gnn_epochs": 300,
     "pae_epochs": 30,
     "path_to_ai4anim": "C:/anim-ws/AI4Animation/AI4Animation/SIGGRAPH_2022/PyTorch",
-    "processed_data_path": "C:/anim-ws/AnimHost/data"
 }
