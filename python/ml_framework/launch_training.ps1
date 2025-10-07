@@ -48,7 +48,47 @@ function Install-Miniconda {
     # Refresh environment to pick up PATH changes
     $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "User") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "Machine")
 
-    Write-JsonStatus "Installation Complete" "Miniconda installed successfully via winget"
+    # Initialize conda for PowerShell in the current session
+    Write-JsonStatus "Initializing Conda" "Setting up conda for PowerShell..."
+
+    # Find conda installation path
+    $condaPaths = @(
+        "$env:USERPROFILE\miniconda3",
+        "$env:LOCALAPPDATA\miniconda3",
+        "C:\ProgramData\miniconda3",
+        "$env:USERPROFILE\AppData\Local\Microsoft\WindowsApps\Anaconda.Miniconda3_*"
+    )
+
+    $condaPath = $null
+    foreach ($path in $condaPaths) {
+        if (Test-Path $path\Scripts\conda.exe) {
+            $condaPath = $path
+            Write-JsonStatus "Conda Found" "Conda installation found at $condaPath"
+            break
+        }
+    }
+
+    if (-not $condaPath) {
+        Write-JsonStatus "Initialization Warning" "Could not find conda installation path. You may need to restart your terminal"
+        return $true
+    }
+
+    # Initialize conda for PowerShell (run conda init powershell)
+    & "$condaPath\Scripts\conda.exe" init powershell 2>&1 | Out-Null
+
+    # Source the conda hook for current session
+    $condaHook = "$env:USERPROFILE\Documents\WindowsPowerShell\profile.ps1"
+    if (Test-Path $condaHook) {
+        . $condaHook
+    }
+
+    # Accept conda Terms of Service for required channels
+    Write-JsonStatus "Accepting ToS" "Accepting conda channel Terms of Service..."
+    & "$condaPath\Scripts\conda.exe" tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main 2>&1 | Out-Null
+    & "$condaPath\Scripts\conda.exe" tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r 2>&1 | Out-Null
+    & "$condaPath\Scripts\conda.exe" tos accept --override-channels --channel https://repo.anaconda.com/pkgs/msys2 2>&1 | Out-Null
+
+    Write-JsonStatus "Installation Complete" "Miniconda installed and initialized successfully"
     return $true
 }
 
