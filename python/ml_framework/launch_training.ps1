@@ -11,6 +11,10 @@ $TARGET_ENV = "animhost-ml-starke22"
 $TRAINING_SCRIPT = Join-Path $PSScriptRoot "training.py"
 $ENV_FILE = Join-Path $PSScriptRoot "environments\$TARGET_ENV.yml"
 
+# Emits a JSON status message for consumption by TrainingPlugin (C++)
+# Parameters:
+#   $status - Status category (e.g., "Environment Error", "Downloading Miniconda")
+#   $text   - Detailed status message
 function Write-JsonStatus($status, $text) {
     $json = [ordered]@{
         status = $status
@@ -19,12 +23,56 @@ function Write-JsonStatus($status, $text) {
     Write-Host $json
 }
 
+# Installs Miniconda using winget (Windows Package Manager)
+# Returns $true on success, $false on failure
+# Winget handles PATH and installation automatically
+function Install-Miniconda {
+    # Check if winget is available
+    try {
+        $null = Get-Command winget -ErrorAction Stop
+    } catch {
+        Write-JsonStatus "Environment Error" "winget not found. Please install winget to enable automatic Miniconda installation"
+        Write-JsonStatus "Environment Error" "Winget comes pre-installed on Windows 11 and Windows 10 (1809+). Install 'App Installer' from Microsoft Store if missing"
+        return $false
+    }
+
+    Write-JsonStatus "Installing Miniconda" "Installing via winget (this may take 2-5 minutes)..."
+
+    # Install Miniconda using winget with silent mode
+    & winget install Anaconda.Miniconda3 --silent --accept-package-agreements --accept-source-agreements
+    if ($LASTEXITCODE -ne 0) {
+        Write-JsonStatus "Install Error" "Miniconda installation via winget failed with exit code $LASTEXITCODE"
+        return $false
+    }
+
+    # Refresh environment to pick up PATH changes
+    $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "User") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "Machine")
+
+    Write-JsonStatus "Installation Complete" "Miniconda installed successfully via winget"
+    return $true
+}
+
 # Check if conda is available
 try {
     $null = Get-Command conda -ErrorAction Stop
 } catch {
-    Write-JsonStatus "Environment Error" "conda not found in PATH. Please install conda/miniconda and add it to your PATH"
-    exit 1
+    Write-JsonStatus "Conda Missing" "conda not found in PATH. Attempting automatic installation..."
+
+    $installed = Install-Miniconda
+    if (-not $installed) {
+        Write-JsonStatus "Environment Error" "Failed to install Miniconda automatically"
+        Write-JsonStatus "Environment Error" "Please install conda/miniconda manually from https://docs.conda.io/en/latest/miniconda.html"
+        exit 1
+    }
+
+    # Verify conda is now available
+    try {
+        $null = Get-Command conda -ErrorAction Stop
+        Write-JsonStatus "Conda Ready" "Conda installation verified and ready to use"
+    } catch {
+        Write-JsonStatus "Environment Error" "Conda installed but not found in PATH. Please restart your terminal and try again"
+        exit 1
+    }
 }
 
 # Check if target environment exists by attempting activation
