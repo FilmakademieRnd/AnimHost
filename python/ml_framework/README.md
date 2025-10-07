@@ -1,129 +1,126 @@
-# How to run
+# Training Character Animation Models
 
-## Requirements & First Run
+This guide walks you through training AI-powered character animation models using the AnimHost pipeline and motion capture data.
 
-**Options 1 & 2:** Require Windows with PowerShell and winget
-- First run automatically installs Miniconda if not present (handled by launcher script)
-- Everything else (conda environments, dependencies) is automatically configured
-- By using the automated launcher, you accept [Anaconda Terms of Service](https://www.anaconda.com/terms-of-service)
+## Prerequisites
 
-**Option 3:** Requires manual conda/miniconda installation and environment activation (works on all platforms)
+- **AnimHost Release**: Download the latest release from [GitHub Releases](https://github.com/FilmakademieRnd/AnimHost/releases)
+- **Windows**: Windows 10/11 with PowerShell
+- **GPU**: NVIDIA GPU recommended for faster training
+- **Disk Space**: ~50GB (TODO:jasper2xf) for datasets and training outputs
 
-## Option 1: AnimHost GUI (Windows only, Recommended)
-1. Launch AnimHost application
-2. Load `TestScenes/TrainingPipeline.flow`
-3. Execute the training pipeline through the node interface
+## Quick Start: Complete Training Workflow
 
-## Option 2: Automated launcher (Windows only)
-```powershell
-cd python/ml_framework
-launch_training.ps1
+### Step 1: Download AI4Animation Framework
+
+Download the [AI4Animation repository](https://github.com/sebastianstarke/AI4Animation) code as a zip file and unpack it next to your AnimHost release. The repository is 3.2GB so this will take some time.
+
+![alt text](<../../doc/resources/ai4animation_code_download_zip.png>)
+
+**Recommended directory structure:**
+```
+C:/My-AnimHost-Run/
+├── AnimHost/
+│   ├── AnimHost.exe
+│   ├── TestScenes/
+│   └── python/
+└── AI4Animation-master/
+    └── AI4Animation/
+        └── SIGGRAPH_2022/
 ```
 
-Or from the AnimHost root directory:
-```powershell
-python\ml_framework\launch_training.bat
+**Copyright Notice**: AI4Animation is only for research or education purposes, and not freely available for commercial use or redistribution.
+
+### Step 2: Download Motion Capture Dataset
+
+Download the *SURVIVOR AnimHost Motion Capture Dataset 2025* under the *ANIMHOST MOTION CAPTURE DATASET 2024 & 2025* section [here](https://animationsinstitut.de/en/research/projects/max-r). Place it with the AnimHost and AI4Animation directory.
+```
+C:/My-AnimHost-Run/
+...
+└── Survivor_AnimHost_Mocap_Dataset_2025/
+    ├── FBX/
+    └── Survivor_Mocap_dataset_2025_Readme_License.html
 ```
 
-This automatically activates the `animhost-ml-starke22` conda environment, runs training with real-time output streaming, and cleanly deactivates the environment when complete.
+### Step 3: Preprocess Motion Capture Data
 
-## Option 3: Direct Python execution (All platforms)
-```powershell
-cd python/ml_framework
-python training.py
+1. Create a directory for your processed dataset. E.g.:
 ```
-Note: Requires manual activation of `animhost-ml-starke22` conda environment first.
-
-# How to test
-
-## Run all tests
-```bash
-cd python/ml_framework/tests
-pytest tests/ -v
+C:/My-AnimHost-Run/
+...
+└── Survivor_Training_Data/
 ```
+2. Launch `AnimHost.exe` from the release package
+3. Load the preprocessing pipeline: **File → Open → AnimHost/TestScenes/Preprocessing.flow**
+4. Configure the nodes:
+   - In the *Animation Import* node select the SURVIVOR dataset directory *.../FBX/Mirror* or *.../FBX/Test* (for testing)
+   - In the *DataExportPlugin* node select the output dir *C:/My-AnimHost-Run/Survivor_Training_Data*. And make sure `overwrite` and `writeBin` are checked.
+   - In the *LocomotionPreprocessNode* select the output dir *C:/My-AnimHost-Run/Survivor_Training_Data*.
+5. Click **Run** to generate training data files
 
-## Run specific test modules
-```bash
-# Test experiment tracker only
-pytest tests/test_experiment_tracker.py -v
+This outputs preprocessed binary data (`data_x.bin`, `data_y.bin`) and metadata files needed for training.
 
-# Test external training integration
-pytest tests/test_external/test_example_training.py -v
-```
+### Step 4: Train the Animation Model
 
-# Developer Documentation
+1. In AnimHost, load the training pipeline: **File → Open → TestScenes/TrainingPipeline.flow**
+2. Configure the dataset node:
+    - Select the `Dataset Path` you used, *C:/My-AnimHost-Run/Survivor_Training_Data*.
+    - Select the `AI4Animation Path` you used, *C:/My-AnimHost-Run/AI4Animation-master*.
+    - Set the `PAE epochs` and `GNN epochs` to 2 epochs for a test run or use the **default configuration for a run that takes X hours on a X GPU** (TODO:jasper2xf)
+3. Click **Run** to start training
 
-```mermaid
-graph TB
-    subgraph "AnimHost Node Framework (Qt/C++)"
-        A["**TrainingNodeWidget**<br/><small>Qt UI widget displaying training progress and status</small>"]
-        C["**MLFramework::TrainingMessage**<br/><small>C++ struct parsing JSON from Python (from_json method)</small>"]
-        B["**TrainingNode**<br/><small>C++ node managing QProcess to launch PowerShell script</small>"]
-    end
+The training process will:
+- Automatically install Miniconda if not present (Windows only)
+- Create the `animhost-ml-starke22` conda environment
+- Train Phase Autoencoder (PAE) and Gated Neural Network (GNN)
+- Display real-time training progress in the UI
 
-    D["**JSON Message**<br/>"]
+---
 
-    subgraph "PowerShell Launcher Layer"
-        H["**launch_training.ps1**<br/><small>Checks/creates conda environment, activates it, launches training</small>"]
-    end
+## Alternative Training Methods
 
-    subgraph "Python ML Framework"
-        E["**ExperimentTracker**<br/><small>Captures and outputs training progress and std logger</small>"]
-        F["**Training Script**<br/><small>Entry point coordinating training pipeline</small>"]
-        G["**Starke Training Functions**<br/><small>Actual ML training implementation</small>"]
-    end
+For developers and advanced users, see [DEV_GUIDE.md](DEV_GUIDE.md) for:
+- **Option 1**: Self built AnimHost GUI (Windows, recommended above)
+- **Option 2**: Automated PowerShell launcher
+- **Option 3**: Direct Python execution (cross-platform)
+- Developer documentation and architecture diagrams
+- Testing instructions
 
-    %% Connections
-    B --> |"QProcess->start('powershell')"| H
-    H --> |"python -u training.py"| F
-    F --> |"subprocess.Popen(...)"| G
-    G --> |"log_epoch(...)"| E
-    E --- |"_emit_json(...)"| D
-    D --> |"onTrainingOutput()"| B
-    B --- C
-    C --> |"updateFromMessage(*)"| A
+---
 
-    %% Styling
-    classDef cppLayer fill:#065f46,stroke:#10b981,stroke-width:2px,color:#ffffff
-    classDef interfaceNode fill:#374151,stroke:#6b7280,stroke-width:2px,color:#ffffff
-    classDef launcherLayer fill:#7c2d12,stroke:#f97316,stroke-width:2px,color:#ffffff
-    classDef pythonLayer fill:#1e40af,stroke:#3b82f6,stroke-width:2px,color:#ffffff
+## Outputs
 
-    class A,B,C cppLayer
-    class D interfaceNode
-    class H launcherLayer
-    class E,F,G pythonLayer
-```
+After training completes, you'll find:
 
-## Integration Overview
+- **Phase Autoencoder**: `AI4Animation/SIGGRAPH_2022/PyTorch/PAE/Training/`
+- **Gated Neural Network**: `AI4Animation/SIGGRAPH_2022/PyTorch/GNN/Training/`
 
-The TrainingPlugin bridges AnimHost's C++ node framework with Python ML training scripts via JSON inter-process communication.
-* The TrainingNode launches a PowerShell launcher script using QProcess, which manages conda environment setup and activation before executing the Python training script.
-* The Python training script will launch an additional subprocess when using an external experiment script.
-* The ExperimentTracker provides structured logging from Python back to the UI. The ExperimentTracker also captures and shares external training script output and standard logger.
+These trained models can be integrated into AnimHost for real-time character animation.
 
-**Critical Interface Requirement**: Any changes to the JSON protocol must be synchronized between:
-- `ExperimentTracker._emit_json()` method in Python (emits JSON with status, text, metrics fields)
-- `MLFramework::TrainingMessage.from_json()` method in C++ (parses the same JSON structure)
+---
 
-This ensures consistent communication between the Python training pipeline and AnimHost's UI components. At this point, this implicit interface is preferred over a strictly enforced message structure for ease of iteration.
+## Troubleshooting
 
-## External Training Script Integration
+**Issue**: TODO(jasper2xf)
+**Solution**: TODO(jasper2xf)
 
-External training scripts (like Starke SIGGRAPH 2022's Network.py) are integrated as subprocesses with customized line parsers:
 
-```python
-# Example from starke_training.py
-run_script_subprocess(
-    script_name="Network.py",
-    working_dir=gnn_path,
-    model_name="Controller", 
-    line_parser=lambda line, model_name: parse_training_output(line, model_name, tracker)
-)
-```
+For technical issues, see [DEV_GUIDE.md](DEV_GUIDE.md) or [open an issue](https://github.com/FilmakademieRnd/AnimHost/issues).
 
-The `line_parser` function converts script-specific output formats into standardized JSON messages:
-- Parses "Epoch 1 0.329..." → `tracker.log_epoch("Controller training", {"epoch": 1, "loss": 0.329})`
-- Parses "Progress 23.42 %" → `tracker.log_percentage_progress("Controller training", 23.42)`
+---
 
-This architecture allows integration of any external training script by providing an appropriate line parser that translates its output format into the standard JSON protocol.
+## About
+![](/doc/resources/FA_AI_Logo.png) &nbsp;&nbsp;&nbsp;&nbsp;
+![](/doc/resources/logo_rnd.jpg) &nbsp;&nbsp;&nbsp;&nbsp;
+![](/doc/resources/Max-R_Logo.png)
+
+AnimHost is a development by [Filmakademie Baden-Wuerttemberg](https://filmakademie.de/), [Animationsinstitut R&D Labs](http://research.animationsinstitut.de/) in the scope of the EU funded project [MAX-R](https://max-r.eu/) (101070072).
+
+## Funding
+![Animationsinstitut R&D](/doc/resources/EN_FundedbytheEU_RGB_POS_rs.png)
+
+This project has received funding from the European Union's Horizon Europe Research and Innovation Programme under Grant Agreement No 101070072 MAX-R.
+
+## License
+AnimHost is a open-sorce development by Filmakademie Baden-Wuerttemberg's Animationsinstitut.  
+The framework is licensed under [MIT](LICENSE.txt). See [License info file](LICENSE_Info.txt) for more details.

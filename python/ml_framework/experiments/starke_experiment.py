@@ -53,11 +53,9 @@ class StarkeExperiment(Experiment):
         """
         self.tracker.log_ui_status("Initializing", "Initializing Starke training pipeline...")
 
-        # Validate AI4Animation structure for both phases
-        if not validate_ai4animation_structure(self.config.path_to_ai4anim, "PAE"):
-            raise RuntimeError("PAE training structure validation failed")
-        if not validate_ai4animation_structure(self.config.path_to_ai4anim, "GNN"):
-            raise RuntimeError("GNN training structure validation failed")
+        # Validate AI4Animation structure for both PAE and GNN phases
+        if not validate_ai4animation_structure(self.config.path_to_ai4anim):
+            raise RuntimeError("AI4Animation structure validation failed for PAE and/or GNN")
 
         # Initialize model hyperparameters and dataset parameters
         init_model(self.config)
