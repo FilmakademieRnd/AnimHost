@@ -43,12 +43,11 @@ BasicOnnxPlugin::BasicOnnxPlugin()
 
     AnimNodeData<OnnxTensor> test;
 
-    qDebug() << "BasicOnnxPlugin created";
 }
 
 BasicOnnxPlugin::~BasicOnnxPlugin() 
 {
-    qDebug() << "~BasicOnnxPlugin()";
+
 }
 
 unsigned int BasicOnnxPlugin::nDataPorts(QtNodes::PortType portType) const

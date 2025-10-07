@@ -26,12 +26,10 @@
 RunTriggerPlugin::RunTriggerPlugin()
 {
     _pushButton = nullptr;
-    qDebug() << "RunTriggerPlugin created";
 }
 
 RunTriggerPlugin::~RunTriggerPlugin()
 {
-    qDebug() << "~RunTriggerPlugin()";
 }
 
 unsigned int RunTriggerPlugin::nDataPorts(QtNodes::PortType portType) const

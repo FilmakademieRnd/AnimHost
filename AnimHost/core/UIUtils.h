@@ -27,8 +27,77 @@
 #include <QWidget>
 #include <QPainter>
 #include <QVector>
+#include <DynamicListWidget.h>
 #include <cmath>
 
+
+namespace UIUtils {
+	class DynamicListWidget;
+}
+
+
+class ANIMHOSTCORESHARED_EXPORT StyleSheet {
+public:
+	const QString mainStyleSheet = ""
+		"QHeaderView::section {"
+		"background-color:rgba(64, 64, 64, 0%);"
+		"border: 0px solid white;}"
+		
+		"QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"
+
+		"QPushButton{"
+		"border: 1px solid white;"
+		"border-radius: 4px;"
+		"padding: 5px;"
+		"background-color:rgb(98, 139, 202);}"
+		
+		"QLabel{padding: 5px;}"
+
+		"QComboBox{"
+		"background-color:rgb(25, 25, 25);"
+		"border: 1px;"
+		"border-color: rgb(60, 60, 60);"
+		"border-radius: 4px;"
+		"padding: 5px;}"
+
+		"QComboBox::drop-down{"
+		"background-color:rgb(98, 139, 202);"
+		"subcontrol-origin: padding;"
+		"subcontrol-position: top right;"
+		"width: 15px;"
+		"border-top-right-radius: 4px;"
+		"border-bottom-right-radius: 4px;}"
+
+		"QComboBox QAbstractItemView{"
+		"background-color:rgb(25, 25, 25);"
+		"border: 1px; border-color: rgb(60, 60, 60);"
+		"border-bottom-right-radius: 4px;"
+		"border-bottom-left-radius: 4px;"
+		"padding: 0px;}"
+		
+		"QScrollBar:vertical {"
+		"border: 1px rgb(25, 25, 25);"
+		"background:rgb(25, 25, 25);"
+		"border-radius: 2px;"
+		"width:6px;"
+		"margin: 2px 0px 2px 1px;}"
+
+		"QScrollBar::handle:vertical {"
+		"border-radius: 2px;"
+		"min-height: 0px;"
+		"background-color: rgb(25, 25, 25);}"
+
+		"QScrollBar::add-line:vertical {"
+		"height: 0px;"
+		"subcontrol-position: bottom;"
+		"subcontrol-origin: margin;}"
+
+		"QScrollBar::sub-line:vertical {"
+		"height: 0px;"
+		"subcontrol-position: top;"
+		"subcontrol-origin: margin;}";
+
+};
 
 class ANIMHOSTCORESHARED_EXPORT BoneSelectionWidget : public QWidget {
 
@@ -67,6 +136,9 @@ public:
 private:
 	QString _selectedDirectory = "";
 
+	QString _fileSuffix = "";
+	QString _fileFilter = "";
+
 	SelectionType _selectionType = SelectionType::Directory;
 
 	QHBoxLayout* _filePathLayout = nullptr;
@@ -74,7 +146,7 @@ private:
 	QPushButton* _pushButton = nullptr;
 
 public:
-	FolderSelectionWidget(QWidget* parent = nullptr, SelectionType selectionType = SelectionType::Directory);
+	FolderSelectionWidget(QWidget* parent = nullptr, SelectionType selectionType = SelectionType::Directory, QString fileSuffix = "", QString fileFilter = "");
 	~FolderSelectionWidget() {};
 
 	void UpdateDirectory();
@@ -97,7 +169,7 @@ private:
 
 	QGridLayout* layout = nullptr;
 	QLabel* header = nullptr;
-	QLineEdit* lineEdits[4][4];
+	QDoubleSpinBox* lineEdits[4][4];
 
 public:
 	MatrixEditorWidget(QWidget* parent = nullptr);
@@ -142,5 +214,74 @@ Q_SIGNALS:
 
 };
 
+class ANIMHOSTCORESHARED_EXPORT ProgressWidgetBase : public QWidget
+{
+public:
+	explicit ProgressWidgetBase(QWidget* parent = nullptr);
+	virtual ~ProgressWidgetBase() = default;
+
+	virtual QString getValueName() const = 0;
+	virtual void setValueName(const QString& name) = 0;
+
+protected:
+	QProgressBar* _progressBar;
+	QLabel* _nameLabel;
+	QLabel* _valueLabel;
+	QString _valueName;
+	
+	void setupUI();
+};
+
+template<typename T>
+class ANIMHOSTCORESHARED_EXPORT ProgressWidget : public ProgressWidgetBase
+{
+public:
+	explicit ProgressWidget(const QString& valueName, T maxValue, QWidget* parent = nullptr);
+	~ProgressWidget();
+
+	bool updateValue(T value);
+	
+	QString getValueName() const override;
+	void setValueName(const QString& name) override;
+	T getMaxValue() const;
+	void setMaxValue(T maxValue);
+
+private:
+	T _maxValue;
+	
+	void updateDisplay(T currentValue);
+};
+
+// Explicit template instantiations
+extern template class ProgressWidget<int>;
+extern template class ProgressWidget<float>;
+extern template class ProgressWidget<double>;
+
+class ANIMHOSTCORESHARED_EXPORT SignalLightWidget : public QWidget
+{
+	Q_OBJECT
+
+public:
+	explicit SignalLightWidget(QWidget* parent = nullptr);
+	void setColor(const QColor& color);
+	void setDefaultColor(const QColor& color);
+	void startFadeOut(int duration = 1000, const QColor& defaulColor= QColor(50, 255, 50)); // duration in ms
+
+protected:
+	void paintEvent(QPaintEvent* event) override;
+
+private slots:
+	void updateFade();
+
+private:
+	QColor currentColor;
+	QColor defaultColor;
+	int alpha; // To manage the fade effect
+	QTimer fadeTimer;
+	int fadeDuration;
+	int timeElapsed;
+
+	void drawLight(QPainter& painter);
+};
 
 #endif // ANIMHOST_UI_UTIL_H

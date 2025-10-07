@@ -1,5 +1,0 @@
-<map id="Ort::detail::ConstSessionImpl::GetOutputNameAllocated" name="Ort::detail::ConstSessionImpl::GetOutputNameAllocated">
-<area shape="rect" id="Node000001" title="Returns a copy of output name at then specified index." alt="" coords="5,5,207,48"/>
-<area shape="rect" id="Node000002" href="$namespace_ort.html#a296b5958479d9889218b17bdb08c1894" title="This returns a reference to the OrtApi interface in use." alt="" coords="255,13,342,40"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="207,24,239,24,239,29,207,29"/>
-</map>

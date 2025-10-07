@@ -119,6 +119,6 @@ jobs:
         with:
           name: 'AnimHost (Alpha)'
           draft: True
-          artifacts: "AnimHostBuild.zip"
+          artifacts: "AnimHostBuild"
           token: ${{ secrets.GITHUB_TOKEN }}
 

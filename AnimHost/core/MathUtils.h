@@ -29,7 +29,7 @@
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
-using Rotation6D = std::vector<float>;
+using Rotation6D = std::array<float, 6>;
 
 /**
  * @class MathUtils
@@ -112,16 +112,16 @@ public:
 	}
 
 	static Rotation6D ConvertRotationTo6D(const glm::quat& rotation) {
-		std::vector<float> result;
+		Rotation6D result;
 		
 		glm::mat4 rotMat = glm::toMat4(rotation);
 
-		result.push_back(rotMat[0].x);
-		result.push_back(rotMat[0].y);
-		result.push_back(rotMat[0].z);
-		result.push_back(rotMat[1].x);
-		result.push_back(rotMat[1].y);
-		result.push_back(rotMat[1].z);
+		result[0] = rotMat[0].x;
+		result[1] = rotMat[0].y;
+		result[2] = rotMat[0].z;
+		result[3] = rotMat[1].x;
+		result[4] = rotMat[1].y;
+		result[5] = rotMat[1].z;
 
 		return result;
 	}

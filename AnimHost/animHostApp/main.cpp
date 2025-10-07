@@ -21,6 +21,7 @@
 #include <QCoreApplication>
 #include <iostream>
 #include <animhostcore.h>
+#include <Logger.h>
 
 #include <QtNodes/ConnectionStyle>
 #include <QtNodes/DataFlowGraphModel>
@@ -35,6 +36,9 @@
 #include <QtWidgets/QVBoxLayout>
 
 #include <QtGui/QScreen>
+
+#include <QMessageBox>
+#include <exception>
 
 using QtNodes::ConnectionStyle;
 using QtNodes::DataFlowGraphicsScene;
@@ -75,62 +79,76 @@ static void setStyle()
 //!
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+	Logger::Initialize();
 
-    //grab command line arguments
-    QStringList cmdlineArgs = QCoreApplication::arguments();
+    try {
+        QApplication a(argc, argv);
 
-    //handle faulty command line arguments
-    /*if(cmdlineArgs.length() != 2)
-    {
-        std::cout << "Wrong amount of command line arguments! Aborting..." << std::endl;
-        return a.exec();
-    }*/
-    //run animHost
+        //grab command line arguments
+        QStringList cmdlineArgs = QCoreApplication::arguments();
 
-
-    AnimHost* animHost = new AnimHost();
-
-
-    //QTNodes
-    setStyle();
-
-    //TODO replace!
-    std::shared_ptr<NodeDelegateModelRegistry> registry = animHost->nodes;
-
-    QWidget mainWidget;
-
-    QMenuBar* menuBar = new QMenuBar();
-    QMenu *menu = menuBar->addMenu("File");
-    QAction* saveAction = menu->addAction("Save Scene");
-    QAction* loadAction = menu->addAction("Load Scene");
-
-    QVBoxLayout *l = new QVBoxLayout(&mainWidget);
-
-    DataFlowGraphModel dataFlowGraphModel(registry);
+        //handle faulty command line arguments
+        /*if(cmdlineArgs.length() != 2)
+        {
+            std::cout << "Wrong amount of command line arguments! Aborting..." << std::endl;
+            return a.exec();
+        }*/
+        //run animHost
 
 
+        AnimHost* animHost = new AnimHost();
 
-    l->addWidget(menuBar);
-    auto scene = new DataFlowGraphicsScene(dataFlowGraphModel, &mainWidget);
+
+        //QTNodes
+        setStyle();
+
+        //TODO replace!
+        std::shared_ptr<NodeDelegateModelRegistry> registry = animHost->nodes;
+
+        QWidget mainWidget;
+
+        QMenuBar* menuBar = new QMenuBar();
+        QMenu *menu = menuBar->addMenu("File");
+        QAction* saveAction = menu->addAction("Save Scene");
+        QAction* loadAction = menu->addAction("Load Scene");
+
+        QVBoxLayout *l = new QVBoxLayout(&mainWidget);
+
+        DataFlowGraphModel dataFlowGraphModel(registry);
+
+
+
+        l->addWidget(menuBar);
+        auto scene = new DataFlowGraphicsScene(dataFlowGraphModel, &mainWidget);
  
 
-    auto view = new GraphicsView(scene);
-    l->addWidget(view);
-    l->setContentsMargins(0, 0, 0, 0);
-    l->setSpacing(0);
+        auto view = new GraphicsView(scene);
+        l->addWidget(view);
+        l->setContentsMargins(0, 0, 0, 0);
+        l->setSpacing(0);
 
-    QObject::connect(saveAction, &QAction::triggered, scene, &DataFlowGraphicsScene::save);
-    QObject::connect(loadAction, &QAction::triggered, scene, &DataFlowGraphicsScene::load);
-    QObject::connect(scene, &DataFlowGraphicsScene::sceneLoaded, view, &GraphicsView::centerScene);
+        QObject::connect(saveAction, &QAction::triggered, scene, &DataFlowGraphicsScene::save);
+        QObject::connect(loadAction, &QAction::triggered, scene, &DataFlowGraphicsScene::load);
+        QObject::connect(scene, &DataFlowGraphicsScene::sceneLoaded, view, &GraphicsView::centerScene);
 
-    mainWidget.setWindowTitle("AnimHost");
-    mainWidget.resize(800, 600);
+        mainWidget.setWindowTitle("AnimHost");
+        mainWidget.resize(800, 600);
 
-    // Center window.
-    mainWidget.move(QApplication::primaryScreen()->availableGeometry().center()
-                    - mainWidget.rect().center());
-    mainWidget.showNormal();
+        // Center window.
+        mainWidget.move(QApplication::primaryScreen()->availableGeometry().center()
+                        - mainWidget.rect().center());
+        mainWidget.showNormal(); 
 
-    return a.exec();
+	    a.exec();
+
+        Logger::Cleanup();
+
+    }
+    catch (const std::exception& e) {
+        QMessageBox::critical(nullptr, "Application Error", e.what());
+    }
+    catch (...) {
+        QMessageBox::critical(nullptr, "Application Error", "An unexpected error occurred.");
+    }
+    return -1;
 }

@@ -24,7 +24,7 @@
 
 void AnimHostOperationNode::processInData(std::shared_ptr<NodeData> data, PortIndex portIndex)
 {
-    qDebug() << this->name() << "setInData() " << portIndex;
+    //qDebug() << this->name() << "setInData() " << portIndex;
 
     if (!data) {
         for(int i=0; i< _dataOut.size(); i++)

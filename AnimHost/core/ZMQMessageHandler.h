@@ -136,6 +136,7 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
         SYNC, PING, RESENDUPDATE, // sync
         UNDOREDOADD, RESETOBJECT, // undo redo
         DATAHUB, // DataHub
+        RPC,
         EMPTY = 255
     };
 
@@ -214,6 +215,10 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
     static byte getOwnID() {
         qsizetype lastDotPos = 0; // qsizetype = int64
 
+		if (ZMQMessageHandler::useLocalHostID) {
+			return ZMQMessageHandler::ownID;
+		}
+
         if (ZMQMessageHandler::ownIP.contains(".")) {
           lastDotPos = ZMQMessageHandler::ownIP.lastIndexOf("."); // saving the index of the last occurence of a dot in the string
           return ZMQMessageHandler::ownIP.sliced(lastDotPos + 1).toUShort(); // everyithing after the last dot is considered the client's own ID (byte = ushort = uchar = uint8)
@@ -221,6 +226,11 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
             return 0;
         }
     }
+
+	static void setClientID(byte _clientID) {
+		ZMQMessageHandler::ownID = _clientID;
+		ZMQMessageHandler::useLocalHostID = true;
+	}
 
     //! Sets the ID of the client that is supposed to receive the update
     /*!
@@ -349,6 +359,11 @@ class ANIMHOSTCORESHARED_EXPORT ZMQMessageHandler : public QObject {
 
     //! Client's own IP address
     static QString ownIP;
+
+	//! Client's own ID
+	static byte ownID;
+    static bool useLocalHostID;
+
 
     //! ID of the TRACER client that is supposed to receive the messages
     static byte targetSceneID;

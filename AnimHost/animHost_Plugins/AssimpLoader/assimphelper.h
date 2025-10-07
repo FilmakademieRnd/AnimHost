@@ -28,9 +28,6 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <assimp/LogStream.hpp>
-#include <glm/glm.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/quaternion.hpp>
 #include <commondatatypes.h>
 
 

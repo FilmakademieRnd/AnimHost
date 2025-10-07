@@ -48,7 +48,7 @@ public:
                 stream.setDevice(&file);
             }
             else {
-                qDebug() << "Error opening file for append.";
+                qWarning() << "Problem opening file for append.";
             }
         }
         else {
@@ -57,7 +57,7 @@ public:
                 stream.setDevice(&file);
             }
             else {
-                qDebug() << "Error creating file and writing.";
+                qWarning() << "Problem creating file and writing.";
             }
         }
     }

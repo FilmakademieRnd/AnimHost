@@ -1,0 +1,5 @@
+"""
+External training module integrations.
+
+Contains utilities and per external process files for running external training scripts and parsing their output.
+"""

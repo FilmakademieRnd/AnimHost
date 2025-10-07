@@ -96,8 +96,7 @@ public:
 
 Q_SIGNALS:
     void inPortDataWasSet(NodeId const, PortType const, PortIndex const);
-
-     void embeddedWidgetSizeUpdated(NodeId const);
+    void embeddedWidgetSizeUpdated(NodeId const);
 
 private:
     NodeId newNodeId() override { return _nextNodeId++; }
@@ -120,6 +119,8 @@ private Q_SLOTS:
    *   @see DataFlowGraphModel::loadNode
    */
     void onOutPortDataUpdated(NodeId const nodeId, PortIndex const portIndex);
+
+    void onOutPortDataInvalidated(NodeId const nodeId, PortIndex const portIndex);
 
     /// Function is called after detaching a connection.
     void propagateEmptyDataTo(NodeId const nodeId, PortIndex const portIndex);

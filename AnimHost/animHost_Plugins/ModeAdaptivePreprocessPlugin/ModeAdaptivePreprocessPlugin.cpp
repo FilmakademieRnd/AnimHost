@@ -39,12 +39,10 @@
 
 ModeAdaptivePreprocessPlugin::ModeAdaptivePreprocessPlugin()
 {
-	qDebug() << "ModeAdaptivePreprocessPlugin created";
 }
 
 ModeAdaptivePreprocessPlugin::~ModeAdaptivePreprocessPlugin()
 {
-	qDebug() << "~ModeAdaptivePreprocessPlugin()";
 }
 
 
@@ -180,6 +178,8 @@ void ModeAdaptivePreprocessPlugin::run()
 
 		qDebug() << "ModeAdaptivePreprocessPlugin: Input Data Complete";
 
+		rootBoneTransforms.clear();
+
 		rootSequenceData.clear();
 		sequenceRelativeJointPosition.clear();
 		sequenceRelativeJointVelocities.clear();
@@ -192,6 +192,11 @@ void ModeAdaptivePreprocessPlugin::run()
 		Y_SequenceRelativeJointVelocities.clear();
 		Y_SequenceRelativJointRotations.clear();
 		Y_SequenceRelativJointRotations6D.clear();
+
+
+
+		//Preprocess Root Transform for Biped once for all frames
+		rootBoneTransforms = prepareBipedRoot(poseSequenceIn, skeleton);
 
 
 		//Offset to start of sequence, allows for enough frames to be left for past trajectory samples
@@ -224,7 +229,8 @@ void ModeAdaptivePreprocessPlugin::processFrame(int frameCounter, std::shared_pt
 	// INPUT SECTION
 	// ==============================
 
-	glm::mat4 rootTransform = animation->CalculateRootTransform(referenceFrame, rootbone_idx);
+	//glm::mat4 rootTransform = animation->CalculateRootTransform(referenceFrame, rootbone_idx);
+	glm::mat4 rootTransform = rootBoneTransforms[referenceFrame];
 
 	//Root Trajectory
 	std::vector<float> flatTrajectoryData = prepareTrajectoryData(referenceFrame + 1, animation, rootTransform, false);
@@ -246,7 +252,8 @@ void ModeAdaptivePreprocessPlugin::processFrame(int frameCounter, std::shared_pt
 	// OUTPUT SECTION
 	// ==============================
 
-	glm::mat4 nextRootTransform = animation->CalculateRootTransform(referenceFrame + 1, rootbone_idx);
+	//glm::mat4 nextRootTransform = animation->CalculateRootTransform(referenceFrame + 1, rootbone_idx);
+	glm::mat4 nextRootTransform = rootBoneTransforms[referenceFrame + 1];
 	
 	//Output Root Trajectory
 	std::vector<float> outFlatTrajectoryData = prepareTrajectoryData(referenceFrame, animation, nextRootTransform,true);
@@ -274,6 +281,99 @@ void ModeAdaptivePreprocessPlugin::processFrame(int frameCounter, std::shared_pt
 	Y_SequenceDeltaUpdate.push_back(delta);
 }
 
+std::vector<glm::quat> ModeAdaptivePreprocessPlugin::prepareRootRotation(std::shared_ptr<PoseSequence> poseSequenceIn, std::shared_ptr<Skeleton> skeleton)
+{
+
+	// Get Bone Index for Hip and Shoulder. Currently hardcoded, should be changed to be more flexible.
+	int rightHipIdx = skeleton->bone_names.at("pelvis_R");
+	int leftHipIdx = skeleton->bone_names.at("pelvis_L");
+
+	int rightShoulderIdx = skeleton->bone_names.at("shoulder_R");
+	int leftShoulderIdx = skeleton->bone_names.at("shoulder_L");
+
+	/*qDebug() << "Right Hip Index: " << rightHipIdx;
+	qDebug() << "Left Hip Index: " << leftHipIdx;
+	qDebug() << "Right Shoulder Index: " << rightShoulderIdx;
+	qDebug() << "Left Shoulder Index: " << leftShoulderIdx;*/
+
+	 std::function<glm::quat(int)> calculateRootRotation = [&](int frame) {
+
+		glm::vec3 hipRight, hipLeft, shoulderRight, shoulderLeft;
+
+		hipRight = poseSequenceIn->GetPositionAtFrame3D(frame, rightHipIdx);
+		hipLeft = poseSequenceIn->GetPositionAtFrame3D(frame, leftHipIdx);
+
+
+		glm::vec3 hipVector = hipRight - hipLeft;
+		hipVector = glm::normalize(AnimHostHelper::ProjectPointOnGroundPlane(hipVector));
+
+		shoulderRight = poseSequenceIn->GetPositionAtFrame3D(frame, rightShoulderIdx);
+		shoulderLeft = poseSequenceIn->GetPositionAtFrame3D(frame, leftShoulderIdx);
+
+		glm::vec3 shoulderVector = shoulderRight - shoulderLeft;
+		shoulderVector = glm::normalize(AnimHostHelper::ProjectPointOnGroundPlane(shoulderVector));
+
+		glm::vec3 forward = glm::normalize(hipVector + shoulderVector);
+		forward = glm::cross(glm::vec3(0.0, 1.0, 0.0), forward);
+		forward = glm::normalize(AnimHostHelper::ProjectPointOnGroundPlane(forward));
+
+		glm::quat rotation = glm::rotation(glm::vec3(0.0f, 0.0f, 1.0f), forward);
+
+		return rotation;
+	};
+
+    // Calculate Root Rotation for each frame
+	std::vector<glm::quat> rootRotations;
+	rootRotations.reserve(poseSequenceIn->mPoseSequence.size());
+
+	for (int i = 0; i < poseSequenceIn->mPoseSequence.size(); i++) {
+		rootRotations.push_back(calculateRootRotation(i));
+	}
+
+	return rootRotations;
+}
+
+std::vector<glm::mat4> ModeAdaptivePreprocessPlugin::prepareBipedRoot(std::shared_ptr<PoseSequence> poseSequenceIn, std::shared_ptr<Skeleton> skeleton)
+{
+
+	int numFrames = poseSequenceIn->mPoseSequence.size();
+
+	int hipIdx = skeleton->bone_names.at("hip"); 
+
+	std::vector<glm::quat> rootRot = prepareRootRotation(poseSequenceIn, skeleton);
+
+
+	//std::vector<glm::quat> smoothedRootRot = SmoothRootRotations(rootRot,120);
+
+	std::vector<glm::quat> smoothedRootRot = rootRot;
+
+	for (int i = 0; i < 5; i++) {
+		smoothedRootRot = GaussianFilterQuaternions(smoothedRootRot, 30);
+	}
+
+	std::vector<glm::vec3> rootPos = std::vector<glm::vec3>(numFrames);
+
+	for (int i = 0; i < numFrames; i++) {
+		rootPos[i] = poseSequenceIn->mPoseSequence[i].mPositionData[hipIdx];
+	}
+	
+	std::vector<glm::mat4> rootTransforms = std::vector<glm::mat4>(numFrames);
+
+	for (int i = 0; i < numFrames; i++) {
+		glm::vec3 pos = glm::vec3(rootPos[i].x, 0.f,rootPos[i].z);
+		glm::quat rot = smoothedRootRot[i];
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * glm::toMat4(rot);
+
+		rootTransforms[i] = transform;
+	}
+
+
+	return rootTransforms;
+}
+
+
+
 std::vector<float> ModeAdaptivePreprocessPlugin::prepareTrajectoryData(int referenceFrame, std::shared_ptr<Animation> animation, glm::mat4 Root,bool isOutput)
 {
 
@@ -297,10 +397,11 @@ std::vector<float> ModeAdaptivePreprocessPlugin::prepareTrajectoryData(int refer
 
 	for (int frameIdx : frameRange) {
 
-		qDebug() << "Frame Index: " << frameIdx;
+		//qDebug() << "Frame Index: " << frameIdx;
 
 		//NEW TRAJECTORY DATA
-		glm::mat4 frameRoot = animation->CalculateRootTransform(frameIdx, rootbone_idx);
+		//glm::mat4 frameRoot = animation->CalculateRootTransform(frameIdx, rootbone_idx);
+		glm::mat4 frameRoot = rootBoneTransforms[glm::min(int(rootBoneTransforms.size()-1),frameIdx)];
 
 		//relative Pos
 		glm::vec2 relativePos = MathUtils::PositionTo(frameRoot, Root);
@@ -312,7 +413,8 @@ std::vector<float> ModeAdaptivePreprocessPlugin::prepareTrajectoryData(int refer
 
 		//relative Velocity
 		glm::vec3 cPos = frameRoot * glm::vec4(0.0, 0.0, 0.0, 1.0);
-		glm::mat4 pFrameRoot = animation->CalculateRootTransform(glm::max(0, frameIdx - 1), rootbone_idx);
+		//glm::mat4 pFrameRoot = animation->CalculateRootTransform(glm::max(0, frameIdx - 1), rootbone_idx);
+		glm::mat4 pFrameRoot = rootBoneTransforms[glm::max(0, glm::min(int(rootBoneTransforms.size() - 1), frameIdx-1))];
 		glm::vec3 pPos = pFrameRoot * glm::vec4(0.0, 0.0, 0.0, 1.0);
 		glm::vec3 v = (cPos - pPos) / (1.f / 60.f); // Velocity Unit: cm/s)
 
@@ -833,4 +935,94 @@ void ModeAdaptivePreprocessPlugin::onOverrideCheckbox(int state)
 	bOverwriteDataExport = state;
 }
 
+
+// Experimental
+
+// Helper function to apply Gaussian filter
+std::vector<glm::quat> ModeAdaptivePreprocessPlugin::ApplyGaussianFilter(const std::vector<glm::quat>& rotations, const std::vector<float>& weights, float sigma) {
+	std::vector<glm::quat> smoothedRotations(rotations.size());
+
+	int kernelRadius = static_cast<int>(3 * sigma); // Kernel size based on standard deviation
+	int frameCount = rotations.size();
+
+	for (int i = 0; i < frameCount; i++) {
+		glm::quat weightedSum(0, 0, 0, 0);
+		float totalWeight = 0.0f;
+
+		for (int j = -kernelRadius; j <= kernelRadius; j++) {
+			int idx = glm::clamp(i + j, 0, frameCount - 1);
+			float weight = std::exp(-(j * j) / (2 * sigma * sigma)) * weights[idx];
+
+			weightedSum += weight * rotations[idx];
+			totalWeight += weight;
+		}
+
+		smoothedRotations[i] = glm::normalize(weightedSum / totalWeight);
+	}
+
+	return smoothedRotations;
+}
+
+// Function to compute adaptive weights
+std::vector<float> ModeAdaptivePreprocessPlugin::ComputeAdaptiveWeights(const std::vector<glm::quat>& rotations, float sigma) {
+	std::vector<float> weights(rotations.size());
+	int frameCount = rotations.size();
+
+	for (int i = 1; i < frameCount; i++) {
+		glm::quat delta = glm::inverse(rotations[i - 1]) * rotations[i];
+		float angle = 2.0f * std::acos(glm::clamp(delta.w, -1.0f, 1.0f));
+
+		// Use the magnitude of the derivative as the weight
+		weights[i] = std::exp(-angle * angle / (2 * sigma * sigma));
+	}
+
+	weights[0] = weights[1]; // Initialize the first weight
+	return weights;
+}
+
+// Main function to adaptively smooth root rotations
+std::vector<glm::quat> ModeAdaptivePreprocessPlugin::SmoothRootRotations(const std::vector<glm::quat>& rootRotations, float timeWindow) {
+	// Compute the standard deviation for the Gaussian filter
+	float sigma = timeWindow / 4.0f;
+
+	// Step 1: Compute the adaptive weights
+	std::vector<float> weights = ComputeAdaptiveWeights(rootRotations, sigma);
+
+	// Step 2: Apply the Gaussian filter using the adaptive weights
+	std::vector<glm::quat> smoothedRotations = ApplyGaussianFilter(rootRotations, weights, sigma);
+
+	return smoothedRotations;
+}
+
+
+// Gaussian filter for quaternions
+std::vector<glm::quat> ModeAdaptivePreprocessPlugin::GaussianFilterQuaternions(const std::vector<glm::quat>& quaternions, float sigma) {
+	std::vector<glm::quat> smoothedQuaternions(quaternions.size());
+
+	// Calculate the kernel radius based on the standard deviation
+	int kernelRadius = static_cast<int>(std::ceil(3.0f * sigma));
+
+	for (int i = 0; i < quaternions.size(); ++i) {
+		glm::quat weightedSum(0.0f, 0.0f, 0.0f, 0.0f);
+		float totalWeight = 0.0f;
+
+		// Iterate over the kernel window centered around the current sample
+		for (int j = -kernelRadius; j <= kernelRadius; ++j) {
+			int idx = std::clamp(i + j, 0, static_cast<int>(quaternions.size()) - 1);
+			float distance = static_cast<float>(j);
+
+			// Calculate Gaussian weight
+			float weight = std::exp(-(distance * distance) / (2.0f * sigma * sigma));
+
+			// Accumulate the weighted quaternion using SLERP for interpolation
+			weightedSum = glm::slerp(weightedSum, quaternions[idx], weight);
+			totalWeight += weight;
+		}
+
+		// Normalize the result and store it
+		smoothedQuaternions[i] = glm::normalize(weightedSum);
+	}
+
+	return smoothedQuaternions;
+}
 

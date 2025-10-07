@@ -1,7 +1,0 @@
-<map id="Ort::Value::CreateSparseTensor" name="Ort::Value::CreateSparseTensor">
-<area shape="rect" id="Node000001" title="This is a simple forwarding method to the other overload that helps deducing data type enum value fro..." alt="" coords="5,29,173,72"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="48,29,47,19,53,10,68,5,89,3,112,5,126,11,124,16,111,10,89,8,69,10,57,15,52,21,53,28"/>
-<area shape="rect" id="Node000002" href="$struct_ort_1_1_value.html#a23c32a59c2149a0faf54187af3cc5bb8" title="Creates a tensor with a user supplied buffer. Wraps OrtApi::CreateTensorWithDataAsOrtValue." alt="" coords="221,37,386,64"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="173,48,205,48,205,53,173,53"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="267,38,261,29,265,19,280,13,303,11,329,13,342,20,340,24,327,18,303,16,281,18,269,23,266,28,271,35"/>
-</map>

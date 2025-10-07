@@ -23,8 +23,9 @@
 
 #include <animhostcore_global.h>
 
-#include "plugininterface.h"
-#include "pluginnodeinterface.h"
+#include <plugininterface.h>
+#include <pluginnodeinterface.h>
+#include <PluginNodeCollectionInterface.h>
 
 #include <QObject>
 #include <QFileInfo>

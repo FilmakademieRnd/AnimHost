@@ -1,5 +1,0 @@
-<map id="TracerSceneReceiverPlugin::onButtonClicked" name="TracerSceneReceiverPlugin::onButtonClicked">
-<area shape="rect" id="Node000001" title="Slot called when the &quot;Request Data&quot; button is clicked." alt="" coords="233,5,412,48"/>
-<area shape="rect" id="Node000002" href="$class_tracer_scene_receiver_plugin.html#af474b99b96dc9acbed3ce9a56b9bd721" title="Initializes the plugin&#39;s UI elements." alt="" coords="5,5,185,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="217,29,185,29,185,24,217,24"/>
-</map>

@@ -1,9 +1,0 @@
-<map id="OrtApi::CreateStatus" name="OrtApi::CreateStatus">
-<area shape="rect" id="Node000001" title="Create an OrtStatus from a null terminated string." alt="" coords="185,56,327,83"/>
-<area shape="rect" id="Node000002" href="$struct_ort_1_1_status.html#a1e051a3c83b72d716cd08cf4a6485a37" title="Creates status instance out of null&#45;terminated string message." alt="" coords="5,5,137,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="189,54,122,35,123,30,191,49"/>
-<area shape="rect" id="Node000003" href="$struct_ort_1_1_status.html#a9f5ec7fb76b1b4e3e508b0315dfd20c5" title="Creates status instance out of exception." alt="" coords="5,56,137,83"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="169,72,137,72,137,67,169,67"/>
-<area shape="rect" id="Node000004" href="$struct_ort_1_1_status.html#abff266a0c43faa3685d460235939bc08" title="Creates status instance out of exception." alt="" coords="5,107,137,133"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="191,90,123,109,122,103,189,85"/>
-</map>

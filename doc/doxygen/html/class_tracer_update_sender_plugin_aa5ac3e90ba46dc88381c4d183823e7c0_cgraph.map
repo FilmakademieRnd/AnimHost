@@ -1,9 +1,0 @@
-<map id="TracerUpdateSenderPlugin::onChangedSelection" name="TracerUpdateSenderPlugin::onChangedSelection">
-<area shape="rect" id="Node000001" title="Slot called when the drop&#45;down menu selection changes." alt="" coords="5,72,181,115"/>
-<area shape="rect" id="Node000002" href="$class_z_m_q_message_handler.html#a6c603798d6ca03b54a55024c1e32a147" title="Gets the list of available IP Addresses." alt="" coords="229,5,383,48"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="162,69,220,51,222,56,164,74"/>
-<area shape="rect" id="Node000003" href="$class_z_m_q_message_handler.html#acbe97dc586d15b31e39834bb437beada" title="Returns the currently selected IP Address." alt="" coords="229,72,383,115"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="181,91,213,91,213,96,181,96"/>
-<area shape="rect" id="Node000004" href="$class_z_m_q_message_handler.html#a52871d6068f2f3063409618e0a61226d" title="Updates the currently selected IP address." alt="" coords="229,139,383,181"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="164,113,222,131,220,136,162,118"/>
-</map>

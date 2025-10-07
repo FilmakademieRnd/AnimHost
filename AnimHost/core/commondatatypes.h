@@ -25,11 +25,14 @@
 
 #include <QObject>
 #include <QString>
+#include <QVariant>
+#include <QVariantMap>
 #include <QQuaternion>
 #include <QMetaType>
 #include <QUuid>
 #include <vector>
 #include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <glm/ext/quaternion_float.hpp>
 
 
@@ -115,12 +118,16 @@ public:
     glm::mat4 GetRestingTransform() { return mRestingTransform; };
 
     glm::quat GetOrientation(int frame) const;
+	void SetOrientation(int frame, glm::quat ori);
 
     glm::vec3 GetPosition(int frame) const;
+    void SetPosition(int frame, glm::vec3 pos) {};
 
     glm::vec3 GetScale(int frame) const;
+    void SetScale(int frame, glm::vec3 scl) {};
 
     glm::mat4 GetTransform(int frame) const;
+    void SetTransform(int frame, glm::mat4) {};
 
     COMMONDATA(bone, Bone)
 
@@ -156,6 +163,40 @@ public:
     ~Skeleton() {};
 
     COMMONDATA(skeleton, Skeleton)
+
+
+
+    /**
+    * @brief Get a bones parent bone.
+    *
+	* @param boneID The bone ID to get the parent bone for.
+	* @return The parent bone ID.
+    */
+	int getParentBone(int boneID) {
+		for (auto& bone : bone_hierarchy) {
+			for (auto& child : bone.second) {
+				if (child == boneID) {
+					return bone.first;
+				}
+			}
+		}
+		return -1;
+	}
+
+
+    /**
+	* @brief Get a bones parent bone name.
+    * 
+	* @param boneID The bone ID to get the parent bone name for.
+	* @return The parent bone name. Empty string if no parent bone.
+    */
+	std::string getParentBoneNamefromID(int boneID) {
+		int parentID = getParentBone(boneID);
+		if (parentID != -1) {
+			return bone_names_reverse[parentID];
+		}
+		return "";
+	}
 
 
     /**
@@ -223,6 +264,12 @@ private:
     }
 
 public:
+    /**
+    * @class Iterator
+    * @brief Depth-First Traversal (DFS) iterator for the Skeleton class.
+    *
+    * This iterator allows for traversing the Skeleton hierarchy using a depth-first approach.
+    */
     class Iterator {
         const Skeleton& skeleton;
         std::vector<int> stack;
@@ -234,17 +281,29 @@ public:
             }
         }
 
+        /**
+        * @brief Dereference operator to get the current bone ID.
+        *
+        * @return The current bone ID being pointed to.
+        */
         int operator*() const {
             return stack.back();
         }
 
+        /**
+        * @brief Pre-increment operator to move to the next bone in depth first order.
+        *
+        * This function removes the current bone from the stack and adds its children to continue traversal.
+        *
+        * @return Reference to the updated iterator.
+        */
         Iterator& operator++() {
             if (!stack.empty()) {
 				int currentBoneId = stack.back();
 				stack.pop_back();
 
 				const auto& children = skeleton.bone_hierarchy.at(currentBoneId);
-				stack.insert(stack.end(), children.rbegin(), children.rend());
+				stack.insert(stack.end(), children.rbegin(), children.rend()); // Push children in reverse order
 			}
 
             return *this;
@@ -296,8 +355,6 @@ public:
     Animation()
     {
         mBones = std::vector<Bone>();
-
-        qDebug() << "Animation()";
     };
 
     /**
@@ -481,7 +538,7 @@ public:
 
 public:
 
-    PoseSequence() { qDebug() << "PoseSequence()"; };
+    PoseSequence() {};
 
 
     /**
@@ -518,7 +575,7 @@ public:
                 				mPoseSequence[FrameIndex].mPositionData[boneIndex].z);
         }
         else {
-            qDebug() << "Error::GetPositionAtFrame: FrameIndex or boneIndex out of range";
+            qWarning() << "FrameIndex or boneIndex out of range. Returning (0,0)";
 			return glm::vec2(0, 0);
 		}   
     }
@@ -540,7 +597,7 @@ public:
 			return mPoseSequence[FrameIndex].mPositionData[boneIndex];
 		}
         else {
-			qDebug() << "Error::GetPositionAtFrame3D: FrameIndex or boneIndex out of range";
+			qWarning() << "FrameIndex or boneIndex out of range. Returning (0,0,0)";
 			return glm::vec3(0, 0, 0);
 		}
 	}
@@ -555,8 +612,16 @@ class ANIMHOSTCORESHARED_EXPORT RunSignal
 {
 
 public:
+    QVariantMap metadata;
 
-    RunSignal() { qDebug() << "RunSignal()"; };
+public:
+
+    RunSignal() {};
+
+	RunSignal(QVariantMap meta) : metadata(meta) {};
+
+	RunSignal(const RunSignal& o) : metadata(o.metadata) {};
+
 
     COMMONDATA(runSignal, Run)
 
@@ -576,6 +641,8 @@ class ANIMHOSTCORESHARED_EXPORT ControlPoint {
 
     public:
     ControlPoint() {};
+    ControlPoint(glm::vec3 pos, glm::quat rot, int frame, float vel) :
+        position { pos }, lookAt { rot }, frameTimestamp { frame }, velocity { vel } {};
 
     COMMONDATA(controlPoint, ControlPoint)
 
@@ -594,9 +661,28 @@ class ANIMHOSTCORESHARED_EXPORT ControlPath : public Sequence {
     std::vector<ControlPoint> mControlPath;
 
     public:
-    ControlPath() : mControlPath {} { qDebug() << "ControlPath()"; };
+    ControlPath() { 
+        mControlPath = {};
+    };
+
+    std::shared_ptr<std::vector<ControlPoint>> getPath() { return std::make_shared<std::vector<ControlPoint>>(mControlPath); };
 
     void CreateSpline();
+
+    //! Static function to create a ControlPath with incremental positions
+    static ControlPath CreateTestControlPath(int totalFrames, glm::vec3 startPosition, glm::vec3 positionIncrement, float velocity) {
+        ControlPath controlPath;
+        controlPath.frameCount = totalFrames;
+
+        glm::quat constantOrientation = glm::quat(1, 0, 0, 0); // Identity quaternion
+
+        for (int frame = 0; frame < totalFrames; ++frame) {
+            glm::vec3 currentPosition = startPosition + (positionIncrement * static_cast<float>(frame));
+            controlPath.mControlPath.emplace_back(currentPosition, constantOrientation, frame, velocity);
+        }
+
+        return controlPath;
+    }
 
     COMMONDATA(controlPath, ControlPath)
 
@@ -654,20 +740,25 @@ class ANIMHOSTCORESHARED_EXPORT CharacterObject :public SceneNodeObject {
     
     std::vector<SkinnedMeshComponent> skinnedMeshList;
 
-    ControlPath controlPath;
+    int controlPathID = 1; // TODO: extend the CharacterPackage to include the control path ID.
+    std::shared_ptr<ControlPath> controlPath;
 
     public:
     CharacterObject(int soID, int oID, std::string name) :
         SceneNodeObject ( soID, oID, name ),
         boneMapping {}, skeletonObjIDs {},
         tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {},
-        skinnedMeshList {} {};
+        skinnedMeshList {} {
+        controlPath = std::make_shared<ControlPath>();
+    };
     
     CharacterObject() :
         SceneNodeObject(),
         boneMapping {}, skeletonObjIDs {},
         tposeBonePos {}, tposeBoneRot {}, tposeBoneScale {},
-        skinnedMeshList {} {};
+        skinnedMeshList {} {
+        controlPath = std::make_shared<ControlPath>();
+    };
 
     void fill(const CharacterObject& _otherChObj) {
         sceneObjectID = _otherChObj.sceneObjectID;
@@ -687,6 +778,11 @@ class ANIMHOSTCORESHARED_EXPORT CharacterObject :public SceneNodeObject {
         skinnedMeshList = _otherChObj.skinnedMeshList;
     }
 
+    void setPath(std::vector<ControlPoint> otherPath) {
+        this->controlPath->frameCount = otherPath.size();
+        this->controlPath->mControlPath = otherPath;
+    }
+
     COMMONDATA(characterObject, CharacterObject)
 
 };
@@ -699,7 +795,7 @@ class ANIMHOSTCORESHARED_EXPORT SceneNodeObjectSequence : public Sequence {
     std::vector<SceneNodeObject> mSceneNodeObjectSequence;
 
     public:
-    SceneNodeObjectSequence() : mSceneNodeObjectSequence {} { qDebug() << "SceneNodeObjectSequence()"; };
+    SceneNodeObjectSequence() : mSceneNodeObjectSequence {} { };
 
     COMMONDATA(sceneNodeObjectSequence, SceneNodeObjectSequence)
 
@@ -713,7 +809,7 @@ class ANIMHOSTCORESHARED_EXPORT CharacterObjectSequence : public Sequence {
     std::vector<CharacterObject> mCharacterObjectSequence;
 
     public:
-    CharacterObjectSequence() : mCharacterObjectSequence {} { qDebug() << "CharacterObjectSequence()"; };
+    CharacterObjectSequence() : mCharacterObjectSequence {} { };
 
     COMMONDATA(characterObjectSequence, CharacterObjectSequence)
       
@@ -739,7 +835,7 @@ public:
 
 
 
-    DebugSignal() { qDebug() << "DebugSignal()"; };
+    DebugSignal() { };
 
     COMMONDATA(debugSignal, Debug)
 

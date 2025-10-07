@@ -39,12 +39,11 @@ DataExportPlugin::DataExportPlugin()
     _poseSequenceIn = std::make_shared<AnimNodeData<PoseSequence>>();
     _jointVelocitySequenceIn = std::make_shared<AnimNodeData<JointVelocitySequence>>();
 
-    qDebug() << "DataExportPlugin created";
 }
 
 DataExportPlugin::~DataExportPlugin()
 {
-    qDebug() << "~DataExportPlugin()";
+
 }
 
 QJsonObject DataExportPlugin::save() const

@@ -22,6 +22,13 @@
 #include "animhosthelper.h"
 #include <commondatatypes.h>
 
+#include <QPainter>
+#include <QTimer>
+#include <QBrush>
+#include <QLinearGradient>
+#include <QTime>
+
+
 BoneSelectionWidget::BoneSelectionWidget(QWidget* parent ) : QWidget(parent)
 {
 	layout = new QHBoxLayout();
@@ -62,9 +69,11 @@ QString BoneSelectionWidget::GetSelectedBone()
 	return comboBox->currentText();
 }
 
-FolderSelectionWidget::FolderSelectionWidget(QWidget* parent, SelectionType selectionType)
+FolderSelectionWidget::FolderSelectionWidget(QWidget* parent, SelectionType selectionType, QString fileSuffix, QString fileFilter)
 {
 	_selectionType = selectionType;
+	_fileSuffix = fileSuffix;
+	_fileFilter = fileFilter;
 
 	_filePathLayout = new QHBoxLayout();
 
@@ -87,6 +96,7 @@ FolderSelectionWidget::FolderSelectionWidget(QWidget* parent, SelectionType sele
 
 }
 
+
 void FolderSelectionWidget::UpdateDirectory()
 {
 
@@ -97,6 +107,9 @@ void FolderSelectionWidget::UpdateDirectory()
 	}
 	else if (_selectionType == SelectionType::File) {
 		dialog.setFileMode(QFileDialog::ExistingFile);
+		// Set the filter to only allow .json files
+		dialog.setNameFilter(_fileFilter);
+		dialog.setDefaultSuffix(_fileSuffix);
 	}
 
 
@@ -106,7 +119,14 @@ void FolderSelectionWidget::UpdateDirectory()
 	{
 		filePath = dialog.selectedFiles().at(0);
 		if (!filePath.isEmpty()) {
-			SetDirectory(filePath);
+
+			// Get the application's directory
+			QDir appDir(QApplication::applicationDirPath());
+
+			// Make the path relative to the application's directory
+			QString relativePath = appDir.relativeFilePath(filePath);
+
+			SetDirectory(relativePath);
 			Q_EMIT directoryChanged();
 		}
 	}
@@ -144,8 +164,9 @@ MatrixEditorWidget::MatrixEditorWidget(QWidget* parent)
 
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
-			lineEdits[i][j] = new QLineEdit();
-			lineEdits[i][j]->setValidator(new QDoubleValidator(this));
+			lineEdits[i][j] = new QDoubleSpinBox();
+			lineEdits[i][j]->setRange(-1000, 1000);
+			//lineEdits[i][j]->setValidator( new QDoubleValidator(this));
 			lineEdits[i][j]->setFixedWidth(50);
 			layout->addWidget(lineEdits[i][j], i, j);
 		}
@@ -169,7 +190,7 @@ glm::mat4 MatrixEditorWidget::GetMatrix() const
 
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
-			matrix[i][j] = lineEdits[i][j]->text().toFloat();
+			matrix[i][j] = lineEdits[i][j]->value();
 		}
 	}
 
@@ -180,7 +201,7 @@ void MatrixEditorWidget::SetMatrix(const glm::mat4& matrix)
 {
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
-			lineEdits[i][j]->setText(QString::number(matrix[i][j]));
+			lineEdits[i][j]->setValue(matrix[i][j]);
 		}
 	}
 }
@@ -231,3 +252,195 @@ void PlotWidget::paintEvent(QPaintEvent* event)
 }
 
 
+
+///!=========================
+/// Signal Light
+///!=========================
+
+
+SignalLightWidget::SignalLightWidget(QWidget* parent)
+	: QWidget(parent), currentColor(Qt::red), alpha(255), timeElapsed(0), fadeDuration(1000)
+{
+
+	setAttribute(Qt::WA_StyledBackground, false);
+	setFixedSize(30, 30);
+	connect(&fadeTimer, &QTimer::timeout, this, &SignalLightWidget::updateFade);
+}
+
+void SignalLightWidget::setColor(const QColor& color)
+{
+	currentColor = color;
+	alpha = 255; // Reset alpha when changing the color
+	update();
+}
+
+void SignalLightWidget::setDefaultColor(const QColor& color)
+{
+	defaultColor = color;
+	alpha = 255; // Reset alpha when changing the color
+	update();
+}
+
+void SignalLightWidget::startFadeOut(int duration, const QColor& resetColor)
+{
+	fadeDuration = duration;
+	defaultColor = resetColor;
+	timeElapsed = 0;
+	alpha = 255;
+	fadeTimer.start(30); // Start a timer to update every 30ms
+}
+
+void SignalLightWidget::updateFade()
+{
+	timeElapsed += 30;
+
+	if (timeElapsed >= fadeDuration) {
+		fadeTimer.stop();
+		alpha = 255;
+		currentColor = defaultColor;
+	}
+	else {
+		alpha = 255 - (255 * timeElapsed / fadeDuration);
+	}
+
+	update(); // Trigger a repaint
+}
+
+void SignalLightWidget::paintEvent(QPaintEvent* event)
+{
+	QPainter painter(this);
+	painter.setRenderHint(QPainter::Antialiasing);
+	painter.setPen(Qt::NoPen);
+
+	drawLight(painter);
+}
+
+void SignalLightWidget::drawLight(QPainter& painter)
+{
+	int radius = width() / 4;
+	QPoint center(width() / 2, height() / 2);
+
+	// Draw the glow effect (shine)
+	QRadialGradient radialGrad(center, radius * 2);
+	QColor glowColor = currentColor;
+	glowColor.setAlpha(alpha / 3); // Fade glow with time
+	radialGrad.setColorAt(0, glowColor);
+	radialGrad.setColorAt(1, QColor(0, 0, 0, 0));
+	painter.setBrush(radialGrad);
+	painter.drawEllipse(center, radius * 2, radius * 2);
+
+	// Draw the main signal light
+	QColor lightColor = currentColor;
+	lightColor.setAlpha(alpha); // Fade light with time
+	painter.setBrush(lightColor);
+	painter.setPen(Qt::NoPen);
+	painter.drawEllipse(center, radius, radius);
+}
+
+// ProgressWidgetBase Implementation
+ProgressWidgetBase::ProgressWidgetBase(QWidget* parent)
+	: QWidget(parent), _progressBar(nullptr), _nameLabel(nullptr), _valueLabel(nullptr)
+{
+	setupUI();
+}
+
+void ProgressWidgetBase::setupUI()
+{
+	_progressBar = new QProgressBar(this);
+	_progressBar->setRange(0, 100);
+	_progressBar->setValue(0);
+
+	_nameLabel = new QLabel(this);
+	_valueLabel = new QLabel(this);
+
+	// Create left/right aligned labels above progress bar
+	_nameLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+	_valueLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+	auto labelsLayout = new QHBoxLayout();
+	labelsLayout->addWidget(_nameLabel);
+	labelsLayout->addStretch();
+	labelsLayout->addWidget(_valueLabel);
+
+	// Main vertical layout
+	auto mainLayout = new QVBoxLayout(this);
+	mainLayout->addLayout(labelsLayout);
+	mainLayout->addWidget(_progressBar);
+}
+
+// ProgressWidget Implementation
+template<typename T>
+ProgressWidget<T>::ProgressWidget(const QString& valueName, T maxValue, QWidget* parent)
+	: ProgressWidgetBase(parent), _maxValue(maxValue)
+{
+	if (_maxValue <= T(0)) {
+		qWarning() << "ProgressWidget: maxValue must be > 0, got:" << _maxValue;
+		_maxValue = T(1); // Set to safe default
+	}
+
+	setValueName(valueName);
+	updateDisplay(T(0));
+}
+
+template<typename T>
+ProgressWidget<T>::~ProgressWidget()
+{
+}
+
+template<typename T>
+bool ProgressWidget<T>::updateValue(T value)
+{
+	if (value > _maxValue) {
+		qWarning() << "ProgressWidget: value" << value << "exceeds maxValue" << _maxValue;
+		return false;
+	}
+	
+	updateDisplay(value);
+	return true;
+}
+
+template<typename T>
+QString ProgressWidget<T>::getValueName() const
+{
+	return _valueName;
+}
+
+template<typename T>
+void ProgressWidget<T>::setValueName(const QString& name)
+{
+	_valueName = name;
+	_nameLabel->setText(_valueName);
+}
+
+template<typename T>
+T ProgressWidget<T>::getMaxValue() const
+{
+	return _maxValue;
+}
+
+template<typename T>
+void ProgressWidget<T>::setMaxValue(T maxValue)
+{
+	if (maxValue <= T(0)) {
+		qWarning() << "ProgressWidget: maxValue must be > 0, got:" << maxValue;
+		return;
+	}
+	
+	_maxValue = maxValue;
+	updateDisplay(T(0));
+}
+
+template<typename T>
+void ProgressWidget<T>::updateDisplay(T currentValue)
+{
+	// Update progress bar (0-100%)
+	int percentage = static_cast<int>((static_cast<double>(currentValue) / static_cast<double>(_maxValue)) * 100.0);
+	_progressBar->setValue(percentage);
+	
+	// Update value label with fraction format
+	_valueLabel->setText(QString("%1/%2").arg(currentValue).arg(_maxValue));
+}
+
+// Explicit template instantiations
+template class ProgressWidget<int>;
+template class ProgressWidget<float>;
+template class ProgressWidget<double>;

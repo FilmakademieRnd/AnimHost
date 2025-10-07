@@ -35,7 +35,7 @@ void OnnxModel::SetupEnvironment()
 
 }
 
-void OnnxModel::LoadOnnxModel(QString Path)
+bool OnnxModel::LoadOnnxModel(QString Path)
 {
     std::wstring modelFilepath = Path.toStdWString();
 
@@ -47,26 +47,31 @@ void OnnxModel::LoadOnnxModel(QString Path)
         bModelValid = true;
 
         Ort::AllocatorWithDefaultOptions allocator;
-        qDebug() << "\nInput Node Name/Shape: \n";
+
+		QString networkReport = QString("Input Node Name/Shape:");
 
         for (std::size_t i = 0; i < session->GetInputCount(); i++) {
 
             input_names.push_back(session->GetInputNameAllocated(i, allocator).get());
             input_shapes.emplace_back(session->GetInputTypeInfo(i).GetTensorTypeAndShapeInfo().GetShape());
-            qDebug() << "\t" << input_names.at(i) << shape_printer(input_shapes[i]);
+            networkReport = networkReport + " " + QString::fromStdString(input_names.at(i)) + QString::fromStdString(shape_printer(input_shapes[i]));
         }
+		qInfo(networkReport.toLocal8Bit().data());
+
 
         // output
-        qDebug() << "\nOutput Node Name/Shape: \n";
+        networkReport = "Output Node Name/Shape:";
         for (std::size_t i = 0; i < session->GetOutputCount(); i++) {
             output_names.push_back(session->GetOutputNameAllocated(i, allocator).get());
             output_shapes.emplace_back(session->GetOutputTypeInfo(i).GetTensorTypeAndShapeInfo().GetShape());
-            qDebug() << "\t" << output_names.at(i) << shape_printer(output_shapes[i]);
+            networkReport = networkReport + " " + QString::fromStdString(output_names.at(i)) + QString::fromStdString(shape_printer(output_shapes[i]));
         }
+        qInfo(networkReport.toLocal8Bit().data());
+        return true;
     }
 
     catch (const Ort::Exception& exception) {
-        qDebug() << "ERROR running model inference: " << exception.what();
+        qCritical() << "ERROR running model inference: " << exception.what();
 
         input_names.clear();
         input_shapes.clear();
@@ -75,6 +80,7 @@ void OnnxModel::LoadOnnxModel(QString Path)
         output_shapes.clear();
 
         bModelValid = false;
+        return false;
     }
     
 
@@ -116,18 +122,26 @@ std::vector<std::string> OnnxModel::GetTensorShapes(bool bGetInput)
 std::vector<float> OnnxModel::RunInference(std::vector<float>& inputValue)
 {
     if (!bModelValid) {
-        qDebug() << "Inference not possible. No model loaded or invalid.";
+        qCritical() << "Inference not possible. No model loaded or invalid.";
         return std::vector<float>(0);
     }
 
     std::vector<Ort::Value> input_tensors;
 
+
+	//Dirty: RunInference only takes one vector reference, so technically only networks with one input tensor are supported
+	//@TODO: Implement support for multiple input tensors
     for (std::size_t i = 0; i < session->GetInputCount(); i++) {
         auto total_num_of_elements = std::accumulate(input_shapes[i].begin(), input_shapes[i].end(), 1,
             [](int a, int b) { return a * b; });
 
         if (total_num_of_elements == inputValue.size()) {
             input_tensors.push_back(OnnxHelper::vecToTensor<float>(inputValue, input_shapes[i]));
+        }
+        else {
+            qCritical() << "Inference not possible. Mismatch between input and network dimensions.";
+			qCritical() << "Expected " << total_num_of_elements << " but got " << inputValue.size();
+            return std::vector<float>(0);
         }
     }
 

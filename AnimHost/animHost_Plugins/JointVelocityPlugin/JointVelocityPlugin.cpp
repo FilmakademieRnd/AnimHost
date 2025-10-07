@@ -29,7 +29,6 @@
 
 JointVelocityPlugin::JointVelocityPlugin()
 {
-    qDebug() << "JointVelocityPlugin created";
 
     //Data
     inputs.append(QMetaType::fromName("PoseSequence"));
@@ -40,7 +39,7 @@ JointVelocityPlugin::JointVelocityPlugin()
 
 JointVelocityPlugin::~JointVelocityPlugin()
 {
-    qDebug() << "~JointVelocityPlugin()";
+
 }
 
 // execute the main functionality of the plugin

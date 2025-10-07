@@ -68,58 +68,129 @@ Bone::Bone()
 
 glm::quat Bone::GetOrientation(int frame) const
 {
-	if (mRotationKeys.size() == 0)
-	{
-		return glm::quat(1,0,0,0);
-	}
-	else
-	{
-		if (frame < mRotationKeys.size()) {
-			return mRotationKeys[frame].orientation;
-		}
-		else {
-			return mRotationKeys[mRotationKeys.size() - 1].orientation;
-		}
-	}
+	if(mRotationKeys.empty())
+		return glm::quat(1.0, 0.0, 0.0, 0.0); // Retunr identity quaternion, if no rotation keys are available
 
+	if (mRotationKeys.size() == 1)
+		return mRotationKeys[0].orientation; // Return the only available rotation key
+
+	float time = static_cast<float>(frame); // We assume that time is frame number
+
+	// Compare for requested time and available time on keys
+	auto compareTime = [](const KeyRotation& key, float time) {
+		return key.timeStamp < time;
+    };
+
+	// Find the keyframe that is less than or equal to the requested time
+	auto it = std::lower_bound(mRotationKeys.begin(), mRotationKeys.end(), time, compareTime);
+
+
+	if (it == mRotationKeys.end()) {
+		// Time is after the last keyframe
+		return mRotationKeys.back().orientation;
+	}
+	else if (it == mRotationKeys.begin()) {
+		// Time is before the first keyframe
+		return mRotationKeys.front().orientation;
+	}
+	else {
+		// Interpolate between the two keyframes
+		auto right = it;
+		auto left = it - 1;
+
+		float deltaTime = right->timeStamp - left->timeStamp;
+		float factor = (time - left->timeStamp) / deltaTime;
+		factor = glm::clamp(factor, 0.0f, 1.0f);
+
+		return glm::slerp(left->orientation, right->orientation, factor);
+
+	}
+}
+
+void Bone::SetOrientation(int frame, glm::quat ori)
+{
 }
 
 glm::vec3 Bone::GetPosition(int frame) const
 {
-	if (mPositonKeys.size() == 0)
-	{
-		return glm::vec3(0.0);
+	if (mPositonKeys.empty())
+		return glm::vec3(0.0, 0.0, 0.0); // Retun identity, if no position keys are available
+
+	if (mPositonKeys.size() == 1)
+		return mPositonKeys[0].position; // Return the only available position key
+
+	float time = static_cast<float>(frame); // We assume that time is frame number
+
+	// Compare for requested time and available time on keys
+	auto compareTime = [](const KeyPosition& key, float time) {
+		return key.timeStamp < time;
+		};
+
+	// Find the keyframe that is less than or equal to the requested time
+	auto it = std::lower_bound(mPositonKeys.begin(), mPositonKeys.end(), time, compareTime);
+
+
+	if (it == mPositonKeys.end()) {
+		// Time is after the last keyframe
+		return mPositonKeys.back().position;
 	}
-	else
-	{
+	else if (it == mPositonKeys.begin()) {
+		// Time is before the first keyframe
+		return mPositonKeys.front().position;
+	}
+	else {
+		// Interpolate between the two keyframes
+		auto right = it;
+		auto left = it - 1;
 
-		if (frame < mPositonKeys.size()) {
-			return mPositonKeys[frame].position;
-		}
-		else {
-			return mPositonKeys[mPositonKeys.size() - 1].position;
-		}
+		float deltaTime = right->timeStamp - left->timeStamp;
+		float factor = (time - left->timeStamp) / deltaTime;
+		factor = glm::clamp(factor, 0.0f, 1.0f);
+
+		return glm::mix(left->position, right->position, factor);
 
 	}
-
 }
 
 glm::vec3 Bone::GetScale(int frame) const
 {
-	if (mScaleKeys.size() == 0)
-	{
-		return glm::vec3(1.0);
-	}
-	else
-	{
-		if (frame < mScaleKeys.size()) {
-			return mScaleKeys[frame].scale;
-		}
-		else {
-			return mScaleKeys[mScaleKeys.size() - 1].scale;
-		}
-	}
+	if (mScaleKeys.empty())
+		return glm::vec3(0.0, 0.0, 0.0); // Retun identity, if no scale keys are available
 
+	if (mScaleKeys.size() == 1)
+		return mScaleKeys[0].scale; // Return the only available scale key
+
+	float time = static_cast<float>(frame); // We assume that time is frame number
+
+	// Compare for requested time and available time on keys
+	auto compareTime = [](const KeyScale& key, float time) {
+		return key.timeStamp < time;
+		};
+
+	// Find the keyframe that is less than or equal to the requested time
+	auto it = std::lower_bound(mScaleKeys.begin(), mScaleKeys.end(), time, compareTime);
+
+
+	if (it == mScaleKeys.end()) {
+		// Time is after the last keyframe
+		return mScaleKeys.back().scale;
+	}
+	else if (it == mScaleKeys.begin()) {
+		// Time is before the first keyframe
+		return mScaleKeys.front().scale;
+	}
+	else {
+		// Interpolate between the two keyframes
+		auto right = it;
+		auto left = it - 1;
+
+		float deltaTime = right->timeStamp - left->timeStamp;
+		float factor = (time - left->timeStamp) / deltaTime;
+		factor = glm::clamp(factor, 0.0f, 1.0f);
+
+		return glm::mix(left->scale, right->scale, factor);
+
+	}
 }
 
 glm::mat4 Bone::GetTransform(int frame) const {
@@ -169,10 +240,11 @@ void Animation::ApplyChangeOfBasis(int rootBoneIdx) {
 glm::mat4 Animation::CalculateRootTransform(int frame, int boneIdx) {
 	
 	//Check if the bone and frame has valid index
-	if (boneIdx >= mBones.size() || frame >= mDurationFrames) {
+	if (boneIdx >= mBones.size()) {
 
-		qDebug() << "Bone or frame index out of range";
+		qWarning() << "Bone index out of range. Returning Identity Matrix.";
 		return glm::mat4(1.0f);
+
 	}
 
 	glm::vec4 forwardBasis = glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);

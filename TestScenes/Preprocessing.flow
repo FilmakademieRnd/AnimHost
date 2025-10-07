@@ -1,0 +1,168 @@
+{
+    "connections": [
+        {
+            "inPortIndex": 0,
+            "intNodeId": 3,
+            "outNodeId": 1,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 3,
+            "outNodeId": 1,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 2,
+            "outNodeId": 3,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 3,
+            "intNodeId": 5,
+            "outNodeId": 2,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 2,
+            "intNodeId": 3,
+            "outNodeId": 1,
+            "outPortIndex": 2
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 2,
+            "outNodeId": 3,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 2,
+            "intNodeId": 2,
+            "outNodeId": 1,
+            "outPortIndex": 2
+        },
+        {
+            "inPortIndex": 3,
+            "intNodeId": 4,
+            "outNodeId": 2,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 4,
+            "outNodeId": 2,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 2,
+            "intNodeId": 4,
+            "outNodeId": 3,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 4,
+            "outNodeId": 1,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 5,
+            "outNodeId": 4,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 5,
+            "outNodeId": 1,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 2,
+            "intNodeId": 5,
+            "outNodeId": 3,
+            "outPortIndex": 1
+        },
+        {
+            "inPortIndex": 4,
+            "intNodeId": 5,
+            "outNodeId": 1,
+            "outPortIndex": 2
+        },
+        {
+            "inPortIndex": 0,
+            "intNodeId": 1,
+            "outNodeId": 0,
+            "outPortIndex": 0
+        }
+    ],
+    "nodes": [
+        {
+            "id": 0,
+            "internal-data": {
+                "model-name": "RunTriggerPlugin"
+            },
+            "position": {
+                "x": -227,
+                "y": -135
+            }
+        },
+        {
+            "id": 1,
+            "internal-data": {
+                "check": true,
+                "dir": "../../../Survivor_AnimHost_Mocap_Dataset_2025/FBX/Default/",
+                "model-name": "Animation Import"
+            },
+            "position": {
+                "x": -31,
+                "y": -143
+            }
+        },
+        {
+            "id": 2,
+            "internal-data": {
+                "model-name": "JointVelocityPlugin"
+            },
+            "position": {
+                "x": 699,
+                "y": -342
+            }
+        },
+        {
+            "id": 3,
+            "internal-data": {
+                "model-name": "Global Joint Positions"
+            },
+            "position": {
+                "x": 412,
+                "y": -260
+            }
+        },
+        {
+            "id": 4,
+            "internal-data": {
+                "dir": "C:\\anim-ws\\AnimHost\\datasets\\Survivor_Gen/",
+                "model-name": "DataExportPlugin",
+                "overwrite": false,
+                "writeBin": true
+            },
+            "position": {
+                "x": 1192,
+                "y": -315
+            }
+        },
+        {
+            "id": 5,
+            "internal-data": {
+                "dir": "../../datasets/Survivor_Gen/",
+                "model-name": "LocomotionPreprocessNode"
+            },
+            "position": {
+                "x": 1580,
+                "y": -151
+            }
+        }
+    ]
+}

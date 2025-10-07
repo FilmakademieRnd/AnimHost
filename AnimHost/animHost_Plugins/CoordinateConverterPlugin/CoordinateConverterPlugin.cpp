@@ -29,18 +29,23 @@ CoordinateConverterPlugin::CoordinateConverterPlugin()
 {
     _animationOut = std::make_shared<AnimNodeData<Animation>>();
 
-    presets.push_back({"AH<->Blender Default",glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix()), false, false, false, false, false });
+    presets.push_back({"AH<->Blender Default",
+                        glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix()) * glm::scale(glm::mat4(1.0), glm::vec3(0.01f, 0.01f, 0.01f)),
+                        glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix())
+                        });
 
-    presets.push_back({"No Conversion", glm::mat4(1.0), false, false, false, false, false});
+    presets.push_back({"No Conversion", glm::mat4(1.0), glm::mat4(1.0)});
+
+	presets.push_back({ "Unity", glm::scale(glm::mat4(1.0), glm::vec3(0.01f, 0.01f, 0.01f)), 
+                        glm::inverse(AnimHostHelper::GetCoordinateSystemTransformationMatrix()),
+                        true});
 
     activePreset = presets[0];
-
-    qDebug() << "CoordinateConverterPlugin created";
 }
 
 CoordinateConverterPlugin::~CoordinateConverterPlugin()
 {
-    qDebug() << "~CoordinateConverterPlugin()";
+
 }
 
 unsigned int CoordinateConverterPlugin::nDataPorts(QtNodes::PortType portType) const
@@ -68,73 +73,129 @@ void CoordinateConverterPlugin::processInData(std::shared_ptr<NodeData> data, Qt
 
     _animationIn = std::static_pointer_cast<AnimNodeData<Animation>>(data);
 
-    qDebug() << "CoordinateConverterPlugin setInData";
+   // qDebug() << "CoordinateConverterPlugin setInData";
 }
 
 bool CoordinateConverterPlugin::isDataAvailable() {
-    return !_animationIn.expired();
-}
+
+    if (!_animationIn.expired()) {
+        if (auto spAnimationIn = _animationIn.lock()) {
+            auto AnimIn = spAnimationIn->getData();
+            if (AnimIn->mBones.size() > 0)
+                return true;
+        }
+    }
+        return false;
+};
 
 void CoordinateConverterPlugin::run()
 {
-    if (auto spAnimationIn = _animationIn.lock()) {
-        auto AnimIn = spAnimationIn->getData();
-        
-        auto animOut = std::make_shared<Animation>(*AnimIn);
+    if (isDataAvailable()) {
+
+        if (auto spAnimationIn = _animationIn.lock()) {
+            auto AnimIn = spAnimationIn->getData();
+            auto animOut = std::make_shared<Animation>(*AnimIn);
+            bool negX, negY, negZ, negW, swapYZ = false;
+
+            negX = xButton->isChecked();
+            negY = yButton->isChecked();
+            negZ = zButton->isChecked();
+            negW = wButton->isChecked();
+            swapYZ = swapYzButton->isChecked();
+
+            // Apply Transforms to Character Object Root
+
+            for (int i = 0; i < animOut->mBones[0].mPositonKeys.size(); i++) {
+                
+				glm::vec3 pos = animOut->mBones[0].mPositonKeys[i].position;
+				glm::quat rot = animOut->mBones[0].mRotationKeys[i].orientation;
+
+				glm::mat4 transform = glm::translate(glm::mat4(1.0), pos) * glm::toMat4(rot);
+
+				// Transform to target system
+				transform = activePreset.transformMatrix * transform * glm::inverse(activePreset.transformMatrix);
+
+				// Extract position and rotation
+				animOut->mBones[0].mPositonKeys[i].position = glm::vec3(transform[3]);
+				animOut->mBones[0].mRotationKeys[i].orientation = glm::toQuat(transform);
+
+            }
 
 
-        bool negX, negY, negZ, negW, swapYZ = false;
+			// Revert Asset specific conversion applied to character "root" bone (Usually Hip)
+            glm::mat4 conversion = activePreset.characterRootTransform;
+            for (int i = 0; i < animOut->mBones[1].mPositonKeys.size(); i++) {
 
-        negX = xButton->isChecked();
-        negY = yButton->isChecked();
-        negZ = zButton->isChecked();
-        negW = wButton->isChecked();
-        swapYZ = swapYzButton->isChecked();
-        
-        
-        //Apply Transform to Root Bone
-        for (int i = 0; i < animOut->mBones[1].mPositonKeys.size(); i++) {
+                glm::vec3 pos = glm::vec4(animOut->mBones[1].mPositonKeys[i].position, 1.f);
+                glm::quat rot = animOut->mBones[1].mRotationKeys[i].orientation  ;
 
-            animOut->mBones[1].mRotationKeys[i].orientation = glm::toQuat(activePreset.transformMatrix) * animOut->mBones[0].mRotationKeys[i].orientation * animOut->mBones[1].mRotationKeys[i].orientation;
-            animOut->mBones[1].mPositonKeys[i].position = glm::toQuat(activePreset.transformMatrix) * glm::vec3(animOut->mBones[1].mPositonKeys[i].position);
+                glm::mat4 transform =glm::translate(glm::mat4(1.0), pos) * glm::toMat4(rot);
 
+                // Transform to target system
+                transform = conversion * transform;
+
+
+                if (activePreset.applyScaleOnCharacter)
+                    animOut->mBones[1].mPositonKeys[i].position = glm::vec3(transform[3]) / 100.f;
+                else
+					animOut->mBones[1].mPositonKeys[i].position = glm::vec3(transform[3]);
+
+
+                animOut->mBones[1].mRotationKeys[i].orientation = glm::toQuat(transform);
+
+            }
+
+
+
+			//Apply bone specific transformations to the rest of the bones
+            for (int i = 0; i < animOut->mBones.size(); i++) {
+
+				//Iterate over T, R, S Keys individually, might contain different amount of keys
+                int numKeys = animOut->mBones[i].mNumKeysRotation;
+                for (int j = 0; j < numKeys; j++) {
+                    animOut->mBones[i].mRotationKeys[j].orientation = ConvertToTargetSystem(animOut->mBones[i].mRotationKeys[j].orientation,
+                        swapYZ, negX, negY, negZ, negW);
+                }
+
+                numKeys = animOut->mBones[i].mNumKeysPosition;
+                for (int j = 0; j < numKeys; j++) {
+                    animOut->mBones[i].mPositonKeys[j].position = ConvertToTargetSystem(animOut->mBones[i].mPositonKeys[j].position,
+                        swapYZ, negX, negY, negZ, negW)  ;
+
+
+					// Fill other position keys with rest translation, no animation expected but prevent empty keys
+                    if (i > 1)
+                        animOut->mBones[i].mPositonKeys[j].position = animOut->mBones[i].mRestingTransform[3] / 100.f;
+                }
+
+                numKeys = animOut->mBones[i].mNumKeysScale;
+                for (int j = 0; j < numKeys; j++) {
+                    animOut->mBones[i].mScaleKeys[j].scale = ConvertToTargetSystem(animOut->mBones[i].GetScale(j),
+                        swapYZ, negX, negY, negZ, negW);
+                }
+
+                animOut->mBones[i].restingRotation = ConvertToTargetSystem(animOut->mBones[i].restingRotation,
+                    swapYZ, negX, negY, negZ, negW);
+
+                animOut->mBones[i].mRestingTransform = ConvertToTargetSystem(animOut->mBones[i].mRestingTransform,
+                    swapYZ, negX, negY, negZ, negW);
+            }
+
+            _animationOut->setVariant(QVariant::fromValue(animOut));
+
+            emitDataUpdate(0);
+            emitRunNextNode();
         }
-        
-        for(int i = 0; i < animOut->mBones.size(); i++) {
-            int numKeys = animOut->mBones[i].mNumKeysRotation;
-            for (int j = 0; j < numKeys; j++) {
-                animOut->mBones[i].mRotationKeys[j].orientation = ConvertToTargetSystem(animOut->mBones[i].mRotationKeys[j].orientation,
-                    swapYZ, negX, negY, negZ, negW);
-            }
+        else {
 
-            numKeys = animOut->mBones[i].mNumKeysPosition;
-            for (int j = 0; j < numKeys; j++) {
-                animOut->mBones[i].mPositonKeys[j].position = ConvertToTargetSystem(animOut->mBones[i].mPositonKeys[j].position,
-                    swapYZ, negX, negY, negZ, negW);
-            }
-
-            numKeys = animOut->mBones[i].mNumKeysScale;
-            for (int j = 0; j < numKeys; j++) {
-                animOut->mBones[i].mScaleKeys[j].scale = ConvertToTargetSystem(animOut->mBones[i].mScaleKeys[j].scale,
-                    swapYZ, negX, negY, negZ, negW);
-            }
-
-            animOut->mBones[i].restingRotation = ConvertToTargetSystem(animOut->mBones[i].restingRotation,
-                swapYZ, negX, negY, negZ, negW);
-
-            animOut->mBones[i].mRestingTransform = ConvertToTargetSystem(animOut->mBones[i].mRestingTransform,
-                swapYZ, negX, negY, negZ, negW);
+            emitDataInvalidated(0);
         }
-			
-        _animationOut->setVariant(QVariant::fromValue(animOut));
 
-        emitDataUpdate(0);
-        emitRunNextNode();
     }
-    else {
-
-        emitDataInvalidated(0);
-    }
+	else {
+		emitDataInvalidated(0);
+	}
+    
 
 }
 
@@ -186,7 +247,7 @@ QWidget* CoordinateConverterPlugin::embeddedWidget()
             debugLayout->addWidget(swapYzButton);
 
             // Matrix Editor
-            matrixLabel = new QLabel("Transformation Matrix:");
+            matrixLabel = new QLabel("Transformation Character Root Matrix:");
             matrixEditor = new MatrixEditorWidget();
             matrixEditor->SetMatrix(activePreset.transformMatrix);
             applyButton = new QPushButton("Apply Matrix");
@@ -347,6 +408,6 @@ glm::vec3 CoordinateConverterPlugin::ConvertToTargetSystem(const glm::vec3& vecI
 
 void CoordinateConverterPlugin::onChangedCheck(int check)
 {
+    qDebug() << "Quaternion Swizzel";
     run();
-	qDebug() << "Example Widget Clicked";
 }

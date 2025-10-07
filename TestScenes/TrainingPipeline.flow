@@ -1,0 +1,48 @@
+{
+    "connections": [
+        {
+            "inPortIndex": 0,
+            "intNodeId": 1,
+            "outNodeId": 0,
+            "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 1,
+            "outNodeId": 3,
+            "outPortIndex": 1
+        }
+    ],
+    "nodes": [
+        {
+            "id": 0,
+            "internal-data": {
+                "model-name": "RunTriggerPlugin"
+            },
+            "position": {
+                "x": -200,
+                "y": -100
+            }
+        },
+        {
+            "id": 1,
+            "internal-data": {
+                "model-name": "TrainingNode"
+            },
+            "position": {
+                "x": 350,
+                "y": -100
+            }
+        },
+        {
+            "id": 3,
+            "internal-data": {
+                "model-name": "StarkeConfigNode"
+            },
+            "position": {
+                "x": -200,
+                "y": 0
+            }
+        }
+    ]
+}

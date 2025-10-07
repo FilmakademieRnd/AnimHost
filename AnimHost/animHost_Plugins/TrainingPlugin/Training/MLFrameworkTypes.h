@@ -1,0 +1,101 @@
+/*
+ ***************************************************************************************
+
+ *   Copyright (c) 2024 Filmakademie Baden-Wuerttemberg, Animationsinstitut R&D Labs
+ *   https://research.animationsinstitut.de/animhost
+ *   https://github.com/FilmakademieRnd/AnimHost
+ *    
+ *   AnimHost is a development by Filmakademie Baden-Wuerttemberg, Animationsinstitut
+ *   R&D Labs in the scope of the EU funded project MAX-R (101070072).
+ *    
+ *   This program is distributed in the hope that it will be useful, but WITHOUT
+ *   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ *   FOR A PARTICULAR PURPOSE. See the MIT License for more details.
+ *   You should have received a copy of the MIT License along with this program; 
+ *   if not go to https://opensource.org/licenses/MIT
+
+ ***************************************************************************************
+ */
+
+#pragma once
+#include <QString>
+#include <QJsonObject>
+#include <tuple>
+#include <array>
+#include <commondatatypes.h>
+#include "ConfigUtils.h"
+
+namespace MLFramework {
+
+/**
+ * @brief Message structure for ML framework training communication
+ *
+ * TrainingMessage represents the communication protocol between the C++ AnimHost
+ * application and Python ML training scripts. It contains status information,
+ * textual messages, and training metrics.
+ *
+ * @note This struct is responsible for maintaining consistency with the Python
+ * ExperimentTracker output format defined in the ML framework.
+ *
+ * @see ExperimentTracker._emit_json() in Python ML framework
+ */
+struct TrainingMessage {
+    QString status;
+    QString text;
+    QJsonObject metrics;
+    
+    /**
+     * Parse a TrainingMessage from a Python ML Framework json message.
+     */
+    static TrainingMessage fromJson(const QJsonObject& obj) {
+        if (obj.isEmpty()) {
+            qWarning() << "Empty JSON object received";
+            return TrainingMessage{};
+        }
+        
+        TrainingMessage msg;
+        msg.status = obj["status"].toString();
+        msg.text = obj["text"].toString();
+        msg.metrics = obj.contains("metrics") ? obj["metrics"].toObject() : QJsonObject();
+        return msg;
+    }
+};
+
+/**
+ * @brief ML training configuration parameters
+ *
+ * Supports auto-generated Qt widgets and JSON serialization.
+ *
+ * @note To add fields: update the field, tie() methods, field_names(), display_names()
+ */
+struct StarkeConfig {
+    QString dataset_path = "C:/anim-ws/AnimHost/datasets/Survivor_Gen";
+    QString path_to_ai4anim = "C:/anim-ws/AI4Animation/AI4Animation/SIGGRAPH_2022/PyTorch";
+    QString processed_data_path = "C:/anim-ws/AnimHost/data";
+    int pae_epochs = 30;
+    int gnn_epochs = 300;
+
+    auto tie() const { return std::tie(dataset_path, path_to_ai4anim, processed_data_path, pae_epochs, gnn_epochs); }
+    auto tie()       { return std::tie(dataset_path, path_to_ai4anim, processed_data_path, pae_epochs, gnn_epochs); }
+
+    static constexpr auto field_names() {
+        return std::array{"dataset_path", "path_to_ai4anim", "processed_data_path", "pae_epochs", "gnn_epochs"};
+    }
+
+    static constexpr auto display_names() {
+        return std::array{"Dataset Path", "AI4Animation Path", "Processed Data Path", "PAE Epochs", "GNN Epochs"};
+    }
+
+    QJsonObject toJson() const {
+        return ConfigUtils::structToJson(*this);
+    }
+
+    static StarkeConfig fromJson(const QJsonObject& obj) {
+        return ConfigUtils::jsonToStruct<StarkeConfig>(obj);
+    }
+
+    // Required for AnimNodeData node inputs/outputs
+    COMMONDATA(StarkeConfig, Starke Config)
+};
+
+} // namespace MLFramework

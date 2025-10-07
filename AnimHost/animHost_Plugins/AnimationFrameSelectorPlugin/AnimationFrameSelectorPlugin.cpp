@@ -29,12 +29,10 @@ AnimationFrameSelectorPlugin::AnimationFrameSelectorPlugin()
 
     _animationOut = std::make_shared<AnimNodeData<Animation>>();
 
-    qDebug() << "AnimationFrameSelectorPlugin created";
 }
 
 AnimationFrameSelectorPlugin::~AnimationFrameSelectorPlugin()
 {
-    qDebug() << "~AnimationFrameSelectorPlugin()";
 }
 
 unsigned int AnimationFrameSelectorPlugin::nDataPorts(QtNodes::PortType portType) const
@@ -139,7 +137,7 @@ QWidget* AnimationFrameSelectorPlugin::embeddedWidget()
 
 void AnimationFrameSelectorPlugin::onFrameChange(int value)
 {
-    qDebug() << value;
+    qDebug() << "Selected Frame " << value;
     auto AnimOut = _animationOut->getData();
     AnimOut->mDurationFrames = 1;
 

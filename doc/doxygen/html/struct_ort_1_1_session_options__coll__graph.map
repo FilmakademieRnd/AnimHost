@@ -1,9 +1,0 @@
-<map id="Ort::SessionOptions" name="Ort::SessionOptions">
-<area shape="rect" id="Node000001" title="Wrapper around ::OrtSessionOptions." alt="" coords="25,261,165,288"/>
-<area shape="rect" id="Node000002" href="$struct_ort_1_1detail_1_1_session_options_impl.html" title=" " alt="" coords="5,171,185,213"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="98,229,98,261,92,261,92,229"/>
-<area shape="rect" id="Node000003" href="$struct_ort_1_1detail_1_1_const_session_options_impl.html" title=" " alt="" coords="11,80,179,123"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="98,138,98,170,92,170,92,138"/>
-<area shape="rect" id="Node000004" href="$struct_ort_1_1detail_1_1_base.html" title="Used internally by the C++ API. C++ wrapper types inherit from this. This is a zero cost abstraction ..." alt="" coords="21,5,169,32"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="98,48,98,80,92,80,92,48"/>
-</map>

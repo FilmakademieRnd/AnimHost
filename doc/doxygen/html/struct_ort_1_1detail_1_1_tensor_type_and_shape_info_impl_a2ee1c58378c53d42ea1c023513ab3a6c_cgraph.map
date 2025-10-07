@@ -1,5 +1,0 @@
-<map id="Ort::detail::TensorTypeAndShapeInfoImpl::GetDimensions" name="Ort::detail::TensorTypeAndShapeInfoImpl::GetDimensions">
-<area shape="rect" id="Node000001" title="Wraps OrtApi::GetDimensions." alt="" coords="5,5,205,48"/>
-<area shape="rect" id="Node000002" href="$namespace_ort.html#a296b5958479d9889218b17bdb08c1894" title="This returns a reference to the OrtApi interface in use." alt="" coords="253,13,340,40"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="205,24,237,24,237,29,205,29"/>
-</map>
