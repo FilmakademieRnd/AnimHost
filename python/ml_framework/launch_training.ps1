@@ -1,5 +1,17 @@
 # AnimHost Training Launcher (PowerShell)
-# Ensures training runs in the correct conda environment
+# Automatically installs Miniconda (if needed), creates the training environment,
+# and runs training scripts with json stdout real-time streaming to the C++ host application.
+#
+# CONDA INTEGRATION NOTE:
+# This script uses a PATH-only conda installation approach suitable for enterprise
+# environments with restricted PowerShell execution policies. It does NOT run 'conda init'
+# which means:
+#   - The 'conda activate' command will NOT work in your terminal
+#   - Conda commands (conda install, conda env list, etc.) WILL work via PATH
+#   - This script calls the environment's Python executable directly for real-time output
+#
+# To use conda activate in your terminal, manually run: conda init powershell
+# (requires execution policy that allows profile scripts)
 
 param(
     [Parameter(ValueFromRemainingArguments)]
@@ -45,13 +57,8 @@ function Install-Miniconda {
         return $false
     }
 
-    # Refresh environment to pick up PATH changes
-    $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "User") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "Machine")
-
-    # Initialize conda for PowerShell in the current session
-    Write-JsonStatus "Initializing Conda" "Setting up conda for PowerShell..."
-
     # Find conda installation path
+    Write-JsonStatus "Initializing Conda" "Locating conda installation..."
     $condaPaths = @(
         "$env:USERPROFILE\miniconda3",
         "$env:LOCALAPPDATA\miniconda3",
@@ -73,14 +80,23 @@ function Install-Miniconda {
         return $true
     }
 
-    # Initialize conda for PowerShell (run conda init powershell)
-    & "$condaPath\Scripts\conda.exe" init powershell 2>&1 | Out-Null
+    # Add conda to User PATH permanently for future sessions
+    # The alternative conda init powershell doesn't work in enterprise environments with restricted execution policy
+    Write-JsonStatus "Updating PATH" "Adding conda to system PATH..."
+    $userPath = [System.Environment]::GetEnvironmentVariable("PATH", "User")
+    $condaBinPaths = "$condaPath;$condaPath\Scripts;$condaPath\condabin"
 
-    # Source the conda hook for current session
-    $condaHook = "$env:USERPROFILE\Documents\WindowsPowerShell\profile.ps1"
-    if (Test-Path $condaHook) {
-        . $condaHook
+    if ($userPath -notlike "*$condaPath*") {
+        [System.Environment]::SetEnvironmentVariable(
+            "PATH",
+            "$condaBinPaths;$userPath",
+            "User"
+        )
+        Write-JsonStatus "PATH Updated" "Conda added to User PATH for future sessions"
     }
+
+    # Update current session PATH
+    $env:PATH = "$condaBinPaths;$env:PATH"
 
     # Accept conda Terms of Service for required channels
     Write-JsonStatus "Accepting ToS" "Accepting conda channel Terms of Service..."
@@ -115,10 +131,10 @@ try {
     }
 }
 
-# Check if target environment exists by attempting activation
+# Check if target environment exists
 Write-JsonStatus "Checking Environment" "Checking if environment $TARGET_ENV exists..."
-$activateResult = & conda activate $TARGET_ENV 2>$null
-if ($LASTEXITCODE -ne 0) {
+$envList = & conda env list 2>$null | Select-String -Pattern "^$TARGET_ENV\s"
+if (-not $envList) {
     Write-JsonStatus "Environment Missing" "Conda environment $TARGET_ENV not found"
 
     # Check if environment YAML file exists
@@ -133,17 +149,17 @@ if ($LASTEXITCODE -ne 0) {
     & conda env create -f $ENV_FILE -n $TARGET_ENV
     if ($LASTEXITCODE -ne 0) {
         Write-JsonStatus "Environment Error" "Failed to create environment $TARGET_ENV. Removing incomplete environment."
-        & conda env remove -n $TARGET_ENV
+        & conda env remove -n $TARGET_ENV -y
         Write-JsonStatus "Environment Error" "Please try running the script again or manually create the environment with: conda env create -f $ENV_FILE -n $TARGET_ENV"
         exit 1
     }
 
     Write-JsonStatus "Verifying Environment" "Waiting for environment to be registered..."
 
-    # Verify environment creation by attempting activation
+    # Verify environment creation by checking if it appears in env list
     $verified = $false
-    $testResult = & conda activate $TARGET_ENV 2>$null
-    if ($LASTEXITCODE -eq 0) {
+    $envList = & conda env list 2>$null | Select-String -Pattern "^$TARGET_ENV\s"
+    if ($envList) {
         $verified = $true
     }
 
@@ -152,15 +168,15 @@ if ($LASTEXITCODE -ne 0) {
         Write-JsonStatus "Verification Retry" "Retry: Environment not ready, waiting 3 seconds..."
         Start-Sleep 3
         $null = & conda info --envs 2>$null
-        $testResult = & conda activate $TARGET_ENV 2>$null
-        if ($LASTEXITCODE -eq 0) {
+        $envList = & conda env list 2>$null | Select-String -Pattern "^$TARGET_ENV\s"
+        if ($envList) {
             $verified = $true
         }
     }
 
     if (-not $verified) {
         Write-JsonStatus "Environment Error" "Failed to verify newly created environment $TARGET_ENV. Removing incomplete environment."
-        & conda env remove -n $TARGET_ENV
+        & conda env remove -n $TARGET_ENV -y
         Write-JsonStatus "Environment Error" "Please try running the script again or manually create the environment with: conda env create -f $ENV_FILE -n $TARGET_ENV"
         exit 1
     }
@@ -168,18 +184,22 @@ if ($LASTEXITCODE -ne 0) {
     Write-JsonStatus "Environment Ready" "Environment $TARGET_ENV created successfully"
 }
 
+# Get the environment's Python executable path
+$envPythonPath = & conda run -n $TARGET_ENV where python 2>$null | Select-Object -First 1
+if (-not $envPythonPath) {
+    Write-JsonStatus "Environment Error" "Could not find Python in environment $TARGET_ENV"
+    exit 1
+}
+
 # Run training with unbuffered output for real-time streaming
+# Use the environment's Python directly to preserve real-time stdout
 $trainingExitCode = 0
-try {
-    if ($TrainingArgs) {
-        & python -u $TRAINING_SCRIPT $TrainingArgs
-    } else {
-        & python -u $TRAINING_SCRIPT
-    }
+if ($TrainingArgs) {
+    & $envPythonPath -u $TRAINING_SCRIPT $TrainingArgs
     $trainingExitCode = $LASTEXITCODE
-} finally {
-    # Deactivate conda environment
-    & conda deactivate 2>$null
+} else {
+    & $envPythonPath -u $TRAINING_SCRIPT
+    $trainingExitCode = $LASTEXITCODE
 }
 
 # Exit with training script's exit code
