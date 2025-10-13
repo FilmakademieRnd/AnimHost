@@ -7,7 +7,7 @@ This guide walks you through training AI-powered character animation models usin
 - **AnimHost Release**: Download the latest release from [GitHub Releases](https://github.com/FilmakademieRnd/AnimHost/releases)
 - **Windows**: Windows 10/11 with PowerShell
 - **GPU**: NVIDIA GPU recommended for faster training
-- **Disk Space**: ~20GB for intermediate trained model onnx files (assumung 30 PAE and 300 GNN epochs)
+- **Disk Space**: ~20GB for intermediate trained model onnx files (assuming 30 PAE and 300 GNN epochs)
 
 ## Quick Start: Complete Training Workflow
 
@@ -29,7 +29,7 @@ C:/My-AnimHost-Run/
         └── SIGGRAPH_2022/
 ```
 
-**Copyright Notice**: AI4Animation is only for research or education purposes, and not freely available for commercial use or redistribution.
+**Copyright Notice**: The external AI4Animation repo is only for research or education purposes, and not freely available for commercial use or redistribution.
 
 ### Step 2: Download Motion Capture Dataset
 
@@ -78,7 +78,7 @@ This outputs preprocessed binary data (`data_x.bin`, `data_y.bin`) and metadata 
 2. Configure the dataset node:
     - Select the `Dataset Path` you used, *C:/My-AnimHost-Run/Survivor_Training_Data*.
     - Select the `AI4Animation Path` you used, *C:/My-AnimHost-Run/AI4Animation-master*.
-    - Set the `PAE epochs` and `GNN epochs` to 2 epochs for a test run. Or use the default configuration for a training run that takes ~12 hours on a recent Nvidia GPU.
+    - Set the `PAE epochs` and `GNN epochs` to 1 epochs for a ~15min trial run (including a few minutes for first time setup). Or the default values for a ~12 hours training run. Time estimates assume a recent Nvidia GPU and training on the full Surivor 2025 dataset (without mirroed data).
 
 3. Click **Run** to start training
 
@@ -114,6 +114,9 @@ For developers and advanced users, see [DEV_GUIDE.md](DEV_GUIDE.md) for:
 
 **Issue**: The TrainingNode looks stuck at `One-time Env Setup`.
 **Solution**: This does take some time because it downloads and installs larger libraries like PyTorch and Cuda. Do expect a few minutes. You'll only need this step for your very first run.
+
+**Issue**: The TrainingNode looks stuck at `Starting training ...`.
+**Solution**: Both the first and expecially the second starting training steps need a few minutes to load the datasets into memory if you're using the full Surivor 2025 set. If you're giving this a trial run you can use only a few FBX files.
 
 
 For technical issues, see [DEV_GUIDE.md](DEV_GUIDE.md) or [open an issue](https://github.com/FilmakademieRnd/AnimHost/issues).

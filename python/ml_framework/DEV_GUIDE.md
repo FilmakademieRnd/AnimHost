@@ -13,13 +13,12 @@
 
 **Use this when:** Testing C++ TrainingNode changes OR validating full integration workflow
 
-**Important:** AnimHost uses **deployed scripts** from the build output directory (`build/.../Release/python/ml_framework/`). Python code changes require a rebuild to be picked up by AnimHost.
-
 1. Build AnimHost as per instructions in the [top-level README](/README.md)
 2. Launch the AnimHost.exe application
 3. Load `TestScenes/TrainingPipeline.flow`
 4. Execute the training pipeline through the node interface
 
+**IMPORTANT:** AnimHost uses **deployed scripts** from the build output directory (`build/.../Release/python/ml_framework/`). Python code changes require a rebuild to be picked up by AnimHost. See option 2 for fast iteration on Python changes.
 
 ## Option 2: Standalone Launcher (Windows only, Python Development)
 
@@ -44,7 +43,7 @@ cd python/ml_framework
 python training.py
 ```
 
-**Note:** Requires manual activation of `animhost-ml-starke22` conda environment first. The launch_training.ps1 install won't enable `conda activate` commands, you need to run `conda init` with proper permissions.
+**Note:** Requires manual activation of `animhost-ml-starke22` conda environment first. The launch_training.ps1 install won't enable `conda activate` commands; you need to run `conda init` with proper permissions.
 
 # Release Package Structure
 
