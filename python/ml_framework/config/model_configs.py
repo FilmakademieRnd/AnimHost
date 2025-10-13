@@ -26,7 +26,6 @@ class StarkeModelConfig:
 
     dataset_path: Path
     path_to_ai4anim: Path
-    processed_data_path: Path
     pae_epochs: int
     gnn_epochs: int
 
@@ -36,8 +35,6 @@ class StarkeModelConfig:
             self.dataset_path = Path(self.dataset_path)
         if isinstance(self.path_to_ai4anim, str):
             self.path_to_ai4anim = Path(self.path_to_ai4anim)
-        if isinstance(self.processed_data_path, str):
-            self.processed_data_path = Path(self.processed_data_path)
 
     def validate(self) -> Optional[str]:
         """
@@ -62,14 +59,6 @@ class StarkeModelConfig:
         if not os.access(self.path_to_ai4anim, os.R_OK):
             return f"AI4Animation path is not readable: {self.path_to_ai4anim}"
 
-        # Validate processed data path exists
-        if not self.processed_data_path.exists():
-            return f"Processed data path does not exist: {self.processed_data_path}"
-        if not self.processed_data_path.is_dir():
-            return f"Processed data path is not a directory: {self.processed_data_path}"
-        if not os.access(self.processed_data_path, os.W_OK):
-            return f"Processed data path is not writable: {self.processed_data_path}"
-        
         # Validate epochs > 0
         if self.pae_epochs <= 0:
             return f"PAE epochs must be greater than 0, got: {self.pae_epochs}"

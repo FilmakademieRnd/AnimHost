@@ -32,6 +32,36 @@ logger = logging.getLogger(__name__)
 PAE_VELOCITY_FEATURE_COUNT = 78
 
 
+def pytorch_path(path_to_ai4anim: Path) -> Path:
+    """
+    Get the PyTorch directory path.
+
+    :param path_to_ai4anim: Path to AI4Animation framework
+    :return: Path to PyTorch directory
+    """
+    return path_to_ai4anim / "AI4Animation" / "SIGGRAPH_2022" / "PyTorch"
+
+
+def pae_path(path_to_ai4anim: Path) -> Path:
+    """
+    Get the PAE directory path.
+
+    :param path_to_ai4anim: Path to AI4Animation framework
+    :return: Path to PAE directory
+    """
+    return pytorch_path(path_to_ai4anim) / "PAE"
+
+
+def gnn_path(path_to_ai4anim: Path) -> Path:
+    """
+    Get the GNN directory path.
+
+    :param path_to_ai4anim: Path to AI4Animation framework
+    :return: Path to GNN directory
+    """
+    return pytorch_path(path_to_ai4anim) / "GNN"
+
+
 def init_model(config: StarkeModelConfig) -> None:
     """
     Initialize model by setting hyperparameters and parameters inferred from input data.
@@ -73,7 +103,7 @@ def _init_pae_data_shape(dataset_path: Path, path_to_ai4anim: Path) -> None:
     logger.info(f"Found {velocity_samples} velocity samples in sequences file")
 
     # Write to PAE DataShape.txt
-    pae_data_shapes_path = path_to_ai4anim / "PAE" / "Dataset" / "DataShape.txt"
+    pae_data_shapes_path = pae_path(path_to_ai4anim) / "Dataset" / "DataShape.txt"
 
     # Create backup if original exists
     if pae_data_shapes_path.exists():
@@ -109,7 +139,7 @@ def _init_pae_network_script(path_to_ai4anim: Path, pae_epochs: int) -> None:
     :param pae_epochs: Number of epochs for PAE training
     :raises RuntimeError: If script editing fails
     """
-    pae_network_path = path_to_ai4anim / "PAE" / "Network.py"
+    pae_network_path = pae_path(path_to_ai4anim) / "Network.py"
     current_pae_values = read_script_variables(pae_network_path, ["epochs"])
     current_pae_epochs = current_pae_values.get("epochs")
 
@@ -130,7 +160,7 @@ def _init_gnn_network_script(
     :param updates: Dictionary of parameter updates (epochs, gating_indices, main_indices)
     :raises RuntimeError: If script editing fails
     """
-    gnn_network_path = path_to_ai4anim / "GNN" / "Network.py"
+    gnn_network_path = gnn_path(path_to_ai4anim) / "Network.py"
 
     # Read current values for logging
     current_values = read_script_variables(gnn_network_path, list(updates.keys()))
@@ -195,7 +225,7 @@ def reset_model(path_to_ai4anim: Path) -> None:
     :raises RuntimeError: If reset fails
     """
     # Reset PAE Network.py
-    pae_network_path = path_to_ai4anim / "PAE" / "Network.py"
+    pae_network_path = pae_path(path_to_ai4anim) / "Network.py"
     error = reset_script(pae_network_path)
     if error:
         logger.error(f"Failed to reset PAE Network.py: {error}")
@@ -203,7 +233,7 @@ def reset_model(path_to_ai4anim: Path) -> None:
     logger.info("Reset PAE Network.py from backup")
 
     # Reset PAE DataShape.txt
-    pae_data_shapes_path = path_to_ai4anim / "PAE" / "Dataset" / "DataShape.txt"
+    pae_data_shapes_path = pae_path(path_to_ai4anim) / "Dataset" / "DataShape.txt"
     backup_path = pae_data_shapes_path.with_suffix(
         pae_data_shapes_path.suffix + ".animhost_backup"
     )
@@ -221,7 +251,7 @@ def reset_model(path_to_ai4anim: Path) -> None:
         logger.warning("No backup found for PAE DataShape.txt")
 
     # Reset GNN Network.py
-    gnn_network_path = path_to_ai4anim / "GNN" / "Network.py"
+    gnn_network_path = gnn_path(path_to_ai4anim) / "Network.py"
     error = reset_script(gnn_network_path)
     if error:
         logger.error(f"Failed to reset GNN Network.py: {error}")
@@ -229,43 +259,68 @@ def reset_model(path_to_ai4anim: Path) -> None:
     logger.info("Reset GNN Network.py from backup")
 
 
-def validate_ai4animation_structure(path_to_ai4anim: Path, phase: str) -> bool:
+def validate_ai4animation_structure(path_to_ai4anim: Path) -> bool:
     """
-    Validate AI4Animation framework structure for given training phase.
+    Validate AI4Animation framework structure for both PAE and GNN training phases.
 
     :param path_to_ai4anim: Path to AI4Animation framework
-    :param phase: Training phase ("PAE" or "GNN")
     :returns: True if structure is valid, False otherwise
     """
-    phase_path = path_to_ai4anim / phase
-
-    if not phase_path.exists() or not phase_path.is_dir():
+    # Validate PyTorch directory exists
+    pytorch_dir = pytorch_path(path_to_ai4anim)
+    if not pytorch_dir.exists() or not pytorch_dir.is_dir():
         logger.error(
-            f"AI4Animation {phase} directory not found at {phase_path}. "
+            f"AI4Animation PyTorch directory not found at {pytorch_dir}. "
             "Ensure AI4Animation is properly cloned and the path_to_ai4anim "
             "configuration points to the correct directory."
         )
         return False
 
-    network_script = phase_path / "Network.py"
-    if not network_script.exists() or not network_script.is_file():
+    # Validate PAE directory
+    pae_dir = pae_path(path_to_ai4anim)
+    if not pae_dir.exists() or not pae_dir.is_dir():
         logger.error(
-            f"AI4Animation {phase} Network.py script not found at {network_script}"
+            f"AI4Animation PAE directory not found at {pae_dir}. "
+            "Ensure AI4Animation is properly cloned and the path_to_ai4anim "
+            "configuration points to the correct directory."
         )
         return False
 
-    if phase == "PAE":
-        dataset_path = phase_path / "Dataset"
-        if not dataset_path.exists() or not dataset_path.is_dir():
-            logger.error(
-                f"AI4Animation PAE Dataset directory not found at {dataset_path}"
-            )
-            return False
-    elif phase == "GNN":
-        data_path = phase_path / "Data"
-        if not data_path.exists() or not data_path.is_dir():
-            logger.error(f"AI4Animation GNN Data directory not found at {data_path}")
-            return False
+    pae_network_script = pae_dir / "Network.py"
+    if not pae_network_script.exists() or not pae_network_script.is_file():
+        logger.error(
+            f"AI4Animation PAE Network.py script not found at {pae_network_script}"
+        )
+        return False
+
+    pae_dataset_path = pae_dir / "Dataset"
+    if not pae_dataset_path.exists() or not pae_dataset_path.is_dir():
+        logger.error(
+            f"AI4Animation PAE Dataset directory not found at {pae_dataset_path}"
+        )
+        return False
+
+    # Validate GNN directory
+    gnn_dir = gnn_path(path_to_ai4anim)
+    if not gnn_dir.exists() or not gnn_dir.is_dir():
+        logger.error(
+            f"AI4Animation GNN directory not found at {gnn_dir}. "
+            "Ensure AI4Animation is properly cloned and the path_to_ai4anim "
+            "configuration points to the correct directory."
+        )
+        return False
+
+    gnn_network_script = gnn_dir / "Network.py"
+    if not gnn_network_script.exists() or not gnn_network_script.is_file():
+        logger.error(
+            f"AI4Animation GNN Network.py script not found at {gnn_network_script}"
+        )
+        return False
+
+    gnn_data_path = gnn_dir / "Data"
+    if not gnn_data_path.exists() or not gnn_data_path.is_dir():
+        logger.error(f"AI4Animation GNN Data directory not found at {gnn_data_path}")
+        return False
 
     return True
 
@@ -314,8 +369,8 @@ def run_pae_training(
         )
 
     # PAE preprocessing - copy training data to PAE folder
-    pae_path = config.path_to_ai4anim / "PAE"
-    pae_dataset_path = pae_path / "Dataset"
+    pae_dir = pae_path(config.path_to_ai4anim)
+    pae_dataset_path = pae_dir / "Dataset"
 
     # Copy files: p_velocity.bin -> Data.bin, sequences_velocity.txt -> Sequences.txt
     shutil.copyfile(p_velocity_file, pae_dataset_path / "Data.bin")
@@ -325,7 +380,7 @@ def run_pae_training(
     # Use MPLBACKEND=Agg to suppress matplotlib windows because they don't show anything
     return_code, stderr = run_script_subprocess(
         script_name="Network.py",
-        working_dir=pae_path,
+        working_dir=pae_dir,
         model_name="Encoder",
         line_parser=lambda line, model_name: parse_training_output(
             line, model_name, tracker
@@ -341,7 +396,7 @@ def run_pae_training(
         return False
 
     # Validate expected output file exists
-    expected_params_file = pae_path / "Training" / f"Parameters_{config.pae_epochs}.txt"
+    expected_params_file = pae_dir / "Training" / f"Parameters_{config.pae_epochs}.txt"
     if not expected_params_file.exists():
         error_msg = f"PAE training completed but expected output file not found: {expected_params_file}"
         if stderr:
@@ -368,24 +423,25 @@ def run_gnn_training(config: StarkeModelConfig, tracker: ExperimentTracker) -> b
 
     # Initialize motion processor
     mp = MotionProcessor(
-        str(config.dataset_path), str(config.path_to_ai4anim), config.pae_epochs
+        str(config.dataset_path), str(pytorch_path(config.path_to_ai4anim)), config.pae_epochs
     )
 
     # GNN preprocessing - prepare training data for generator
     mp.input_preprocessing()
     mp.output_preprocessing()
-    mp.export_data()
+    processed_data_path = config.dataset_path / "processed"
+    mp.export_data(folder_path=str(processed_data_path) + "/")
 
     # Copy all files from processed folder to GNN folder
-    gnn_path = config.path_to_ai4anim / "GNN"
-    for file_path in config.processed_data_path.iterdir():
+    gnn_dir = gnn_path(config.path_to_ai4anim)
+    for file_path in processed_data_path.iterdir():
         if file_path.is_file():  # Only copy files, not directories
-            shutil.copyfile(file_path, gnn_path / "Data" / file_path.name)
+            shutil.copyfile(file_path, gnn_dir / "Data" / file_path.name)
 
     # Launch GNN Network.py subprocess
     return_code, stderr = run_script_subprocess(
         script_name="Network.py",
-        working_dir=gnn_path,
+        working_dir=gnn_dir,
         model_name="Controller",
         line_parser=lambda line, model_name: parse_training_output(
             line, model_name, tracker
