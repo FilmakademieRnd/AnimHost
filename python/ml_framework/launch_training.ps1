@@ -54,6 +54,8 @@ function Install-Miniconda {
     & winget install Anaconda.Miniconda3 --silent --accept-package-agreements --accept-source-agreements
     if ($LASTEXITCODE -ne 0) {
         Write-JsonStatus "Install Error" "Miniconda installation via winget failed with exit code $LASTEXITCODE"
+        Write-JsonStatus "Install Error" "Cleaning up failed installation..."
+        & winget uninstall Anaconda.Miniconda3 --silent 2>&1 | Out-Null
         return $false
     }
 
@@ -181,10 +183,21 @@ if (-not $envList) {
     Write-JsonStatus "Environment Ready" "Environment $TARGET_ENV created successfully"
 }
 
-# Get the environment's Python executable path
-$envPythonPath = & conda run -n $TARGET_ENV where python 2>$null | Select-Object -First 1
-if (-not $envPythonPath) {
-    Write-JsonStatus "Environment Error" "Could not find Python in environment $TARGET_ENV"
+# Get the environment's Python executable path by parsing conda env list
+$envListOutput = & conda env list 2>$null
+$envInfo = $envListOutput | Select-String -Pattern "^$TARGET_ENV\s+(.+)$"
+
+if ($envInfo -and $envInfo.Matches.Count -gt 0 -and $envInfo.Matches[0].Groups.Count -gt 1) {
+    # Extract path and remove any asterisk marker and whitespace
+    $envPath = $envInfo.Matches[0].Groups[1].Value.Trim('*').Trim()
+    $envPythonPath = Join-Path $envPath "python.exe"
+
+    if (-not (Test-Path $envPythonPath)) {
+        Write-JsonStatus "Environment Error" "Could not find Python at $envPythonPath"
+        exit 1
+    }
+} else {
+    Write-JsonStatus "Environment Error" "Could not determine path for environment $TARGET_ENV"
     exit 1
 }
 
