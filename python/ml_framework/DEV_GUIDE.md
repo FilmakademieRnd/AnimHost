@@ -13,15 +13,13 @@
 
 **Use this when:** Testing C++ TrainingNode changes OR validating full integration workflow
 
-**Important:** AnimHost uses **deployed scripts** from the build output directory (`build/.../Release/python/ml_framework/`). Python code changes require a rebuild to be picked up by the GUI.
+**Important:** AnimHost uses **deployed scripts** from the build output directory (`build/.../Release/python/ml_framework/`). Python code changes require a rebuild to be picked up by AnimHost.
 
 1. Build AnimHost as per instructions in the [top-level README](/README.md)
-   - The build process automatically copies `python/ml_framework/` to the build output
 2. Launch the AnimHost.exe application
 3. Load `TestScenes/TrainingPipeline.flow`
 4. Execute the training pipeline through the node interface
 
-**Note:** If you modify Python code and want to test in the GUI, you must rebuild AnimHost for changes to take effect.
 
 ## Option 2: Standalone Launcher (Windows only, Python Development)
 
@@ -29,18 +27,11 @@
 
 **Advantage:** No build required - directly uses source scripts from `python/ml_framework/`
 
-From the `python/ml_framework` directory:
 ```powershell
-cd python/ml_framework
-launch_training.ps1
+python/ml_framework/launch_training.ps1
 ```
 
-Or from the AnimHost root directory:
-```powershell
-python\ml_framework\launch_training.bat
-```
-
-This automatically activates the `animhost-ml-starke22` conda environment, runs training with real-time output streaming, and cleanly deactivates the environment when complete.
+This runs training in the `animhost-ml-starke22` conda environment with real-time output streaming.
 
 ## Option 3: Direct Python Execution (All Platforms, Manual Environment)
 
@@ -53,7 +44,7 @@ cd python/ml_framework
 python training.py
 ```
 
-**Note:** Requires manual activation of `animhost-ml-starke22` conda environment first.
+**Note:** Requires manual activation of `animhost-ml-starke22` conda environment first. The launch_training.ps1 install won't enable `conda activate` commands, you need to run `conda init` with proper permissions.
 
 # Release Package Structure
 
@@ -67,24 +58,13 @@ Release/
     ml_framework/
       launch_training.ps1
       training.py
-      starke_training.py
       environments/
         animhost-ml-starke22.yml
       (other ML framework files)
   TestScenes/
     TrainingPipeline.flow
     (other .flow test scenes)
-  platforms/
-  imageformats/
-  translations/
 ```
-
-**To create a release package:**
-1. Build AnimHost in Release configuration
-2. Navigate to `build/AnimHost/animHostApp/Release/`
-3. Zip the entire `Release/` directory
-
-The resulting package is self-contained and runnable on Windows systems with the automated conda environment setup.
 
 # How to test
 
@@ -96,9 +76,6 @@ pytest tests/ -v
 
 ## Run specific test modules
 ```bash
-# Test experiment tracker only
-pytest tests/test_experiment_tracker.py -v
-
 # Test external training integration
 pytest tests/test_external/test_example_training.py -v
 ```
