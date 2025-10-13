@@ -4,22 +4,6 @@ AnimHost connects animation generators to Digital Content Creation applications,
 
 **AninHost web site:** https://research.animationsinstitut.de/animhost
 
-## Run Instructions
-
-### Training Character Animation Models
-
-AnimHost can train AI-powered character animation models on motion capture data using deep learning techniques (Phase Autoencoder + Gated Neural Networks).
-
-**Quick Start for End Users:**
-1. Download the [latest release](https://github.com/FilmakademieRnd/AnimHost/releases)
-2. Follow the complete training workflow in [python/ml_framework/README.md](python/ml_framework/README.md)
-
-The guide covers:
-- Downloading AI4Animation framework and mocap datasets
-- Preprocessing motion capture data
-- Training neural network models
-- Troubleshooting common issues
-
 ## Build Instructions
 
 Follow these steps to set up the project on your local machine:
