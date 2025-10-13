@@ -203,8 +203,7 @@ void TrainingNode::onTrainingOutput()
             QJsonDocument doc = QJsonDocument::fromJson(trimmedLine.toUtf8(), &parseError);
             
             if (parseError.error != QJsonParseError::NoError) {
-                //TODO(jasperx2f): Silence this
-                // qWarning() << "JSON parse error:" << parseError.errorString() << "in line:" << trimmedLine;
+                qWarning() << "JSON parse error:" << parseError.errorString() << "in line:" << trimmedLine;
                 continue;
             }
             
