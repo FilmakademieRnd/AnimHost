@@ -1,6 +1,6 @@
 {
-    "dataset_path": "C:/anim-ws/Survivor_Gen",
+    "dataset_path": "../../../Survivor_Training_Data",
     "gnn_epochs": 2,
     "pae_epochs": 2,
-    "path_to_ai4anim": "C:/anim-ws/AI4Animation"
+    "path_to_ai4anim": "../../../AI4Animation-master"
 }

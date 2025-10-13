@@ -69,8 +69,8 @@ struct TrainingMessage {
  * @note To add fields: update the field, tie() methods, field_names(), display_names()
  */
 struct StarkeConfig {
-    QString dataset_path = "C:/anim-ws/Survivor_Gen";
-    QString path_to_ai4anim = "C:/anim-ws/AI4Animation";
+    QString dataset_path = QDir::cleanPath(QDir(QCoreApplication::applicationDirPath()).filePath("../Survivor_Training_Data"));
+    QString path_to_ai4anim = QDir::cleanPath(QDir(QCoreApplication::applicationDirPath()).filePath("../AI4Animation-master"));
     int pae_epochs = 30;
     int gnn_epochs = 300;
 
