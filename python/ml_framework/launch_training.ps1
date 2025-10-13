@@ -109,9 +109,7 @@ function Install-Miniconda {
 }
 
 # Check if conda is available
-try {
-    $null = Get-Command conda -ErrorAction Stop
-} catch {
+if (-not (Get-Command conda -ErrorAction SilentlyContinue)) {
     Write-JsonStatus "Conda Missing" "conda not found in PATH. Attempting automatic installation..."
 
     $installed = Install-Miniconda
@@ -122,13 +120,12 @@ try {
     }
 
     # Verify conda is now available
-    try {
-        $null = Get-Command conda -ErrorAction Stop
-        Write-JsonStatus "Conda Ready" "Conda installation verified and ready to use"
-    } catch {
+    if (-not (Get-Command conda -ErrorAction SilentlyContinue)) {
         Write-JsonStatus "Environment Error" "Conda installed but not found in PATH. Please restart your terminal and try again"
         exit 1
     }
+
+    Write-JsonStatus "Conda Ready" "Conda installation verified and ready to use"
 }
 
 # Check if target environment exists
@@ -191,8 +188,7 @@ if (-not $envPythonPath) {
     exit 1
 }
 
-# Run training with unbuffered output for real-time streaming
-# Use the environment's Python directly to preserve real-time stdout
+# Run training via the environment's Python directly to preserve unbuffered stdout
 $trainingExitCode = 0
 if ($TrainingArgs) {
     & $envPythonPath -u $TRAINING_SCRIPT $TrainingArgs
