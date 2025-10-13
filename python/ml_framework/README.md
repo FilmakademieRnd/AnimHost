@@ -1,19 +1,19 @@
 # Training Character Animation Models
 
-This guide walks you through training AI-powered character animation models using the AnimHost pipeline and motion capture data.
+This guide walks you through training AI-powered character animation models using the AnimHost pipeline and motion capture data. You will train a Phase Autoencoder (PAE) and Gated Neural Network (GNN).
 
 ## Prerequisites
 
 - **AnimHost Release**: Download the latest release from [GitHub Releases](https://github.com/FilmakademieRnd/AnimHost/releases)
 - **Windows**: Windows 10/11 with PowerShell
 - **GPU**: NVIDIA GPU recommended for faster training
-- **Disk Space**: ~50GB (TODO:jasper2xf) for datasets and training outputs
+- **Disk Space**: ~20GB for intermediate trained model onnx files (assumung 30 PAE and 300 GNN epochs)
 
 ## Quick Start: Complete Training Workflow
 
 ### Step 1: Download AI4Animation Framework
 
-Download the [AI4Animation repository](https://github.com/sebastianstarke/AI4Animation) code as a zip file and unpack it next to your AnimHost release. The repository is 3.2GB so this will take some time.
+Download the [AI4Animation repository](https://github.com/sebastianstarke/AI4Animation) code as a zip file and unpack it next to your AnimHost release. The compressed repository is 3.3GB so this will take some time.
 
 ![alt text](<../../doc/resources/ai4animation_code_download_zip.png>)
 
@@ -33,12 +33,18 @@ C:/My-AnimHost-Run/
 
 ### Step 2: Download Motion Capture Dataset
 
-Download the *SURVIVOR AnimHost Motion Capture Dataset 2025* under the *ANIMHOST MOTION CAPTURE DATASET 2024 & 2025* section [here](https://animationsinstitut.de/en/research/projects/max-r). Place it with the AnimHost and AI4Animation directory.
+Download the *SURVIVOR AnimHost Motion Capture Dataset 2025* under the *ANIMHOST MOTION CAPTURE DATASET 2024 & 2025* section [here](https://animationsinstitut.de/en/research/projects/max-r). Place it with the AnimHost and AI4Animation directory. If you want to train without mirrored data you need to move the data files into their own dir (below Default).
 ```
 C:/My-AnimHost-Run/
 ...
 └── Survivor_AnimHost_Mocap_Dataset_2025/
     ├── FBX/
+    │   ├── Default/
+    │   │   ├── 01_....fbx
+    │   │   └── 02_....fbx
+    │   └── Mirror/
+    │       ├── 01_...Mirrored.fbx
+    │       └── 02_...Mirrored.fbx
     └── Survivor_Mocap_dataset_2025_Readme_License.html
 ```
 
@@ -50,12 +56,17 @@ C:/My-AnimHost-Run/
 ...
 └── Survivor_Training_Data/
 ```
+Note: Clear this dir if you already have it, there is a bug that blocks overwriting of some files.
+
 2. Launch `AnimHost.exe` from the release package
+
 3. Load the preprocessing pipeline: **File → Open → AnimHost/TestScenes/Preprocessing.flow**
+
 4. Configure the nodes:
-   - In the *Animation Import* node select the SURVIVOR dataset directory *.../FBX/Mirror* or *.../FBX/Test* (for testing)
+   - In the *Animation Import* node select the SURVIVOR dataset directory *.../FBX/Default* (or *.../FBX/Test* with just a few files for small trial run dataset)
    - In the *DataExportPlugin* node select the output dir *C:/My-AnimHost-Run/Survivor_Training_Data*. And make sure `overwrite` and `writeBin` are checked.
-   - In the *LocomotionPreprocessNode* select the output dir *C:/My-AnimHost-Run/Survivor_Training_Data*.
+   - In the *LocomotionPreprocessNode* select the output dir *C:/My-AnimHost-Run/Survivor_Training_Data* and `overwrite` option.
+
 5. Click **Run** to generate training data files
 
 This outputs preprocessed binary data (`data_x.bin`, `data_y.bin`) and metadata files needed for training.
@@ -63,30 +74,21 @@ This outputs preprocessed binary data (`data_x.bin`, `data_y.bin`) and metadata 
 ### Step 4: Train the Animation Model
 
 1. In AnimHost, load the training pipeline: **File → Open → TestScenes/TrainingPipeline.flow**
+
 2. Configure the dataset node:
     - Select the `Dataset Path` you used, *C:/My-AnimHost-Run/Survivor_Training_Data*.
     - Select the `AI4Animation Path` you used, *C:/My-AnimHost-Run/AI4Animation-master*.
-    - Set the `PAE epochs` and `GNN epochs` to 2 epochs for a test run or use the **default configuration for a run that takes X hours on a X GPU** (TODO:jasper2xf)
+    - Set the `PAE epochs` and `GNN epochs` to 2 epochs for a test run. Or use the default configuration for a training run that takes ~12 hours on a recent Nvidia GPU.
+
 3. Click **Run** to start training
 
 The training process will:
 - Automatically install Miniconda if not present (Windows only)
 - Create the `animhost-ml-starke22` conda environment
-- Train Phase Autoencoder (PAE) and Gated Neural Network (GNN)
+- Train the Phase Autoencoder (PAE) and Gated Neural Network (GNN)
 - Display real-time training progress in the UI
 
----
 
-## Alternative Training Methods
-
-For developers and advanced users, see [DEV_GUIDE.md](DEV_GUIDE.md) for:
-- **Option 1**: Self built AnimHost GUI (Windows, recommended above)
-- **Option 2**: Automated PowerShell launcher
-- **Option 3**: Direct Python execution (cross-platform)
-- Developer documentation and architecture diagrams
-- Testing instructions
-
----
 
 ## Outputs
 
@@ -97,12 +99,21 @@ After training completes, you'll find:
 
 These trained models can be integrated into AnimHost for real-time character animation.
 
----
+
+## Alternative Training Methods
+
+For developers and advanced users, see [DEV_GUIDE.md](DEV_GUIDE.md) for:
+- **Option 1**: Self built AnimHost GUI
+- **Option 2**: Automated PowerShell launcher
+- **Option 3**: Direct Python execution (cross-platform)
+- Developer documentation and architecture diagrams
+- Testing instructions
+
 
 ## Troubleshooting
 
-**Issue**: TODO(jasper2xf)
-**Solution**: TODO(jasper2xf)
+**Issue**: The TrainingNode looks stuck at `One-time Env Setup`.
+**Solution**: This does take some time because it downloads and installs larger libraries like PyTorch and Cuda. Do expect a few minutes. You'll only need this step for your very first run.
 
 
 For technical issues, see [DEV_GUIDE.md](DEV_GUIDE.md) or [open an issue](https://github.com/FilmakademieRnd/AnimHost/issues).
