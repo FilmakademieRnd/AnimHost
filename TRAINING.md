@@ -15,7 +15,7 @@ This guide walks you through training AI-powered character animation models usin
 
 Download the [AI4Animation repository](https://github.com/sebastianstarke/AI4Animation) code as a zip file and unpack it next to your AnimHost release. The compressed repository is 3.3GB so this will take some time.
 
-![alt text](<../../doc/resources/ai4animation_code_download_zip.png>)
+![alt text](<doc/resources/ai4animation_code_download_zip.png>)
 
 **Recommended directory structure:**
 ```
@@ -78,7 +78,7 @@ This outputs preprocessed binary data (`data_x.bin`, `data_y.bin`) and metadata 
 2. Configure the dataset node:
     - Select the `Dataset Path` you used, *C:/My-AnimHost-Run/Survivor_Training_Data*.
     - Select the `AI4Animation Path` you used, *C:/My-AnimHost-Run/AI4Animation-master*.
-    - Set the `PAE epochs` and `GNN epochs` to 1 epochs for a ~15min trial run (including a few minutes for first time setup). Or the default values for a ~12 hours training run. Time estimates assume a recent Nvidia GPU and training on the full Surivor 2025 dataset (without mirroed data).
+    - Set the `PAE epochs` and `GNN epochs` to 1 epochs for a ~15min trial run (including a few minutes for first time setup). Or the default values for a ~16 hours training run. Time estimates assume a recent Nvidia GPU and training on the full Surivor 2025 dataset (without mirroed data).
 
 3. Click **Run** to start training
 
