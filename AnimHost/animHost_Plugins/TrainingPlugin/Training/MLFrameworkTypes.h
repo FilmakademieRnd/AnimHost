@@ -69,21 +69,20 @@ struct TrainingMessage {
  * @note To add fields: update the field, tie() methods, field_names(), display_names()
  */
 struct StarkeConfig {
-    QString dataset_path = "C:/anim-ws/AnimHost/datasets/Survivor_Gen";
-    QString path_to_ai4anim = "C:/anim-ws/AI4Animation/AI4Animation/SIGGRAPH_2022/PyTorch";
-    QString processed_data_path = "C:/anim-ws/AnimHost/data";
+    QString dataset_path = QDir::cleanPath(QDir(QCoreApplication::applicationDirPath()).filePath("../Survivor_Training_Data"));
+    QString path_to_ai4anim = QDir::cleanPath(QDir(QCoreApplication::applicationDirPath()).filePath("../AI4Animation-master"));
     int pae_epochs = 30;
     int gnn_epochs = 300;
 
-    auto tie() const { return std::tie(dataset_path, path_to_ai4anim, processed_data_path, pae_epochs, gnn_epochs); }
-    auto tie()       { return std::tie(dataset_path, path_to_ai4anim, processed_data_path, pae_epochs, gnn_epochs); }
+    auto tie() const { return std::tie(dataset_path, path_to_ai4anim, pae_epochs, gnn_epochs); }
+    auto tie()       { return std::tie(dataset_path, path_to_ai4anim, pae_epochs, gnn_epochs); }
 
     static constexpr auto field_names() {
-        return std::array{"dataset_path", "path_to_ai4anim", "processed_data_path", "pae_epochs", "gnn_epochs"};
+        return std::array{"dataset_path", "path_to_ai4anim", "pae_epochs", "gnn_epochs"};
     }
 
     static constexpr auto display_names() {
-        return std::array{"Dataset Path", "AI4Animation Path", "Processed Data Path", "PAE Epochs", "GNN Epochs"};
+        return std::array{"Dataset Path", "AI4Animation Path", "PAE Epochs", "GNN Epochs"};
     }
 
     QJsonObject toJson() const {

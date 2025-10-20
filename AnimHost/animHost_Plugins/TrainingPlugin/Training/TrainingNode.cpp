@@ -28,9 +28,9 @@ TrainingNode::TrainingNode()
     
     // Initialize process management
     _trainingProcess = new QProcess(this);
-    
-    // Set the path to the PowerShell launcher script relative to the AnimHost executable location
-    _trainingScriptPath = QApplication::applicationDirPath() + "/../../python/ml_framework/launch_training.ps1";
+
+    // Set the path to the PowerShell launcher script (deployed with build)
+    _trainingScriptPath = QApplication::applicationDirPath() + "/python/ml_framework/launch_training.ps1";
     
     // Connect process signals
     connect(_trainingProcess, &QProcess::readyReadStandardOutput, 
@@ -143,8 +143,8 @@ void TrainingNode::run()
     auto configPtr = configData->getData();
     MLFramework::StarkeConfig currentConfig = *configPtr;
 
-    // Save config to temporary file for Python script
-    QString configPath = QApplication::applicationDirPath() + "/../../python/ml_framework/starke_model_config.json";
+    // Save config to file for Python script (in deployed location)
+    QString configPath = QApplication::applicationDirPath() + "/python/ml_framework/starke_model_config.json";
     QJsonObject configJson = currentConfig.toJson();
     QJsonDocument doc(configJson);
     QFile configFile(configPath);
