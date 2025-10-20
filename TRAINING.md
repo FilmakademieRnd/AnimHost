@@ -15,7 +15,7 @@ This guide walks you through training AI-powered character animation models usin
 
 Download the [AI4Animation repository](https://github.com/sebastianstarke/AI4Animation) code as a zip file and unpack it next to your AnimHost release. The compressed repository is 3.3GB so this will take some time.
 
-![alt text](<doc/resources/ai4animation_code_download_zip.png>)
+![AI4Animation code download](<doc/resources/ai4animation_code_download_zip.png>)
 
 **Recommended directory structure:**
 ```
@@ -50,13 +50,15 @@ C:/My-AnimHost-Run/
 
 ### Step 3: Preprocess Motion Capture Data
 
+![Animhost preprocessing scene](<doc/resources/animhost_preprocessing_scene.png>)
+
 1. Create a directory for your processed dataset. E.g.:
 ```
 C:/My-AnimHost-Run/
 ...
 └── Survivor_Training_Data/
 ```
-Note: Clear this dir if you already have it, there is a bug that blocks overwriting of some files.
+**NOTE:** Clear this dir if you already have it, there is a bug that blocks overwriting of some files.
 
 2. Launch `AnimHost.exe` from the release package
 
@@ -69,26 +71,35 @@ Note: Clear this dir if you already have it, there is a bug that blocks overwrit
 
 5. Click **Run** to generate training data files
 
-This outputs preprocessed binary data (`data_x.bin`, `data_y.bin`) and metadata files needed for training.
+This outputs preprocessed binary data (`data_x.bin`, `data_y.bin`) and metadata files needed for training. Expect 142 MB `data_x.bin` and 126 MB `data_y.bin` for the SURVIVOR 2025 dataset without mirrored data.
 
 ### Step 4: Train the Animation Model
+
+![Animhost training scene](<doc/resources/animhost_training_scene.png>)
 
 1. In AnimHost, load the training pipeline: **File → Open → TestScenes/TrainingPipeline.flow**
 
 2. Configure the dataset node:
     - Select the `Dataset Path` you used, *C:/My-AnimHost-Run/Survivor_Training_Data*.
     - Select the `AI4Animation Path` you used, *C:/My-AnimHost-Run/AI4Animation-master*.
-    - Set the `PAE epochs` and `GNN epochs` to 1 epochs for a ~15min trial run (including a few minutes for first time setup). Or the default values for a ~16 hours training run. Time estimates assume a recent Nvidia GPU and training on the full Surivor 2025 dataset (without mirroed data).
+    - Set the `PAE epochs` and `GNN epochs` to 1 epochs for a ~15min trial run (including a few minutes for first time setup). Or the default values for a ~16 hours training run.
 
-3. Click **Run** to start training
+3. Click **Run** to start training. This will:
+    - Automatically install Miniconda if not present (Windows only)
+    - Create the `animhost-ml-starke22` conda environment
+    - Train the Phase Autoencoder (PAE) and Gated Neural Network (GNN)
+    - Display real-time training progress in the UI
 
-The training process will:
-- Automatically install Miniconda if not present (Windows only)
-- Create the `animhost-ml-starke22` conda environment
-- Train the Phase Autoencoder (PAE) and Gated Neural Network (GNN)
-- Display real-time training progress in the UI
+4. Confirm losses and runtime are consistent with the below reference.
 
+### Training Run Reference
 
+| Dataset | Epochs (PAE/GNN) | Final Losses (PAE/GNN) | Runtime |
+|---------|------------------|------------------------|---------|
+| SURVIVOR 2025 (without mirrored) | 30 / 300 | 0.10 / 0.08 | ~16 hours |
+| SURVIVOR 2025 (without mirrored) | 1 / 1 | 0.13 / 0.33 | ~15 minutes |
+
+*Runtimes measured on NVIDIA RTX A5000.*
 
 ## Outputs
 
@@ -103,7 +114,7 @@ These trained models can be integrated into AnimHost for real-time character ani
 ## Alternative Training Methods
 
 For developers and advanced users, see [DEV_GUIDE.md](DEV_GUIDE.md) for:
-- **Option 1**: Self built AnimHost GUI
+- **Option 1**: Local build of AnimHost
 - **Option 2**: Automated PowerShell launcher
 - **Option 3**: Direct Python execution (cross-platform)
 - Developer documentation and architecture diagrams
