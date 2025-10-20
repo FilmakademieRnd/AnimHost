@@ -1,5 +1,17 @@
 # AnimHost Training Launcher (PowerShell)
-# Ensures training runs in the correct conda environment
+# Automatically installs Miniconda (if needed), creates the training environment,
+# and runs training scripts with json stdout real-time streaming to the C++ host application.
+#
+# CONDA INTEGRATION NOTE:
+# This script uses a PATH-only conda installation approach suitable for enterprise
+# environments with restricted PowerShell execution policies. It does NOT run 'conda init'
+# which means:
+#   - The 'conda activate' command will NOT work in your terminal
+#   - Conda commands (conda install, conda env list, etc.) WILL work via PATH
+#   - This script calls the environment's Python executable directly for real-time output
+#
+# To use conda activate in your terminal, manually run: conda init powershell
+# (requires execution policy that allows profile scripts)
 
 param(
     [Parameter(ValueFromRemainingArguments)]
@@ -11,6 +23,10 @@ $TARGET_ENV = "animhost-ml-starke22"
 $TRAINING_SCRIPT = Join-Path $PSScriptRoot "training.py"
 $ENV_FILE = Join-Path $PSScriptRoot "environments\$TARGET_ENV.yml"
 
+# Emits a JSON status message for consumption by TrainingPlugin (C++)
+# Parameters:
+#   $status - Status category (e.g., "Environment Error", "Downloading Miniconda")
+#   $text   - Detailed status message
 function Write-JsonStatus($status, $text) {
     $json = [ordered]@{
         status = $status
@@ -19,18 +35,105 @@ function Write-JsonStatus($status, $text) {
     Write-Host $json
 }
 
-# Check if conda is available
-try {
-    $null = Get-Command conda -ErrorAction Stop
-} catch {
-    Write-JsonStatus "Environment Error" "conda not found in PATH. Please install conda/miniconda and add it to your PATH"
-    exit 1
+# Installs Miniconda using winget (Windows Package Manager)
+# Returns $true on success, $false on failure
+# Winget handles PATH and installation automatically
+function Install-Miniconda {
+    # Check if winget is available
+    try {
+        $null = Get-Command winget -ErrorAction Stop
+    } catch {
+        Write-JsonStatus "Environment Error" "winget not found. Please install winget to enable automatic Miniconda installation"
+        Write-JsonStatus "Environment Error" "Winget comes pre-installed on Windows 11 and Windows 10 (1809+). Install 'App Installer' from Microsoft Store if missing"
+        return $false
+    }
+
+    Write-JsonStatus "Installing Miniconda" "Installing via winget (this may take 2-5 minutes)..."
+
+    # Install Miniconda using winget with silent mode
+    & winget install Anaconda.Miniconda3 --silent --accept-package-agreements --accept-source-agreements
+    if ($LASTEXITCODE -ne 0) {
+        Write-JsonStatus "Install Error" "Miniconda installation via winget failed with exit code $LASTEXITCODE"
+        Write-JsonStatus "Install Error" "Cleaning up failed installation..."
+        & winget uninstall Anaconda.Miniconda3 --silent 2>&1 | Out-Null
+        return $false
+    }
+
+    # Find conda installation path
+    Write-JsonStatus "Initializing Conda" "Locating conda installation..."
+    $condaPaths = @(
+        "$env:USERPROFILE\miniconda3",
+        "$env:LOCALAPPDATA\miniconda3",
+        "C:\ProgramData\miniconda3",
+        "$env:USERPROFILE\AppData\Local\Microsoft\WindowsApps\Anaconda.Miniconda3_*"
+    )
+
+    $condaPath = $null
+    foreach ($path in $condaPaths) {
+        if (Test-Path $path\Scripts\conda.exe) {
+            $condaPath = $path
+            Write-JsonStatus "Conda Found" "Conda installation found at $condaPath"
+            break
+        }
+    }
+
+    if (-not $condaPath) {
+        Write-JsonStatus "Initialization Warning" "Could not find conda installation path. You may need to restart your terminal"
+        return $true
+    }
+
+    # Add conda to User PATH permanently for future sessions
+    # The alternative conda init powershell doesn't work in enterprise environments with restricted execution policy
+    Write-JsonStatus "Updating PATH" "Adding conda to system PATH..."
+    $userPath = [System.Environment]::GetEnvironmentVariable("PATH", "User")
+    $condaBinPaths = "$condaPath;$condaPath\Scripts;$condaPath\condabin"
+
+    if ($userPath -notlike "*$condaPath*") {
+        [System.Environment]::SetEnvironmentVariable(
+            "PATH",
+            "$condaBinPaths;$userPath",
+            "User"
+        )
+        Write-JsonStatus "PATH Updated" "Conda added to User PATH for future sessions"
+    }
+
+    # Update current session PATH
+    $env:PATH = "$condaBinPaths;$env:PATH"
+
+    # Accept conda Terms of Service for required channels
+    Write-JsonStatus "Accepting ToS" "Accepting conda channel Terms of Service..."
+    & "$condaPath\Scripts\conda.exe" tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main 2>&1 | Out-Null
+    & "$condaPath\Scripts\conda.exe" tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r 2>&1 | Out-Null
+    & "$condaPath\Scripts\conda.exe" tos accept --override-channels --channel https://repo.anaconda.com/pkgs/msys2 2>&1 | Out-Null
+
+    Write-JsonStatus "Installation Complete" "Miniconda installed and initialized successfully"
+    return $true
 }
 
-# Check if target environment exists by attempting activation
+# Check if conda is available
+if (-not (Get-Command conda -ErrorAction SilentlyContinue)) {
+    Write-JsonStatus "Conda Missing" "conda not found in PATH. Attempting automatic installation..."
+
+    $installed = Install-Miniconda
+    if (-not $installed) {
+        Write-JsonStatus "Environment Error" "Failed to install Miniconda automatically"
+        Write-JsonStatus "Environment Error" "Please install conda/miniconda manually from https://docs.conda.io/en/latest/miniconda.html"
+        exit 1
+    }
+
+    # Verify conda is now available
+    if (-not (Get-Command conda -ErrorAction SilentlyContinue)) {
+        Write-JsonStatus "Environment Error" "Conda installed but not found in PATH. Please restart your terminal and try again"
+        exit 1
+    }
+
+    Write-JsonStatus "Conda Ready" "Conda installation verified and ready to use"
+}
+
+# Check if target environment exists
 Write-JsonStatus "Checking Environment" "Checking if environment $TARGET_ENV exists..."
-$activateResult = & conda activate $TARGET_ENV 2>$null
-if ($LASTEXITCODE -ne 0) {
+$envList = & conda env list 2>$null | Select-String -Pattern "^$TARGET_ENV\s"
+if (-not $envList) {
     Write-JsonStatus "Environment Missing" "Conda environment $TARGET_ENV not found"
 
     # Check if environment YAML file exists
@@ -45,17 +148,17 @@ if ($LASTEXITCODE -ne 0) {
     & conda env create -f $ENV_FILE -n $TARGET_ENV
     if ($LASTEXITCODE -ne 0) {
         Write-JsonStatus "Environment Error" "Failed to create environment $TARGET_ENV. Removing incomplete environment."
-        & conda env remove -n $TARGET_ENV
+        & conda env remove -n $TARGET_ENV -y
         Write-JsonStatus "Environment Error" "Please try running the script again or manually create the environment with: conda env create -f $ENV_FILE -n $TARGET_ENV"
         exit 1
     }
 
     Write-JsonStatus "Verifying Environment" "Waiting for environment to be registered..."
 
-    # Verify environment creation by attempting activation
+    # Verify environment creation by checking if it appears in env list
     $verified = $false
-    $testResult = & conda activate $TARGET_ENV 2>$null
-    if ($LASTEXITCODE -eq 0) {
+    $envList = & conda env list 2>$null | Select-String -Pattern "^$TARGET_ENV\s"
+    if ($envList) {
         $verified = $true
     }
 
@@ -64,15 +167,15 @@ if ($LASTEXITCODE -ne 0) {
         Write-JsonStatus "Verification Retry" "Retry: Environment not ready, waiting 3 seconds..."
         Start-Sleep 3
         $null = & conda info --envs 2>$null
-        $testResult = & conda activate $TARGET_ENV 2>$null
-        if ($LASTEXITCODE -eq 0) {
+        $envList = & conda env list 2>$null | Select-String -Pattern "^$TARGET_ENV\s"
+        if ($envList) {
             $verified = $true
         }
     }
 
     if (-not $verified) {
         Write-JsonStatus "Environment Error" "Failed to verify newly created environment $TARGET_ENV. Removing incomplete environment."
-        & conda env remove -n $TARGET_ENV
+        & conda env remove -n $TARGET_ENV -y
         Write-JsonStatus "Environment Error" "Please try running the script again or manually create the environment with: conda env create -f $ENV_FILE -n $TARGET_ENV"
         exit 1
     }
@@ -80,18 +183,32 @@ if ($LASTEXITCODE -ne 0) {
     Write-JsonStatus "Environment Ready" "Environment $TARGET_ENV created successfully"
 }
 
-# Run training with unbuffered output for real-time streaming
-$trainingExitCode = 0
-try {
-    if ($TrainingArgs) {
-        & python -u $TRAINING_SCRIPT $TrainingArgs
-    } else {
-        & python -u $TRAINING_SCRIPT
+# Get the environment's Python executable path by parsing conda env list
+$envListOutput = & conda env list 2>$null
+$envInfo = $envListOutput | Select-String -Pattern "^$TARGET_ENV\s+(.+)$"
+
+if ($envInfo -and $envInfo.Matches.Count -gt 0 -and $envInfo.Matches[0].Groups.Count -gt 1) {
+    # Extract path and remove any asterisk marker and whitespace
+    $envPath = $envInfo.Matches[0].Groups[1].Value.Trim('*').Trim()
+    $envPythonPath = Join-Path $envPath "python.exe"
+
+    if (-not (Test-Path $envPythonPath)) {
+        Write-JsonStatus "Environment Error" "Could not find Python at $envPythonPath"
+        exit 1
     }
+} else {
+    Write-JsonStatus "Environment Error" "Could not determine path for environment $TARGET_ENV"
+    exit 1
+}
+
+# Run training via the environment's Python directly to preserve unbuffered stdout
+$trainingExitCode = 0
+if ($TrainingArgs) {
+    & $envPythonPath -u $TRAINING_SCRIPT $TrainingArgs
     $trainingExitCode = $LASTEXITCODE
-} finally {
-    # Deactivate conda environment
-    & conda deactivate 2>$null
+} else {
+    & $envPythonPath -u $TRAINING_SCRIPT
+    $trainingExitCode = $LASTEXITCODE
 }
 
 # Exit with training script's exit code
