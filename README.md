@@ -4,6 +4,24 @@ AnimHost connects animation generators to Digital Content Creation applications,
 
 **AninHost web site:** https://research.animationsinstitut.de/animhost
 
+## Run Instructions
+
+### Training Character Animation Models
+
+AnimHost can train AI-powered character animation models on motion capture data using deep learning techniques (Periodic Autoencoder + Gated Neural Network [Starke et al. 2022]).
+
+**Quick Start for End Users:**
+1. Download the [latest release](https://github.com/FilmakademieRnd/AnimHost/releases)
+2. Follow the complete training workflow in [TRAINING.md](TRAINING.md)
+
+The guide covers:
+- Downloading the AI4Animation framework and mocap datasets
+- Preprocessing motion capture data
+- Training neural network models
+- Troubleshooting common issues
+
+> [Starke et al. 2022] Sebastian Starke, Ian Mason, and Taku Komura. 2022. DeepPhase: periodic autoencoders for learning motion phase manifolds. ACM Trans. Graph. 41, 4, Article 136 (July 2022), 13 pages. https://doi.org/10.1145/3528223.3530178
+
 ## Build Instructions
 
 Follow these steps to set up the project on your local machine:
@@ -45,5 +63,5 @@ AnimHost is a development by [Filmakademie Baden-Wuerttemberg](https://filmakade
 This project has received funding from the European Union's Horizon Europe Research and Innovation Programme under Grant Agreement No 101070072 MAX-R.
 
 ## License
-AnimHost is a open-sorce development by Filmakademie Baden-Wuerttemberg's Animationsinstitut.  
+AnimHost is a open-source development by Filmakademie Baden-Wuerttemberg's Animationsinstitut.
 The framework is licensed under [MIT](LICENSE.txt). See [License info file](LICENSE_Info.txt) for more details.

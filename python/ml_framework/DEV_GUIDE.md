@@ -2,37 +2,68 @@
 
 ## Requirements & First Run
 
-**Options 1 & 2:** Require Windows with PowerShell and winget
+**Options 1 & 2:** Require Windows with PowerShell and winget or conda
 - First run automatically installs Miniconda if not present (handled by launcher script)
 - Everything else (conda environments, dependencies) is automatically configured
 - By using the automated launcher, you accept [Anaconda Terms of Service](https://www.anaconda.com/terms-of-service)
 
 **Option 3:** Requires manual conda/miniconda installation and environment activation (works on all platforms)
 
-## Option 1: AnimHost GUI (Windows only, Recommended)
-1. Launch AnimHost application
-2. Load `TestScenes/TrainingPipeline.flow`
-3. Execute the training pipeline through the node interface
+## Option 1: AnimHost GUI (Windows only, C++ Integration Testing)
 
-## Option 2: Automated launcher (Windows only)
+**Use this when:** Testing C++ TrainingNode changes OR validating full integration workflow
+
+1. Build AnimHost as per instructions in the [top-level README](/README.md)
+2. Launch the AnimHost.exe application
+3. Load `TestScenes/TrainingPipeline.flow`
+4. Execute the training pipeline through the node interface
+
+**IMPORTANT:** AnimHost uses **deployed scripts** from the build output directory (`build/Release/python/ml_framework/`). Python code changes require a rebuild to be picked up by AnimHost. See option 2 for fast iteration on Python changes.
+
+## Option 2: Standalone Launcher (Windows only, Python Development)
+
+**Use this when:** Iterating on Python ML code without rebuilding AnimHost
+
+**Advantage:** No build required - directly uses source scripts from `python/ml_framework/`
+
 ```powershell
-cd python/ml_framework
-launch_training.ps1
+python/ml_framework/launch_training.ps1
 ```
 
-Or from the AnimHost root directory:
-```powershell
-python\ml_framework\launch_training.bat
-```
+This runs training in the `animhost-ml-starke22` conda environment with real-time output streaming.
 
-This automatically activates the `animhost-ml-starke22` conda environment, runs training with real-time output streaming, and cleanly deactivates the environment when complete.
+## Option 3: Direct Python Execution (All Platforms, Manual Environment)
 
-## Option 3: Direct Python execution (All platforms)
+**Use this when:** Testing without launcher automation OR working on non-Windows platforms
+
+**Advantage:** Works on Linux/macOS, gives full control over environment
+
 ```powershell
 cd python/ml_framework
 python training.py
 ```
-Note: Requires manual activation of `animhost-ml-starke22` conda environment first.
+
+**Note:** Requires manual activation of `animhost-ml-starke22` conda environment first. The launch_training.ps1 install won't enable `conda activate` commands; you need to run `conda init` with proper permissions.
+
+# Release Package Structure
+
+When AnimHost is built, the Python ML framework is automatically copied to the build output directory. The final release package has this structure:
+
+```
+Release/
+  AnimHost.exe
+  *.dll (Qt plugins, vcpkg libraries)
+  python/
+    ml_framework/
+      launch_training.ps1
+      training.py
+      environments/
+        animhost-ml-starke22.yml
+      (other ML framework files)
+  TestScenes/
+    TrainingPipeline.flow
+    (other .flow test scenes)
+```
 
 # How to test
 
@@ -44,9 +75,6 @@ pytest tests/ -v
 
 ## Run specific test modules
 ```bash
-# Test experiment tracker only
-pytest tests/test_experiment_tracker.py -v
-
 # Test external training integration
 pytest tests/test_external/test_example_training.py -v
 ```
