@@ -176,6 +176,9 @@ void DataExportPlugin::run()
                 exportJointVelocitySequence();
             }
         }
+        // Reset overwrite flags after run to avoid accidental overwriting on next run
+        _cbOverwrite->setCheckState(Qt::Unchecked);
+
         emitRunNextNode();
     }
 }
@@ -281,8 +284,6 @@ void DataExportPlugin::writeCSVPoseSequenceData() {
                 out << ",";
         }
         out << "\n";
-
-        bOverwritePoseSeq = false;
     }
 
     for (int frame = 0; frame < poseSequenceIn->mPoseSequence.size(); frame++) {
@@ -310,8 +311,6 @@ void DataExportPlugin::writeBinaryPoseSequenceData() {
 
     if (bOverwritePoseSeq) {
         file.open(QIODevice::WriteOnly);
-        bOverwritePoseSeq = false;
-        _cbOverwrite->setCheckState(Qt::Unchecked);
     }
     else {
         file.open(QIODevice::WriteOnly | QIODevice::Append);
@@ -420,8 +419,6 @@ void DataExportPlugin::writeCSVJointVelocitySequence() {
                 out << ",";
         }
         out << "\n";
-
-        bOverwriteJointVelSeq = false;
     }
 
     for (int frame = 0; frame < jointVelSeqIn->mJointVelocitySequence.size(); frame++) {
@@ -452,9 +449,7 @@ void DataExportPlugin::writeBinaryJointVelocitySequence() {
 
     if (bOverwriteJointVelSeq) {
         file.open(QIODevice::WriteOnly);
-        bOverwriteJointVelSeq = false;
         FileHandler<QTextStream>::deleteFile(fileNameIdent);
-        _cbOverwrite->setCheckState(Qt::Unchecked);
     }
     else {
         file.open(QIODevice::WriteOnly | QIODevice::Append);
