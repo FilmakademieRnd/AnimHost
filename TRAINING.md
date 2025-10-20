@@ -15,7 +15,7 @@ This guide walks you through training AI-powered character animation models usin
 
 Download the [AI4Animation repository](https://github.com/sebastianstarke/AI4Animation) code as a zip file and unpack it next to your AnimHost release. The compressed repository is 3.3GB so this will take some time.
 
-![AI4Animation code download](<doc/resources/ai4animation_code_download_zip.png>)
+![AI4Animation code download](doc/resources/ai4animation_code_download_zip.png)
 
 **Recommended directory structure:**
 ```
@@ -50,7 +50,7 @@ C:/My-AnimHost-Run/
 
 ### Step 3: Preprocess Motion Capture Data
 
-![Animhost preprocessing scene](<doc/resources/animhost_preprocessing_scene.png>)
+![Animhost preprocessing scene](doc/resources/animhost_preprocessing_scene.png)
 
 1. Create a directory for your processed dataset. E.g.:
 ```
@@ -75,7 +75,7 @@ This outputs preprocessed binary data (`data_x.bin`, `data_y.bin`) and metadata 
 
 ### Step 4: Train the Animation Model
 
-![Animhost training scene](<doc/resources/animhost_training_scene.png>)
+![Animhost training scene](doc/resources/animhost_training_scene.png)
 
 1. In AnimHost, load the training pipeline: **File → Open → TestScenes/TrainingPipeline.flow**
 
@@ -147,5 +147,5 @@ AnimHost is a development by [Filmakademie Baden-Wuerttemberg](https://filmakade
 This project has received funding from the European Union's Horizon Europe Research and Innovation Programme under Grant Agreement No 101070072 MAX-R.
 
 ## License
-AnimHost is a open-sorce development by Filmakademie Baden-Wuerttemberg's Animationsinstitut.  
+AnimHost is a open-source development by Filmakademie Baden-Wuerttemberg's Animationsinstitut.
 The framework is licensed under [MIT](LICENSE.txt). See [License info file](LICENSE_Info.txt) for more details.

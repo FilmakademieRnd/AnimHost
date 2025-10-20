@@ -63,5 +63,5 @@ AnimHost is a development by [Filmakademie Baden-Wuerttemberg](https://filmakade
 This project has received funding from the European Union's Horizon Europe Research and Innovation Programme under Grant Agreement No 101070072 MAX-R.
 
 ## License
-AnimHost is a open-sorce development by Filmakademie Baden-Wuerttemberg's Animationsinstitut.  
+AnimHost is a open-source development by Filmakademie Baden-Wuerttemberg's Animationsinstitut.
 The framework is licensed under [MIT](LICENSE.txt). See [License info file](LICENSE_Info.txt) for more details.

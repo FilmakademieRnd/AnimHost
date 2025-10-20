@@ -18,7 +18,7 @@
 3. Load `TestScenes/TrainingPipeline.flow`
 4. Execute the training pipeline through the node interface
 
-**IMPORTANT:** AnimHost uses **deployed scripts** from the build output directory (`build/.../Release/python/ml_framework/`). Python code changes require a rebuild to be picked up by AnimHost. See option 2 for fast iteration on Python changes.
+**IMPORTANT:** AnimHost uses **deployed scripts** from the build output directory (`build/Release/python/ml_framework/`). Python code changes require a rebuild to be picked up by AnimHost. See option 2 for fast iteration on Python changes.
 
 ## Option 2: Standalone Launcher (Windows only, Python Development)
 
