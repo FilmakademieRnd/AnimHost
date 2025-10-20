@@ -113,7 +113,7 @@ These trained models can be integrated into AnimHost for real-time character ani
 
 ## Alternative Training Methods
 
-For developers and advanced users, see [DEV_GUIDE.md](DEV_GUIDE.md) for:
+For developers and advanced users, see [DEV_GUIDE.md](python/ml_framework/DEV_GUIDE.md) for:
 - **Option 1**: Local build of AnimHost
 - **Option 2**: Automated PowerShell launcher
 - **Option 3**: Direct Python execution (cross-platform)
@@ -132,7 +132,7 @@ For developers and advanced users, see [DEV_GUIDE.md](DEV_GUIDE.md) for:
 **Issue**: I'm getting a lot of `INFO || Non-JSON stdout:` output, e.g. during first time setup.
 **Solution**: Output like this expected, especially during first time setup and during `Starting training ...`. The information is likely irrelevant for you unless you're debugging an issue.
 
-For technical issues, see [DEV_GUIDE.md](DEV_GUIDE.md) or [open an issue](https://github.com/FilmakademieRnd/AnimHost/issues).
+For technical issues, see [DEV_GUIDE.md](python/ml_framework/DEV_GUIDE.md) or [open an issue](https://github.com/FilmakademieRnd/AnimHost/issues).
 
 ---
 
