@@ -1,6 +1,6 @@
 # Training Character Animation Models
 
-This guide walks you through training AI-powered character animation models using the AnimHost pipeline and motion capture data. You will train a Phase Autoencoder (PAE) and Gated Neural Network (GNN).
+This guide walks you through training AI-powered character animation models using the AnimHost pipeline and motion capture data. You will train a Periodic Autoencoder (PAE) and Gated Neural Network (GNN).
 
 ## Prerequisites
 
@@ -66,8 +66,8 @@ C:/My-AnimHost-Run/
 
 4. Configure the nodes:
    - In the *Animation Import* node select the SURVIVOR dataset directory *.../FBX/Default* (or *.../FBX/Test* with just a few files for small trial run dataset)
-   - In the *DataExportPlugin* node select the output dir *C:/My-AnimHost-Run/Survivor_Training_Data*. And make sure `overwrite` and `writeBin` are checked.
-   - In the *LocomotionPreprocessNode* select the output dir *C:/My-AnimHost-Run/Survivor_Training_Data* and `overwrite` option.
+   - In the *DataExportPlugin* node select the output dir *C:/My-AnimHost-Run/Survivor_Training_Data*. Check the `Write Binary Data` and `Overwrite Existing Data` options.
+   - In the *LocomotionPreprocessNode* select the output dir *C:/My-AnimHost-Run/Survivor_Training_Data* and `Overwrite Existing Data` option.
 
 5. Click **Run** to generate training data files
 
@@ -87,7 +87,7 @@ This outputs preprocessed binary data (`data_x.bin`, `data_y.bin`) and metadata 
 3. Click **Run** to start training. This will:
     - Automatically install Miniconda if not present (Windows only)
     - Create the `animhost-ml-starke22` conda environment
-    - Train the Phase Autoencoder (PAE) and Gated Neural Network (GNN)
+    - Train the Periodic Autoencoder (PAE) and Gated Neural Network (GNN)
     - Display real-time training progress in the UI
 
 4. Confirm losses and runtime are consistent with the below reference.
@@ -105,7 +105,7 @@ This outputs preprocessed binary data (`data_x.bin`, `data_y.bin`) and metadata 
 
 After training completes, you'll find:
 
-- **Phase Autoencoder**: `AI4Animation/SIGGRAPH_2022/PyTorch/PAE/Training/`
+- **Periodic Autoencoder**: `AI4Animation/SIGGRAPH_2022/PyTorch/PAE/Training/`
 - **Gated Neural Network**: `AI4Animation/SIGGRAPH_2022/PyTorch/GNN/Training/`
 
 These trained models can be integrated into AnimHost for real-time character animation.
