@@ -129,6 +129,8 @@ For developers and advanced users, see [DEV_GUIDE.md](DEV_GUIDE.md) for:
 **Issue**: The TrainingNode looks stuck at `Starting training ...`.
 **Solution**: Both the first and expecially the second starting training steps need a few minutes to load the datasets into memory if you're using the full Surivor 2025 set. If you're giving this a trial run you can use only a few FBX files.
 
+**Issue**: I'm getting a lot of `INFO || Non-JSON stdout:` output, e.g. during first time setup.
+**Solution**: Output like this expected, especially during first time setup and during `Starting training ...`. The information is likely irrelevant for you unless you're debugging an issue.
 
 For technical issues, see [DEV_GUIDE.md](DEV_GUIDE.md) or [open an issue](https://github.com/FilmakademieRnd/AnimHost/issues).
 
