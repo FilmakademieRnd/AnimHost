@@ -27,7 +27,10 @@ class StarkeModelConfig:
     dataset_path: Path
     path_to_ai4anim: Path
     pae_epochs: int
+    pae_learning_rate: float
     gnn_epochs: int
+    gnn_learning_rate: float
+    gnn_dropout: float
 
     def __post_init__(self) -> None:
         """Convert string paths to Path objects if needed."""
@@ -64,5 +67,15 @@ class StarkeModelConfig:
             return f"PAE epochs must be greater than 0, got: {self.pae_epochs}"
         if self.gnn_epochs <= 0:
             return f"GNN epochs must be greater than 0, got: {self.gnn_epochs}"
+
+        # Validate learning rates > 0
+        if self.pae_learning_rate <= 0:
+            return f"PAE learning rate must be greater than 0, got: {self.pae_learning_rate}"
+        if self.gnn_learning_rate <= 0:
+            return f"GNN learning rate must be greater than 0, got: {self.gnn_learning_rate}"
+
+        # Validate dropout between 0 and 1
+        if not (0 <= self.gnn_dropout <= 1):
+            return f"GNN dropout must be between 0 and 1, got: {self.gnn_dropout}"
 
         return None
