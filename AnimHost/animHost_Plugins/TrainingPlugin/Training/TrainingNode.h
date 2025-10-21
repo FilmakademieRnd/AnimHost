@@ -52,6 +52,9 @@ private:
     // Current run directory for artifacts
     QString _currentRunDir;
 
+    // Training start time for log slicing
+    QDateTime _trainingStartTime;
+
     // Framework automatically provides RunSignal input at port 0
 
 public:
@@ -88,6 +91,7 @@ private:
     void updateConnectionStatus(const QString& status, const QColor& signalColor);
     void updateFromMessage(const MLFramework::TrainingMessage& msg);
     QString generateRunDir();
+    void copyLogSliceToRunDir(const QDateTime& startTime, const QDateTime& endTime);
 
 };
 

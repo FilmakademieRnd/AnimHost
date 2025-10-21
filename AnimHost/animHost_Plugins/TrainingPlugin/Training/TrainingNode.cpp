@@ -134,6 +134,9 @@ bool TrainingNode::isDataAvailable()
  */
 void TrainingNode::run()
 {
+    // Store start time for log slicing
+    _trainingStartTime = QDateTime::currentDateTime();
+
     qDebug() << "TrainingNode run - Starting Python training process!";
 
     // Check for required config data using isDataAvailable()
@@ -276,6 +279,10 @@ void TrainingNode::onTrainingFinished(int exitCode, QProcess::ExitStatus exitSta
 {
     qDebug() << "Training process finished with exit code:" << exitCode << "status:" << exitStatus;
 
+    // Copy log slice to run directory
+    QDateTime endTime = QDateTime::currentDateTime();
+    copyLogSliceToRunDir(_trainingStartTime, endTime);
+
     if (exitStatus == QProcess::NormalExit && exitCode == 0) {
         updateConnectionStatus("Completed", QColor(50, 255, 50)); // Bright green (like TRACER)
 
@@ -389,4 +396,64 @@ QString TrainingNode::generateRunDir()
 
     qDebug() << "Created run directory:" << runDir << "(count:" << count << ")";
     return runDir;
+}
+
+/**
+ * @brief Copy log entries from the main log file to the run directory.
+ *
+ * Extracts log entries between startTime and endTime from LogOutput.txt
+ * and writes them to <run_dir>/LogOutput.txt. This preserves a training-specific
+ * log slice without affecting the main application log.
+ *
+ * Log format expected: "yyyy-MM-dd hh:mm:ss || ..."
+ */
+void TrainingNode::copyLogSliceToRunDir(const QDateTime& startTime, const QDateTime& endTime)
+{
+    // Skip if no run directory was created
+    if (_currentRunDir.isEmpty()) {
+        qDebug() << "No run directory, skipping log copy";
+        return;
+    }
+
+    // Open main log file
+    QString mainLogPath = QApplication::applicationDirPath() + "/LogOutput.txt";
+    QFile mainLog(mainLogPath);
+    if (!mainLog.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "Failed to open main log file for reading:" << mainLogPath;
+        return;
+    }
+
+    // Create run-specific log file
+    QString runLogPath = _currentRunDir + "/RunLogOutput.txt";
+    QFile runLog(runLogPath);
+    if (!runLog.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qWarning() << "Failed to create run log file:" << runLogPath;
+        mainLog.close();
+        return;
+    }
+
+    // Read and filter log lines
+    QTextStream in(&mainLog);
+    QTextStream out(&runLog);
+    int linesCopied = 0;
+
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+
+        // Parse timestamp from log line format: "yyyy-MM-dd hh:mm:ss || ..."
+        if (line.length() >= 19) {
+            QString timestampStr = line.left(19);
+            QDateTime lineTime = QDateTime::fromString(timestampStr, "yyyy-MM-dd hh:mm:ss");
+
+            if (lineTime.isValid() && lineTime >= startTime && lineTime <= endTime) {
+                out << line << "\n";
+                linesCopied++;
+            }
+        }
+    }
+
+    mainLog.close();
+    runLog.close();
+
+    qDebug() << "Copied" << linesCopied << "log lines to run directory:" << runLogPath;
 }
