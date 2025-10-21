@@ -125,8 +125,8 @@ private:
 
     QWidget* createPathWidget(const QString& displayName);
     QWidget* createLineEditWidget(const QString& displayName);
+    QWidget* createDoubleLineEditWidget(const QString& displayName);
     QWidget* createSpinBoxWidget(const QString& displayName);
-    QWidget* createDoubleSpinBoxWidget(const QString& displayName);
     QWidget* createCheckBoxWidget(const QString& displayName);
 
     // Widget update methods

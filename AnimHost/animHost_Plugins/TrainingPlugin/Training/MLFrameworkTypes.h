@@ -72,17 +72,20 @@ struct StarkeConfig {
     QString dataset_path = QDir::cleanPath(QDir(QCoreApplication::applicationDirPath()).filePath("../Survivor_Training_Data"));
     QString path_to_ai4anim = QDir::cleanPath(QDir(QCoreApplication::applicationDirPath()).filePath("../AI4Animation-master"));
     int pae_epochs = 30;
+    double pae_learning_rate = 1e-4;
     int gnn_epochs = 300;
+    double gnn_learning_rate = 1e-4;
+    double gnn_dropout = 0.3;
 
-    auto tie() const { return std::tie(dataset_path, path_to_ai4anim, pae_epochs, gnn_epochs); }
-    auto tie()       { return std::tie(dataset_path, path_to_ai4anim, pae_epochs, gnn_epochs); }
+    auto tie() const { return std::tie(dataset_path, path_to_ai4anim, pae_epochs, pae_learning_rate, gnn_epochs, gnn_learning_rate, gnn_dropout); }
+    auto tie()       { return std::tie(dataset_path, path_to_ai4anim, pae_epochs, pae_learning_rate, gnn_epochs, gnn_learning_rate, gnn_dropout); }
 
     static constexpr auto field_names() {
-        return std::array{"dataset_path", "path_to_ai4anim", "pae_epochs", "gnn_epochs"};
+        return std::array{"dataset_path", "path_to_ai4anim", "pae_epochs", "pae_learning_rate", "gnn_epochs", "gnn_learning_rate", "gnn_dropout"};
     }
 
     static constexpr auto display_names() {
-        return std::array{"Dataset Path", "AI4Animation Path", "PAE Epochs", "GNN Epochs"};
+        return std::array{"Dataset Path", "AI4Animation Path", "PAE Epochs", "PAE Learning Rate", "GNN Epochs", "GNN Learning Rate", "GNN Dropout"};
     }
 
     QJsonObject toJson() const {

@@ -1,6 +1,9 @@
 {
     "dataset_path": "../../../Survivor_Training_Data",
+    "gnn_dropout": 0.3,
     "gnn_epochs": 2,
+    "gnn_learning_rate": 1e-04,
     "pae_epochs": 2,
+    "pae_learning_rate": 1e-04,
     "path_to_ai4anim": "../../../AI4Animation-master"
 }

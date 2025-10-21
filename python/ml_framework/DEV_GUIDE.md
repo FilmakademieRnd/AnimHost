@@ -155,3 +155,18 @@ The `line_parser` function converts script-specific output formats into standard
 - Parses "Progress 23.42 %" → `tracker.log_percentage_progress("Controller training", 23.42)`
 
 This architecture allows integration of any external training script by providing an appropriate line parser that translates its output format into the standard JSON protocol.
+
+## Exposing External Script Parameters to AnimHost
+
+To add new training hyperparameters to the AnimHost UI, synchronize changes across four locations:
+
+1. **`AnimHost/animHost_Plugins/TrainingPlugin/Training/MLFrameworkTypes.h`** - Add field to your config struct and update `tie()`, `field_names()`, and `display_names()` arrays
+2. **`python/ml_framework/config/model_configs.py`** - Add matching field to your config dataclass with validation in `validate()`
+3. **`python/ml_framework/external/starke_training.py`** - Use config values to update external training scripts via `write_script_variables()`
+4. **`python/ml_framework/starke_model_config.json`** - Add default values for example configurations
+
+**UI widgets are auto-generated** by `ConfigWidget.h` based on field type: `int` → spinbox, `double` → validated text field (scientific notation supported), `QString` → text/path field, `bool` → checkbox.
+
+**Key requirements**: Field types must match between C++ and Python (`double` ↔ `float`, `int` ↔ `int`), field order in `tie()` must match metadata arrays, and changes require rebuilding AnimHost.
+
+**Example**: See [PR #53](https://github.com/FilmakademieRnd/AnimHost/pull/53) for an implementation adding learning rate and dropout parameters.
