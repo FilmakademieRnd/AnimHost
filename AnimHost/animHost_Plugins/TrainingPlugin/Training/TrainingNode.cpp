@@ -115,6 +115,23 @@ bool TrainingNode::isDataAvailable()
     return false;
 }
 
+/**
+ * @brief Execute the ML training pipeline.
+ *
+ * Orchestrates the complete training workflow:
+ * 1. Validates configuration data availability
+ * 2. Terminates any existing training process
+ * 3. Generates unique run directory for artifact preservation
+ * 4. Serializes configuration to JSON (including run_dir)
+ * 5. Launches Python training script via PowerShell
+ *
+ * The run directory is created in artifacts/ next to AnimHost.exe and follows
+ * the naming format: <username>_<yyyyMMdd>_<count>. If run directory generation
+ * fails, training proceeds but artifact preservation will be skipped.
+ *
+ * Training progress is communicated back via JSON messages on stdout,
+ * which are parsed and displayed in the node widget.
+ */
 void TrainingNode::run()
 {
     qDebug() << "TrainingNode run - Starting Python training process!";
@@ -143,9 +160,19 @@ void TrainingNode::run()
     auto configPtr = configData->getData();
     MLFramework::StarkeConfig currentConfig = *configPtr;
 
+    // Generate run directory for artifact preservation
+    QString runDir = generateRunDir();
+
     // Save config to file for Python script (in deployed location)
     QString configPath = QApplication::applicationDirPath() + "/python/ml_framework/starke_model_config.json";
     QJsonObject configJson = currentConfig.toJson();
+    // Add run_dir to config JSON if it was successfully generated
+    if (!runDir.isEmpty()) {
+        configJson["run_dir"] = runDir;
+        qDebug() << "Added run_dir to config:" << runDir;
+    } else {
+        qWarning() << "Run directory generation failed, artifact preservation will be skipped";
+    }
     QJsonDocument doc(configJson);
     QFile configFile(configPath);
     if (configFile.open(QIODevice::WriteOnly)) {
@@ -268,4 +295,63 @@ void TrainingNode::updateFromMessage(const MLFramework::TrainingMessage& msg)
     if (_widget) {
         _widget->updateFromMessage(msg);
     }
+}
+
+/**
+ * @brief Generate a unique run directory for artifact preservation.
+ *
+ * Creates a run directory in the artifacts/ subdirectory next to AnimHost.exe.
+ * Directory naming format: <username>_<yyyyMMdd>_<count>
+ *
+ * The count is determined by counting existing directories with the same
+ * username and date prefix. This ensures multiple runs on the same day
+ * get incrementing suffixes (0, 1, 2, ...).
+ *
+ * @return QString Path to the created run directory, or empty string on failure
+ */
+QString TrainingNode::generateRunDir()
+{
+    // Get application directory (where AnimHost.exe is located)
+    QString appDir = QApplication::applicationDirPath();
+    QString artifactsDir = appDir + "/artifacts";
+
+    // Ensure artifacts directory exists
+    QDir artifactsDirObj(artifactsDir);
+    if (!artifactsDirObj.exists()) {
+        if (!QDir().mkpath(artifactsDir)) {
+            qWarning() << "Failed to create artifacts directory:" << artifactsDir;
+            return QString(); // Return empty string on failure
+        }
+        qDebug() << "Created artifacts directory:" << artifactsDir;
+    }
+
+    // Get Windows username with fallback
+    QString userName = qgetenv("USERNAME");
+    if (userName.isEmpty()) {
+        userName = "unknown_user";
+        qDebug() << "USERNAME environment variable not found, using:" << userName;
+    }
+
+    // Get current date in yyyyMMdd format
+    QString date = QDateTime::currentDateTime().toString("yyyyMMdd");
+    QString prefix = userName + "_" + date;
+
+    // Count existing directories with same prefix (username_yyyyMMdd_*)
+    QStringList filters;
+    filters << prefix + "_*";
+    QStringList existingDirs = artifactsDirObj.entryList(filters, QDir::Dirs | QDir::NoDotAndDotDot);
+    int count = existingDirs.count();
+
+    // Generate run directory name: username_yyyyMMdd_count
+    QString runDirName = prefix + "_" + QString::number(count);
+    QString runDir = artifactsDir + "/" + runDirName;
+
+    // Create the run directory
+    if (!QDir().mkpath(runDir)) {
+        qWarning() << "Failed to create run directory:" << runDir;
+        return QString(); // Return empty string on failure
+    }
+
+    qDebug() << "Created run directory:" << runDir << "(count:" << count << ")";
+    return runDir;
 }

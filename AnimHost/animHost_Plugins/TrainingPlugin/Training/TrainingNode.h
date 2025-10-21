@@ -84,6 +84,7 @@ private Q_SLOTS:
 private:
     void updateConnectionStatus(const QString& status, const QColor& signalColor);
     void updateFromMessage(const MLFramework::TrainingMessage& msg);
+    QString generateRunDir();
 
 };
 
