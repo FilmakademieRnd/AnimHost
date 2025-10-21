@@ -143,10 +143,10 @@ QWidget* ConfigWidget<ConfigStruct>::createWidgetForField(const QString& fieldNa
         return createSpinBoxWidget(displayName);
     }
     else if constexpr (std::is_same_v<std::decay_t<FieldType>, double>) {
-        return createDoubleSpinBoxWidget(displayName);
+        return createDoubleLineEditWidget(displayName);
     }
     else if constexpr (std::is_same_v<std::decay_t<FieldType>, float>) {
-        return createDoubleSpinBoxWidget(displayName);
+        return createDoubleLineEditWidget(displayName);
     }
     else if constexpr (std::is_same_v<std::decay_t<FieldType>, bool>) {
         return createCheckBoxWidget(displayName);
@@ -196,6 +196,40 @@ QWidget* ConfigWidget<ConfigStruct>::createLineEditWidget(const QString& display
 }
 
 template<typename ConfigStruct>
+QWidget* ConfigWidget<ConfigStruct>::createDoubleLineEditWidget(const QString& displayName) {
+    auto* containerWidget = new QWidget(this);
+    auto* layout = new QHBoxLayout(containerWidget);
+
+    auto* label = new QLabel(displayName, containerWidget);
+    label->setFixedWidth(120);
+
+    auto* lineEdit = new QLineEdit(containerWidget);
+    lineEdit->setObjectName(displayName);
+
+    // Validation with visual feedback
+    connect(lineEdit, &QLineEdit::textChanged, [this, lineEdit]() {
+        bool ok;
+        lineEdit->text().toDouble(&ok);
+
+        if (ok) {
+            // Valid input - clear potential error style
+            lineEdit->setStyleSheet("");
+        } else {
+            // Invalid input (including empty) - red border
+            lineEdit->setStyleSheet("QLineEdit { border: 2px solid #ff4444; }");
+        }
+
+        emitConfigChanged();
+    });
+
+    layout->addWidget(label);
+    layout->addWidget(lineEdit);
+    containerWidget->setLayout(layout);
+
+    return containerWidget;
+}
+
+template<typename ConfigStruct>
 QWidget* ConfigWidget<ConfigStruct>::createSpinBoxWidget(const QString& displayName) {
     auto* containerWidget = new QWidget(this);
     auto* layout = new QHBoxLayout(containerWidget);
@@ -217,28 +251,6 @@ QWidget* ConfigWidget<ConfigStruct>::createSpinBoxWidget(const QString& displayN
     return containerWidget;
 }
 
-template<typename ConfigStruct>
-QWidget* ConfigWidget<ConfigStruct>::createDoubleSpinBoxWidget(const QString& displayName) {
-    auto* containerWidget = new QWidget(this);
-    auto* layout = new QHBoxLayout(containerWidget);
-
-    auto* label = new QLabel(displayName, containerWidget);
-    label->setFixedWidth(120);
-
-    auto* doubleSpinBox = new QDoubleSpinBox(containerWidget);
-    doubleSpinBox->setObjectName(displayName);
-    doubleSpinBox->setRange(0.0, DBL_MAX);
-    doubleSpinBox->setDecimals(3);
-    connect(doubleSpinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), [this]() {
-        emitConfigChanged();
-    });
-
-    layout->addWidget(label);
-    layout->addWidget(doubleSpinBox);
-    containerWidget->setLayout(layout);
-
-    return containerWidget;
-}
 
 template<typename ConfigStruct>
 QWidget* ConfigWidget<ConfigStruct>::createCheckBoxWidget(const QString& displayName) {
@@ -316,10 +328,16 @@ void ConfigWidget<ConfigStruct>::updateWidgetValue(const FieldType& field, const
             spinBox->setValue(field);
         }
     }
-    else if constexpr (std::is_same_v<std::decay_t<FieldType>, double> || std::is_same_v<std::decay_t<FieldType>, float>) {
-        auto* doubleSpinBox = widget->findChild<QDoubleSpinBox*>(displayName);
-        if (doubleSpinBox) {
-            doubleSpinBox->setValue(static_cast<double>(field));
+    else if constexpr (std::is_same_v<std::decay_t<FieldType>, double>) {
+        auto* lineEdit = widget->findChild<QLineEdit*>(displayName);
+        if (lineEdit) {
+            lineEdit->setText(QString::number(field, 'g', 10));
+        }
+    }
+    else if constexpr (std::is_same_v<std::decay_t<FieldType>, float>) {
+        auto* lineEdit = widget->findChild<QLineEdit*>(displayName);
+        if (lineEdit) {
+            lineEdit->setText(QString::number(static_cast<double>(field), 'g', 10));
         }
     }
     else if constexpr (std::is_same_v<std::decay_t<FieldType>, bool>) {
@@ -382,15 +400,23 @@ void ConfigWidget<ConfigStruct>::updateConfigField(FieldType& field, const QStri
         }
     }
     else if constexpr (std::is_same_v<std::decay_t<FieldType>, double>) {
-        auto* doubleSpinBox = widget->findChild<QDoubleSpinBox*>(displayName);
-        if (doubleSpinBox) {
-            field = doubleSpinBox->value();
+        auto* lineEdit = widget->findChild<QLineEdit*>(displayName);
+        if (lineEdit) {
+            bool ok;
+            double value = lineEdit->text().toDouble(&ok);
+            if (ok) {
+                field = value;
+            }
         }
     }
     else if constexpr (std::is_same_v<std::decay_t<FieldType>, float>) {
-        auto* doubleSpinBox = widget->findChild<QDoubleSpinBox*>(displayName);
-        if (doubleSpinBox) {
-            field = static_cast<float>(doubleSpinBox->value());
+        auto* lineEdit = widget->findChild<QLineEdit*>(displayName);
+        if (lineEdit) {
+            bool ok;
+            double value = lineEdit->text().toDouble(&ok);
+            if (ok) {
+                field = static_cast<float>(value);
+            }
         }
     }
     else if constexpr (std::is_same_v<std::decay_t<FieldType>, bool>) {
