@@ -115,8 +115,28 @@ bool TrainingNode::isDataAvailable()
     return false;
 }
 
+/**
+ * @brief Execute the ML training pipeline.
+ *
+ * Orchestrates the complete training workflow:
+ * 1. Validates configuration data availability
+ * 2. Terminates any existing training process
+ * 3. Generates unique run directory for artifact preservation
+ * 4. Serializes configuration to JSON (including run_dir)
+ * 5. Launches Python training script via PowerShell
+ *
+ * The run directory is created in artifacts/ next to AnimHost.exe and follows
+ * the naming format: <username>_<yyyyMMdd>_<count>. If run directory generation
+ * fails, training proceeds but artifact preservation will be skipped.
+ *
+ * Training progress is communicated back via JSON messages on stdout,
+ * which are parsed and displayed in the node widget.
+ */
 void TrainingNode::run()
 {
+    // Store start time for log slicing
+    _trainingStartTime = QDateTime::currentDateTime();
+
     qDebug() << "TrainingNode run - Starting Python training process!";
 
     // Check for required config data using isDataAvailable()
@@ -143,9 +163,25 @@ void TrainingNode::run()
     auto configPtr = configData->getData();
     MLFramework::StarkeConfig currentConfig = *configPtr;
 
+    // Generate run directory for artifact preservation
+    _currentRunDir = generateRunDir();
+
+    // Update widget with run directory and disable button until training completes
+    if (_widget) {
+        _widget->setRunDir(_currentRunDir);
+        _widget->setArtifactsButtonEnabled(false);
+    }
+
     // Save config to file for Python script (in deployed location)
     QString configPath = QApplication::applicationDirPath() + "/python/ml_framework/starke_model_config.json";
     QJsonObject configJson = currentConfig.toJson();
+    // Add run_dir to config JSON if it was successfully generated
+    if (!_currentRunDir.isEmpty()) {
+        configJson["run_dir"] = _currentRunDir;
+        qDebug() << "Added run_dir to config:" << _currentRunDir;
+    } else {
+        qWarning() << "Run directory generation failed, artifact preservation will be skipped";
+    }
     QJsonDocument doc(configJson);
     QFile configFile(configPath);
     if (configFile.open(QIODevice::WriteOnly)) {
@@ -185,6 +221,17 @@ QWidget* TrainingNode::embeddedWidget()
     return _widget;
 }
 
+/**
+ * @brief Handle stdout from the Python training process.
+ *
+ * Reads and parses JSON-formatted training messages from the Python training
+ * script's stdout. Each message contains status updates, progress information,
+ * and training metrics (epoch, loss, etc.).
+ *
+ * Messages are parsed line-by-line to handle multiple JSON objects in a single
+ * output batch. Non-JSON output is logged as debug information but ignored.
+ * Parsed messages are forwarded to the widget for UI updates.
+ */
 void TrainingNode::onTrainingOutput()
 {
     QByteArray data = _trainingProcess->readAllStandardOutput();
@@ -213,12 +260,36 @@ void TrainingNode::onTrainingOutput()
     }
 }
 
+/**
+ * @brief Handle completion of the Python training process.
+ *
+ * Called when the training subprocess terminates. Updates the UI to reflect
+ * the final training status (success or failure) and enables the artifacts
+ * viewer button on successful completion.
+ *
+ * On successful completion (exit code 0):
+ * - Updates status to "Completed" with green indicator
+ * - Enables "View Run Artifacts" button (if run directory exists)
+ *
+ * On failure (non-zero exit code or crash):
+ * - Updates status to "Failed" with red indicator
+ * - Artifacts button remains disabled
+ */
 void TrainingNode::onTrainingFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
     qDebug() << "Training process finished with exit code:" << exitCode << "status:" << exitStatus;
-    
+
+    // Copy log slice to run directory
+    QDateTime endTime = QDateTime::currentDateTime();
+    copyLogSliceToRunDir(_trainingStartTime, endTime);
+
     if (exitStatus == QProcess::NormalExit && exitCode == 0) {
         updateConnectionStatus("Completed", QColor(50, 255, 50)); // Bright green (like TRACER)
+
+        // Enable artifacts button on successful completion
+        if (_widget) {
+            _widget->setArtifactsButtonEnabled(true);
+        }
     } else {
         updateConnectionStatus("Failed", Qt::red);
     }
@@ -268,4 +339,121 @@ void TrainingNode::updateFromMessage(const MLFramework::TrainingMessage& msg)
     if (_widget) {
         _widget->updateFromMessage(msg);
     }
+}
+
+/**
+ * @brief Generate a unique run directory for artifact preservation.
+ *
+ * Creates a run directory in the artifacts/ subdirectory next to AnimHost.exe.
+ * Directory naming format: <username>_<yyyyMMdd>_<count>
+ *
+ * The count is determined by counting existing directories with the same
+ * username and date prefix. This ensures multiple runs on the same day
+ * get incrementing suffixes (0, 1, 2, ...).
+ */
+QString TrainingNode::generateRunDir()
+{
+    // Get application directory (where AnimHost.exe is located)
+    QString appDir = QApplication::applicationDirPath();
+    QString artifactsDir = appDir + "/artifacts";
+
+    // Ensure artifacts directory exists
+    QDir artifactsDirObj(artifactsDir);
+    if (!artifactsDirObj.exists()) {
+        if (!QDir().mkpath(artifactsDir)) {
+            qWarning() << "Failed to create artifacts directory:" << artifactsDir;
+            return QString(); // Return empty string on failure
+        }
+        qDebug() << "Created artifacts directory:" << artifactsDir;
+    }
+
+    // Get Windows username with fallback
+    QString userName = qgetenv("USERNAME");
+    if (userName.isEmpty()) {
+        userName = "unknown_user";
+        qDebug() << "USERNAME environment variable not found, using:" << userName;
+    }
+
+    // Get current date in yyyyMMdd format
+    QString date = QDateTime::currentDateTime().toString("yyyyMMdd");
+    QString prefix = userName + "_" + date;
+
+    // Count existing directories with same prefix (username_yyyyMMdd_*)
+    QStringList filters;
+    filters << prefix + "_*";
+    QStringList existingDirs = artifactsDirObj.entryList(filters, QDir::Dirs | QDir::NoDotAndDotDot);
+    int count = existingDirs.count();
+
+    // Generate run directory name: username_yyyyMMdd_count
+    QString runDirName = prefix + "_" + QString::number(count);
+    QString runDir = artifactsDir + "/" + runDirName;
+
+    // Create the run directory
+    if (!QDir().mkpath(runDir)) {
+        qWarning() << "Failed to create run directory:" << runDir;
+        return QString(); // Return empty string on failure
+    }
+
+    qDebug() << "Created run directory:" << runDir << "(count:" << count << ")";
+    return runDir;
+}
+
+/**
+ * @brief Copy log entries from the main log file to the run directory.
+ *
+ * Extracts log entries between startTime and endTime from LogOutput.txt
+ * and writes them to <run_dir>/LogOutput.txt. This preserves a training-specific
+ * log slice without affecting the main application log.
+ *
+ * Log format expected: "yyyy-MM-dd hh:mm:ss || ..."
+ */
+void TrainingNode::copyLogSliceToRunDir(const QDateTime& startTime, const QDateTime& endTime)
+{
+    // Skip if no run directory was created
+    if (_currentRunDir.isEmpty()) {
+        qDebug() << "No run directory, skipping log copy";
+        return;
+    }
+
+    // Open main log file
+    QString mainLogPath = QApplication::applicationDirPath() + "/LogOutput.txt";
+    QFile mainLog(mainLogPath);
+    if (!mainLog.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "Failed to open main log file for reading:" << mainLogPath;
+        return;
+    }
+
+    // Create run-specific log file
+    QString runLogPath = _currentRunDir + "/RunLogOutput.txt";
+    QFile runLog(runLogPath);
+    if (!runLog.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qWarning() << "Failed to create run log file:" << runLogPath;
+        mainLog.close();
+        return;
+    }
+
+    // Read and filter log lines
+    QTextStream in(&mainLog);
+    QTextStream out(&runLog);
+    int linesCopied = 0;
+
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+
+        // Parse timestamp from log line format: "yyyy-MM-dd hh:mm:ss || ..."
+        if (line.length() >= 19) {
+            QString timestampStr = line.left(19);
+            QDateTime lineTime = QDateTime::fromString(timestampStr, "yyyy-MM-dd hh:mm:ss");
+
+            if (lineTime.isValid() && lineTime >= startTime && lineTime <= endTime) {
+                out << line << "\n";
+                linesCopied++;
+            }
+        }
+    }
+
+    mainLog.close();
+    runLog.close();
+
+    qDebug() << "Copied" << linesCopied << "log lines to run directory:" << runLogPath;
 }
