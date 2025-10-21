@@ -474,6 +474,90 @@ def run_gnn_training(config: StarkeModelConfig, tracker: ExperimentTracker) -> b
     return True
 
 
+def move_pae_artifacts(path_to_ai4anim: Path, dest_dir: Path) -> bool:
+    """
+    Move PAE training artifacts to destination directory.
+
+    Moves files from AI4Animation/SIGGRAPH_2022/PyTorch/PAE/Training/ to dest_dir/PAE/Training/
+    Overwrites existing files with the same name.
+
+    :param path_to_ai4anim: Path to AI4Animation framework
+    :param dest_dir: Destination directory for artifacts
+    :return: True on success, False on failure
+    """
+    try:
+        pae_source = pae_path(path_to_ai4anim) / "Training"
+        pae_dest = dest_dir / "PAE" / "Training"
+
+        if not pae_source.exists():
+            logger.warning(f"PAE training directory not found: {pae_source}")
+            return False
+
+        if not pae_source.is_dir():
+            logger.error(f"PAE training path is not a directory: {pae_source}")
+            return False
+
+        # Create destination directory
+        pae_dest.mkdir(parents=True, exist_ok=True)
+
+        # Move all files from source to destination
+        moved_count = 0
+        for item in pae_source.iterdir():
+            dest_item = pae_dest / item.name
+            shutil.move(str(item), str(dest_item))
+            moved_count += 1
+
+        logger.info(f"Moved {moved_count} PAE training artifacts from {pae_source} to {pae_dest}")
+        return True
+
+    except Exception as e:
+        logger.error(f"Failed to move PAE artifacts: {e}", exc_info=True)
+        return False
+
+
+def move_gnn_artifacts(path_to_ai4anim: Path, dest_dir: Path) -> bool:
+    """
+    Move GNN training artifacts to destination directory.
+
+    Moves files from AI4Animation/SIGGRAPH_2022/PyTorch/GNN/Training/ to dest_dir/GNN/Training/
+    Overwrites existing files with the same name.
+
+    :param path_to_ai4anim: Path to AI4Animation framework
+    :param dest_dir: Destination directory for artifacts
+    :return: True on success, False on failure
+    """
+    try:
+        gnn_source = gnn_path(path_to_ai4anim) / "Training"
+        gnn_dest = dest_dir / "GNN" / "Training"
+
+        if not gnn_source.exists():
+            logger.warning(f"GNN training directory not found: {gnn_source}")
+            return False
+
+        if not gnn_source.is_dir():
+            logger.error(f"GNN training path is not a directory: {gnn_source}")
+            return False
+
+        # Create destination directory
+        gnn_dest.mkdir(parents=True, exist_ok=True)
+
+        # Move all files from source to destination (skip placeholder.txt)
+        moved_count = 0
+        for item in gnn_source.iterdir():
+            if item.name == "placeholder.txt":
+                continue
+            dest_item = gnn_dest / item.name
+            shutil.move(str(item), str(dest_item))
+            moved_count += 1
+
+        logger.info(f"Moved {moved_count} GNN training artifacts from {gnn_source} to {gnn_dest}")
+        return True
+
+    except Exception as e:
+        logger.error(f"Failed to move GNN artifacts: {e}", exc_info=True)
+        return False
+
+
 def parse_training_output(
     line: str, model_name: str, tracker: ExperimentTracker
 ) -> None:

@@ -34,6 +34,7 @@ def main() -> None:
         experiment = StarkeExperiment(config, tracker)
         experiment.init()
         experiment.run()
+        experiment.preserve()
     except Exception as e:
         tracker.log_exception("Starke training failed", e)
         raise
