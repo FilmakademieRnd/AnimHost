@@ -49,6 +49,9 @@ private:
     // Configuration input
     std::weak_ptr<AnimNodeData<MLFramework::StarkeConfig>> _configIn;
 
+    // Current run directory for artifacts
+    QString _currentRunDir;
+
     // Framework automatically provides RunSignal input at port 0
 
 public:

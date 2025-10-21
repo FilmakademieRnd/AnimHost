@@ -161,15 +161,21 @@ void TrainingNode::run()
     MLFramework::StarkeConfig currentConfig = *configPtr;
 
     // Generate run directory for artifact preservation
-    QString runDir = generateRunDir();
+    _currentRunDir = generateRunDir();
+
+    // Update widget with run directory and disable button until training completes
+    if (_widget) {
+        _widget->setRunDir(_currentRunDir);
+        _widget->setArtifactsButtonEnabled(false);
+    }
 
     // Save config to file for Python script (in deployed location)
     QString configPath = QApplication::applicationDirPath() + "/python/ml_framework/starke_model_config.json";
     QJsonObject configJson = currentConfig.toJson();
     // Add run_dir to config JSON if it was successfully generated
-    if (!runDir.isEmpty()) {
-        configJson["run_dir"] = runDir;
-        qDebug() << "Added run_dir to config:" << runDir;
+    if (!_currentRunDir.isEmpty()) {
+        configJson["run_dir"] = _currentRunDir;
+        qDebug() << "Added run_dir to config:" << _currentRunDir;
     } else {
         qWarning() << "Run directory generation failed, artifact preservation will be skipped";
     }
@@ -212,6 +218,17 @@ QWidget* TrainingNode::embeddedWidget()
     return _widget;
 }
 
+/**
+ * @brief Handle stdout from the Python training process.
+ *
+ * Reads and parses JSON-formatted training messages from the Python training
+ * script's stdout. Each message contains status updates, progress information,
+ * and training metrics (epoch, loss, etc.).
+ *
+ * Messages are parsed line-by-line to handle multiple JSON objects in a single
+ * output batch. Non-JSON output is logged as debug information but ignored.
+ * Parsed messages are forwarded to the widget for UI updates.
+ */
 void TrainingNode::onTrainingOutput()
 {
     QByteArray data = _trainingProcess->readAllStandardOutput();
@@ -240,12 +257,32 @@ void TrainingNode::onTrainingOutput()
     }
 }
 
+/**
+ * @brief Handle completion of the Python training process.
+ *
+ * Called when the training subprocess terminates. Updates the UI to reflect
+ * the final training status (success or failure) and enables the artifacts
+ * viewer button on successful completion.
+ *
+ * On successful completion (exit code 0):
+ * - Updates status to "Completed" with green indicator
+ * - Enables "View Run Artifacts" button (if run directory exists)
+ *
+ * On failure (non-zero exit code or crash):
+ * - Updates status to "Failed" with red indicator
+ * - Artifacts button remains disabled
+ */
 void TrainingNode::onTrainingFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
     qDebug() << "Training process finished with exit code:" << exitCode << "status:" << exitStatus;
-    
+
     if (exitStatus == QProcess::NormalExit && exitCode == 0) {
         updateConnectionStatus("Completed", QColor(50, 255, 50)); // Bright green (like TRACER)
+
+        // Enable artifacts button on successful completion
+        if (_widget) {
+            _widget->setArtifactsButtonEnabled(true);
+        }
     } else {
         updateConnectionStatus("Failed", Qt::red);
     }
@@ -306,8 +343,6 @@ void TrainingNode::updateFromMessage(const MLFramework::TrainingMessage& msg)
  * The count is determined by counting existing directories with the same
  * username and date prefix. This ensures multiple runs on the same day
  * get incrementing suffixes (0, 1, 2, ...).
- *
- * @return QString Path to the created run directory, or empty string on failure
  */
 QString TrainingNode::generateRunDir()
 {

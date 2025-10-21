@@ -22,6 +22,10 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QJsonObject>
+#include <QDesktopServices>
+#include <QUrl>
+#include <QDir>
+#include <QMessageBox>
 
 TrainingNodeWidget::TrainingNodeWidget(QWidget* parent)
     : QWidget(parent)
@@ -36,10 +40,13 @@ TrainingNodeWidget::TrainingNodeWidget(QWidget* parent)
     , _controllerGroupBox(nullptr)
     , _controllerProgressBar(nullptr)
     , _controllerTrainLossLabel(nullptr)
+    , _artifactsGroupBox(nullptr)
+    , _viewArtifactsButton(nullptr)
+    , _runDir("")
 {
     setupUI();
     applyStyles();
-    
+
     // Initialize connection status
     updateConnectionStatus("Uninitialized", Qt::red);
 }
@@ -80,10 +87,23 @@ void TrainingNodeWidget::setupUI()
     controllerLayout->addWidget(_controllerProgressBar);
     controllerLayout->addWidget(_controllerTrainLossLabel);
 
+    // Create Artifacts Group Box
+    _artifactsGroupBox = new QGroupBox("Artifacts", this);
+    auto* artifactsLayout = new QHBoxLayout(_artifactsGroupBox);
+
+    _viewArtifactsButton = new QPushButton("View Run Artifacts 📁", _artifactsGroupBox);
+    _viewArtifactsButton->setEnabled(false);
+    _viewArtifactsButton->setToolTip("No run directory configured");
+
+    connect(_viewArtifactsButton, &QPushButton::clicked, this, &TrainingNodeWidget::onViewArtifactsClicked);
+
+    artifactsLayout->addWidget(_viewArtifactsButton);
+
     // Add group boxes to main layout
     _mainLayout->addWidget(_connectionGroupBox);
     _mainLayout->addWidget(_encoderGroupBox);
     _mainLayout->addWidget(_controllerGroupBox);
+    _mainLayout->addWidget(_artifactsGroupBox);
     _mainLayout->addStretch();
 }
 
@@ -173,5 +193,69 @@ void TrainingNodeWidget::setConfiguration(const MLFramework::StarkeConfig& confi
     }
     if (_controllerProgressBar) {
         _controllerProgressBar->setMaxValue(config.gnn_epochs);
+    }
+}
+
+void TrainingNodeWidget::setRunDir(const QString& runDir)
+{
+    _runDir = runDir;
+
+    // Update button tooltip based on whether run_dir is set
+    if (_viewArtifactsButton) {
+        if (_runDir.isEmpty()) {
+            _viewArtifactsButton->setToolTip("No run directory configured");
+        } else {
+            _viewArtifactsButton->setToolTip(_runDir);
+        }
+    }
+}
+
+void TrainingNodeWidget::setArtifactsButtonEnabled(bool enabled)
+{
+    if (!_viewArtifactsButton) {
+        return;
+    }
+
+    // Check if directory exists before enabling
+    if (enabled && !_runDir.isEmpty()) {
+        QDir dir(_runDir);
+        if (dir.exists()) {
+            _viewArtifactsButton->setEnabled(true);
+            _viewArtifactsButton->setToolTip(_runDir);
+        } else {
+            _viewArtifactsButton->setEnabled(false);
+            _viewArtifactsButton->setToolTip("Artifacts directory does not exist: " + _runDir);
+        }
+    } else if (enabled && _runDir.isEmpty()) {
+        _viewArtifactsButton->setEnabled(false);
+        _viewArtifactsButton->setToolTip("No run directory configured");
+    } else {
+        _viewArtifactsButton->setEnabled(false);
+        if (_runDir.isEmpty()) {
+            _viewArtifactsButton->setToolTip("No run directory configured");
+        } else {
+            _viewArtifactsButton->setToolTip("Training in progress...");
+        }
+    }
+}
+
+void TrainingNodeWidget::onViewArtifactsClicked()
+{
+    if (_runDir.isEmpty()) {
+        QMessageBox::warning(this, "No Artifacts", "No run directory has been configured.");
+        return;
+    }
+
+    QDir dir(_runDir);
+    if (!dir.exists()) {
+        QMessageBox::warning(this, "Directory Not Found",
+                            "The artifacts directory no longer exists:\n" + _runDir);
+        return;
+    }
+
+    // Open directory in Windows Explorer using QDesktopServices
+    if (!QDesktopServices::openUrl(QUrl::fromLocalFile(_runDir))) {
+        QMessageBox::warning(this, "Failed to Open",
+                            "Failed to open artifacts directory:\n" + _runDir);
     }
 }
