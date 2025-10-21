@@ -61,3 +61,16 @@ class Experiment(ABC):
         the main operation's success or failure.
         """
         pass
+
+    def preserve(self) -> None:
+        """
+        Preserve experiment artifacts for reproducibility.
+
+        This optional phase should handle:
+        - Saving configuration files
+        - Archiving training outputs
+        - Moving artifacts to run directory
+
+        Default implementation does nothing. Override to implement preservation.
+        """
+        pass
