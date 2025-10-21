@@ -100,12 +100,25 @@ This outputs preprocessed binary data (`data_x.bin`, `data_y.bin`) and metadata 
 
 *Runtimes measured on NVIDIA RTX A5000.*
 
+
 ## Outputs
 
-After training completes, you'll find:
+After training completes successfully, training artifacts are automatically preserved in a unique run directory:
 
-- **Periodic Autoencoder**: `AI4Animation/SIGGRAPH_2022/PyTorch/PAE/Training/`
-- **Gated Neural Network**: `AI4Animation/SIGGRAPH_2022/PyTorch/GNN/Training/`
+**Artifacts Location**: `AnimHost/artifacts/<username>_<date>_<count>/`
+
+
+**Artifact Contents**:
+- **Configuration**: `config.json` - Complete training setup for reproducibility
+- **PAE Training Output**: `PAE/Training/` - Periodic Autoencoder models and checkpoints
+- **GNN Training Output**: `GNN/Training/` - Gated Neural Network models and checkpoints
+- **AnimHost log slice**: `LogOutput.txt` - AniMHost logging during the run
+
+**Quick Access**: Click the **"View Run Artifacts 📁"** button in the TrainingNode widget to open the artifacts directory in Windows Explorer.
+
+**Note**: If artifact preservation fails or is disabled, trained models remain in their original locations:
+- `AI4Animation/SIGGRAPH_2022/PyTorch/PAE/Training/`
+- `AI4Animation/SIGGRAPH_2022/PyTorch/GNN/Training/`
 
 These trained models can be integrated into AnimHost for real-time character animation.
 
