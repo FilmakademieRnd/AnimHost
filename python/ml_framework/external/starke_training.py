@@ -71,12 +71,18 @@ def init_model(config: StarkeModelConfig) -> None:
     # PAE data loading requires input feature metadata
     _init_pae_data_shape(config.dataset_path, config.path_to_ai4anim)
 
-    # Initialize PAE network with epochs
-    _init_pae_network_script(config.path_to_ai4anim, config.pae_epochs)
+    # Initialize PAE network with epochs and learning rate
+    pae_updates = {
+        "epochs": config.pae_epochs,
+        "learning_rate": config.pae_learning_rate,
+    }
+    _init_pae_network_script(config.path_to_ai4anim, pae_updates)
 
-    # Initialize GNN network with epochs and input feature-based parameters
+    # Initialize GNN network with epochs, learning rate, dropout, and input feature-based parameters
     gnn_updates = _init_gnn_feature_count(config.dataset_path)
     gnn_updates["epochs"] = config.gnn_epochs
+    gnn_updates["learning_rate"] = config.gnn_learning_rate
+    gnn_updates["dropout"] = config.gnn_dropout
     _init_gnn_network_script(config.path_to_ai4anim, gnn_updates)
 
 
@@ -131,33 +137,42 @@ def _init_pae_data_shape(dataset_path: Path, path_to_ai4anim: Path) -> None:
         raise RuntimeError(f"Failed to write DataShape.txt: {e}")
 
 
-def _init_pae_network_script(path_to_ai4anim: Path, pae_epochs: int) -> None:
+def _init_pae_network_script(
+    path_to_ai4anim: Path, updates: Dict[str, Union[int, float]]
+) -> None:
     """
-    Initialize PAE Network.py with epochs.
+    Initialize PAE Network.py with configuration parameters.
 
     :param path_to_ai4anim: Path to AI4Animation framework
-    :param pae_epochs: Number of epochs for PAE training
+    :param updates: Dictionary of parameter updates (epochs, learning_rate)
     :raises RuntimeError: If script editing fails
     """
     pae_network_path = pae_path(path_to_ai4anim) / "Network.py"
-    current_pae_values = read_script_variables(pae_network_path, ["epochs"])
-    current_pae_epochs = current_pae_values.get("epochs")
 
-    error = write_script_variables(pae_network_path, {"epochs": pae_epochs})
+    # Read current values for logging
+    current_values = read_script_variables(pae_network_path, list(updates.keys()))
+
+    # Apply all updates
+    error = write_script_variables(pae_network_path, updates)
     if error:
-        logger.error(f"Failed to update PAE epochs: {error}")
-        raise RuntimeError(f"Failed to update PAE epochs: {error}")
-    logger.info(f"Updated PAE epochs from {current_pae_epochs} to {pae_epochs}")
+        logger.error(f"Failed to update PAE Network.py: {error}")
+        raise RuntimeError(f"Failed to update PAE Network.py: {error}")
+
+    # Log all changes
+    logger.info("Successfully updated PAE Network.py with:")
+    for key, new_value in updates.items():
+        old_value = current_values.get(key)
+        logger.info(f"  {key}: {old_value} -> {new_value}")
 
 
 def _init_gnn_network_script(
-    path_to_ai4anim: Path, updates: Dict[str, Union[str, int]]
+    path_to_ai4anim: Path, updates: Dict[str, Union[str, int, float]]
 ) -> None:
     """
     Initialize GNN Network.py with all parameter updates in a single operation.
 
     :param path_to_ai4anim: Path to AI4Animation framework
-    :param updates: Dictionary of parameter updates (epochs, gating_indices, main_indices)
+    :param updates: Dictionary of parameter updates (epochs, learning_rate, dropout, gating_indices, main_indices)
     :raises RuntimeError: If script editing fails
     """
     gnn_network_path = gnn_path(path_to_ai4anim) / "Network.py"

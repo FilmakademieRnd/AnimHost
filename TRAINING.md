@@ -58,7 +58,6 @@ C:/My-AnimHost-Run/
 ...
 └── Survivor_Training_Data/
 ```
-**NOTE:** Clear this dir if you already have it, there is a bug that blocks overwriting of some files.
 
 2. Launch `AnimHost.exe` from the release package
 
