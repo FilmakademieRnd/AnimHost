@@ -6,7 +6,10 @@ Implements the complete Starke training pipeline using the Experiment interface.
 Handles PAE and GNN training phases with proper initialization and cleanup.
 """
 
+import dataclasses
+import json
 import logging
+from pathlib import Path
 
 from .base import Experiment
 from config.model_configs import StarkeModelConfig
@@ -17,6 +20,8 @@ from external.starke_training import (
     reset_model,
     run_pae_training,
     run_gnn_training,
+    move_pae_artifacts,
+    move_gnn_artifacts,
 )
 from data.velocity_preprocessing import preprocess_velocity_data
 
@@ -100,6 +105,43 @@ class StarkeExperiment(Experiment):
         self.tracker.log_ui_status(
             "Completed Training", "Starke training pipeline completed successfully"
         )
+
+    def preserve(self) -> None:
+        """
+        Preserve experiment artifacts for reproducibility.
+
+        Saves the following artifacts to config.run_dir:
+        - Input JSON configuration (defines experiment setup)
+        - PAE training outputs (moved from AI4Animation/SIGGRAPH_2022/PyTorch/PAE/Training/)
+        - GNN training outputs (moved from AI4Animation/SIGGRAPH_2022/PyTorch/GNN/Training/)
+
+        If config.run_dir is not set, preservation is skipped.
+        Logs errors but does not raise exceptions to avoid masking training success.
+        """
+        if not self.config.run_dir:
+            self.tracker.log_ui_status("Preservation Disabled", "Artifact preservation disabled (no run_dir configured)")
+            return
+
+        self.tracker.log_ui_status("Preserving Artifacts", "Starting artifact preservation...")
+
+        # Save configuration as JSON using dataclasses.asdict()
+        try:
+            config_path = self.config.run_dir / "config.json"
+            with open(config_path, 'w') as f:
+                json.dump(dataclasses.asdict(self.config), f, indent=2, default=str)
+            logger.info(f"Saved configuration to {config_path}")
+        except Exception as e:
+            self.tracker.log_exception("Config preservation failed", e)
+
+        # Move PAE and GNN training artifacts
+        pae_success = move_pae_artifacts(self.config.path_to_ai4anim, self.config.run_dir)
+        gnn_success = move_gnn_artifacts(self.config.path_to_ai4anim, self.config.run_dir)
+
+        if pae_success and gnn_success:
+            self.tracker.log_ui_status("Preservation Complete", f"Artifacts preserved to {self.config.run_dir}")
+        else:
+            self.tracker.log_ui_status("Preservation Partial", "Some artifacts could not be moved (see logs)")
+
 
     def cleanup(self) -> None:
         """

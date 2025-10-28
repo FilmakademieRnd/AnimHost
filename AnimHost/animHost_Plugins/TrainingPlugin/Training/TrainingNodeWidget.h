@@ -59,6 +59,19 @@ public:
      * @param config The StarkeConfig containing epoch settings.
      */
     void setConfiguration(const MLFramework::StarkeConfig& config);
+    /**
+     * Set the run directory path for artifact viewing.
+     * @param runDir Path to the run artifacts directory.
+     */
+    void setRunDir(const QString& runDir);
+    /**
+     * Enable or disable the artifacts button.
+     * @param enabled True to enable the button, false to disable.
+     */
+    void setArtifactsButtonEnabled(bool enabled);
+
+private slots:
+    void onViewArtifactsClicked();
 
 private:
     // UI components
@@ -79,6 +92,11 @@ private:
     QGroupBox* _controllerGroupBox;
     ProgressWidget<int>* _controllerProgressBar;
     QLabel* _controllerTrainLossLabel;
+
+    // Artifacts components
+    QGroupBox* _artifactsGroupBox;
+    QPushButton* _viewArtifactsButton;
+    QString _runDir;
 
     void setupUI();
     void applyStyles();

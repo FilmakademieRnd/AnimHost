@@ -31,6 +31,7 @@ class StarkeModelConfig:
     gnn_epochs: int
     gnn_learning_rate: float
     gnn_dropout: float
+    run_dir: Optional[Path]
 
     def __post_init__(self) -> None:
         """Convert string paths to Path objects if needed."""
@@ -38,6 +39,8 @@ class StarkeModelConfig:
             self.dataset_path = Path(self.dataset_path)
         if isinstance(self.path_to_ai4anim, str):
             self.path_to_ai4anim = Path(self.path_to_ai4anim)
+        if isinstance(self.run_dir, str):
+            self.run_dir = Path(self.run_dir)
 
     def validate(self) -> Optional[str]:
         """
@@ -77,5 +80,13 @@ class StarkeModelConfig:
         # Validate dropout between 0 and 1
         if not (0 <= self.gnn_dropout <= 1):
             return f"GNN dropout must be between 0 and 1, got: {self.gnn_dropout}"
+        # Validate run_dir if provided
+        if self.run_dir is not None:
+            if not self.run_dir.exists():
+                return f"Run directory does not exist: {self.run_dir}"
+            if not self.run_dir.is_dir():
+                return f"Run directory path is not a directory: {self.run_dir}"
+            if not os.access(self.run_dir, os.W_OK):
+                return f"Run directory is not writable: {self.run_dir}"
 
         return None
