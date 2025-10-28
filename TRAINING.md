@@ -33,7 +33,7 @@ C:/My-AnimHost-Run/
 
 ### Step 2: Download Motion Capture Dataset
 
-Download the *SURVIVOR AnimHost Motion Capture Dataset 2025* under the *ANIMHOST MOTION CAPTURE DATASET 2024 & 2025* section [here](https://animationsinstitut.de/en/research/projects/max-r). Place it with the AnimHost and AI4Animation directory. If you want to train without mirrored data you need to move the data files into their own dir (below Default).
+Download the *SURVIVOR AnimHost Motion Capture Dataset 2025* under the *ANIMHOST MOTION CAPTURE DATASET 2024 & 2025* section [here](https://animationsinstitut.de/en/research/projects/max-r). Place it alongside the AnimHost and AI4Animation directories. If you want to train without mirrored data you need to move the data files into their own dir (below Default).
 ```
 C:/My-AnimHost-Run/
 ...
@@ -61,7 +61,7 @@ C:/My-AnimHost-Run/
 
 2. Launch `AnimHost.exe` from the release package
 
-3. Load the preprocessing pipeline: **File → Open → AnimHost/TestScenes/Preprocessing.flow**
+3. Load the preprocessing pipeline: **File → Load Scene → AnimHost/TestScenes/Preprocessing.flow**
 
 4. Configure the nodes:
    - In the *Animation Import* node select the SURVIVOR dataset directory *.../FBX/Default* (or *.../FBX/Test* with just a few files for small trial run dataset)
@@ -76,7 +76,7 @@ This outputs preprocessed binary data (`data_x.bin`, `data_y.bin`) and metadata 
 
 ![Animhost training scene](doc/resources/animhost_training_scene.png)
 
-1. In AnimHost, load the training pipeline: **File → Open → TestScenes/TrainingPipeline.flow**
+1. In AnimHost, load the training pipeline: **File → Load Scene → TestScenes/TrainingPipeline.flow**
 
 2. Configure the dataset node:
     - Select the `Dataset Path` you used, *C:/My-AnimHost-Run/Survivor_Training_Data*.
@@ -112,7 +112,7 @@ After training completes successfully, training artifacts are automatically pres
 - **Configuration**: `config.json` - Complete training setup for reproducibility
 - **PAE Training Output**: `PAE/Training/` - Periodic Autoencoder models and checkpoints
 - **GNN Training Output**: `GNN/Training/` - Gated Neural Network models and checkpoints
-- **AnimHost log slice**: `LogOutput.txt` - AniMHost logging during the run
+- **AnimHost log slice**: `LogOutput.txt` - AnimHost logging during the run
 
 **Quick Access**: Click the **"View Run Artifacts 📁"** button in the TrainingNode widget to open the artifacts directory in Windows Explorer.
 
@@ -139,7 +139,7 @@ For developers and advanced users, see [DEV_GUIDE.md](python/ml_framework/DEV_GU
 **Solution**: This does take some time because it downloads and installs larger libraries like PyTorch and Cuda. Do expect a few minutes. You'll only need this step for your very first run.
 
 **Issue**: The TrainingNode looks stuck at `Starting training ...`.
-**Solution**: Both the first and expecially the second starting training steps need a few minutes to load the datasets into memory if you're using the full Surivor 2025 set. If you're giving this a trial run you can use only a few FBX files.
+**Solution**: Both the first and especially the second starting training steps need a few minutes to load the datasets into memory if you're using the full Surivor 2025 set. If you're giving this a trial run you can use only a few FBX files.
 
 **Issue**: I'm getting a lot of `INFO || Non-JSON stdout:` output, e.g. during first time setup.
 **Solution**: Output like this expected, especially during first time setup and during `Starting training ...`. The information is likely irrelevant for you unless you're debugging an issue.
