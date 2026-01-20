@@ -8,7 +8,7 @@ This guide walks you through running AI-powered character animation inference us
 - **Blender**: Blender 4.2 (4.2.9 confirmed working, 4.1 does not work)
 - **Trained Models**: Pre-trained ONNX models (see Dev Exchange/Model Zoo or train your own using [TRAINING.md](TRAINING.md))
 - **Reference FBX file**: A reference FBX file as used in training is required to get the character skeleton definition.
-- **Reference FBX file**: The demo .blend scene.
+- **Demo blender scene**: The demo .blend scene.
 
 ## Quick Start: Complete Inference Workflow
 
@@ -39,10 +39,10 @@ DataHub facilitates communication between AnimHost and Blender.
 cd .\DataHub\DataHub\
 .\DataHub.exe -nl -np -ownIP 127.0.0.1 -d
 ```
-- `-nl`: No logging to file
-- `-np`: No port forwarding
+- `-nl`: Run without lock history
+- `-np`: Run without parameter history
 - `-ownIP 127.0.0.1`: Set local IP address
-- `-d`: Debug mode
+- `-d`: Run with debug output
 
 3. Keep DataHub running in the background during inference
 
@@ -58,9 +58,9 @@ cd .\DataHub\DataHub\
 
 4. The default configuration is expected to work as a starting point.
    - There is no need to explicitly start this pipeline because receiver nodes are set to `Auto Start`.
-   - The `ControlPathDecoderNode` is set to use a `Path from Blender`.
+   - The `ControlPathDecoderNode` is set to `Path from Blender`.
    - The `CoordinateConverterPlugin` is set to `AH<->Blender Default`.
-   - `Locomotion Generator (2D)` parameters are set to bias towards the control path. See the detailed paramter description below.
+   - `Locomotion Generator (2D)` parameters are set to bias towards the control path. See the detailed parameter description below.
 
 ![AnimHost Inference parameters](doc/resources/animhost_inference_parameters_scene.png)
 
@@ -82,7 +82,7 @@ cd .\DataHub\DataHub\
 
 1. In Blender, with the `Survivor_Base_wPath` scene open, click all **red highlighted buttons**:
    - `Connect to TRACER`
-   - `TRACER chracter Setup`
+   - `TRACER Character Setup`
    - `Start Path Operator`
 
 2. Confirm that the AnimHost connector nodes both show a green light.
@@ -96,7 +96,7 @@ cd .\DataHub\DataHub\
    - The control parameters set in AnimHost
    - The locomotion patterns learned during training
 
-5. Once you see a Animation received message on the bottom of the screen you can play the animation.
+5. Once you see an animation received message on the bottom of the screen you can play the animation.
 
 ---
 
