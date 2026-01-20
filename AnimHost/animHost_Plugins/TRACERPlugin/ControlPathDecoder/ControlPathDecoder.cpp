@@ -309,6 +309,7 @@ QWidget* ControlPathDecoderNode::embeddedWidget()
         _comboBox = new QComboBox();
 
 		_pathFromBlender = new QCheckBox("Path from Blender");
+        _pathFromBlender->setChecked(_pathFromBlenderChecked);
 
         _mainLayout->addWidget(_comboBox);
 		_mainLayout->addWidget(_pathFromBlender);
