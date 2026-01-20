@@ -70,8 +70,8 @@ cd .\DataHub\DataHub\
 |-----------|-------|---------|-------------|
 | **Mix Root Rotation** | 0.0 - 1.0 | 0.5 | Root rotation blend (0 = network, 1 = path) |
 | **Mix Root Translation** | 0.0 - 1.0 | 0.5 | Root position blend (0 = network, 1 = path) |
-| **Path Position Influence** | 0.0 - 1.0 | 0.9 | Pre-inference position blend (0 = strict path, 1 = loose) |
-| **Path Rotation Influence** | 0.0 - 1.0 | 0.4 | Pre-inference rotation blend (0 = strict path, 1 = loose) |
+| **Path Position Influence** | 0.0 - 1.0 | 0.5 | Pre-inference position blend (0 = strict path, 1 = loose) |
+| **Path Rotation Influence** | 0.0 - 1.0 | 0.3 | Pre-inference rotation blend (0 = strict path, 1 = loose) |
 | **Network Phase Bias** | 0 - 100 | 50 | Post-inference phase blend (0 = steady gait, 100 = fast tempo adaptation) |
 | **Network Control Bias** | 0 - 100 | 33 | Post-inference trajectory blend (0 = ignore network, 100 = trust network) |
 
