@@ -26,7 +26,7 @@ private:
     bool _receivedControlPathPointRotation = false;
     bool _receivedControlPathPointLocation = false;
 
-	bool _pathFromBlenderChecked = false; // Flag to indicate if the path is from Blender, and thus needs to be transformed
+	bool _pathFromBlenderChecked = true; // Flag to indicate if the path is from Blender, and thus needs to be transformed
 
     uint16_t _characterID = 2;          // It refers to the selected Character Object
     uint16_t _paramControlPath = -1;    // This is the parameterID of the Character Object that keeps the ID of the Control Path associated with the selected Character Object 
