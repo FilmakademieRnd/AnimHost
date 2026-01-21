@@ -5,10 +5,10 @@ This guide walks you through running AI-powered character animation inference us
 ## Prerequisites
 
 - **AnimHost Release**: Download the latest release from [AnimHost GitHub Releases](https://github.com/FilmakademieRnd/AnimHost/releases/tag/v0.1.0)
+- **Trained Models**: Pre-trained ONNX models, available as an release asset.
+- **Reference FBX file**: A reference FBX file as used in training is required to get the character skeleton definition, available as an release asset.
+- **Demo blender scene**: The demo .blend scene, available as an release asset.
 - **Blender**: Blender 4.2 (4.2.9 confirmed working, 4.1 does not work)
-- **Trained Models**: Pre-trained ONNX models (see Dev Exchange/Model Zoo or train your own using [TRAINING.md](TRAINING.md))
-- **Reference FBX file**: A reference FBX file as used in training is required to get the character skeleton definition.
-- **Demo blender scene**: The demo .blend scene.
 
 ## Quick Start: Complete Inference Workflow
 
@@ -24,7 +24,7 @@ This guide walks you through running AI-powered character animation inference us
 2. Open the Survivor character scene:
    - Use the `Survivor_Base_wPath.blend` scene file
 
-For further information on how to use the Plugin to configure your own path see the add-on's [GitHub Readme]() which is also available in the release zip file.
+For further information on how to use the Plugin to configure your own path see the add-on's [GitHub README](https://github.com/FilmakademieRnd/TracerSceneDistribution/blob/main/Blender/README.md). It is also available in the release zip file.
 
 ### Step 2: Run DataHub
 
