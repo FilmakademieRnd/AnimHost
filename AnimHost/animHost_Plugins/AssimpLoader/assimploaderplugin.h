@@ -24,11 +24,13 @@
 #include "assimploaderplugin_global.h"
 #include <QMetaType>
 #include <QtCore/QObject>
+#include <QComboBox>
 #include <pluginnodeinterface.h>
 #include <commondatatypes.h>
 #include <nodedatatypes.h>
 #include <QtWidgets>
 #include <UIUtils.h>
+#include <SkeletonConfig.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -53,12 +55,12 @@ private:
 
     bool bDataValid;
 
-    //Experimental
-    bool bIsSurvivorChar = true;
+    // Skeleton type configuration
+    SkeletonType _skeletonType = SkeletonType::Bipedal;
 
     QWidget* widget;
     FolderSelectionWidget* _folderSelect = nullptr;
-    QCheckBox* _subsamplingCheck = nullptr;
+    QComboBox* _skeletonTypeCombo = nullptr;
     QPushButton* _pushButton;
     QLabel* _label;
     QHBoxLayout* _filePathLayout;
@@ -97,6 +99,7 @@ public:
 private Q_SLOTS:
     //void onButtonClicked();
     void onFolderSelectionChanged();
+    void onSkeletonTypeChanged(int index);
 
 private:
     void loadAnimationData(aiAnimation* pASSIMPAnimation, Skeleton* pSkeleton, Animation* pAnimation, aiNode* pNode);

@@ -9,46 +9,7 @@
 #include <UIUtils.h>
 #include <commondatatypes.h>
 #include <MathUtils.h>
-
-/**
- * Enum for skeleton type selection.
- */
-enum class SkeletonType {
-    Bipedal = 0,
-    Quadrupedal = 1
-};
-
-/**
- * Bone name configuration for different skeleton types.
- */
-struct SkeletonBoneConfig {
-    const char* rootBone;       // Center of mass / root position
-    const char* rearRight;      // Right rear joint (hip for biped, back leg for quad)
-    const char* rearLeft;       // Left rear joint
-    const char* frontRight;     // Right front joint (shoulder for biped, front leg for quad)
-    const char* frontLeft;      // Left front joint
-};
-
-// Bone configurations for supported skeleton types
-namespace SkeletonConfigs {
-    // Biped skeleton, e.g. Animationsinstitut SURIVOR robot
-    constexpr SkeletonBoneConfig Bipedal = {
-        "hip",          // rootBone
-        "pelvis_R",     // rearRight
-        "pelvis_L",     // rearLeft
-        "shoulder_R",   // frontRight
-        "shoulder_L"    // frontLeft
-    };
-
-    // Quadruped skeleton, e.g. MANN/DeepPhase dog
-    constexpr SkeletonBoneConfig Quadrupedal = {
-        "Hips",             // rootBone
-        "RightUpLeg",       // rearRight
-        "LeftUpLeg",        // rearLeft
-        "RightShoulder",    // frontRight
-        "LeftShoulder"      // frontLeft
-    };
-}
+#include <SkeletonConfig.h>
 
 class DEEPLOCOMOTIONPLUGINSHARED_EXPORT LocomotionPreprocessNode : public PluginNodeInterface
 {

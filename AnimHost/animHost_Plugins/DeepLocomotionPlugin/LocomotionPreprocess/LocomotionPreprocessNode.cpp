@@ -47,13 +47,7 @@ LocomotionPreprocessNode::~LocomotionPreprocessNode()
 
 const SkeletonBoneConfig& LocomotionPreprocessNode::getBoneConfig() const
 {
-    switch (_skeletonType) {
-    case SkeletonType::Quadrupedal:
-        return SkeletonConfigs::Quadrupedal;
-    case SkeletonType::Bipedal:
-    default:
-        return SkeletonConfigs::Bipedal;
-    }
+    return getSkeletonBoneConfig(_skeletonType);
 }
 
 unsigned int LocomotionPreprocessNode::nDataPorts(QtNodes::PortType portType) const
