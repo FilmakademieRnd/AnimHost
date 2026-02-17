@@ -14,7 +14,6 @@ Example:
 
 import bpy
 import sys
-import os
 from pathlib import Path
 
 
