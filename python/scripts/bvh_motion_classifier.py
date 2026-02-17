@@ -15,7 +15,6 @@ from dataclasses import dataclass
 DATASET_PATH = r"D:\anim-ws\MANN_qudruped_data"
 
 # Classification threshold (units per second)
-# Adjust based on your data scale - this is for typical mocap units (cm)
 VELOCITY_THRESHOLD = 10.0  # Average velocity below this = stationary
 
 
@@ -27,7 +26,8 @@ class MotionStats:
     total_distance: float
     avg_velocity: float
     max_velocity: float
-    displacement: float  # Start to end distance
+    y_mean: float
+    y_max: float
     is_stationary: bool
 
 
@@ -43,7 +43,6 @@ def parse_bvh(filepath: str) -> tuple[int, float, np.ndarray] | None:
         with open(filepath, 'r', encoding='utf-8') as f:
             content = f.read()
 
-        # Extract metadata
         frames_match = re.search(r'Frames:\s*(\d+)', content)
         frame_time_match = re.search(r'Frame Time:\s*([\d.]+)', content)
 
@@ -53,12 +52,10 @@ def parse_bvh(filepath: str) -> tuple[int, float, np.ndarray] | None:
         frames = int(frames_match.group(1))
         frame_time = float(frame_time_match.group(1))
 
-        # Find MOTION section and extract data
         motion_idx = content.find('MOTION')
         if motion_idx == -1:
             return None
 
-        # Get lines after Frame Time
         lines = content[motion_idx:].split('\n')
         data_lines = []
         found_frame_time = False
@@ -70,12 +67,11 @@ def parse_bvh(filepath: str) -> tuple[int, float, np.ndarray] | None:
             if found_frame_time and line.strip():
                 data_lines.append(line.strip())
 
-        # Parse motion data - first 3 values are root XYZ position
         root_positions = []
         for line in data_lines[:frames]:
             values = [float(v) for v in line.split()]
             if len(values) >= 3:
-                root_positions.append(values[:3])  # X, Y, Z position
+                root_positions.append(values[:3])
 
         return frames, frame_time, np.array(root_positions)
 
@@ -97,18 +93,20 @@ def analyze_motion(filepath: str, velocity_threshold: float) -> MotionStats | No
 
     duration = frames * frame_time
 
-    # Calculate frame-to-frame displacements
+    # Calculate velocities
     deltas = np.diff(positions, axis=0)
     frame_distances = np.linalg.norm(deltas, axis=1)
-
-    # Calculate velocities (distance per second)
     velocities = frame_distances / frame_time
 
     # Statistics
     total_distance = np.sum(frame_distances)
     avg_velocity = np.mean(velocities)
     max_velocity = np.max(velocities)
-    displacement = np.linalg.norm(positions[-1] - positions[0])
+
+    # Root (hip) Y position stats (height)
+    root_y_positions = positions[:, 1]  # positions is root XYZ from first 3 values per frame
+    y_mean = np.mean(root_y_positions)
+    y_max = np.max(root_y_positions)
 
     is_stationary = avg_velocity < velocity_threshold
 
@@ -119,7 +117,8 @@ def analyze_motion(filepath: str, velocity_threshold: float) -> MotionStats | No
         total_distance=total_distance,
         avg_velocity=avg_velocity,
         max_velocity=max_velocity,
-        displacement=displacement,
+        y_mean=y_mean,
+        y_max=y_max,
         is_stationary=is_stationary
     )
 
@@ -139,12 +138,12 @@ def classify_dataset(dataset_path: str, velocity_threshold: float = VELOCITY_THR
         return
 
     print(f"BVH Motion Classification")
-    print(f"{'=' * 90}")
+    print(f"{'=' * 95}")
     print(f"Dataset: {dataset_path}")
     print(f"Velocity threshold: {velocity_threshold} units/sec")
-    print(f"{'=' * 90}\n")
+    print(f"{'=' * 95}\n")
 
-    # Collect all stats first
+    # Collect all stats
     all_stats = []
     for bvh_file in bvh_files:
         stats = analyze_motion(str(bvh_file), velocity_threshold)
@@ -157,24 +156,26 @@ def classify_dataset(dataset_path: str, velocity_threshold: float = VELOCITY_THR
     stationary = [s for s in all_stats if s.is_stationary]
     non_stationary = [s for s in all_stats if not s.is_stationary]
 
-    print(f"{'File':<35} {'Dur':>7} {'AvgVel':>10} {'MaxVel':>10} {'Dist':>10} {'Class':<12}")
-    print(f"{'-' * 35} {'-' * 7} {'-' * 10} {'-' * 10} {'-' * 10} {'-' * 12}")
+    print(f"{'File':<28} {'Dur':>6} {'AvgVel':>8} {'MaxVel':>8} {'Y_mean':>8} {'Y_max':>8} {'Dist':>8} {'Class':<10}")
+    print(f"{'-' * 28} {'-' * 6} {'-' * 8} {'-' * 8} {'-' * 8} {'-' * 8} {'-' * 8} {'-' * 10}")
 
     for stats in all_stats:
         classification = "STATIONARY" if stats.is_stationary else "MOVING"
         filename = stats.filename
-        if len(filename) > 33:
-            filename = filename[:30] + "..."
+        if len(filename) > 26:
+            filename = filename[:23] + "..."
 
-        print(f"{filename:<35} {stats.duration:>6.1f}s {stats.avg_velocity:>10.2f} "
-              f"{stats.max_velocity:>10.2f} {stats.total_distance:>10.1f} {classification:<12}")
+        print(f"{filename:<28} {stats.duration:>5.1f}s {stats.avg_velocity:>8.2f} "
+              f"{stats.max_velocity:>8.2f} {stats.y_mean:>8.2f} {stats.y_max:>8.2f} "
+              f"{stats.total_distance:>8.1f} {classification:<10}")
 
     # Summary
-    print(f"\n{'=' * 90}")
+    print(f"\n{'=' * 95}")
     print(f"CLASSIFICATION SUMMARY")
-    print(f"{'=' * 90}")
-    print(f"\nStationary clips:     {len(stationary):>4} ({100*len(stationary)/(len(stationary)+len(non_stationary)):.1f}%)")
-    print(f"Non-stationary clips: {len(non_stationary):>4} ({100*len(non_stationary)/(len(stationary)+len(non_stationary)):.1f}%)")
+    print(f"{'=' * 95}")
+    total = len(stationary) + len(non_stationary)
+    print(f"\nStationary clips:     {len(stationary):>4} ({100*len(stationary)/total:.1f}%)")
+    print(f"Non-stationary clips: {len(non_stationary):>4} ({100*len(non_stationary)/total:.1f}%)")
 
     if stationary:
         total_stat_dur = sum(s.duration for s in stationary)
@@ -185,21 +186,23 @@ def classify_dataset(dataset_path: str, velocity_threshold: float = VELOCITY_THR
         print(f"Moving total duration:     {total_move_dur:.1f}s ({total_move_dur/60:.1f} min)")
 
     # List files by category
-    print(f"\n{'=' * 90}")
+    print(f"\n{'=' * 95}")
     print("STATIONARY FILES:")
-    print(f"{'=' * 90}")
-    print(f"  {'File':<35} {'Dur':>7} {'AvgVel':>10} {'MaxVel':>10} {'Dist':>10}")
-    print(f"  {'-' * 35} {'-' * 7} {'-' * 10} {'-' * 10} {'-' * 10}")
+    print(f"{'=' * 95}")
+    print(f"  {'File':<28} {'Dur':>6} {'AvgVel':>8} {'MaxVel':>8} {'Y_mean':>8} {'Y_max':>8} {'Dist':>8}")
+    print(f"  {'-' * 28} {'-' * 6} {'-' * 8} {'-' * 8} {'-' * 8} {'-' * 8} {'-' * 8}")
     for s in sorted(stationary, key=lambda x: x.avg_velocity):
-        print(f"  {s.filename:<35} {s.duration:>6.1f}s {s.avg_velocity:>10.2f} {s.max_velocity:>10.2f} {s.total_distance:>10.1f}")
+        print(f"  {s.filename:<28} {s.duration:>5.1f}s {s.avg_velocity:>8.2f} {s.max_velocity:>8.2f} "
+              f"{s.y_mean:>8.2f} {s.y_max:>8.2f} {s.total_distance:>8.1f}")
 
-    print(f"\n{'=' * 90}")
+    print(f"\n{'=' * 95}")
     print("NON-STATIONARY FILES:")
-    print(f"{'=' * 90}")
-    print(f"  {'File':<35} {'Dur':>7} {'AvgVel':>10} {'MaxVel':>10} {'Dist':>10}")
-    print(f"  {'-' * 35} {'-' * 7} {'-' * 10} {'-' * 10} {'-' * 10}")
+    print(f"{'=' * 95}")
+    print(f"  {'File':<28} {'Dur':>6} {'AvgVel':>8} {'MaxVel':>8} {'Y_mean':>8} {'Y_max':>8} {'Dist':>8}")
+    print(f"  {'-' * 28} {'-' * 6} {'-' * 8} {'-' * 8} {'-' * 8} {'-' * 8} {'-' * 8}")
     for s in sorted(non_stationary, key=lambda x: x.avg_velocity, reverse=True):
-        print(f"  {s.filename:<35} {s.duration:>6.1f}s {s.avg_velocity:>10.2f} {s.max_velocity:>10.2f} {s.total_distance:>10.1f}")
+        print(f"  {s.filename:<28} {s.duration:>5.1f}s {s.avg_velocity:>8.2f} {s.max_velocity:>8.2f} "
+              f"{s.y_mean:>8.2f} {s.y_max:>8.2f} {s.total_distance:>8.1f}")
 
 
 def plot_velocity_distribution(dataset_path: str, velocity_threshold: float = VELOCITY_THRESHOLD):
@@ -259,7 +262,7 @@ def plot_velocity_distribution(dataset_path: str, velocity_threshold: float = VE
     ax.axvline(x=velocity_threshold, color='gray', linestyle=':', alpha=0.5)
     ax.legend()
 
-    # Annotation for displaying filename on click
+    # Annotation for click
     annot = ax.annotate(
         "", xy=(0, 0), xytext=(10, 10),
         textcoords="offset points",
@@ -268,7 +271,6 @@ def plot_velocity_distribution(dataset_path: str, velocity_threshold: float = VE
     )
     annot.set_visible(False)
 
-    # Build index mapping for picking
     stat_names = [names[i] for i in range(len(names)) if stationary_mask[i]]
     move_names = [names[i] for i in range(len(names)) if moving_mask[i]]
 
