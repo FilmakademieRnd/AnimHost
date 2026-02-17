@@ -45,6 +45,16 @@ LocomotionPreprocessNode::~LocomotionPreprocessNode()
 {
 }
 
+const SkeletonBoneConfig& LocomotionPreprocessNode::getBoneConfig() const
+{
+    switch (_skeletonType) {
+    case SkeletonType::Quadrupedal:
+        return SkeletonConfigs::Quadrupedal;
+    case SkeletonType::Bipedal:
+    default:
+        return SkeletonConfigs::Bipedal;
+    }
+}
 
 unsigned int LocomotionPreprocessNode::nDataPorts(QtNodes::PortType portType) const
 {
@@ -76,18 +86,18 @@ NodeDataType LocomotionPreprocessNode::dataPortType(QtNodes::PortType portType, 
 	return type;
 }
 
-QJsonObject LocomotionPreprocessNode::save() const 
+QJsonObject LocomotionPreprocessNode::save() const
 {
 	QJsonObject nodeJson = NodeDelegateModel::save();
 
 	nodeJson["dir"] = exportDirectory;
+	nodeJson["skeletonType"] = static_cast<int>(_skeletonType);
 
 	return nodeJson;
 }
 
 void LocomotionPreprocessNode::load(QJsonObject const& p)
 {
-	
 	QJsonValue v = p["dir"];
 
 	if (!v.isUndefined()) {
@@ -102,6 +112,13 @@ void LocomotionPreprocessNode::load(QJsonObject const& p)
 		}
 	}
 
+	QJsonValue skeletonTypeVal = p["skeletonType"];
+	if (!skeletonTypeVal.isUndefined()) {
+		_skeletonType = static_cast<SkeletonType>(skeletonTypeVal.toInt());
+		if (_skeletonTypeCombo) {
+			_skeletonTypeCombo->setCurrentIndex(static_cast<int>(_skeletonType));
+		}
+	}
 }
 
 
@@ -283,37 +300,35 @@ void LocomotionPreprocessNode::processFrame(int frameCounter, std::shared_ptr<Po
 
 std::vector<glm::quat> LocomotionPreprocessNode::prepareRootRotation(std::shared_ptr<PoseSequence> poseSequenceIn, std::shared_ptr<Skeleton> skeleton)
 {
+	const auto& boneConfig = getBoneConfig();
 
-	// Get Bone Index for Hip and Shoulder. Currently hardcoded, should be changed to be more flexible.
-	int rightHipIdx = skeleton->bone_names.at("pelvis_R");
-	int leftHipIdx = skeleton->bone_names.at("pelvis_L");
+	// Get Bone Index for rear and front joints based on skeleton type
+	int rearRightIdx = skeleton->bone_names.at(boneConfig.rearRight);
+	int rearLeftIdx = skeleton->bone_names.at(boneConfig.rearLeft);
+	int frontRightIdx = skeleton->bone_names.at(boneConfig.frontRight);
+	int frontLeftIdx = skeleton->bone_names.at(boneConfig.frontLeft);
 
-	int rightShoulderIdx = skeleton->bone_names.at("shoulder_R");
-	int leftShoulderIdx = skeleton->bone_names.at("shoulder_L");
+	qDebug() << "Using skeleton type:" << (_skeletonType == SkeletonType::Bipedal ? "Bipedal" : "Quadrupedal");
+	qDebug() << "Rear indices (R/L):" << rearRightIdx << "/" << rearLeftIdx;
+	qDebug() << "Front indices (R/L):" << frontRightIdx << "/" << frontLeftIdx;
 
-	/*qDebug() << "Right Hip Index: " << rightHipIdx;
-	qDebug() << "Left Hip Index: " << leftHipIdx;
-	qDebug() << "Right Shoulder Index: " << rightShoulderIdx;
-	qDebug() << "Left Shoulder Index: " << leftShoulderIdx;*/
+	std::function<glm::quat(int)> calculateRootRotation = [&](int frame) {
 
-	 std::function<glm::quat(int)> calculateRootRotation = [&](int frame) {
+		glm::vec3 rearRight, rearLeft, frontRight, frontLeft;
 
-		glm::vec3 hipRight, hipLeft, shoulderRight, shoulderLeft;
+		rearRight = poseSequenceIn->GetPositionAtFrame3D(frame, rearRightIdx);
+		rearLeft = poseSequenceIn->GetPositionAtFrame3D(frame, rearLeftIdx);
 
-		hipRight = poseSequenceIn->GetPositionAtFrame3D(frame, rightHipIdx);
-		hipLeft = poseSequenceIn->GetPositionAtFrame3D(frame, leftHipIdx);
+		glm::vec3 rearVector = rearRight - rearLeft;
+		rearVector = glm::normalize(AnimHostHelper::ProjectPointOnGroundPlane(rearVector));
 
+		frontRight = poseSequenceIn->GetPositionAtFrame3D(frame, frontRightIdx);
+		frontLeft = poseSequenceIn->GetPositionAtFrame3D(frame, frontLeftIdx);
 
-		glm::vec3 hipVector = hipRight - hipLeft;
-		hipVector = glm::normalize(AnimHostHelper::ProjectPointOnGroundPlane(hipVector));
+		glm::vec3 frontVector = frontRight - frontLeft;
+		frontVector = glm::normalize(AnimHostHelper::ProjectPointOnGroundPlane(frontVector));
 
-		shoulderRight = poseSequenceIn->GetPositionAtFrame3D(frame, rightShoulderIdx);
-		shoulderLeft = poseSequenceIn->GetPositionAtFrame3D(frame, leftShoulderIdx);
-
-		glm::vec3 shoulderVector = shoulderRight - shoulderLeft;
-		shoulderVector = glm::normalize(AnimHostHelper::ProjectPointOnGroundPlane(shoulderVector));
-
-		glm::vec3 forward = glm::normalize(hipVector + shoulderVector);
+		glm::vec3 forward = glm::normalize(rearVector + frontVector);
 		forward = glm::cross(glm::vec3(0.0, 1.0, 0.0), forward);
 		forward = glm::normalize(AnimHostHelper::ProjectPointOnGroundPlane(forward));
 
@@ -335,10 +350,11 @@ std::vector<glm::quat> LocomotionPreprocessNode::prepareRootRotation(std::shared
 
 std::vector<glm::mat4> LocomotionPreprocessNode::prepareBipedRoot(std::shared_ptr<PoseSequence> poseSequenceIn, std::shared_ptr<Skeleton> skeleton)
 {
+	const auto& boneConfig = getBoneConfig();
 
 	int numFrames = poseSequenceIn->mPoseSequence.size();
 
-	int hipIdx = skeleton->bone_names.at("hip"); 
+	int rootBoneIdx = skeleton->bone_names.at(boneConfig.rootBone);
 
 	std::vector<glm::quat> rootRot = prepareRootRotation(poseSequenceIn, skeleton);
 
@@ -349,7 +365,7 @@ std::vector<glm::mat4> LocomotionPreprocessNode::prepareBipedRoot(std::shared_pt
 	std::vector<glm::vec3> rootPos = std::vector<glm::vec3>(numFrames);
 
 	for (int i = 0; i < numFrames; i++) {
-		rootPos[i] = poseSequenceIn->mPoseSequence[i].mPositionData[hipIdx];
+		rootPos[i] = poseSequenceIn->mPoseSequence[i].mPositionData[rootBoneIdx];
 	}
 	
 	std::vector<glm::mat4> rootTransforms = std::vector<glm::mat4>(numFrames);
@@ -546,10 +562,16 @@ QWidget* LocomotionPreprocessNode::embeddedWidget()
 		_folderSelect = new FolderSelectionWidget(_widget);
 		_cbOverwrite = new QCheckBox("Overwrite Existing Data");
 
+		// Skeleton type selector
+		_skeletonTypeCombo = new QComboBox(_widget);
+		_skeletonTypeCombo->addItem("Bipedal", static_cast<int>(SkeletonType::Bipedal));
+		_skeletonTypeCombo->addItem("Quadrupedal", static_cast<int>(SkeletonType::Quadrupedal));
+		_skeletonTypeCombo->setCurrentIndex(static_cast<int>(_skeletonType));
 
 		QVBoxLayout* layout = new QVBoxLayout();
 
-
+		layout->addWidget(new QLabel("Skeleton Type:"));
+		layout->addWidget(_skeletonTypeCombo);
 		layout->addWidget(_folderSelect);
 		layout->addWidget(_cbOverwrite);
 		layout->addWidget(_boneSelect);
@@ -558,6 +580,7 @@ QWidget* LocomotionPreprocessNode::embeddedWidget()
 		//_widget->setMinimumHeight(_widget->sizeHint().height());
 		//_widget->setMaximumWidth(_widget->sizeHint().width());
 
+		connect(_skeletonTypeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &LocomotionPreprocessNode::onSkeletonTypeChanged);
 		connect(_boneSelect, &BoneSelectionWidget::currentBoneChanged, this, &LocomotionPreprocessNode::onRootBoneSelectionChanged);
 		connect(_folderSelect, &FolderSelectionWidget::directoryChanged, this, &LocomotionPreprocessNode::onFolderSelectionChanged);
 		connect(_cbOverwrite, &QCheckBox::stateChanged, this, &LocomotionPreprocessNode::onOverrideCheckbox);
@@ -925,11 +948,23 @@ void LocomotionPreprocessNode::onRootBoneSelectionChanged(const int indx)
 	}
 }
 
-void LocomotionPreprocessNode::onOverrideCheckbox(int state) 
+void LocomotionPreprocessNode::onOverrideCheckbox(int state)
 {
 	bOverwriteDataExport = state;
 }
 
+void LocomotionPreprocessNode::onSkeletonTypeChanged(int index)
+{
+	SkeletonType newType = static_cast<SkeletonType>(index);
+	if (_skeletonType != newType) {
+		_skeletonType = newType;
+		const auto& config = getBoneConfig();
+		qDebug() << "Skeleton type changed to:" << (index == 0 ? "Bipedal" : "Quadrupedal");
+		qDebug() << "  Root bone:" << config.rootBone;
+		qDebug() << "  Rear bones:" << config.rearLeft << "/" << config.rearRight;
+		qDebug() << "  Front bones:" << config.frontLeft << "/" << config.frontRight;
+	}
+}
 
 // Experimental
 
