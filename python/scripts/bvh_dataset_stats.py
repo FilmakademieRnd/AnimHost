@@ -13,9 +13,9 @@ import re
 from pathlib import Path
 
 # Configuration
-RAW_DATASET_PATH = r"D:\anim-ws\MANN_qudruped_data"
+RAW_DATASET_PATH = r"D:\anim-ws\MANN_qudruped_data\all"
 UNITY_DATASET_PATH = r"D:\anim-ws\AI4Animation-master\AI4Animation\SIGGRAPH_2022\Unity\Assets\Projects\DeepPhase\Demos\Quadruped\Assets"
-SEQUENCES_FILE = r"D:\anim-ws\quadruped-run-1\PAE Dataset\Sequences.txt"
+SEQUENCES_FILE = r"D:\anim-ws\quad-experiments\quadruped-run-1\PAE Dataset\Sequences.txt"
 
 def parse_bvh_metadata(filepath: str) -> tuple[int, float] | None:
     """

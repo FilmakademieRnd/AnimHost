@@ -8,7 +8,7 @@ Usage:
 
 Example:
     blender --background --python bvh_to_fbx_batch.py -- "D:\anim-ws\MANN_qudruped_data" "D:\anim-ws\MANN_qudruped_data\fbx_output"
-    & "C:\Program Files\Blender Foundation\Blender 4.2\blender.exe" --background --python bvh_to_fbx_batch.py -- "D:\anim-ws\MANN_qudruped_data" "D:\anim-ws\MANN_qudruped_data\fbx_output"
+    & "C:\Program Files\Blender Foundation\Blender 4.2\blender.exe" --background --python bvh_to_fbx_batch.py -- "D:\anim-ws\MANN_qudruped_data\p50" "D:\anim-ws\MANN_qudruped_data\p50\fbx"
     & "C:\Program Files\Blender Foundation\Blender 4.2\blender.exe" --background --python bvh_to_fbx_batch.py -- "D:\anim-ws\MANN_qudruped_data\D1_053_KAN01_002.bvh" "D:\anim-ws\MANN_qudruped_data\fbx_output"
 """
 
