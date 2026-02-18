@@ -442,6 +442,8 @@ void DataExportPlugin::writeBinaryJointVelocitySequence() {
     auto jointVelSeqIn = _jointVelocitySequenceIn.lock()->getData();
 
     qDebug() << "Write Joint Velocity Data to Binary File";
+    qDebug() << "[DataExportPlugin] JointVelocitySequence size to export:" << jointVelSeqIn->mJointVelocitySequence.size()
+             << "Loop will run from 0 to" << (jointVelSeqIn->mJointVelocitySequence.size() - 1);
 
     QFile file(exportDirectory + "joint_velocity.bin");
 

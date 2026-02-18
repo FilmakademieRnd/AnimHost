@@ -209,13 +209,20 @@ void LocomotionPreprocessNode::run()
 		//Preprocess Root Transform for Biped once for all frames
 		rootBoneTransforms = prepareBipedRoot(poseSequenceIn, skeleton);
 
+		qDebug() << "[LocomotionPreprocessNode] Input sizes:"
+		         << "animation->mDurationFrames:" << animation->mDurationFrames
+		         << "poseSequenceIn->mPoseSequence.size():" << poseSequenceIn->mPoseSequence.size()
+		         << "velSeq->mJointVelocitySequence.size():" << velSeq->mJointVelocitySequence.size();
 
 		//Offset to start of sequence, allows for enough frames to be left for past trajectory samples
 		int start = 60;
 
-		//Offset to last frame of sequence, allows for enough frames to be left for trajectory 
+		//Offset to last frame of sequence, allows for enough frames to be left for trajectory
 		//and output (trajectory of next frame)
 		int end = animation->mDurationFrames - 60;
+
+		qDebug() << "[LocomotionPreprocessNode] Processing frames from" << start << "to" << end
+		         << "(total:" << (end - start + 1) << "frames)";
 
 		for (int frameCounter = start; frameCounter <= end; frameCounter++) {
 			processFrame(frameCounter, poseSequenceIn, animation, velSeq, skeleton);

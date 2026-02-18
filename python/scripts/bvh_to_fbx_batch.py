@@ -18,6 +18,16 @@ from pathlib import Path
 from mathutils import Vector
 
 
+def parse_bvh_frame_count(bvh_path):
+    """Parse BVH file to extract the frame count from the MOTION section."""
+    with open(bvh_path, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if line.startswith('Frames:'):
+                return int(line.split(':')[1].strip())
+    return 0
+
+
 def parse_bvh_end_sites(bvh_path):
     """Parse BVH file to extract End Site offsets with their parent joint names.
 
@@ -127,7 +137,8 @@ def convert_bvh_to_fbx(bvh_path, fbx_path):
     bpy.ops.object.select_all(action='SELECT')
     bpy.ops.object.delete()
 
-    # Parse End Sites from BVH before import
+    # Parse frame count and End Sites from BVH before import
+    bvh_frames = parse_bvh_frame_count(bvh_path)
     end_sites = parse_bvh_end_sites(bvh_path)
     print(f"  Found {len(end_sites)} End Sites: {list(end_sites.keys())}")
 
@@ -140,6 +151,14 @@ def convert_bvh_to_fbx(bvh_path, fbx_path):
         if obj.type == 'ARMATURE':
             armature = obj
             break
+
+    # Get frame count from armature's action (the actual animation data)
+    fbx_frames = 0
+    if armature and armature.animation_data and armature.animation_data.action:
+        action = armature.animation_data.action
+        frame_start, frame_end = action.frame_range
+        fbx_frames = int(frame_end - frame_start) + 1
+    print(f"  Frames: BVH={bvh_frames}, FBX={fbx_frames}")
 
     if armature and end_sites:
         add_end_site_bones(armature, end_sites)

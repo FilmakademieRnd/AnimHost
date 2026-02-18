@@ -250,7 +250,13 @@ void AssimpLoaderPlugin::onSkeletonTypeChanged(int index)
 
 void AssimpLoaderPlugin::loadAnimationData(aiAnimation* pASSIMPAnimation, Skeleton* pSkeleton, Animation* pAnimation, aiNode* pNode)
 {
+	qDebug() << "[AssimpLoader] Raw assimp mDuration:" << pASSIMPAnimation->mDuration
+	         << "mTicksPerSecond:" << pASSIMPAnimation->mTicksPerSecond
+	         << "mNumChannels:" << pASSIMPAnimation->mNumChannels;
+
 	pAnimation->mDurationFrames = pASSIMPAnimation->mDuration;
+
+	qDebug() << "[AssimpLoader] Set mDurationFrames to:" << pAnimation->mDurationFrames;
 
 
 	pAnimation->mBones = std::vector<Bone>(pSkeleton->mNumBones, Bone());
@@ -279,6 +285,14 @@ void AssimpLoaderPlugin::loadAnimationData(aiAnimation* pASSIMPAnimation, Skelet
 		int numKeysRot = channel->mNumRotationKeys;
 		int numKeysPos = channel->mNumPositionKeys;
 		int numKeysScl = channel->mNumScalingKeys;
+
+		// Log first channel's keyframe counts to see actual frame count
+		if (idx == 0) {
+			qDebug() << "[AssimpLoader] First channel actual keyframe counts:"
+			         << "mNumRotationKeys:" << numKeysRot
+			         << "mNumPositionKeys:" << numKeysPos
+			         << "mNumScalingKeys:" << numKeysScl;
+		}
 
 		for (int i = 0; i < numKeysRot; i++)
 		{
@@ -333,6 +347,8 @@ void AssimpLoaderPlugin::UseSubSkeleton(std::string pRootBone, std::vector<std::
 
 	anim->mDurationFrames = oAnimation->mDurationFrames;
 	anim->mDuration = oAnimation->mDuration;
+	qDebug() << "[AssimpLoader] SubSkeleton mDurationFrames:" << anim->mDurationFrames
+	         << "mDuration:" << anim->mDuration;
 	anim->sequenceID = oAnimation->sequenceID;
 	anim->sourceName = oAnimation->sourceName;
 	anim->dataSetID = oAnimation->dataSetID;
