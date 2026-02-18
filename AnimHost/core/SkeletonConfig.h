@@ -102,7 +102,7 @@ namespace SubSkeletonConfigs {
     inline const SubSkeletonConfig& Quadrupedal() {
         static const SubSkeletonConfig config = {
             "Hips",
-            { "Head", "LeftHand", "RightHand", "LeftFoot", "RightFoot", "Tail1" },
+            { "Head", "LeftHandSite", "RightHandSite", "LeftFootSite", "RightFootSite", "Tail1Site" },
             true  // Apply Y-up to Z-up transformation (MANN data is Y-up)
         };
         return config;

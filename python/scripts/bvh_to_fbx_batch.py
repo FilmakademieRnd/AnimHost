@@ -15,23 +15,142 @@ Example:
 import bpy
 import sys
 from pathlib import Path
+from mathutils import Vector
+
+
+def parse_bvh_end_sites(bvh_path):
+    """Parse BVH file to extract End Site offsets with their parent joint names.
+
+    Returns a dict: {parent_joint_name: Vector(offset)}
+    Excludes Head End Site to match Unity pipeline convention.
+    """
+    end_sites = {}
+
+    with open(bvh_path, 'r') as f:
+        content = f.read()
+
+    lines = content.split('\n')
+    joint_stack = []
+    i = 0
+
+    while i < len(lines):
+        line = lines[i].strip()
+
+        if line.startswith('ROOT') or line.startswith('JOINT'):
+            parts = line.split()
+            joint_name = parts[1] if len(parts) > 1 else None
+            if joint_name:
+                joint_stack.append(joint_name)
+
+        if line == '}':
+            if joint_stack:
+                joint_stack.pop()
+
+        if 'End Site' in line:
+            parent_joint = joint_stack[-1] if joint_stack else None
+
+            # Skip Head End Site to match Unity pipeline
+            if parent_joint and parent_joint != 'Head':
+                for j in range(i + 1, min(i + 5, len(lines))):
+                    offset_line = lines[j].strip()
+                    if offset_line.startswith('OFFSET'):
+                        parts = offset_line.split()
+                        if len(parts) >= 4:
+                            offset = Vector((float(parts[1]), float(parts[2]), float(parts[3])))
+                            end_sites[parent_joint] = offset
+                        break
+
+        i += 1
+
+    return end_sites
+
+
+def add_end_site_bones(armature, end_sites):
+    """Add End Site bones to the armature with correct offsets.
+
+    Args:
+        armature: The Blender armature object
+        end_sites: Dict of {parent_joint_name: Vector(offset)}
+    """
+    # Enter edit mode to modify bones
+    bpy.context.view_layer.objects.active = armature
+    bpy.ops.object.mode_set(mode='EDIT')
+
+    edit_bones = armature.data.edit_bones
+
+    for parent_name, offset in end_sites.items():
+        # Find the parent bone
+        parent_bone = edit_bones.get(parent_name)
+        if not parent_bone:
+            print(f"  Warning: Parent bone '{parent_name}' not found, skipping End Site")
+            continue
+
+        # Create the End Site bone
+        site_name = f"{parent_name}Site"
+        site_bone = edit_bones.new(site_name)
+
+        # Blender's BVH importer already computed parent_bone.tail as the End Site position
+        # (using parent's world rotation × offset internally)
+        # Just use that position and extend using the 3D offset in local coordinates
+        site_bone.head = parent_bone.tail.copy()
+
+        if offset.length > 0:
+            # Build local coordinate frame from parent bone
+            # BVH offset convention: (x=forward, y=right, z=up)
+            bone_forward = (parent_bone.tail - parent_bone.head).normalized()
+            world_up = Vector((0, 1, 0))
+            bone_right = bone_forward.cross(world_up).normalized()
+            bone_up = bone_right.cross(bone_forward).normalized()
+
+            world_offset = (bone_forward * offset.x +
+                           bone_right * offset.y +
+                           bone_up * offset.z)
+
+            site_bone.tail = site_bone.head + world_offset
+        else:
+            print(f"  ERROR: Zero-length offset for End Site '{site_name}', skipping")
+            edit_bones.remove(site_bone)
+            continue
+
+        # Set parent
+        site_bone.parent = parent_bone
+
+        print(f"  Added End Site bone: {site_name} at offset {offset}")
+
+    # Return to object mode
+    bpy.ops.object.mode_set(mode='OBJECT')
 
 
 def convert_bvh_to_fbx(bvh_path, fbx_path):
-    """Convert a single BVH file to FBX."""
+    """Convert a single BVH file to FBX with proper End Site bones."""
     # Clear the scene
     bpy.ops.object.select_all(action='SELECT')
     bpy.ops.object.delete()
 
+    # Parse End Sites from BVH before import
+    end_sites = parse_bvh_end_sites(bvh_path)
+    print(f"  Found {len(end_sites)} End Sites: {list(end_sites.keys())}")
+
     # Import BVH
     bpy.ops.import_anim.bvh(filepath=str(bvh_path))
+
+    # Find the imported armature
+    armature = None
+    for obj in bpy.context.scene.objects:
+        if obj.type == 'ARMATURE':
+            armature = obj
+            break
+
+    if armature and end_sites:
+        add_end_site_bones(armature, end_sites)
 
     # Select all (the imported armature)
     bpy.ops.object.select_all(action='SELECT')
 
-    # Export FBX
+    # Export FBX - no add_leaf_bones since we added our own
     bpy.ops.export_scene.fbx(
         filepath=str(fbx_path),
+        global_scale=1.0, # The data remains in cm scale, consistent with unity pipeline, invalid for Blender
         use_selection=True,
         bake_anim=True,
         add_leaf_bones=False
