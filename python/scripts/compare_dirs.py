@@ -12,7 +12,7 @@ from pathlib import Path
 
 # Configuration
 BASELINE_DIR = r"D:\anim-ws\quad-experiments\quadruped-run-5\v0.1.1-processing"
-CANDIDATE_DIR = r"D:\anim-ws\quad-experiments\quadruped-run-5\0cc24a3-processing"
+CANDIDATE_DIR = r"D:\anim-ws\quad-experiments\quadruped-run-5\de629b5-processing"
 IGNORE_FILES = ["LogOutput.txt"]
 
 
