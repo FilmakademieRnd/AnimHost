@@ -20,6 +20,7 @@ private:
     std::weak_ptr<AnimNodeData<PoseSequence>> _poseSequenceIn;
     std::weak_ptr<AnimNodeData<JointVelocitySequence>> _jointVelocitySequenceIn;
     std::weak_ptr<AnimNodeData<Animation>> _animationIn;
+    std::weak_ptr<AnimNodeData<ValidFrames>> _validFramesIn;
 
 
     //UI
@@ -208,6 +209,26 @@ private Q_SLOTS:
     void onFolderSelectionChanged();
     void onOverrideCheckbox(int state);
     void onSkeletonTypeChanged(int index);
+
+private:
+    /**
+     * @brief Get the list of frames to process based on ValidFrames input.
+     *
+     * If ValidFrames is empty (no Sequences.txt), returns frames with 60-frame offset (current behavior).
+     * If ValidFrames is populated, filters to valid frames that pass the 60-frame scene bounds check.
+     *
+     * @param animation The animation being processed
+     * @param sourceName The source filename to look up in ValidFrames
+     * @return Vector of frame indices to process
+     */
+    std::vector<int> getFramesToProcess(std::shared_ptr<Animation> animation, const QString& sourceName);
+
+    /**
+     * @brief Extract the filename stem (without path and extension) from a source name.
+     * @param sourceName The source filename (e.g., "D1_001_KAN01_001.bvh")
+     * @return The stem without extension (e.g., "D1_001_KAN01_001")
+     */
+    QString extractFileStem(const QString& sourceName) const;
 
 };
 

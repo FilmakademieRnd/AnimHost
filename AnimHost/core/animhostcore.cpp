@@ -50,8 +50,10 @@ AnimHost::AnimHost()
 
     qRegisterMetaType<std::shared_ptr<CharacterObject>>("CharacterObject");
     qRegisterMetaType<std::shared_ptr<CharacterObjectSequence>>("CharacterObjectSequence");
- 
+
     qRegisterMetaType<std::shared_ptr<RunSignal>>("RunSignal");
+
+    qRegisterMetaType<std::shared_ptr<ValidFrames>>("ValidFrames");
 
 
     //initalize list for nodes

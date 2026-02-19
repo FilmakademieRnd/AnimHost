@@ -47,6 +47,9 @@ AssimpLoaderPlugin::AssimpLoaderPlugin()
 
 	_animation = std::make_shared<AnimNodeData<Animation>>();
 
+	_validFrames = std::make_shared<AnimNodeData<ValidFrames>>();
+	_validFrames->setData(std::make_shared<ValidFrames>());
+
 	bDataValid = false;
 
 	_pushButton = nullptr;
@@ -62,6 +65,8 @@ QJsonObject AssimpLoaderPlugin::save() const
 
 	nodeJson["dir"] = SourceDirectory;
 	nodeJson["skeletonType"] = static_cast<int>(_skeletonType);
+	nodeJson["sequencesFile"] = SequencesFilePath;
+	nodeJson["sequencesOneIndexed"] = bSequencesOneIndexed;
 
 	return nodeJson;
 }
@@ -70,6 +75,8 @@ void AssimpLoaderPlugin::load(QJsonObject const& p)
 {
 	QJsonValue v = p["dir"];
 	QJsonValue skeletonTypeVal = p["skeletonType"];
+	QJsonValue sequencesFileVal = p["sequencesFile"];
+	QJsonValue sequencesOneIndexedVal = p["sequencesOneIndexed"];
 
 	if (!v.isUndefined()) {
 		QString strDir = v.toString();
@@ -89,6 +96,20 @@ void AssimpLoaderPlugin::load(QJsonObject const& p)
 			_skeletonTypeCombo->setCurrentIndex(static_cast<int>(_skeletonType));
 		}
 	}
+
+	if (!sequencesFileVal.isUndefined()) {
+		SequencesFilePath = sequencesFileVal.toString();
+		if (_sequencesFileSelect && !SequencesFilePath.isEmpty()) {
+			_sequencesFileSelect->SetDirectory(SequencesFilePath);
+		}
+	}
+
+	if (!sequencesOneIndexedVal.isUndefined()) {
+		bSequencesOneIndexed = sequencesOneIndexedVal.toBool();
+		if (_indexingCombo) {
+			_indexingCombo->setCurrentIndex(bSequencesOneIndexed ? 1 : 0);
+		}
+	}
 }
 
 unsigned int AssimpLoaderPlugin::nDataPorts(QtNodes::PortType portType) const
@@ -98,7 +119,7 @@ unsigned int AssimpLoaderPlugin::nDataPorts(QtNodes::PortType portType) const
     if (portType == QtNodes::PortType::In)
         result = 0;
     else
-        result = 2;
+        result = 3;  // Skeleton, Animation, ValidFrames
 
     return result;
 }
@@ -114,26 +135,31 @@ NodeDataType AssimpLoaderPlugin::dataPortType(QtNodes::PortType portType, QtNode
 			return type = _skeleton->type();
 		case 1:
 			return type = _animation->type();
+		case 2:
+			return type = _validFrames->type();
 
 		default:
 			return type;
 		}
-             
+
 }
 
 std::shared_ptr<NodeData> AssimpLoaderPlugin::processOutData(QtNodes::PortIndex port)
 {
-
-	if (bDataValid)
-	{
-		switch (port) {
-		case 0:
+	switch (port) {
+	case 0:
+		if (bDataValid)
 			return _skeleton;
-		case 1:
+		break;
+	case 1:
+		if (bDataValid)
 			return _animation;
-		default:
-			break;
-		}
+		break;
+	case 2:
+		// ValidFrames is always available (empty if no Sequences.txt)
+		return _validFrames;
+	default:
+		break;
 	}
 	return nullptr;
 }
@@ -143,7 +169,13 @@ bool AssimpLoaderPlugin::isDataAvailable() {
 }
 
 void AssimpLoaderPlugin::run() {
-	
+
+	// Parse Sequences.txt if configured
+	parseSequencesFile();
+
+	// Emit ValidFrames data update
+	emitDataUpdate(2);
+
 	//ToDo Move Processing
 	QStringList files = loadFilesFromDir();
 
@@ -204,15 +236,35 @@ QWidget* AssimpLoaderPlugin::embeddedWidget()
 		_skeletonTypeCombo->addItem("Quadrupedal (MANN Dog)", static_cast<int>(SkeletonType::Quadrupedal));
 		_skeletonTypeCombo->setCurrentIndex(static_cast<int>(_skeletonType));
 
+		// Sequences.txt file selector (optional)
+		_sequencesFileSelect = new FolderSelectionWidget(
+			widget,
+			FolderSelectionWidget::SelectionType::File,
+			".txt",
+			"Sequences files (*.txt);;All files (*)"
+		);
+
+		// Indexing mode selector
+		_indexingCombo = new QComboBox(widget);
+		_indexingCombo->addItem("0-indexed", 0);
+		_indexingCombo->addItem("1-indexed", 1);
+		_indexingCombo->setCurrentIndex(bSequencesOneIndexed ? 1 : 0);
+
 		QVBoxLayout* layout = new QVBoxLayout();
 
 		layout->addWidget(_folderSelect);
 		layout->addWidget(new QLabel("Skeleton Type:"));
 		layout->addWidget(_skeletonTypeCombo);
+		layout->addWidget(new QLabel("Sequences File (optional):"));
+		layout->addWidget(_sequencesFileSelect);
+		layout->addWidget(new QLabel("Sequences Indexing:"));
+		layout->addWidget(_indexingCombo);
 		widget->setLayout(layout);
 
 		connect(_folderSelect, &FolderSelectionWidget::directoryChanged, this, &AssimpLoaderPlugin::onFolderSelectionChanged);
 		connect(_skeletonTypeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &AssimpLoaderPlugin::onSkeletonTypeChanged);
+		connect(_sequencesFileSelect, &FolderSelectionWidget::directoryChanged, this, &AssimpLoaderPlugin::onSequencesFileChanged);
+		connect(_indexingCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &AssimpLoaderPlugin::onIndexingChanged);
 
 	}
 
@@ -478,5 +530,104 @@ QStringList AssimpLoaderPlugin::loadFilesFromDir()
 	return {""};
 }
 
+void AssimpLoaderPlugin::onSequencesFileChanged()
+{
+	SequencesFilePath = _sequencesFileSelect->GetSelectedDirectory();
 
+	widget->adjustSize();
+	widget->updateGeometry();
+
+	Q_EMIT embeddedWidgetSizeUpdated();
+
+	qDebug() << "Sequences file changed to:" << SequencesFilePath;
+}
+
+void AssimpLoaderPlugin::onIndexingChanged(int index)
+{
+	bSequencesOneIndexed = (index == 1);
+	qDebug() << "Sequences indexing changed to:" << (bSequencesOneIndexed ? "1-indexed" : "0-indexed");
+}
+
+void AssimpLoaderPlugin::parseSequencesFile()
+{
+	// Reset ValidFrames
+	auto validFrames = std::make_shared<ValidFrames>();
+
+	if (SequencesFilePath.isEmpty()) {
+		// No Sequences.txt file configured - empty ValidFrames means "process all frames"
+		_validFrames->setData(validFrames);
+		qDebug() << "[AssimpLoader] No Sequences.txt configured - processing all frames";
+		return;
+	}
+
+	QFile file(SequencesFilePath);
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		qWarning() << "[AssimpLoader] Failed to open Sequences.txt:" << SequencesFilePath;
+		_validFrames->setData(validFrames);
+		return;
+	}
+
+	QTextStream in(&file);
+	int lineCount = 0;
+	int frameCount = 0;
+
+	while (!in.atEnd()) {
+		QString line = in.readLine().trimmed();
+		if (line.isEmpty()) continue;
+
+		lineCount++;
+
+		// Parse line: [unknown] [frame_number] [label] [filename_stem.bvh] [hash]
+		// Example: 1 180 Standard D1_001_KAN01_001.bvh 331c4ff26421fd44898a5e67ddd07067
+		QStringList parts = line.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
+
+		if (parts.size() < 4) {
+			qWarning() << "[AssimpLoader] Malformed line" << lineCount << "in Sequences.txt:" << line;
+			continue;
+		}
+
+		bool ok;
+		int frameNumber = parts[1].toInt(&ok);
+		if (!ok) {
+			qWarning() << "[AssimpLoader] Invalid frame number on line" << lineCount << ":" << parts[1];
+			continue;
+		}
+
+		// Convert to 0-indexed if source is 1-indexed
+		if (bSequencesOneIndexed) {
+			frameNumber -= 1;
+		}
+
+		QString filename = parts[3];
+		QString stem = extractFileStem(filename);
+
+		// Add frame to the map
+		validFrames->sequenceFrames[stem].push_back(frameNumber);
+		frameCount++;
+	}
+
+	file.close();
+
+	// Sort frame indices for each file (for binary_search in hasFrame)
+	for (auto& [stem, frames] : validFrames->sequenceFrames) {
+		std::sort(frames.begin(), frames.end());
+		// Remove duplicates
+		frames.erase(std::unique(frames.begin(), frames.end()), frames.end());
+	}
+
+	_validFrames->setData(validFrames);
+
+	qDebug() << "[AssimpLoader] Parsed Sequences.txt:" << frameCount << "frames across"
+	         << validFrames->sequenceFrames.size() << "files";
+}
+
+QString AssimpLoaderPlugin::extractFileStem(const QString& filename) const
+{
+	// Remove extension (e.g., ".bvh", ".fbx")
+	int dotIndex = filename.lastIndexOf('.');
+	if (dotIndex > 0) {
+		return filename.left(dotIndex);
+	}
+	return filename;
+}
 

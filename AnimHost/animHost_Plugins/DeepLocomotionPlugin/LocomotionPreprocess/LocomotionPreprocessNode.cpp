@@ -53,7 +53,7 @@ const SkeletonBoneConfig& LocomotionPreprocessNode::getBoneConfig() const
 unsigned int LocomotionPreprocessNode::nDataPorts(QtNodes::PortType portType) const
 {
 	if (portType == QtNodes::PortType::In)
-		return 4;
+		return 5;  // Skeleton, PoseSequence, JointVelocitySequence, Animation, ValidFrames
 	else
 		return 0;
 }
@@ -72,11 +72,13 @@ NodeDataType LocomotionPreprocessNode::dataPortType(QtNodes::PortType portType, 
 			return AnimNodeData<JointVelocitySequence>::staticType();
 		case 3:
 			return AnimNodeData<Animation>::staticType();
+		case 4:
+			return AnimNodeData<ValidFrames>::staticType();
 		default:
 			break;
 		}
 	}
-	
+
 	return type;
 }
 
@@ -133,6 +135,10 @@ void LocomotionPreprocessNode::processInData(std::shared_ptr<NodeData> data, QtN
 			break;
 		case 3:
 			_animationIn.reset();
+			break;
+		case 4:
+			_validFramesIn.reset();
+			break;
 
 		default:
 			return;
@@ -155,6 +161,9 @@ void LocomotionPreprocessNode::processInData(std::shared_ptr<NodeData> data, QtN
 		break;
 	case 3:
 		_animationIn = std::static_pointer_cast<AnimNodeData<Animation>>(data);
+		break;
+	case 4:
+		_validFramesIn = std::static_pointer_cast<AnimNodeData<ValidFrames>>(data);
 		break;
 	default:
 		return;
@@ -214,17 +223,12 @@ void LocomotionPreprocessNode::run()
 		         << "poseSequenceIn->mPoseSequence.size():" << poseSequenceIn->mPoseSequence.size()
 		         << "velSeq->mJointVelocitySequence.size():" << velSeq->mJointVelocitySequence.size();
 
-		//Offset to start of sequence, allows for enough frames to be left for past trajectory samples
-		int start = 60;
+		// Get frames to process based on ValidFrames input
+		std::vector<int> framesToProcess = getFramesToProcess(animation, animation->sourceName);
 
-		//Offset to last frame of sequence, allows for enough frames to be left for trajectory
-		//and output (trajectory of next frame)
-		int end = animation->mDurationFrames - 60;
+		qDebug() << "[LocomotionPreprocessNode] Processing" << framesToProcess.size() << "frames";
 
-		qDebug() << "[LocomotionPreprocessNode] Processing frames from" << start << "to" << end
-		         << "(total:" << (end - start + 1) << "frames)";
-
-		for (int frameCounter = start; frameCounter <= end; frameCounter++) {
+		for (int frameCounter : framesToProcess) {
 			processFrame(frameCounter, poseSequenceIn, animation, velSeq, skeleton);
 		}
 
@@ -578,8 +582,6 @@ QWidget* LocomotionPreprocessNode::embeddedWidget()
 		layout->addWidget(_boneSelect);
 
 		_widget->setLayout(layout);
-		//_widget->setMinimumHeight(_widget->sizeHint().height());
-		//_widget->setMaximumWidth(_widget->sizeHint().width());
 
 		connect(_skeletonTypeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &LocomotionPreprocessNode::onSkeletonTypeChanged);
 		connect(_boneSelect, &BoneSelectionWidget::currentBoneChanged, this, &LocomotionPreprocessNode::onRootBoneSelectionChanged);
@@ -1055,5 +1057,68 @@ std::vector<glm::quat> LocomotionPreprocessNode::GaussianFilterQuaternions(const
 	}
 
 	return smoothedQuaternions;
+}
+
+std::vector<int> LocomotionPreprocessNode::getFramesToProcess(std::shared_ptr<Animation> animation, const QString& sourceName)
+{
+	std::vector<int> frames;
+	int duration = animation->mDurationFrames;
+
+	// Check if ValidFrames is available
+	auto sp_validFrames = _validFramesIn.lock();
+
+	if (!sp_validFrames || sp_validFrames->getData()->isEmpty()) {
+		// No Sequences.txt configured - use current behavior (all frames with 60-frame offset)
+		for (int f = 60; f <= duration - 60; f++) {
+			frames.push_back(f);
+		}
+
+		qDebug() << "[LocomotionPreprocessNode] No ValidFrames - processing"
+		         << frames.size() << "frames (60-frame offset)";
+
+		return frames;
+	}
+
+	// ValidFrames is configured - iterate only on valid frames
+	auto validFrames = sp_validFrames->getData();
+	QString stem = extractFileStem(sourceName);
+
+	if (!validFrames->hasFile(stem)) {
+		// File not in Sequences.txt - skip it
+		qWarning() << "[LocomotionPreprocessNode] File" << stem
+		           << "not found in Sequences.txt - skipping (no valid frames)";
+		return frames;  // Empty
+	}
+
+	// Get valid frames for this file
+	std::vector<int> validFrameList = validFrames->getFrames(stem);
+
+	qDebug() << "[LocomotionPreprocessNode] Found" << validFrameList.size()
+	         << "valid frames for" << stem << "in Sequences.txt";
+
+	// Filter by scene bounds (need 60 frames for trajectory context)
+	for (int f : validFrameList) {
+		if (f >= 60 && f <= duration - 60) {
+			frames.push_back(f);
+		}
+	}
+
+	qDebug() << "[LocomotionPreprocessNode] After scene bounds check:"
+	         << frames.size() << "frames to process";
+
+	return frames;
+}
+
+QString LocomotionPreprocessNode::extractFileStem(const QString& sourceName) const
+{
+	// Remove path if present
+	QString filename = QFileInfo(sourceName).fileName();
+
+	// Remove extension
+	int dotIndex = filename.lastIndexOf('.');
+	if (dotIndex > 0) {
+		return filename.left(dotIndex);
+	}
+	return filename;
 }
 

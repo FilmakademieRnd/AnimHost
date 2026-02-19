@@ -46,10 +46,13 @@ class ASSIMPLOADERPLUGINSHARED_EXPORT AssimpLoaderPlugin : public PluginNodeInte
 private:
     std::shared_ptr<AnimNodeData<Skeleton>> _skeleton;
     std::shared_ptr<AnimNodeData<Animation>> _animation;
+    std::shared_ptr<AnimNodeData<ValidFrames>> _validFrames;
 
 
     QString SourceDirectory = "";
     QString SourceFilePath = "";
+    QString SequencesFilePath = "";  // Path to Sequences.txt file (optional)
+    bool bSequencesOneIndexed = true;  // Whether Sequences.txt uses 1-indexed frame numbers
 
     int sequenceCounter = 1;
 
@@ -60,7 +63,9 @@ private:
 
     QWidget* widget;
     FolderSelectionWidget* _folderSelect = nullptr;
+    FolderSelectionWidget* _sequencesFileSelect = nullptr;  // For Sequences.txt selection
     QComboBox* _skeletonTypeCombo = nullptr;
+    QComboBox* _indexingCombo = nullptr;  // For 0/1 index toggle
     QPushButton* _pushButton;
     QLabel* _label;
     QHBoxLayout* _filePathLayout;
@@ -100,6 +105,8 @@ private Q_SLOTS:
     //void onButtonClicked();
     void onFolderSelectionChanged();
     void onSkeletonTypeChanged(int index);
+    void onSequencesFileChanged();
+    void onIndexingChanged(int index);
 
 private:
     void loadAnimationData(aiAnimation* pASSIMPAnimation, Skeleton* pSkeleton, Animation* pAnimation, aiNode* pNode);
@@ -120,6 +127,21 @@ private:
     void selectDir();
 
     QStringList loadFilesFromDir();
+
+    /**
+     * @brief Parse a Sequences.txt file and populate the ValidFrames data product.
+     *
+     * Format: [unknown] [frame_number] [label] [filename_stem.bvh] [hash]
+     * Example: 1 180 Standard D1_001_KAN01_001.bvh 331c4ff26421fd44898a5e67ddd07067
+     */
+    void parseSequencesFile();
+
+    /**
+     * @brief Extract the filename stem (without extension) from a full filename.
+     * @param filename The filename with extension (e.g., "D1_001_KAN01_001.bvh")
+     * @return The stem without extension (e.g., "D1_001_KAN01_001")
+     */
+    QString extractFileStem(const QString& filename) const;
 
 };
 
