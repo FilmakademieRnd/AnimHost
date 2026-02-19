@@ -9,7 +9,7 @@ Usage:
 Example:
     blender --background --python bvh_to_fbx_batch.py -- "D:\anim-ws\MANN_qudruped_data" "D:\anim-ws\MANN_qudruped_data\fbx_output"
     & "C:\Program Files\Blender Foundation\Blender 4.2\blender.exe" --background --python bvh_to_fbx_batch.py -- "D:\anim-ws\MANN_qudruped_data\p50" "D:\anim-ws\MANN_qudruped_data\p50\fbx"
-    & "C:\Program Files\Blender Foundation\Blender 4.2\blender.exe" --background --python bvh_to_fbx_batch.py -- "D:\anim-ws\MANN_qudruped_data\D1_053_KAN01_002.bvh" "D:\anim-ws\MANN_qudruped_data\fbx_output"
+    & "C:\Program Files\Blender Foundation\Blender 4.2\blender.exe" --background --python bvh_to_fbx_batch.py -- "D:\anim-ws\MANN_qudruped_data\p50\D1_007_KAN01_001.bvh" "D:\anim-ws\MANN_qudruped_data\p50\fbx"
 """
 
 import bpy
@@ -133,9 +133,15 @@ def add_end_site_bones(armature, end_sites):
 
 def convert_bvh_to_fbx(bvh_path, fbx_path):
     """Convert a single BVH file to FBX with proper End Site bones."""
-    # Clear the scene
-    bpy.ops.object.select_all(action='SELECT')
-    bpy.ops.object.delete()
+    # Clear scene - use direct removal for reliability (operators can fail silently)
+    for obj in bpy.data.objects:
+        bpy.data.objects.remove(obj, do_unlink=True)
+    # Clear actions (animation data persists separately from objects!)
+    for action in bpy.data.actions:
+        bpy.data.actions.remove(action, do_unlink=True)
+    # Clear armature data blocks
+    for armature in bpy.data.armatures:
+        bpy.data.armatures.remove(armature, do_unlink=True)
 
     # Parse frame count and End Sites from BVH before import
     bvh_frames = parse_bvh_frame_count(bvh_path)
@@ -163,8 +169,14 @@ def convert_bvh_to_fbx(bvh_path, fbx_path):
     if armature and end_sites:
         add_end_site_bones(armature, end_sites)
 
-    # Select all (the imported armature)
-    bpy.ops.object.select_all(action='SELECT')
+    if not armature:
+        print(f"  ERROR: No armature found after import, skipping export")
+        return
+
+    # Select only this armature for export (not select_all which could grab stale objects)
+    bpy.ops.object.select_all(action='DESELECT')
+    armature.select_set(True)
+    bpy.context.view_layer.objects.active = armature
 
     # Export FBX - no add_leaf_bones since we added our own
     bpy.ops.export_scene.fbx(

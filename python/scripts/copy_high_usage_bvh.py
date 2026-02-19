@@ -13,9 +13,9 @@ from bvh_dataset_stats import parse_bvh_metadata, analyze_raw_dataset
 
 # Configuration
 RAW_DATASET_PATH = r"D:\anim-ws\MANN_qudruped_data\all"
-TARGET_DIR = r"D:\anim-ws\MANN_qudruped_data\p50"
+TARGET_DIR = r"D:\anim-ws\MANN_qudruped_data\p100"
 SEQUENCES_FILE = r"D:\anim-ws\quad-experiments\quadruped-run-1\PAE Dataset\Sequences.txt"
-VALID_THRESHOLD = 0.5  # 50%
+VALID_THRESHOLD = 1  # 100%
 
 
 def analyze_sequences_file(sequences_path: str) -> dict[str, int]:
@@ -78,7 +78,7 @@ def copy_high_usage_files():
         source_path = data['path']
         dest_path = target_path / f"{filename}.bvh"
 
-        if ratio > VALID_THRESHOLD:
+        if ratio >= VALID_THRESHOLD:
             shutil.copy2(source_path, dest_path)
             action = "COPIED"
             copied.append((filename, ratio))
