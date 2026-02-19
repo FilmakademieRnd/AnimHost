@@ -13,12 +13,6 @@
             "outPortIndex": 1
         },
         {
-            "inPortIndex": 1,
-            "intNodeId": 2,
-            "outNodeId": 3,
-            "outPortIndex": 1
-        },
-        {
             "inPortIndex": 3,
             "intNodeId": 5,
             "outNodeId": 2,
@@ -29,6 +23,12 @@
             "intNodeId": 3,
             "outNodeId": 1,
             "outPortIndex": 2
+        },
+        {
+            "inPortIndex": 1,
+            "intNodeId": 2,
+            "outNodeId": 3,
+            "outPortIndex": 1
         },
         {
             "inPortIndex": 0,
@@ -86,6 +86,12 @@
         },
         {
             "inPortIndex": 4,
+            "intNodeId": 4,
+            "outNodeId": 1,
+            "outPortIndex": 3
+        },
+        {
+            "inPortIndex": 4,
             "intNodeId": 5,
             "outNodeId": 1,
             "outPortIndex": 2
@@ -95,6 +101,12 @@
             "intNodeId": 1,
             "outNodeId": 0,
             "outPortIndex": 0
+        },
+        {
+            "inPortIndex": 5,
+            "intNodeId": 5,
+            "outNodeId": 1,
+            "outPortIndex": 3
         }
     ],
     "nodes": [
@@ -111,9 +123,11 @@
         {
             "id": 1,
             "internal-data": {
-                "check": true,
                 "dir": "../../../Survivor_AnimHost_Mocap_Dataset_2025/FBX/Default/",
-                "model-name": "Animation Import"
+                "model-name": "Animation Import",
+                "sequencesFile": "",
+                "sequencesOneIndexed": true,
+                "skeletonType": 0
             },
             "position": {
                 "x": -31,
@@ -157,7 +171,8 @@
             "id": 5,
             "internal-data": {
                 "dir": "../../datasets/Survivor_Gen/",
-                "model-name": "LocomotionPreprocessNode"
+                "model-name": "LocomotionPreprocessNode",
+                "skeletonType": 0
             },
             "position": {
                 "x": 1580,
