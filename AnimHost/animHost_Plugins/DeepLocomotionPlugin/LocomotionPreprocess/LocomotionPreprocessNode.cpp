@@ -861,7 +861,9 @@ void LocomotionPreprocessNode::writeInputData()
 					for (int idx = 0; idx < rootSequenceData.size(); idx++) {
 						// Use currentSequenceIndex and actual frame numbers from processedFrameNumbers
 						idString += QString::number(currentSequenceIndex) + " ";
-						idString += QString::number(processedFrameNumbers[idx]) + " ";
+						// Adjust frame number from 60-frame offset to pastSample offset for output
+						// TODO(jasper2xf): This is probably wrong - keep for now for backwards compatibility with DataExportPlugin, but ideally we should just write the actual frame number without any offset and handle it in the model training.
+						idString += QString::number(processedFrameNumbers[idx] - 60 + pastSamples) + " ";
 						idString += "Standard ";
 						idString += poseSequenceIn->sourceName + " ";
 						idString += poseSequenceIn->dataSetID;
