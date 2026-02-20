@@ -223,16 +223,20 @@ void LocomotionPreprocessNode::run()
 		         << "poseSequenceIn->mPoseSequence.size():" << poseSequenceIn->mPoseSequence.size()
 		         << "velSeq->mJointVelocitySequence.size():" << velSeq->mJointVelocitySequence.size();
 
-		// Get frames to process based on ValidFrames input
+		// Get frames to process WITHOUT 60-frame buffer (same as DataExportPlugin)
 		std::vector<int> framesToProcess = getFramesToProcess(animation, animation->sourceName);
 
 		if (framesToProcess.empty()) {
-			qDebug() << "[LocomotionPreprocessNode] No frames to process";
-			return;
+			qDebug() << "[LocomotionPreprocessNode] No valid frames - skipping file";
+			return;  // File not in ValidFrames - both plugins skip
 		}
 
-		// Segment frames into consecutive groups
-		std::vector<std::vector<int>> segments = segmentConsecutiveFrames(framesToProcess);
+		// Segment AND filter with 60-frame buffer
+		// Returns all segments (including empty ones that were filtered out)
+		std::vector<std::vector<int>> segments = segmentAndFilterConsecutiveFrames(
+			framesToProcess,
+			animation->mDurationFrames
+		);
 
 		qDebug() << "[LocomotionPreprocessNode] Found" << segments.size()
 		         << "consecutive segments from" << framesToProcess.size() << "total frames";
@@ -242,26 +246,24 @@ void LocomotionPreprocessNode::run()
 			currentSequenceIndex = 1;
 		}
 
-		// Process and write each segment separately
+		// Process each segment (skip empty ones but still increment SeqId)
 		for (size_t segIdx = 0; segIdx < segments.size(); segIdx++) {
 			const std::vector<int>& currentSegment = segments[segIdx];
+
+			if (currentSegment.empty()) {
+				// Segment eliminated by 60-frame buffer - skip but increment SeqId
+				qDebug() << "[LocomotionPreprocessNode] Segment" << (segIdx + 1)
+				         << "eliminated by 60-frame buffer. Skipping SeqId"
+				         << currentSequenceIndex << "to maintain sync with DataExportPlugin.";
+				currentSequenceIndex++;
+				continue;
+			}
 
 			qDebug() << "[LocomotionPreprocessNode] Processing segment" << (segIdx + 1)
 			         << "with" << currentSegment.size() << "frames, SeqId:" << currentSequenceIndex;
 
-			// Clear data for this segment
-			rootSequenceData.clear();
-			sequenceRelativeJointPosition.clear();
-			sequenceRelativeJointVelocities.clear();
-			sequenceRelativJointRotations.clear();
-			sequenceRelativJointRotations6D.clear();
-			Y_SequenceDeltaUpdate.clear();
-			Y_RootSequenceData.clear();
-			Y_SequenceRelativeJointPosition.clear();
-			Y_SequenceRelativeJointVelocities.clear();
-			Y_SequenceRelativJointRotations.clear();
-			Y_SequenceRelativJointRotations6D.clear();
-			processedFrameNumbers.clear();
+			// Clear data buffers
+			clearSegmentBuffers();
 
 			// Process all frames in this segment
 			for (int frameCounter : currentSegment) {
@@ -269,12 +271,11 @@ void LocomotionPreprocessNode::run()
 				processedFrameNumbers.push_back(frameCounter);
 			}
 
-			// Clear existing files only on first segment if overwriting
+			// Write this segment's data to files
 			if (segIdx == 0) {
 				clearExistingData();
 			}
 
-			// Write this segment's data to files
 			writeMetaData();
 			writeInputData();
 			writeOutputData();
@@ -680,6 +681,22 @@ void LocomotionPreprocessNode::clearExistingData()
 		bOverwriteDataExport = false;
 		_cbOverwrite->setCheckState(Qt::Unchecked);
 	}
+}
+
+void LocomotionPreprocessNode::clearSegmentBuffers()
+{
+	rootSequenceData.clear();
+	sequenceRelativeJointPosition.clear();
+	sequenceRelativeJointVelocities.clear();
+	sequenceRelativJointRotations.clear();
+	sequenceRelativJointRotations6D.clear();
+	Y_SequenceDeltaUpdate.clear();
+	Y_RootSequenceData.clear();
+	Y_SequenceRelativeJointPosition.clear();
+	Y_SequenceRelativeJointVelocities.clear();
+	Y_SequenceRelativJointRotations.clear();
+	Y_SequenceRelativJointRotations6D.clear();
+	processedFrameNumbers.clear();
 }
 
 void LocomotionPreprocessNode::writeMetaData() {
@@ -1112,18 +1129,18 @@ std::vector<int> LocomotionPreprocessNode::getFramesToProcess(std::shared_ptr<An
 	auto sp_validFrames = _validFramesIn.lock();
 
 	if (!sp_validFrames || sp_validFrames->getData()->isEmpty()) {
-		// No Sequences.txt configured - use current behavior (all frames with 60-frame offset)
-		for (int f = 60; f <= duration - 60; f++) {
+		// No Sequences.txt configured - use all frames (no buffer here)
+		for (int f = 0; f < duration; f++) {
 			frames.push_back(f);
 		}
 
-		qDebug() << "[LocomotionPreprocessNode] No ValidFrames - processing"
-		         << frames.size() << "frames (60-frame offset)";
+		qDebug() << "[LocomotionPreprocessNode] No ValidFrames - using all"
+		         << frames.size() << "frames";
 
 		return frames;
 	}
 
-	// ValidFrames is configured - iterate only on valid frames
+	// ValidFrames is configured - get valid frames only
 	auto validFrames = sp_validFrames->getData();
 	QString stem = extractFileStem(sourceName);
 
@@ -1140,14 +1157,14 @@ std::vector<int> LocomotionPreprocessNode::getFramesToProcess(std::shared_ptr<An
 	qDebug() << "[LocomotionPreprocessNode] Found" << validFrameList.size()
 	         << "valid frames for" << stem << "in Sequences.txt";
 
-	// Filter by scene bounds (need 60 frames for trajectory context)
+	// Filter by bounds only (NO 60-frame buffer here)
 	for (int f : validFrameList) {
-		if (f >= 60 && f <= duration - 60) {
+		if (f >= 0 && f < duration) {
 			frames.push_back(f);
 		}
 	}
 
-	qDebug() << "[LocomotionPreprocessNode] After scene bounds check:"
+	qDebug() << "[LocomotionPreprocessNode] After bounds check:"
 	         << frames.size() << "frames to process";
 
 	return frames;
@@ -1170,6 +1187,30 @@ std::vector<std::vector<int>> LocomotionPreprocessNode::segmentConsecutiveFrames
 	}
 	segments.push_back(currentSegment);  // Add last segment
 	return segments;
+}
+
+std::vector<std::vector<int>> LocomotionPreprocessNode::segmentAndFilterConsecutiveFrames(
+	const std::vector<int>& frames,
+	int animationDuration) const
+{
+	// Step 1: Segment into consecutive groups (same as DataExportPlugin)
+	std::vector<std::vector<int>> segments = segmentConsecutiveFrames(frames);
+
+	// Step 2: Apply 60-frame buffer filter to EACH segment
+	// Check position within segment to ensure 60 valid frames before/after
+	const int buffer = 60;
+	for (auto& segment : segments) {
+		std::vector<int> filtered;
+		for (size_t i = 0; i < segment.size(); i++) {
+			// Only keep frames that have 60 frames before and after WITHIN this segment
+			if (i >= buffer && i < segment.size() - buffer) {
+				filtered.push_back(segment[i]);
+			}
+		}
+		segment = filtered;  // Replace with filtered version (might be empty!)
+	}
+
+	return segments;  // Some segments might be empty vectors
 }
 
 QString LocomotionPreprocessNode::extractFileStem(const QString& sourceName) const

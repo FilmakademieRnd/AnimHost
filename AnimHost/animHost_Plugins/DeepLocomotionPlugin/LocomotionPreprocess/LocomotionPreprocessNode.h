@@ -209,6 +209,7 @@ private:
     void writeInputData();
     void writeOutputData();
     void writeMetaData();
+    void clearSegmentBuffers();
 
     /**
      * @brief Segment frames into consecutive groups.
@@ -220,6 +221,23 @@ private:
      * @return Vector of frame number groups, each representing a consecutive segment
      */
     std::vector<std::vector<int>> segmentConsecutiveFrames(const std::vector<int>& frames) const;
+
+    /**
+     * @brief Segment frames into consecutive groups and apply 60-frame buffer filter.
+     *
+     * First segments frames into consecutive groups (same as DataExportPlugin),
+     * then applies 60-frame buffer filter to each segment based on position within the segment.
+     * A frame is kept only if it has at least 60 valid frames before and after it within the
+     * same consecutive segment. Returns ALL segments including empty ones (segments completely
+     * eliminated by the filter).
+     *
+     * @param frames Vector of frame numbers (must be sorted)
+     * @param animationDuration Total duration of the animation (unused, kept for compatibility)
+     * @return Vector of frame number groups (some may be empty)
+     */
+    std::vector<std::vector<int>> segmentAndFilterConsecutiveFrames(
+        const std::vector<int>& frames,
+        int animationDuration) const;
 
 private Q_SLOTS:
     void onRootBoneSelectionChanged(const int text);
