@@ -226,19 +226,62 @@ void LocomotionPreprocessNode::run()
 		// Get frames to process based on ValidFrames input
 		std::vector<int> framesToProcess = getFramesToProcess(animation, animation->sourceName);
 
-		qDebug() << "[LocomotionPreprocessNode] Processing" << framesToProcess.size() << "frames";
-
-		for (int frameCounter : framesToProcess) {
-			processFrame(frameCounter, poseSequenceIn, animation, velSeq, skeleton);
+		if (framesToProcess.empty()) {
+			qDebug() << "[LocomotionPreprocessNode] No frames to process";
+			return;
 		}
 
-		// Clear existing data
-		clearExistingData();
+		// Segment frames into consecutive groups
+		std::vector<std::vector<int>> segments = segmentConsecutiveFrames(framesToProcess);
 
-		// Write Data to Files
-		writeMetaData();
-		writeInputData();
-		writeOutputData();
+		qDebug() << "[LocomotionPreprocessNode] Found" << segments.size()
+		         << "consecutive segments from" << framesToProcess.size() << "total frames";
+
+		// Reset index if overwriting
+		if (bOverwriteDataExport) {
+			currentSequenceIndex = 1;
+		}
+
+		// Process and write each segment separately
+		for (size_t segIdx = 0; segIdx < segments.size(); segIdx++) {
+			const std::vector<int>& currentSegment = segments[segIdx];
+
+			qDebug() << "[LocomotionPreprocessNode] Processing segment" << (segIdx + 1)
+			         << "with" << currentSegment.size() << "frames, SeqId:" << currentSequenceIndex;
+
+			// Clear data for this segment
+			rootSequenceData.clear();
+			sequenceRelativeJointPosition.clear();
+			sequenceRelativeJointVelocities.clear();
+			sequenceRelativJointRotations.clear();
+			sequenceRelativJointRotations6D.clear();
+			Y_SequenceDeltaUpdate.clear();
+			Y_RootSequenceData.clear();
+			Y_SequenceRelativeJointPosition.clear();
+			Y_SequenceRelativeJointVelocities.clear();
+			Y_SequenceRelativJointRotations.clear();
+			Y_SequenceRelativJointRotations6D.clear();
+			processedFrameNumbers.clear();
+
+			// Process all frames in this segment
+			for (int frameCounter : currentSegment) {
+				processFrame(frameCounter, poseSequenceIn, animation, velSeq, skeleton);
+				processedFrameNumbers.push_back(frameCounter);
+			}
+
+			// Clear existing files only on first segment if overwriting
+			if (segIdx == 0) {
+				clearExistingData();
+			}
+
+			// Write this segment's data to files
+			writeMetaData();
+			writeInputData();
+			writeOutputData();
+
+			// Increment sequence index for next segment
+			currentSequenceIndex++;
+		}
 
 	}
 }
@@ -799,8 +842,9 @@ void LocomotionPreprocessNode::writeInputData()
 					QString idString = "";
 
 					for (int idx = 0; idx < rootSequenceData.size(); idx++) {
-						idString += QString::number(poseSequenceIn->sequenceID) + " ";
-						idString += QString::number(pastSamples + idx) + " ";
+						// Use currentSequenceIndex and actual frame numbers from processedFrameNumbers
+						idString += QString::number(currentSequenceIndex) + " ";
+						idString += QString::number(processedFrameNumbers[idx]) + " ";
 						idString += "Standard ";
 						idString += poseSequenceIn->sourceName + " ";
 						idString += poseSequenceIn->dataSetID;
@@ -1107,6 +1151,25 @@ std::vector<int> LocomotionPreprocessNode::getFramesToProcess(std::shared_ptr<An
 	         << frames.size() << "frames to process";
 
 	return frames;
+}
+
+std::vector<std::vector<int>> LocomotionPreprocessNode::segmentConsecutiveFrames(const std::vector<int>& frames) const
+{
+	std::vector<std::vector<int>> segments;
+	if (frames.empty()) return segments;
+
+	std::vector<int> currentSegment = {frames[0]};
+
+	for (size_t i = 1; i < frames.size(); i++) {
+		if (frames[i] == frames[i-1] + 1) {
+			currentSegment.push_back(frames[i]);  // Consecutive
+		} else {
+			segments.push_back(currentSegment);   // Gap detected - save and start new
+			currentSegment = {frames[i]};
+		}
+	}
+	segments.push_back(currentSegment);  // Add last segment
+	return segments;
 }
 
 QString LocomotionPreprocessNode::extractFileStem(const QString& sourceName) const

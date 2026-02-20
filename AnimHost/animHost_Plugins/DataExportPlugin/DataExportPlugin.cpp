@@ -170,21 +170,83 @@ bool DataExportPlugin::isDataAvailable() {
     return !_skeletonIn.expired() && !_poseSequenceIn.expired() && !_jointVelocitySequenceIn.expired();
 }
 
+std::vector<std::vector<int>> DataExportPlugin::segmentConsecutiveFrames(const std::vector<int>& frames) const
+{
+    std::vector<std::vector<int>> segments;
+    if (frames.empty()) return segments;
+
+    std::vector<int> currentSegment = {frames[0]};
+
+    for (size_t i = 1; i < frames.size(); i++) {
+        if (frames[i] == frames[i-1] + 1) {
+            currentSegment.push_back(frames[i]);  // Consecutive
+        } else {
+            segments.push_back(currentSegment);   // Gap detected - save and start new
+            currentSegment = {frames[i]};
+        }
+    }
+    segments.push_back(currentSegment);  // Add last segment
+    return segments;
+}
+
 void DataExportPlugin::run()
 {
     if (!exportDirectory.isEmpty()) {
-
         if (auto sp_skeleton = _skeletonIn.lock()) {
             writeBinarySkeletonData();
 
-            if (auto sp_poseSeq = _poseSequenceIn.lock() && bWritePoseSequence) {
-                exportPoseSequenceData();
+            auto sp_poseSeq = _poseSequenceIn.lock();
+            auto sp_jointVelSeq = _jointVelocitySequenceIn.lock();
+
+            // Determine source name and total frames from available data
+            QString sourceName;
+            int totalFrames = 0;
+
+            if (sp_poseSeq) {
+                sourceName = sp_poseSeq->getData()->sourceName;
+                totalFrames = sp_poseSeq->getData()->mPoseSequence.size();
+            } else if (sp_jointVelSeq) {
+                sourceName = sp_jointVelSeq->getData()->sourceName;
+                totalFrames = sp_jointVelSeq->getData()->mJointVelocitySequence.size();
             }
 
-            if (auto sp_jointVelSeq = _jointVelocitySequenceIn.lock() && bWriteJointVelocity) {
-                exportJointVelocitySequence();
+            // Get frames to export (filtered by ValidFrames if configured)
+            std::vector<int> framesToExport = getFramesToExport(totalFrames, sourceName);
+
+            if (!framesToExport.empty()) {
+                // Segment frames into consecutive groups
+                std::vector<std::vector<int>> segments = segmentConsecutiveFrames(framesToExport);
+
+                qDebug() << "[DataExportPlugin] Found" << segments.size()
+                         << "consecutive segments to export";
+
+                // Reset index if overwriting
+                if (bOverwritePoseSeq || bOverwriteJointVelSeq) {
+                    currentSequenceIndex = 1;
+                }
+
+                // Export each segment
+                for (size_t i = 0; i < segments.size(); i++) {
+                    currentFrameSegment = segments[i];
+                    isFirstSegment = (i == 0);
+
+                    qDebug() << "[DataExportPlugin] Exporting segment" << (i + 1)
+                             << "with" << currentFrameSegment.size()
+                             << "frames, index:" << currentSequenceIndex;
+
+                    if (sp_poseSeq && bWritePoseSequence) {
+                        exportPoseSequenceData();
+                    }
+
+                    if (sp_jointVelSeq && bWriteJointVelocity) {
+                        exportJointVelocitySequence();
+                    }
+
+                    currentSequenceIndex++;
+                }
             }
         }
+
         // Reset overwrite flags after run to avoid accidental overwriting on next run
         _cbOverwrite->setCheckState(Qt::Unchecked);
 
@@ -270,20 +332,12 @@ void DataExportPlugin::writeCSVPoseSequenceData() {
 
     qDebug() << "Write Pose Data to CSV File";
 
-    // Get frames to export (filtered by ValidFrames if configured)
-    std::vector<int> framesToExport = getFramesToExport(
-        poseSequenceIn->mPoseSequence.size(),
-        poseSequenceIn->sourceName
-    );
-
-    if (framesToExport.empty()) {
-        qWarning() << "[DataExportPlugin] No frames to export for" << poseSequenceIn->sourceName;
-        return;
-    }
+    // Use pre-computed segment from run()
+    const std::vector<int>& framesToExport = currentFrameSegment;
 
     QFile file(exportDirectory+"pose.csv");
 
-    if (bOverwritePoseSeq) {
+    if (isFirstSegment && bOverwritePoseSeq) {
         file.open(QIODevice::WriteOnly | QIODevice::Text);
     }
     else {
@@ -293,7 +347,7 @@ void DataExportPlugin::writeCSVPoseSequenceData() {
 
     QTextStream out(&file);
 
-    if (bOverwritePoseSeq) {
+    if (isFirstSegment && bOverwritePoseSeq) {
         out << "seq_id,";
         for (int i = 0; i < skeletonIn->mNumBones; i++) {
             out << QString::fromStdString(skeletonIn->bone_names_reverse.at(i)) << "_x,";
@@ -305,9 +359,9 @@ void DataExportPlugin::writeCSVPoseSequenceData() {
         out << "\n";
     }
 
-    // Export only filtered frames
+    // Export only filtered frames using continuous sequence index
     for (int frame : framesToExport) {
-        out << poseSequenceIn->dataSetID << ",";
+        out << currentSequenceIndex << ",";
         for (int bone = 0; bone < skeletonIn->mNumBones; bone++) {
             out << poseSequenceIn->mPoseSequence[frame].mPositionData[bone].x << ",";
             out << poseSequenceIn->mPoseSequence[frame].mPositionData[bone].y << ",";
@@ -327,20 +381,12 @@ void DataExportPlugin::writeBinaryPoseSequenceData() {
 
     qDebug() << "Write Pose Data to Binary File";
 
-    // Get frames to export (filtered by ValidFrames if configured)
-    std::vector<int> framesToExport = getFramesToExport(
-        poseSequenceIn->mPoseSequence.size(),
-        poseSequenceIn->sourceName
-    );
-
-    if (framesToExport.empty()) {
-        qWarning() << "[DataExportPlugin] No frames to export for" << poseSequenceIn->sourceName;
-        return;
-    }
+    // Use pre-computed segment from run()
+    const std::vector<int>& framesToExport = currentFrameSegment;
 
     QFile file(exportDirectory+ "pose.bin");
 
-    if (bOverwritePoseSeq) {
+    if (isFirstSegment && bOverwritePoseSeq) {
         file.open(QIODevice::WriteOnly);
     }
     else {
@@ -427,20 +473,12 @@ void DataExportPlugin::writeCSVJointVelocitySequence() {
 
     qDebug() << "Write Joint Velocity Data to CSV File";
 
-    // Get frames to export (filtered by ValidFrames if configured)
-    std::vector<int> framesToExport = getFramesToExport(
-        jointVelSeqIn->mJointVelocitySequence.size(),
-        jointVelSeqIn->sourceName
-    );
-
-    if (framesToExport.empty()) {
-        qWarning() << "[DataExportPlugin] No frames to export for" << jointVelSeqIn->sourceName;
-        return;
-    }
+    // Use pre-computed segment from run()
+    const std::vector<int>& framesToExport = currentFrameSegment;
 
     QFile file(exportDirectory + "joint_velocity.csv");
 
-    if (bOverwriteJointVelSeq) {
+    if (isFirstSegment && bOverwriteJointVelSeq) {
         file.open(QIODevice::WriteOnly | QIODevice::Text);
     }
     else {
@@ -450,7 +488,7 @@ void DataExportPlugin::writeCSVJointVelocitySequence() {
 
     QTextStream out(&file);
 
-    if (bOverwriteJointVelSeq) {
+    if (isFirstSegment && bOverwriteJointVelSeq) {
         out << "seq_id,";
         out << "frame,";
         for (int i = 0; i < skeletonIn->mNumBones; i++) {
@@ -463,9 +501,9 @@ void DataExportPlugin::writeCSVJointVelocitySequence() {
         out << "\n";
     }
 
-    // Export only filtered frames
+    // Export only filtered frames using continuous sequence index
     for (int frame : framesToExport) {
-        out << jointVelSeqIn->dataSetID << ",";
+        out << currentSequenceIndex << ",";
         out << frame << ",";
         for (int bone = 0; bone < skeletonIn->mNumBones; bone++) {
             out << jointVelSeqIn->mJointVelocitySequence[frame].mJointVelocity[bone].x << ",";
@@ -486,16 +524,8 @@ void DataExportPlugin::writeBinaryJointVelocitySequence() {
 
     qDebug() << "Write Joint Velocity Data to Binary File";
 
-    // Get frames to export (filtered by ValidFrames if configured)
-    std::vector<int> framesToExport = getFramesToExport(
-        jointVelSeqIn->mJointVelocitySequence.size(),
-        jointVelSeqIn->sourceName
-    );
-
-    if (framesToExport.empty()) {
-        qWarning() << "[DataExportPlugin] No frames to export for" << jointVelSeqIn->sourceName;
-        return;
-    }
+    // Use pre-computed segment from run()
+    const std::vector<int>& framesToExport = currentFrameSegment;
 
     qDebug() << "[DataExportPlugin] JointVelocitySequence frames to export:" << framesToExport.size();
 
@@ -503,7 +533,7 @@ void DataExportPlugin::writeBinaryJointVelocitySequence() {
 
     QString fileNameIdent = exportDirectory + "sequences_velocity.txt";
 
-    if (bOverwriteJointVelSeq) {
+    if (isFirstSegment && bOverwriteJointVelSeq) {
         file.open(QIODevice::WriteOnly);
         FileHandler<QTextStream>::deleteFile(fileNameIdent);
     }
@@ -524,9 +554,9 @@ void DataExportPlugin::writeBinaryJointVelocitySequence() {
     QTextStream& outID = fileIdent.getStream();
     QString idString = "";
 
-    // Write sequence identifiers for filtered frames only
+    // Write sequence identifiers for filtered frames only, using continuous sequence index
     for (int frame : framesToExport) {
-        idString += QString::number(jointVelSeqIn->sequenceID) + " ";
+        idString += QString::number(currentSequenceIndex) + " ";
         idString += QString::number(frame) + " ";
         idString += "Standard ";
         idString += jointVelSeqIn->sourceName + " ";

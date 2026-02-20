@@ -63,6 +63,13 @@ private:
     bool bOverwriteJointVelSeq = true;
     bool bOverwritePoseSeq = true;
 
+    // Continuous sequence indexing
+    int currentSequenceIndex = 1;
+
+    // Segment tracking
+    std::vector<int> currentFrameSegment;  // Current segment being exported
+    bool isFirstSegment = true;             // Whether this is the first segment
+
 public:
 
     DataExportPlugin();
@@ -119,6 +126,13 @@ private:
      * @return The stem without extension (e.g., "D1_001_KAN01_001")
      */
     QString extractFileStem(const QString& sourceName) const;
+
+    /**
+     * @brief Segment frame indices into consecutive groups.
+     * @param frames Sorted vector of frame indices
+     * @return Vector of segments, where each segment is a vector of consecutive frames
+     */
+    std::vector<std::vector<int>> segmentConsecutiveFrames(const std::vector<int>& frames) const;
 
 private Q_SLOTS:
     void onButtonClicked();

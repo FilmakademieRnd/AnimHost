@@ -42,6 +42,12 @@ private:
     int totalNumberFrames = 0;
     bool bOverwriteDataExport = false;
 
+    // Continuous sequence indexing
+    int currentSequenceIndex = 1;
+
+    // Frame tracking for consecutive segmentation
+    std::vector<int> processedFrameNumbers;  // Actual frame numbers from getFramesToProcess()
+
     QString metadataFileName = "metadata.txt";
     QString sequencesFileName = "sequences_mann.txt";
     QString dataXFileName = "data_X.bin";
@@ -203,6 +209,17 @@ private:
     void writeInputData();
     void writeOutputData();
     void writeMetaData();
+
+    /**
+     * @brief Segment frames into consecutive groups.
+     *
+     * Splits a list of frame numbers into groups where each group contains
+     * consecutive frames (frame[i+1] == frame[i] + 1).
+     *
+     * @param frames Vector of frame numbers (must be sorted)
+     * @return Vector of frame number groups, each representing a consecutive segment
+     */
+    std::vector<std::vector<int>> segmentConsecutiveFrames(const std::vector<int>& frames) const;
 
 private Q_SLOTS:
     void onRootBoneSelectionChanged(const int text);
