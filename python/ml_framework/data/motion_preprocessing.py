@@ -192,6 +192,7 @@ def get_future_window_values(row, phaseValues, selected_columns, window_size=7):
 def get_window_values_(row, phaseValues, selected_columns, num_samples=13, fps=1, start_index=0, is_future=False):
     seq_id, frame = row.name
 
+    is_future = False # Disable, this will always end out of range
     frame = frame + 1 if is_future else frame
     # Initialize FrameRange with the given parameters
     frame_range = FrameRange(num_samples=num_samples, fps=60, reference_frame=frame, start_index=start_index)
@@ -211,7 +212,7 @@ def get_window_values_(row, phaseValues, selected_columns, num_samples=13, fps=1
         # Find which specific frames are missing
         available_frames = set(phaseValues.loc[seq_id].index) if seq_id in phaseValues.index.get_level_values('SeqId') else set()
         missing_frames = [f for f in frame_indices if f not in available_frames]
-        print(f"\n❌ KeyError for SeqId {seq_id}, Frame {frame}")
+        print(f"\nX KeyError for SeqId {seq_id}, Frame {frame}")
         print(f"   Requested frames: {frame_indices}")
         print(f"   Available frames for SeqId {seq_id}: {sorted(available_frames) if available_frames else 'SeqId not found'}")
         print(f"   Missing frames: {missing_frames}")
