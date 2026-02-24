@@ -306,10 +306,15 @@ void AssimpLoaderPlugin::loadAnimationData(aiAnimation* pASSIMPAnimation, Skelet
 	         << "mTicksPerSecond:" << pASSIMPAnimation->mTicksPerSecond
 	         << "mNumChannels:" << pASSIMPAnimation->mNumChannels;
 
-	pAnimation->mDurationFrames = pASSIMPAnimation->mDuration;
-
-	qDebug() << "[AssimpLoader] Set mDurationFrames to:" << pAnimation->mDurationFrames;
-
+	// FIX D: Diagnostic logging - check first/last keyframe timestamps
+	if (pASSIMPAnimation->mNumChannels > 0 && pASSIMPAnimation->mChannels[0]->mNumRotationKeys > 0) {
+		auto firstKey = pASSIMPAnimation->mChannels[0]->mRotationKeys[0];
+		auto lastKey = pASSIMPAnimation->mChannels[0]->mRotationKeys[
+			pASSIMPAnimation->mChannels[0]->mNumRotationKeys - 1];
+		qDebug() << "[AssimpLoader] Keyframe time range - First:" << firstKey.mTime
+		         << "Last:" << lastKey.mTime
+		         << "Total rotation keys:" << pASSIMPAnimation->mChannels[0]->mNumRotationKeys;
+	}
 
 	pAnimation->mBones = std::vector<Bone>(pSkeleton->mNumBones, Bone());
 	for (auto var : pSkeleton->bone_names)
@@ -319,6 +324,8 @@ void AssimpLoaderPlugin::loadAnimationData(aiAnimation* pASSIMPAnimation, Skelet
 
 	AssimpHelper::setAnimationRestingPositionFromAssimpNode(*pNode, *pSkeleton, pAnimation);
 
+	// FIX C: Calculate mDurationFrames from actual keyframe count instead of mDuration
+	int maxKeyframes = 0;
 	for (int idx = 0; idx < pASSIMPAnimation->mNumChannels; idx++)
 	{
 
@@ -332,11 +339,16 @@ void AssimpLoaderPlugin::loadAnimationData(aiAnimation* pASSIMPAnimation, Skelet
 			qWarning() << "Bone: " << name << "not found.";
 			continue;
 		}
-		
+
 
 		int numKeysRot = channel->mNumRotationKeys;
 		int numKeysPos = channel->mNumPositionKeys;
 		int numKeysScl = channel->mNumScalingKeys;
+
+		// Track maximum keyframe count across all channels
+		maxKeyframes = std::max(maxKeyframes, numKeysRot);
+		maxKeyframes = std::max(maxKeyframes, numKeysPos);
+		maxKeyframes = std::max(maxKeyframes, numKeysScl);
 
 		// Log first channel's keyframe counts to see actual frame count
 		if (idx == 0) {
@@ -370,6 +382,13 @@ void AssimpLoaderPlugin::loadAnimationData(aiAnimation* pASSIMPAnimation, Skelet
 			pAnimation->mBones.at(boneIndex).mScaleKeys.push_back({ (float)sclKey.mTime,scale });
 		}
 	}
+
+	// FIX C: Set mDurationFrames from actual keyframe count (not mDuration timestamp)
+	pAnimation->mDurationFrames = maxKeyframes;
+
+	qDebug() << "[AssimpLoader] mDurationFrames set from keyframe count:" << pAnimation->mDurationFrames
+	         << "(ASSIMP mDuration was:" << pASSIMPAnimation->mDuration << ")"
+	         << "- Difference:" << (pAnimation->mDurationFrames - (int)pASSIMPAnimation->mDuration);
 }
 
 
@@ -469,8 +488,11 @@ void AssimpLoaderPlugin::importAssimpData()
 	//const unsigned int severity =  Assimp::Logger::Err | Assimp::Logger::Warn;
 	Assimp::DefaultLogger::get()->attachStream(new AssimpQTStream, severity);
 
+	// FIX B: Add import flags to improve animation data processing
 	const  aiScene* scene = importer.ReadFile(SourceFilePath.toStdString(),
-		aiProcess_SortByPType);
+		aiProcess_SortByPType |
+		aiProcess_ValidateDataStructure |  // Validate imported data integrity
+		aiProcess_PopulateArmatureData);   // Ensure bone/animation data is complete
 
 	auto keys = scene->mMetaData->mKeys;
 

@@ -179,11 +179,18 @@ def convert_bvh_to_fbx(bvh_path, fbx_path):
     bpy.context.view_layer.objects.active = armature
 
     # Export FBX - no add_leaf_bones since we added our own
+    # CRITICAL: Ensure all frames are baked without simplification
     bpy.ops.export_scene.fbx(
         filepath=str(fbx_path),
         global_scale=1.0, # The data remains in cm scale, consistent with unity pipeline, invalid for Blender
         use_selection=True,
         bake_anim=True,
+        bake_anim_use_all_bones=True,  # Bake all bones
+        bake_anim_use_nla_strips=False,
+        bake_anim_use_all_actions=False,
+        bake_anim_step=1.0,  # Bake every single frame (step of 1)
+        bake_anim_simplify_factor=0.0,  # NO simplification - keep all keyframes!
+        bake_anim_force_startend_keying=True,  # Force first/last frame keyframes
         add_leaf_bones=False
     )
 
