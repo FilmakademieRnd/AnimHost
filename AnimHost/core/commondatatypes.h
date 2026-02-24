@@ -843,6 +843,9 @@ public:
 };
 Q_DECLARE_METATYPE(std::shared_ptr<DebugSignal>)
 
+// Minimum frames required for Butterworth filtering in velocity preprocessing
+// 5th-order filter requires: len >= 3 * (order + 1) = 3 * 6 = 18
+static constexpr int MIN_FRAMES_FOR_VELOCITY_FILTERING = 18;
 
 /**
  * @class ValidFrames

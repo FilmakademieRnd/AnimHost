@@ -631,16 +631,30 @@ void AssimpLoaderPlugin::parseSequencesFile()
 	file.close();
 
 	// Sort frame indices for each file (for binary_search in hasFrame)
+	std::vector<QString> sequencesToRemove;
 	for (auto& [stem, frames] : validFrames->sequenceFrames) {
 		std::sort(frames.begin(), frames.end());
 		// Remove duplicates
 		frames.erase(std::unique(frames.begin(), frames.end()), frames.end());
+
+		// Validate minimum sequence length for velocity filtering
+		if (frames.size() < MIN_FRAMES_FOR_VELOCITY_FILTERING) {
+			qWarning() << "[AssimpLoader] Sequence" << stem << "has only" << frames.size()
+			           << "frames (minimum" << MIN_FRAMES_FOR_VELOCITY_FILTERING
+			           << "required for Butterworth filtering) - skipping";
+			sequencesToRemove.push_back(stem);
+		}
+	}
+
+	// Remove sequences that are too short
+	for (const auto& stem : sequencesToRemove) {
+		validFrames->sequenceFrames.erase(stem);
 	}
 
 	_validFrames->setData(validFrames);
 
 	qDebug() << "[AssimpLoader] Parsed Sequences.txt:" << frameCount << "frames across"
-	         << validFrames->sequenceFrames.size() << "files";
+	         << validFrames->sequenceFrames.size() << "files (after filtering)";
 }
 
 QString AssimpLoaderPlugin::extractFileStem(const QString& filename) const
