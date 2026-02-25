@@ -17,7 +17,7 @@ from pathlib import Path
 # Configuration Constants
 # ============================================================================
 DATASET_PATH = r"D:\anim-ws\quad-experiments\quadruped-run-6\processing-filtered"
-PAE_PATH = r"D:\anim-ws\quad-experiments\quadruped-run-6\jaspe_20260224_3"
+PAE_PATH = r"D:\anim-ws\AnimHost\build\Release\artifacts\jaspe_20260224_5"
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent / "ml_framework"))

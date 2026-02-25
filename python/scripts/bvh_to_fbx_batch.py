@@ -160,11 +160,13 @@ def convert_bvh_to_fbx(bvh_path, fbx_path):
 
     # Get frame count from armature's action (the actual animation data)
     fbx_frames = 0
+    frame_start = 0
+    frame_end = 0
     if armature and armature.animation_data and armature.animation_data.action:
         action = armature.animation_data.action
         frame_start, frame_end = action.frame_range
         fbx_frames = int(frame_end - frame_start) + 1
-    print(f"  Frames: BVH={bvh_frames}, FBX={fbx_frames}")
+    print(f"  Frames: BVH={bvh_frames}, FBX={fbx_frames}, Range={frame_start}-{frame_end}")
 
     if armature and end_sites:
         add_end_site_bones(armature, end_sites)
@@ -178,20 +180,35 @@ def convert_bvh_to_fbx(bvh_path, fbx_path):
     armature.select_set(True)
     bpy.context.view_layer.objects.active = armature
 
-    # Export FBX - no add_leaf_bones since we added our own
-    # CRITICAL: Ensure all frames are baked without simplification
+    # Set scene frame range to match the animation (FBX exporter uses scene range)
+    # IMPORTANT: bpy.ops.export_scene.fbx() does NOT have frame_start/frame_end parameters!
+    # It uses the scene's frame range instead - this is documented behavior
+    bpy.context.scene.frame_start = int(frame_start)
+    bpy.context.scene.frame_end = int(frame_end)
+    print(f"  Set scene frame range: {int(frame_start)}-{int(frame_end)}")
+
+    # Export FBX with full animation data
+    # API Reference: https://docs.blender.org/api/4.2/bpy.ops.export_scene.html#bpy.ops.export_scene.fbx
+    # To verify parameters in your Blender version, run in Python console: help(bpy.ops.export_scene.fbx)
     bpy.ops.export_scene.fbx(
-        filepath=str(fbx_path),
-        global_scale=1.0, # The data remains in cm scale, consistent with unity pipeline, invalid for Blender
-        use_selection=True,
-        bake_anim=True,
-        bake_anim_use_all_bones=True,  # Bake all bones
-        bake_anim_use_nla_strips=False,
-        bake_anim_use_all_actions=False,
-        bake_anim_step=1.0,  # Bake every single frame (step of 1)
-        bake_anim_simplify_factor=0.0,  # NO simplification - keep all keyframes!
-        bake_anim_force_startend_keying=True,  # Force first/last frame keyframes
-        add_leaf_bones=False
+        # === File & Selection ===
+        filepath=str(fbx_path),  # (string) Output file path
+        use_selection=True,  # (bool) Export only selected objects (our armature)
+
+        # === Scale ===
+        global_scale=1.0,  # (float) Scale all data. Keep at 1.0 to preserve cm scale for Unity pipeline
+
+        # === Animation Baking ===
+        bake_anim=True,  # (bool) Export baked keyframe animation
+        bake_anim_use_all_bones=True,  # (bool) Force exporting at least one key of animation for all bones (ensures consistent keyframe counts)
+        bake_anim_use_nla_strips=False,  # (bool) Export each non-muted NLA strip as a separated FBX AnimStack (disabled - single animation)
+        bake_anim_use_all_actions=False,  # (bool) Export each action as a separated FBX AnimStack (disabled - single animation)
+        bake_anim_step=1.0,  # (float, 0.01-100) Sampling rate - how often to evaluate animated values in frames. 1.0 = every frame
+        bake_anim_simplify_factor=0.0,  # (float, 0-100) Simplification - how much to simplify baked values. 0.0 = disabled (keep ALL keyframes)
+        bake_anim_force_startend_keying=True,  # (bool) Always add a keyframe at start and end of actions for animated channels
+
+        # === Armature ===
+        add_leaf_bones=False  # (bool) Append a final bone to the end of each chain to specify last bone length (disabled - we add custom End Site bones)
     )
 
 
