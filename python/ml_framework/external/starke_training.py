@@ -158,6 +158,17 @@ def _init_pae_network_script(
         logger.error(f"Failed to update PAE Network.py: {error}")
         raise RuntimeError(f"Failed to update PAE Network.py: {error}")
 
+    # Fix single-sample last-batch crash: PAE params have shape [batch, channels, 1]
+    # due to unsqueeze(2). .squeeze() removes ALL size-1 dims, so a batch of 1 collapses
+    # to 1D and breaks both indexing and the visualization distribution plot.
+    # .squeeze(-1) only removes the trailing dim, preserving batch regardless of size.
+    # Backup already created by write_script_variables above.
+    content = pae_network_path.read_text(encoding="utf-8")
+    fixed = content.replace(".squeeze().numpy()", ".squeeze(-1).numpy()")
+    if fixed != content:
+        pae_network_path.write_text(fixed, encoding="utf-8")
+        logger.info("Applied squeeze(-1) fix to PAE Network.py visualization code")
+
     # Log all changes
     logger.info("Successfully updated PAE Network.py with:")
     for key, new_value in updates.items():
