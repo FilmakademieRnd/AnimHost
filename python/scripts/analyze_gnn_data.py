@@ -23,11 +23,16 @@ import numpy as np
 # ── Config ────────────────────────────────────────────────────────────────────
 
 # Unity
-BASELINE_DIR  = r"D:\anim-ws\quad-experiments\quadruped-run-7\GNN data"
-# AnimHost
-CANDIDATE_DIR = r"D:\anim-ws\quad-experiments\quadruped-run-11\jaspe_20260305_3\GNN\Data"
+BASELINE_DIR  = r"D:\anim-ws\quad-experiments\quadruped-run-2\GNN Data A"
 
-MODE = "coordinates"  # "coordinates" | "baseline_coordinates" | "candidate_coordinates" | "speed" | "root_output" | "input_skeleton" | "input_skeleton_rot_check" | "input_skeleton_speed_check"
+# AnimHost
+CANDIDATE_DIR = r"D:\anim-ws\AnimHost\build\Release\artifacts\jaspe_20260305_10\GNN\Data"
+
+MODE = "compute_bone_corrections"  # "coordinates" | "baseline_coordinates" | "candidate_coordinates" | "speed" | "root_output" | "input_skeleton" | "input_skeleton_rot_check" | "input_skeleton_speed_check" | "compute_bone_corrections"
+
+
+BASELINE_COORD_SCALE = 1  # baseline coordinates are normalised (×100 = metres), candidate already in metres
+CANDIDATE_SPEED_MULTIPLIER = 100
 
 # ── Coordinate mode config ────────────────────────────────────────────────────
 # Data index: 0-based index into the dataset's segments.
@@ -56,9 +61,9 @@ CANDIDATE_SPEED_LABEL = "root_speed_6"
 #   Translation: baseline is in normalised units (×100 = metres), candidate already in metres.
 #   Rotation:    baseline is in degrees, candidate is in radians → c_scale = 180/π → both degrees.
 ROOT_OUTPUT_PAIRS = [
-    ("RootUpdateX", "delta_x",     "X translation delta  (m)",   100.0,           1.0),
+    ("RootUpdateX", "delta_x",     "X translation delta  (m)",   1.0,           1.0),
     ("RootUpdateY", "delta_angle", "Y rotation delta  (deg)",       1.0, 180.0/math.pi),
-    ("RootUpdateZ", "delta_y",     "Z translation delta  (m)",   100.0,           1.0),
+    ("RootUpdateZ", "delta_y",     "Z translation delta  (m)",   1.0,           1.0),
 ]
 
 # ── Skeleton mode config ──────────────────────────────────────────────────────
@@ -77,6 +82,11 @@ SKEL_VEL_B_SCALE = 1.0     # baseline velocity: same unit as candidate (both cm/
 # ── Skeleton check mode config ────────────────────────────────────────────────
 # Auto-discovers all bones from baseline labels. No manual SKELETON_BONES needed.
 SKEL_CHECK_SPEED_ZERO_THRESH = 0.5   # baseline speed (cm/s) below which a bone is "zero-speed"
+
+# ── Bone correction mode config ────────────────────────────────────────────────
+# Bones whose per-frame variance exceeds this threshold are flagged UNRELIABLE.
+# The C# output uses Quaternion.identity for them; handle separately (lock to parent / skip).
+CORRECTION_VARIANCE_THRESH_DEG = 10.0
 
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -224,6 +234,53 @@ def load_output_dataset(directory: str) -> tuple[np.ndarray, list[str]]:
     return data, labels
 
 
+# ── Helpers ───────────────────────────────────────────────────────────────────
+
+
+def _average_rotations(R_stack: np.ndarray) -> np.ndarray:
+    """Geodesic mean of a batch of rotation matrices via SVD projection.
+
+    R_stack: (N, 3, 3). Returns (3, 3).
+    """
+    M = R_stack.mean(axis=0)
+    U, _, Vt = np.linalg.svd(M)
+    R_mean = U @ Vt
+    if np.linalg.det(R_mean) < 0:
+        U[:, -1] *= -1
+        R_mean = U @ Vt
+    return R_mean
+
+
+def _mat_to_quat_xyzw(R: np.ndarray) -> tuple[float, float, float, float]:
+    """3×3 rotation matrix → quaternion in Unity (x, y, z, w) order."""
+    trace = R[0, 0] + R[1, 1] + R[2, 2]
+    if trace > 0:
+        s = 0.5 / math.sqrt(trace + 1.0)
+        w = 0.25 / s
+        x = (R[2, 1] - R[1, 2]) * s
+        y = (R[0, 2] - R[2, 0]) * s
+        z = (R[1, 0] - R[0, 1]) * s
+    elif R[0, 0] > R[1, 1] and R[0, 0] > R[2, 2]:
+        s = 2.0 * math.sqrt(1.0 + R[0, 0] - R[1, 1] - R[2, 2])
+        w = (R[2, 1] - R[1, 2]) / s
+        x = 0.25 * s
+        y = (R[0, 1] + R[1, 0]) / s
+        z = (R[0, 2] + R[2, 0]) / s
+    elif R[1, 1] > R[2, 2]:
+        s = 2.0 * math.sqrt(1.0 + R[1, 1] - R[0, 0] - R[2, 2])
+        w = (R[0, 2] - R[2, 0]) / s
+        x = (R[0, 1] + R[1, 0]) / s
+        y = 0.25 * s
+        z = (R[1, 2] + R[2, 1]) / s
+    else:
+        s = 2.0 * math.sqrt(1.0 + R[2, 2] - R[0, 0] - R[1, 1])
+        w = (R[1, 0] - R[0, 1]) / s
+        x = (R[0, 2] + R[2, 0]) / s
+        y = (R[1, 2] + R[2, 1]) / s
+        z = 0.25 * s
+    return float(x), float(y), float(z), float(w)
+
+
 # ── Modes ─────────────────────────────────────────────────────────────────────
 
 
@@ -286,8 +343,8 @@ def mode_coordinates(
     c_x, c_y = _extract_coords(candidate_dir, candidate_data_index, candidate_x_label, candidate_y_label, "candidate", candidate_slice)
 
     # Scale baseline coords to match candidate coordinate system
-    b_x = b_x * 100
-    b_y = b_y * 100
+    b_x = b_x * BASELINE_COORD_SCALE
+    b_y = b_y * BASELINE_COORD_SCALE
 
     print(f"\n── Coordinate Stats (baseline ×100) {'─' * 40}")
     _print_coord_stats("Baseline", b_x, b_y)
@@ -398,7 +455,7 @@ def mode_speed(
         print(f"  candidate: {len(c_seg)} frames (sliced [{candidate_slice[0]}:{candidate_slice[1]}])")
     else:
         print(f"  candidate: {len(c_seg)} frames")
-    c_speed = c_seg[:, c_col]
+    c_speed = c_seg[:, c_col] * CANDIDATE_SPEED_MULTIPLIER
 
     print(f"\n── Speed Stats {'─' * 50}")
     print(f"  Baseline  range [{b_speed.min():.4f}, {b_speed.max():.4f}]  mean {b_speed.mean():.4f}")
@@ -841,6 +898,124 @@ def mode_input_skeleton_speed_check(
         print(f"\n  Bones missing in candidate ({len(missing)}): {', '.join(missing)}")
 
 
+def mode_compute_bone_corrections(
+    baseline_dir: str,
+    candidate_dir: str,
+    baseline_data_index: int,
+    candidate_data_index: int,
+    variance_thresh_deg: float = 10.0,
+    baseline_slice: tuple[int, int] | None = None,
+    candidate_slice: tuple[int, int] | None = None,
+) -> None:
+    """Compute per-bone correction quaternions: AnimHost bone rotation → Unity bone rotation.
+
+    For each bone, derives R_corr = mean_t(Ra[t]^T @ Rc[t]) — the constant bone-roll offset
+    mapping candidate (AnimHost/Blender) local axes onto baseline (Unity FBX) local axes.
+
+    Application at inference:
+      Feed:  q_animhost_input = q_unity_actor  * Quaternion.Inverse(_boneCorr[i])
+      Read:  q_unity_out      = q_animhost_net * _boneCorr[i]
+
+    Bones with per-frame variance > variance_thresh_deg are UNRELIABLE (Quaternion.identity
+    in the output array). These must be locked to their parent or skipped in Read().
+    """
+    b_seg, b_labels, c_seg, c_labels, bones = _load_and_trim(
+        baseline_dir, candidate_dir,
+        baseline_data_index, candidate_data_index,
+        baseline_slice, candidate_slice,
+    )
+
+    W = 22
+    header = (
+        f"{'Bone':<{W}} "
+        f"{'Corr angle°':>11} {'Var mean°':>9} {'Var max°':>8}  {'Status':>10}"
+    )
+    sep = "─" * len(header)
+    print(header)
+    print(sep)
+
+    # (b_prefix, c_bone, (x,y,z,w), is_reliable)
+    bone_results: list[tuple[str, str, tuple[float, float, float, float], bool]] = []
+
+    eye3 = np.eye(3, dtype=np.float32)[np.newaxis]  # (1,3,3) — identity for angle measure
+
+    for b_prefix, c_bone in bones:
+        try:
+            b_fwd = np.stack([
+                b_seg[:, _label_to_col(b_labels, f"{b_prefix}ForwardX")],
+                b_seg[:, _label_to_col(b_labels, f"{b_prefix}ForwardY")],
+                b_seg[:, _label_to_col(b_labels, f"{b_prefix}ForwardZ")],
+            ], axis=-1)
+            b_up = np.stack([
+                b_seg[:, _label_to_col(b_labels, f"{b_prefix}UpX")],
+                b_seg[:, _label_to_col(b_labels, f"{b_prefix}UpY")],
+                b_seg[:, _label_to_col(b_labels, f"{b_prefix}UpZ")],
+            ], axis=-1)
+            c_col0 = np.stack([
+                c_seg[:, _label_to_col(c_labels, f"jrot_0_{c_bone}")],
+                c_seg[:, _label_to_col(c_labels, f"jrot_1_{c_bone}")],
+                c_seg[:, _label_to_col(c_labels, f"jrot_2_{c_bone}")],
+            ], axis=-1)
+            c_col1 = np.stack([
+                c_seg[:, _label_to_col(c_labels, f"jrot_3_{c_bone}")],
+                c_seg[:, _label_to_col(c_labels, f"jrot_4_{c_bone}")],
+                c_seg[:, _label_to_col(c_labels, f"jrot_5_{c_bone}")],
+            ], axis=-1)
+        except ValueError:
+            print(f"{'  ' + c_bone:<{W}} {'MISSING IN CANDIDATE':>10}")
+            bone_results.append((b_prefix, c_bone, (0.0, 0.0, 0.0, 1.0), False))
+            continue
+
+        Ra = _fwd_up_to_matrix(b_fwd, b_up)   # (N,3,3)
+        Rc = _rot6d_to_matrix(c_col0, c_col1)  # (N,3,3)
+
+        # Per-frame correction matrix
+        R_corr_frames = Ra.swapaxes(-2, -1) @ Rc  # Ra[t]^T @ Rc[t] → (N,3,3)
+
+        # Mean correction via SVD projection onto SO(3)
+        R_corr_mean = _average_rotations(R_corr_frames)
+
+        # Per-frame variance: geodesic distance from mean
+        R_mean_batch = np.tile(R_corr_mean[np.newaxis], (len(R_corr_frames), 1, 1))
+        var_per_frame = _rotation_error_deg(R_mean_batch, R_corr_frames)
+
+        # Angle of the correction itself (distance from identity)
+        corr_angle = _rotation_error_deg(eye3, R_corr_mean[np.newaxis])[0]
+
+        is_reliable = var_per_frame.mean() <= variance_thresh_deg
+        status = "ok" if is_reliable else "UNRELIABLE"
+
+        q = _mat_to_quat_xyzw(R_corr_mean)
+        bone_results.append((b_prefix, c_bone, q, is_reliable))
+
+        print(
+            f"{c_bone:<{W}} "
+            f"{corr_angle:>11.2f} {var_per_frame.mean():>9.2f} {var_per_frame.max():>8.2f}  "
+            f"{status:>10}"
+        )
+
+    print(sep)
+    unreliable = [c_bone for _, c_bone, _, ok in bone_results if not ok]
+    if unreliable:
+        print(f"\n  UNRELIABLE ({len(unreliable)}): {', '.join(unreliable)}")
+        print(f"  → Quaternion.identity used. Lock to parent or disable in Read().\n")
+
+    # ── C# output ─────────────────────────────────────────────────────────────
+    print()
+    print("// ── Paste into QuadrupedController_GNN_Unified.cs ──────────────────────────────")
+    print("// Bone index order mirrors baseline label discovery (Bone1…BoneN). Verify against")
+    print("// Actor.Bones order before use.")
+    print("// Feed:  NeuralNetwork.Feed((Actor.Bones[i].GetTransform().right).DirectionTo(root * Matrix4x4.Rotate(Quaternion.Inverse(_boneCorr[i]))));")
+    print("// Read:  Quaternion rot = Quaternion.LookRotation(forward, upward) * _boneCorr[i];")
+    print(f"// Variance threshold used: {variance_thresh_deg}°")
+    print("private static readonly Quaternion[] _boneCorr = new Quaternion[]")
+    print("{")
+    for _, c_bone, (x, y, z, w), is_reliable in bone_results:
+        note = "" if is_reliable else "  // UNRELIABLE — lock to parent"
+        print(f"    new Quaternion({x:+.6f}f, {y:+.6f}f, {z:+.6f}f, {w:+.6f}f),  // {c_bone}{note}")
+    print("};")
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
@@ -923,6 +1098,16 @@ if __name__ == "__main__":
             CANDIDATE_DATA_INDEX,
             SKEL_VEL_B_SCALE,
             SKEL_CHECK_SPEED_ZERO_THRESH,
+            BASELINE_SLICE,
+            CANDIDATE_SLICE,
+        )
+    elif MODE == "compute_bone_corrections":
+        mode_compute_bone_corrections(
+            BASELINE_DIR,
+            CANDIDATE_DIR,
+            BASELINE_DATA_INDEX,
+            CANDIDATE_DATA_INDEX,
+            CORRECTION_VARIANCE_THRESH_DEG,
             BASELINE_SLICE,
             CANDIDATE_SLICE,
         )

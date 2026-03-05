@@ -200,7 +200,7 @@ def convert_bvh_to_fbx(bvh_path, fbx_path):
         use_selection=True,  # (bool) Export only selected objects (our armature)
 
         # === Scale ===
-        global_scale=0.01,  # (float) Scale all data. Keep at 1.0 to preserve cm scale for Unity pipeline
+        global_scale=1,  # (float) Scale all data. Keep at 1.0 to preserve cm scale for Unity pipeline
 
         # === Transform & Axis Conversion ===
         axis_forward='-Z',
