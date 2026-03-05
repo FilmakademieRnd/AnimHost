@@ -25,9 +25,9 @@ import numpy as np
 # Unity
 BASELINE_DIR  = r"D:\anim-ws\quad-experiments\quadruped-run-7\GNN data"
 # AnimHost
-CANDIDATE_DIR = r"D:\anim-ws\quad-experiments\quadruped-run-10\e2509_20260225_0\GNN\Data"
+CANDIDATE_DIR = r"D:\anim-ws\quad-experiments\quadruped-run-11\jaspe_20260305_3\GNN\Data"
 
-MODE = "input_skeleton_rot_check"  # "coordinates" | "baseline_coordinates" | "candidate_coordinates" | "speed" | "root_output" | "input_skeleton" | "input_skeleton_rot_check" | "input_skeleton_speed_check"
+MODE = "coordinates"  # "coordinates" | "baseline_coordinates" | "candidate_coordinates" | "speed" | "root_output" | "input_skeleton" | "input_skeleton_rot_check" | "input_skeleton_speed_check"
 
 # ── Coordinate mode config ────────────────────────────────────────────────────
 # Data index: 0-based index into the dataset's segments.
