@@ -1,6 +1,10 @@
 """
 Batch convert BVH files to FBX using Blender's Python API.
 
+Versioning
+- v0: Initial implementation with working BVH to FBX conversion (scale 100x off, skeleton orientations use different axis conventions)
+- v1: Consistent scale, consistent skeleton orientations
+
 Usage:
     blender --background --python bvh_to_fbx_batch.py -- <input_path> <output_dir>
 
@@ -8,8 +12,8 @@ Usage:
 
 Example:
     blender --background --python bvh_to_fbx_batch.py -- "D:\anim-ws\MANN_qudruped_data" "D:\anim-ws\MANN_qudruped_data\fbx_output"
-    & "C:\Program Files\Blender Foundation\Blender 4.2\blender.exe" --background --python bvh_to_fbx_batch.py -- "D:\anim-ws\MANN_qudruped_data\p50" "D:\anim-ws\MANN_qudruped_data\p50\fbx"
-    & "C:\Program Files\Blender Foundation\Blender 4.2\blender.exe" --background --python bvh_to_fbx_batch.py -- "D:\anim-ws\MANN_qudruped_data\p50\D1_007_KAN01_001.bvh" "D:\anim-ws\MANN_qudruped_data\p50\fbx"
+    & "D:\anim-sw\Blender Foundation\Blender 4.2\blender.exe" --background --python bvh_to_fbx_batch.py -- "D:\anim-ws\MANN_qudruped_data\p100" "D:\anim-ws\MANN_qudruped_data\p100\fbx-v1"
+    & "D:\anim-sw\Blender Foundation\Blender 4.2\blender.exe" --background --python bvh_to_fbx_batch.py -- "D:\anim-ws\MANN_qudruped_data\p50\D1_007_KAN01_001.bvh" "D:\anim-ws\MANN_qudruped_data\p50\fbx"
 """
 
 import bpy
@@ -196,7 +200,11 @@ def convert_bvh_to_fbx(bvh_path, fbx_path):
         use_selection=True,  # (bool) Export only selected objects (our armature)
 
         # === Scale ===
-        global_scale=1.0,  # (float) Scale all data. Keep at 1.0 to preserve cm scale for Unity pipeline
+        global_scale=0.01,  # (float) Scale all data. Keep at 1.0 to preserve cm scale for Unity pipeline
+
+        # === Transform & Axis Conversion ===
+        axis_forward='-Z',
+        axis_up='Y',
 
         # === Animation Baking ===
         bake_anim=True,  # (bool) Export baked keyframe animation
