@@ -230,9 +230,6 @@ void AssimpLoaderPlugin::onFolderSelectionChanged()
 
 void AssimpLoaderPlugin::loadAnimationData(aiAnimation* pASSIMPAnimation, Skeleton* pSkeleton, Animation* pAnimation, aiNode* pNode)
 {
-	pAnimation->mDurationFrames = pASSIMPAnimation->mDuration;
-
-
 	pAnimation->mBones = std::vector<Bone>(pSkeleton->mNumBones, Bone());
 	for (auto var : pSkeleton->bone_names)
 	{
@@ -241,6 +238,8 @@ void AssimpLoaderPlugin::loadAnimationData(aiAnimation* pASSIMPAnimation, Skelet
 
 	AssimpHelper::setAnimationRestingPositionFromAssimpNode(*pNode, *pSkeleton, pAnimation);
 
+	// Calculate mDurationFrames from actual keyframe count instead of mDuration
+	int maxKeyframes = 0;
 	for (int idx = 0; idx < pASSIMPAnimation->mNumChannels; idx++)
 	{
 
@@ -259,6 +258,19 @@ void AssimpLoaderPlugin::loadAnimationData(aiAnimation* pASSIMPAnimation, Skelet
 		int numKeysRot = channel->mNumRotationKeys;
 		int numKeysPos = channel->mNumPositionKeys;
 		int numKeysScl = channel->mNumScalingKeys;
+
+		// Track maximum keyframe count across all channels
+		maxKeyframes = std::max(maxKeyframes, numKeysRot);
+		maxKeyframes = std::max(maxKeyframes, numKeysPos);
+		maxKeyframes = std::max(maxKeyframes, numKeysScl);
+
+		// Log first channel's keyframe counts to see actual frame count
+		if (idx == 0) {
+			qDebug() << "[AssimpLoader] First channel actual keyframe counts:"
+			         << "mNumRotationKeys:" << numKeysRot
+			         << "mNumPositionKeys:" << numKeysPos
+			         << "mNumScalingKeys:" << numKeysScl;
+		}
 
 		for (int i = 0; i < numKeysRot; i++)
 		{
@@ -284,6 +296,11 @@ void AssimpLoaderPlugin::loadAnimationData(aiAnimation* pASSIMPAnimation, Skelet
 			pAnimation->mBones.at(boneIndex).mScaleKeys.push_back({ (float)sclKey.mTime,scale });
 		}
 	}
+	pAnimation->mDurationFrames = maxKeyframes;
+
+	qDebug() << "[AssimpLoader] mDurationFrames set from keyframe count:" << pAnimation->mDurationFrames
+	         << "(ASSIMP mDuration was:" << pASSIMPAnimation->mDuration << ")"
+	         << "- Difference:" << (pAnimation->mDurationFrames - (int)pASSIMPAnimation->mDuration);
 }
 
 
