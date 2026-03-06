@@ -44,9 +44,9 @@ private:
   
 
 
-    int numSamples = 13;
-    int pastSamples = 6;
-    int futureSamples = 6; // past samples + reference frame + future samples = numSamples
+    int numSamples = 13; // Number of trajectory samples (-60:+60 frames, every 10 frames -> 13 samples)
+    int pastSamples = 6; // Number of past samples
+    int pastFrames = 60; // Number of past frames sampled
 
     int rootbone_idx = 0;
 
