@@ -189,12 +189,11 @@ def get_future_window_values(row, phaseValues, selected_columns, window_size=7):
         print(f"Progress: {seq_id}/{frame}", end='\r')
     return window[selected_columns].values.flatten()
 
-def get_window_values_(row, phaseValues, selected_columns, num_samples=13, fps=1, start_index=0, is_future=False):
+def get_window_values_(row, phaseValues, selected_columns, num_samples=13, fps=60, start_index=0):
     seq_id, frame = row.name
     
-    frame = frame + 1 if is_future else frame
     # Initialize FrameRange with the given parameters
-    frame_range = FrameRange(num_samples=num_samples, fps=60, reference_frame=frame, start_index=start_index)
+    frame_range = FrameRange(num_samples=num_samples, fps=fps, reference_frame=frame, start_index=start_index)
     
     # Generate the frame indices within the specified range
     frame_indices = list(frame_range)
@@ -367,7 +366,7 @@ class MotionProcessor:
         select_combined = select_phase2d + select_amplitude + select_freq
 
         # Collect Future Phase Values
-        future_phase_values = self.InputData.apply(get_window_values_, args=(self.PhaseData, select_combined, 13, 60, 6, True), axis=1)
+        future_phase_values = self.InputData.apply(get_window_values_, args=(self.PhaseData, select_combined, 13, 60, 6), axis=1)
         #future_phase_values = self.InputData.apply(get_future_window_values, args=(self.PhaseData, select_combined, 7), axis=1)
         
         dfOutDataMrg = pd.merge(df_OutputData, future_phase_values.to_frame(), on=['SeqId','Frame'],how='inner')
