@@ -35,8 +35,8 @@ DATA_TYPE = "output"  # "input" | "output"
 
 # Compare-mode config (used when COMPARE_MODE = True)
 BASELINE_DIR  = r"D:\anim-ws\survivor-experiments\survivor-1\candidate\GNN Data"
-CANDIDATE_DIR = r"D:\anim-ws\survivor-experiments\survivor-1\nomirror-processed-pr"
-COMPARE_DATA_TYPE = "input"  # "input" | "output" (applies to both)
+CANDIDATE_DIR = r"D:\anim-ws\survivor-experiments\survivor-1\inference-data-curve"
+COMPARE_DATA_TYPE = "output"  # "input" | "output" (applies to both)
 
 # Format of the CANDIDATE directory:
 #   "gnn" — preprocessed GNN data (Input/Output.bin + InputShape/Labels.txt)
@@ -48,14 +48,14 @@ CANDIDATE_FORMAT = "raw"  # "gnn" | "raw"
 # LABEL_FILTER: Optional[List[str]] = [
 #     "delta_x", "delta_y", "delta_angle",
 # ]
-# LABEL_FILTER: Optional[List[str]] = [
-#     "out_root_pos_x_7",  "out_root_pos_y_7",
-#     "out_root_pos_x_8",  "out_root_pos_y_8",
-#     "out_root_pos_x_9",  "out_root_pos_y_9",
-#     "out_root_pos_x_10", "out_root_pos_y_10",
-#     "out_root_pos_x_11", "out_root_pos_y_11",
-#     "out_root_pos_x_12", "out_root_pos_y_12",
-# ]
+LABEL_FILTER: Optional[List[str]] = [
+    "out_root_pos_x_7",  "out_root_pos_y_7",
+    "out_root_pos_x_8",  "out_root_pos_y_8",
+    "out_root_pos_x_9",  "out_root_pos_y_9",
+    "out_root_pos_x_10", "out_root_pos_y_10",
+    "out_root_pos_x_11", "out_root_pos_y_11",
+    "out_root_pos_x_12", "out_root_pos_y_12",
+]
 # LABEL_FILTER: Optional[List[str]] = [
 #     "out_jpos_x_hip", "out_jpos_y_hip", "out_jpos_z_hip",
 #     "out_jrot_0_hip", "out_jrot_1_hip", "out_jrot_2_hip",
@@ -68,12 +68,12 @@ CANDIDATE_FORMAT = "raw"  # "gnn" | "raw"
 #     "PhaseUpdate-9",  "PhaseUpdate-10", "PhaseUpdate-11", "PhaseUpdate-12",
 # ]
 
-LABEL_FILTER: Optional[List[str]] = [
-    "root_pos_x_7", "root_pos_y_7",
-    "root_fwd_x_7", "root_fwd_y_7",
-    "root_vel_x_7", "root_vel_y_7",
-    "root_speed_7",
-]
+# LABEL_FILTER: Optional[List[str]] = [
+#     "root_pos_x_7", "root_pos_y_7",
+#     "root_fwd_x_7", "root_fwd_y_7",
+#     "root_vel_x_7", "root_vel_y_7",
+#     "root_speed_7",
+# ]
 
 
 BINS = 100
@@ -275,8 +275,8 @@ def plot_compare_distributions(
         hi = max(b_vals.max(), c_vals.max())
         bin_edges = np.linspace(lo, hi, bins + 1)
 
-        ax.hist(b_vals, bins=bin_edges, color="tab:blue",   edgecolor="none", alpha=0.55, label="baseline")
-        ax.hist(c_vals, bins=bin_edges, color="tab:orange", edgecolor="none", alpha=0.55, label="candidate")
+        ax.hist(b_vals, bins=bin_edges, color="tab:blue",   edgecolor="none", alpha=0.55, label="baseline",  density=True)
+        ax.hist(c_vals, bins=bin_edges, color="tab:orange", edgecolor="none", alpha=0.55, label="candidate", density=True)
 
         suffix = f"  (cand ×{m:g})" if m != 1.0 else ""
         ax.set_title(f"{lbl}{suffix}", fontsize=9)
@@ -285,7 +285,7 @@ def plot_compare_distributions(
             f"C: [{c_vals.min():.3g}, {c_vals.max():.3g}] μ={c_vals.mean():.3g}"
         )
         ax.set_xlabel(stats, fontsize=7)
-        ax.set_ylabel("Count", fontsize=8)
+        ax.set_ylabel("Density", fontsize=8)
         ax.legend(fontsize=7)
         ax.grid(True, alpha=0.25)
 

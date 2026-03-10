@@ -158,6 +158,12 @@ private:
     std::vector<float> input_values;
     std::vector<float> output_values;
 
+    // Data export
+    bool bExportData = false;
+    QString _exportDir;
+    std::vector<std::vector<float>> _exportInputSamples;
+    std::vector<std::vector<float>> _exportOutputSamples;
+
     //Plotting
     #ifdef DEBUG_PLOT
     matplot::figure_handle figure = nullptr;
@@ -206,6 +212,13 @@ public:
     std::shared_ptr<Animation> GetAnimationOut();
     std::shared_ptr<DebugSignal> GetDebugSignal(){return debugSignal; }
 
+    void EnableDataExport(const QString& dir) {
+        bExportData = true;
+        _exportDir = dir;
+        _exportInputSamples.clear();
+        _exportOutputSamples.clear();
+    }
+
 private:
 
     void InitPlot();
@@ -239,5 +252,9 @@ private:
     float CalcPhaseValue(glm::vec2 phase);
 
     glm::mat4 updateRootTranform(const glm::mat4& pos, const glm::vec3& delta, int genIdx);
+
+    void writeExportMetadata() const;
+    void writeExportSequences() const;
+    void writeExportBinary() const;
 
 };

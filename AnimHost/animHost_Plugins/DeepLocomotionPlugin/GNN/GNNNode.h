@@ -3,6 +3,7 @@
 
 #include "../DeepLocomotionPlugin_global.h"
 #include <QMetaType>
+#include <QCheckBox>
 #include <pluginnodeinterface.h>
 #include "GNNController.h"
 #include "UIUtils.h"
@@ -41,6 +42,11 @@ private:
     QDoubleSpinBox* _mixControlPathRotation = nullptr;
 	QSlider* _networkPhaseBias = nullptr;
 	QSlider* _networkControlBias = nullptr;
+
+    // Export UI
+    FolderSelectionWidget* _exportFolderWidget = nullptr;
+    QCheckBox*             _cbExportData       = nullptr;
+    QString                _exportPath;
 
 public:
     GNNNode();
