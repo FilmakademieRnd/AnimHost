@@ -38,29 +38,31 @@ import onnxruntime as ort
 # ── Config ────────────────────────────────────────────────────────────────────
 
 # Data directories (same as analyze_gnn_data.py)
-BASELINE_DIR  = r"D:\anim-ws\quad-experiments\quadruped-run-7\GNN data"
-CANDIDATE_DIR = r"D:\anim-ws\quad-experiments\quadruped-run-10\e2509_20260225_0\GNN\Data"
+BASELINE_DIR  = r"D:\anim-ws\survivor-experiments\survivor-1\baseline\GNN Data"
+CANDIDATE_DIR = r"D:\anim-ws\survivor-experiments\survivor-1\candidate\GNN Data"
 # CANDIDATE_DIR = r"D:\anim-ws\survivor-experiments\PR50-30pae-150gnn-nomirror-survivor25\GNN Data"
 
 # ONNX model paths — separate files because input dims differ (559 vs 530)
-BASELINE_ONNX_PATH  = r"D:\anim-ws\quad-experiments\quadruped-run-7\GNN training\r7-unity-nomirror-150.onnx"
-CANDIDATE_ONNX_PATH = r"D:\anim-ws\quad-experiments\quadruped-run-10\r10-e2509_20260225_0-nomirror-150.onnx"
+BASELINE_ONNX_PATH  = r"D:\anim-ws\survivor-experiments\survivor-1\baseline\300.onnx"
+CANDIDATE_ONNX_PATH = r"D:\anim-ws\survivor-experiments\survivor-1\candidate\300.onnx"
 # CANDIDATE_ONNX_PATH = r"D:\anim-ws\survivor-experiments\PR50-30pae-150gnn-nomirror-survivor25\GNN Training\150.onnx"
 
-MODE = "candidate_speed"  # "coordinates" | "baseline_coordinates" | "candidate_coordinates" | "speed" | "candidate_speed"
+MODE = "coordinates"  # "coordinates" | "baseline_coordinates" | "candidate_coordinates" | "speed" | "candidate_speed"
 
-BASELINE_SLICE  = (60, 1060)   # (start, end) rows from Input/Output.bin, or None
-CANDIDATE_SLICE = (5000, 5500)
+BASELINE_SLICE  = (0, 1000)   # (start, end) rows from Input/Output.bin, or None
+CANDIDATE_SLICE = (0, 1000)
 
 # Scale applied to baseline OUTPUT positions before plotting (normalised → metres)
-BASELINE_COORD_SCALE = 100.0
+BASELINE_COORD_SCALE = 1.0
 
 # ── Coordinate mode config ────────────────────────────────────────────────────
 # Labels must be OUTPUT label names (from OutputLabels.txt).
 # Baseline output has trajectory frames 8-13;  "TrajectoryPosition10X/Z" is
 # the midpoint.  Candidate output prefixes positions with "out_".
-BASELINE_X_LABEL  = "TrajectoryPosition8X"
-BASELINE_Y_LABEL  = "TrajectoryPosition8Z"
+# BASELINE_X_LABEL  = "TrajectoryPosition8X"
+# BASELINE_Y_LABEL  = "TrajectoryPosition8Z"
+BASELINE_X_LABEL  = "out_root_pos_x_7"
+BASELINE_Y_LABEL  = "out_root_pos_y_7"
 CANDIDATE_X_LABEL = "out_root_pos_x_7"
 CANDIDATE_Y_LABEL = "out_root_pos_y_7"
 
@@ -68,7 +70,8 @@ CANDIDATE_Y_LABEL = "out_root_pos_y_7"
 # Use single-column output labels that represent a speed-like scalar.
 # Baseline: RootVelocityX is the only single-axis root speed in the output.
 # Candidate: out_root_speed_7 is an explicit scalar speed prediction.
-BASELINE_SPEED_LABEL  = "Actions8-3"
+# BASELINE_SPEED_LABEL  = "Actions8-3"
+BASELINE_SPEED_LABEL  = "out_root_speed_7"
 CANDIDATE_SPEED_LABEL = "out_root_speed_7"
 
 # ── I/O helpers (mirrors analyze_gnn_data.py) ─────────────────────────────────
