@@ -35,8 +35,13 @@ DATA_TYPE = "output"  # "input" | "output"
 
 # Compare-mode config (used when COMPARE_MODE = True)
 BASELINE_DIR  = r"D:\anim-ws\survivor-experiments\survivor-1\candidate\GNN Data"
-CANDIDATE_DIR = r"D:\anim-ws\quad-experiments\quadruped-run-10\e2509_20260225_0\GNN\Data"
+CANDIDATE_DIR = r"D:\anim-ws\survivor-experiments\survivor-1\nomirror-processed-pr"
 COMPARE_DATA_TYPE = "input"  # "input" | "output" (applies to both)
+
+# Format of the CANDIDATE directory:
+#   "gnn" — preprocessed GNN data (Input/Output.bin + InputShape/Labels.txt)
+#   "raw" — raw AnimHost export   (data_x/data_y.bin + metadata.txt + sequences_mann.txt)
+CANDIDATE_FORMAT = "raw"  # "gnn" | "raw"
 
 # If non-empty, only these labels are plotted. In compare mode, only labels
 # present in LABEL_FILTER *and* both datasets are shown.
@@ -120,6 +125,44 @@ def _read_binary(path: Path, num_samples: int, num_features: int) -> np.ndarray:
     return np.frombuffer(raw[:expected_bytes], dtype=np.float32).reshape(
         num_samples, num_features
     )
+
+
+def _count_lines(path: Path) -> int:
+    """Return the number of non-empty lines in a text file."""
+    with open(path, "r", encoding="utf-8") as f:
+        return sum(1 for line in f if line.strip())
+
+
+def load_raw_dataset(directory: str, data_type: str = "input") -> Tuple[np.ndarray, List[str]]:
+    """Load data_x.bin or data_y.bin with labels from metadata.txt.
+
+    metadata.txt format (comma-separated):
+      row 0: num_input_features, label_0, label_1, ...
+      row 1: num_output_features, label_0, label_1, ...
+
+    Sample count is derived from sequences_mann.txt (one non-empty line per sample).
+    """
+    d = Path(directory)
+    with open(d / "metadata.txt", "r", encoding="utf-8") as f:
+        lines = [l.strip() for l in f if l.strip()]
+
+    row_idx = 0 if data_type == "input" else 1
+    parts = lines[row_idx].split(",")
+    num_features = int(parts[0])
+    labels = [p.strip() for p in parts[1 : num_features + 1]]
+
+    num_samples = _count_lines(d / "sequences_mann.txt")
+    print(f"  [{data_type}] Shape: {num_samples} samples × {num_features} features")
+
+    bin_name = "data_x.bin" if data_type == "input" else "data_y.bin"
+    data = _read_binary(d / bin_name, num_samples, num_features)
+
+    if len(labels) != num_features:
+        print(
+            f"  WARNING: metadata.txt has {len(labels)} labels "
+            f"but {num_features} features expected"
+        )
+    return data, labels
 
 
 def load_dataset(directory: str, data_type: str = "input") -> Tuple[np.ndarray, List[str]]:
@@ -258,8 +301,11 @@ if __name__ == "__main__":
     if COMPARE_MODE:
         print(f"Loading baseline  ({COMPARE_DATA_TYPE}): {BASELINE_DIR}")
         b_data, b_labels = load_dataset(BASELINE_DIR, COMPARE_DATA_TYPE)
-        print(f"Loading candidate ({COMPARE_DATA_TYPE}): {CANDIDATE_DIR}")
-        c_data, c_labels = load_dataset(CANDIDATE_DIR, COMPARE_DATA_TYPE)
+        print(f"Loading candidate ({COMPARE_DATA_TYPE}) [{CANDIDATE_FORMAT}]: {CANDIDATE_DIR}")
+        if CANDIDATE_FORMAT == "raw":
+            c_data, c_labels = load_raw_dataset(CANDIDATE_DIR, COMPARE_DATA_TYPE)
+        else:
+            c_data, c_labels = load_dataset(CANDIDATE_DIR, COMPARE_DATA_TYPE)
         plot_compare_distributions(b_data, b_labels, c_data, c_labels, LABEL_FILTER, BINS)
     else:
         if DATA_TYPE not in ("input", "output"):
