@@ -25,7 +25,7 @@
 #include "animhosthelper.h"
 
 #include <assimp/DefaultLogger.hpp>
-
+#include <assimp/config.h>
 
 #include <QFileInfo>
 #include <QDateTime>
@@ -459,7 +459,7 @@ void AssimpLoaderPlugin::importAssimpData()
 {
 	Assimp::Importer importer;
 	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
-
+	importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.0f);
 
 	// Create a logger instance
 	Assimp::DefaultLogger::create("", Assimp::Logger::DEBUGGING);
@@ -475,7 +475,8 @@ void AssimpLoaderPlugin::importAssimpData()
 	const  aiScene* scene = importer.ReadFile(SourceFilePath.toStdString(),
 		aiProcess_SortByPType |
 		aiProcess_ValidateDataStructure |  // Validate imported data integrity
-		aiProcess_PopulateArmatureData);   // Ensure bone/animation data is complete
+		aiProcess_PopulateArmatureData |   // Ensure bone/animation data is complete
+		aiProcess_GlobalScale);            // Apply AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY to positions
 
 	auto keys = scene->mMetaData->mKeys;
 
