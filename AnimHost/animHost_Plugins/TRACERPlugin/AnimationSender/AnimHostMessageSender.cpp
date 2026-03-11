@@ -203,37 +203,57 @@ void AnimHostMessageSender::sendAnimationDataBlock()
 {
     qDebug() << "Starting BLOCK AnimHost Message Sender";
 
+    // Null checks before proceeding
+    if (!animData)   { qCritical() << "BLOCK: animData is null!";      sendBlock = false; return; }
+    if (!charObj)    { qCritical() << "BLOCK: charObj is null!";       sendBlock = false; return; }
+    if (!sceneNodeList) { qCritical() << "BLOCK: sceneNodeList is null!"; sendBlock = false; return; }
+    if (!_globalTimer)  { qCritical() << "BLOCK: _globalTimer is null!";  sendBlock = false; return; }
+
+    qDebug() << "BLOCK: animData bones:" << animData->mBones.size()
+             << "| charObj sceneObjectID:" << charObj->sceneObjectID
+             << "| sceneNodeList size:" << sceneNodeList->mSceneNodeObjectSequence.size()
+             << "| skinnedMeshList size:" << charObj->skinnedMeshList.size()
+             << "| skeletonObjIDs size:" << charObj->skeletonObjIDs.size();
 
     QByteArray* msgBodyAnim = new QByteArray();
-   
+
     bool locked = false;
 
     m_pauseMutex.lock();
 
+    qDebug() << "BLOCK: calling SerializeAnimation...";
     mutex.lock();
     SerializeAnimation(animData, charObj, sceneNodeList, msgBodyAnim, 0);
     mutex.unlock();
-    
-    
+    qDebug() << "BLOCK: SerializeAnimation done, msgBodyAnim size:" << msgBodyAnim->size();
+
+    qDebug() << "BLOCK: calling createNewMessage...";
     createNewMessage( _globalTimer->getLocalTimeStamp(), ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
+    qDebug() << "BLOCK: createNewMessage done";
 
     // Sending LOCK message to the character (necessary for applying root animations)
     if (!locked) {
+        qDebug() << "BLOCK: sending LOCK message for sceneObjectID:" << charObj->sceneObjectID;
         createLockMessage(_globalTimer->getLocalTimeStamp(), charObj->sceneObjectID, true);
         int retunLockVal = sendSocket->send((void*)lockMessage->data(), lockMessage->size());
+        qDebug() << "BLOCK: LOCK send returned:" << retunLockVal;
         locked = true;
     }
 
     // Sending new parameter update message
+    qDebug() << "BLOCK: sending PARAMETERUPDATE message, size:" << message->size();
     int retunVal = sendSocket->send((void*)message->data(), message->size());
+    qDebug() << "BLOCK: PARAMETERUPDATE send returned:" << retunVal;
 
     QThread::msleep(1);
 
     m_pauseMutex.unlock();
-        
+
     //UNLOCK CHARACTER
+    qDebug() << "BLOCK: sending UNLOCK message";
     createLockMessage(_globalTimer->getLocalTimeStamp(), charObj->sceneObjectID, false);
     int retunUnlockVal = sendSocket->send((void*)lockMessage->data(), lockMessage->size());
+    qDebug() << "BLOCK: UNLOCK send returned:" << retunUnlockVal;
     locked = false;
 
     // Set _working to false -> process cannot be aborted anymore
@@ -241,6 +261,7 @@ void AnimHostMessageSender::sendAnimationDataBlock()
     sendBlock = false;
     mutex.unlock();
 
+    qDebug() << "BLOCK: sendAnimationDataBlock complete";
 }
 
 
@@ -275,7 +296,21 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
     // Target Scene ID
     int targetSceneID = ZMQMessageHandler::getTargetSceneID();
     int charRootID = character->characterRootID;
-    int nBones = character->skinnedMeshList.at(0).boneMapIDs.size();    // The number of Bones in the targeted character
+
+    // Resolve bone map: prefer skinnedMesh boneMapIDs, fall back to skeletonObjIDs (skip index 0 = armature root)
+    std::vector<int> skeletonFallback;
+    const std::vector<int>* boneMapPtr = nullptr;
+    if (!character->skinnedMeshList.empty()) {
+        boneMapPtr = &character->skinnedMeshList.at(0).boneMapIDs;
+    } else if (character->skeletonObjIDs.size() > 1) {
+        skeletonFallback.assign(character->skeletonObjIDs.begin() + 1, character->skeletonObjIDs.end());
+        boneMapPtr = &skeletonFallback;
+    } else {
+        qCritical() << "SerializePose: no bone map available";
+        return;
+    }
+    const std::vector<int>& boneMapIDs = *boneMapPtr;
+    int nBones = (int)boneMapIDs.size();
 
     // Root TRS
     // Getting Bone Object Rotation Quaternion
@@ -302,7 +337,7 @@ void AnimHostMessageSender::SerializePose(std::shared_ptr<Animation> animData, s
         // This WILL NOT WORK for RETARGETED animations
 
         // Getting boneName given the parameterID
-        int boneID = character->skinnedMeshList.at(0).boneMapIDs.at(i);
+        int boneID = boneMapIDs.at(i);
         std::string boneName = sceneNodeList->mSceneNodeObjectSequence.at(boneID).objectName;
 
 
@@ -354,9 +389,31 @@ void AnimHostMessageSender::SerializeAnimation(std::shared_ptr<Animation> animDa
 
     // Target Scene ID
     int targetSceneID = ZMQMessageHandler::getTargetSceneID();
-    int nBones = character->skinnedMeshList.at(0).boneMapIDs.size();    // The number of Bones in the targeted character
-	QString boneRotationMap = "";
 
+    if (animData->mBones.empty()) { qCritical() << "SerializeAnimation: animData has no bones!"; return; }
+
+    // Resolve bone map: prefer skinnedMesh boneMapIDs, fall back to skeletonObjIDs (skip index 0 = armature root)
+    std::vector<int> skeletonFallback;
+    const std::vector<int>* boneMapPtr = nullptr;
+    if (!character->skinnedMeshList.empty()) {
+        boneMapPtr = &character->skinnedMeshList.at(0).boneMapIDs;
+        qDebug() << "SerializeAnimation: using skinnedMesh boneMapIDs";
+    } else if (character->skeletonObjIDs.size() > 1) {
+        skeletonFallback.assign(character->skeletonObjIDs.begin() + 1, character->skeletonObjIDs.end());
+        boneMapPtr = &skeletonFallback;
+        qDebug() << "SerializeAnimation: using skeletonObjIDs fallback, root sceneNode:"
+                 << QString::fromStdString(sceneNodeList->mSceneNodeObjectSequence.at(character->skeletonObjIDs.at(0)).objectName);
+    } else {
+        qCritical() << "SerializeAnimation: no bone map available (skinnedMeshList empty, skeletonObjIDs size=" << character->skeletonObjIDs.size() << ")";
+        return;
+    }
+    const std::vector<int>& boneMapIDs = *boneMapPtr;
+    int nBones = (int)boneMapIDs.size();
+
+    qDebug() << "SerializeAnimation: targetSceneID=" << targetSceneID << "nBones=" << nBones
+             << "animBones=" << animData->mBones.size()
+             << "sceneNodes=" << sceneNodeList->mSceneNodeObjectSequence.size();
+	QString boneRotationMap = "";
 
     // Prepare animation data for objects TRS
     if (true) {
@@ -398,10 +455,15 @@ void AnimHostMessageSender::SerializeAnimation(std::shared_ptr<Animation> animDa
 
 
 	//Prepare animation data for bones
+    qDebug() << "SerializeAnimation: iterating" << nBones << "bones";
     for (int i = 0; i < nBones; i++)
     {
 
-        int boneID = character->skinnedMeshList.at(0).boneMapIDs.at(i);
+        int boneID = boneMapIDs.at(i);
+        if (boneID < 0 || boneID >= (int)sceneNodeList->mSceneNodeObjectSequence.size()) {
+            qCritical() << "SerializeAnimation: boneID" << boneID << "out of range (sceneNodes:" << sceneNodeList->mSceneNodeObjectSequence.size() << ") at i=" << i;
+            continue;
+        }
         std::string boneName = sceneNodeList->mSceneNodeObjectSequence.at(boneID).objectName;
 
 		// HOTFIX Accomodate Survivor specific special case for heel_02_R and heel_02_L (Heel breaks Character IK rig?) 
