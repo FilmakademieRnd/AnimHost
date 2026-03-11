@@ -89,8 +89,8 @@ private:
     int numPhaseChannel = 5;
 
     /*Mix Weights*/
-    float rootTranslationWeight = 0.5f;
-    float rootRotationWeight = 0.5f;
+    float rootTranslationWeight = 0.0f;
+    float rootRotationWeight = 0.0f;
 
     /**
      * Exponential mix factor for rotations between predicted future trajectory values and control trajectory values.
@@ -106,7 +106,7 @@ private:
      * Trajectory Update Bias.
 	 * Controls the mix between predicted future trajectory values and the the current trajectory values.
      */
-    float networkControlBias = 1.f / 3.f;
+    float networkControlBias = 1.f;
 
     /**
      * Phase Update Bias.
