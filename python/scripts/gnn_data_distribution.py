@@ -34,9 +34,11 @@ DATA_DIR = r"D:\anim-ws\survivor-experiments\survivor-1\candidate\GNN Data"
 DATA_TYPE = "output"  # "input" | "output"
 
 # Compare-mode config (used when COMPARE_MODE = True)
-BASELINE_DIR  = r"D:\anim-ws\survivor-experiments\survivor-1\candidate\GNN Data"
-CANDIDATE_DIR = r"D:\anim-ws\survivor-experiments\survivor-1\inference-data-curve"
-COMPARE_DATA_TYPE = "output"  # "input" | "output" (applies to both)
+BASELINE_DIR  = r"D:\anim-ws\quad-experiments\quadruped-run-10\e2509_20260225_0\GNN\Data"
+CANDIDATE_DIR = r"D:\anim-ws\MANN Eval Scenes\Inference Data assim scale"
+# BASELINE_DIR  = r"D:\anim-ws\survivor-experiments\survivor-1\candidate\GNN Data"
+# CANDIDATE_DIR = r"D:\anim-ws\survivor-experiments\survivor-1\inference-data-straight"
+COMPARE_DATA_TYPE = "input"  # "input" | "output" (applies to both)
 
 # Format of the CANDIDATE directory:
 #   "gnn" — preprocessed GNN data (Input/Output.bin + InputShape/Labels.txt)
@@ -48,24 +50,28 @@ CANDIDATE_FORMAT = "raw"  # "gnn" | "raw"
 # LABEL_FILTER: Optional[List[str]] = [
 #     "delta_x", "delta_y", "delta_angle",
 # ]
-LABEL_FILTER: Optional[List[str]] = [
-    "out_root_pos_x_7",  "out_root_pos_y_7",
-    "out_root_pos_x_8",  "out_root_pos_y_8",
-    "out_root_pos_x_9",  "out_root_pos_y_9",
-    "out_root_pos_x_10", "out_root_pos_y_10",
-    "out_root_pos_x_11", "out_root_pos_y_11",
-    "out_root_pos_x_12", "out_root_pos_y_12",
-]
 # LABEL_FILTER: Optional[List[str]] = [
-#     "out_jpos_x_hip", "out_jpos_y_hip", "out_jpos_z_hip",
-#     "out_jrot_0_hip", "out_jrot_1_hip", "out_jrot_2_hip",
-#     "out_jrot_3_hip", "out_jrot_4_hip", "out_jrot_5_hip",
-#     "out_jvel_x_hip", "out_jvel_y_hip", "out_jvel_z_hip",
+#     "out_root_pos_x_7",  "out_root_pos_y_7",
+#     "out_root_pos_x_8",  "out_root_pos_y_8",
+#     "out_root_pos_x_9",  "out_root_pos_y_9",
+#     "out_root_pos_x_10", "out_root_pos_y_10",
+#     "out_root_pos_x_11", "out_root_pos_y_11",
+#     "out_root_pos_x_12", "out_root_pos_y_12",
+# ]
+# LABEL_FILTER: Optional[List[str]] = [
+#     "out_jpos_x_Hips", "out_jpos_y_Hips", "out_jpos_z_Hips",
+#     "out_jrot_0_Hips", "out_jrot_1_Hips", "out_jrot_2_Hips",
+#     "out_jrot_3_Hips", "out_jrot_4_Hips", "out_jrot_5_Hips",
+#     "out_jvel_x_Hips", "out_jvel_y_Hips", "out_jvel_z_Hips",
 # ]
 # LABEL_FILTER: Optional[List[str]] = [
 #     "PhaseUpdate-1",  "PhaseUpdate-2",  "PhaseUpdate-3",  "PhaseUpdate-4",
 #     "PhaseUpdate-5",  "PhaseUpdate-6",  "PhaseUpdate-7",  "PhaseUpdate-8",
 #     "PhaseUpdate-9",  "PhaseUpdate-10", "PhaseUpdate-11", "PhaseUpdate-12",
+# ]
+# LABEL_FILTER: Optional[List[str]] = [
+#     "out_root_speed_7",  "out_root_speed_8",  "out_root_speed_9",
+#     "out_root_speed_10", "out_root_speed_11", "out_root_speed_12",
 # ]
 
 # LABEL_FILTER: Optional[List[str]] = [
@@ -74,7 +80,18 @@ LABEL_FILTER: Optional[List[str]] = [
 #     "root_vel_x_7", "root_vel_y_7",
 #     "root_speed_7",
 # ]
-
+# LABEL_FILTER: Optional[List[str]] = [
+#     "root_speed_0",  "root_speed_1",  "root_speed_2",  "root_speed_3",
+#     "root_speed_4",  "root_speed_5",  "root_speed_6",  "root_speed_7",
+#     "root_speed_8",  "root_speed_9",  "root_speed_10", "root_speed_11",
+#     "root_speed_12",
+# ]
+# LABEL_FILTER: Optional[List[str]] = [
+#     "jpos_x_Hips", "jpos_y_Hips", "jpos_z_Hips",
+#     "jrot_0_Hips", "jrot_1_Hips", "jrot_2_Hips",
+#     "jrot_3_Hips", "jrot_4_Hips", "jrot_5_Hips",
+#     "jvel_x_Hips", "jvel_y_Hips", "jvel_z_Hips",
+# ]
 
 BINS = 100
 
