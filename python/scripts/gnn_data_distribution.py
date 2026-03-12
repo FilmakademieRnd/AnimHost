@@ -30,7 +30,7 @@ import numpy as np
 #   INPUT_PHASE_MODE  expects Input.bin  with 130 features (13 keys × 5 ch × 2)
 #   OUTPUT_PHASE_MODE expects Output.bin with 140 features ( 7 keys × 5 ch × 4)
 INPUT_PHASE_MODE  = False
-OUTPUT_PHASE_MODE = True
+OUTPUT_PHASE_MODE = False
 
 # COMPARE_MODE: when True, overlay baseline + candidate histograms on the same plots.
 # When False, plot a single dataset as before.
@@ -41,11 +41,11 @@ DATA_DIR = r"D:\anim-ws\survivor-experiments\survivor-1\candidate\GNN Data"
 DATA_TYPE = "output"  # "input" | "output"
 
 # Compare-mode config (used when COMPARE_MODE = True)
-# BASELINE_DIR  = r"D:\anim-ws\quad-experiments\quadruped-run-10\e2509_20260225_0\GNN\Data"   # AnimHost parity model data
-# CANDIDATE_DIR = r"D:\anim-ws\MANN Eval Scenes\inference-data-phase05"                       # AnimHost parity model inference
+BASELINE_DIR  = r"D:\anim-ws\quad-experiments\quadruped-run-10\e2509_20260225_0\GNN\Data"   # AnimHost parity model data
+CANDIDATE_DIR = r"D:\anim-ws\MANN Eval Scenes\infernece-data-7x1m"                       # AnimHost parity model inference
 # CANDIDATE_DIR = r"D:\anim-ws\quad-experiments\quadruped-run-7\GNN data"                     # Unity parity model data
-BASELINE_DIR  = r"D:\anim-ws\survivor-experiments\survivor-1\candidate\GNN Data"          # AnimHost survivor latest data
-CANDIDATE_DIR = r"D:\anim-ws\survivor-experiments\survivor-1\inference-data-straight"     # Animhost survivor inference
+# BASELINE_DIR  = r"D:\anim-ws\survivor-experiments\survivor-1\candidate\GNN Data"          # AnimHost survivor latest data
+# CANDIDATE_DIR = r"D:\anim-ws\survivor-experiments\survivor-1\infernece-data-7x1m"     # Animhost survivor inference
 COMPARE_DATA_TYPE = "output"  # "input" | "output" (applies to both)
 
 # Format of the CANDIDATE directory:
@@ -55,9 +55,9 @@ CANDIDATE_FORMAT = "gnn"  # "gnn" | "raw"
 
 # If non-empty, only these labels are plotted. In compare mode, only labels
 # present in LABEL_FILTER *and* both datasets are shown.
-LABEL_FILTER: Optional[List[str]] = [
-    "delta_x", "delta_y", "delta_angle",
-]
+# LABEL_FILTER: Optional[List[str]] = [
+#     "delta_x", "delta_y", "delta_angle",
+# ]
 # LABEL_FILTER: Optional[List[str]] = [
 #     "out_root_pos_x_7",  "out_root_pos_y_7",
 #     "out_root_pos_x_8",  "out_root_pos_y_8",
@@ -101,6 +101,16 @@ LABEL_FILTER: Optional[List[str]] = [
 #     "jrot_3_Hips", "jrot_4_Hips", "jrot_5_Hips",
 #     "jvel_x_Hips", "jvel_y_Hips", "jvel_z_Hips",
 # ]
+# LABEL_FILTER: Optional[List[str]] = [
+#     "jpos_z_Spine1", "jpos_z_Tail", "jpos_z_Neck", "jpos_z_Head",
+#     "root_speed_0", "jpos_z_RightShoulder", "root_speed_1", "jpos_z_LeftShoulder",
+# ]
+LABEL_FILTER: Optional[List[str]] = [
+    "out_root_fwd_y_8", "out_root_fwd_y_9", "out_root_fwd_y_10",
+    "out_root_fwd_y_7", "out_root_fwd_y_11", "out_root_fwd_y_12",
+]
+
+
 
 BINS = 100
 
