@@ -253,8 +253,14 @@ private:
 
     glm::mat4 updateRootTranform(const glm::mat4& pos, const glm::vec3& delta, int genIdx);
 
-    void writeExportMetadata() const;
     void writeExportSequences() const;
-    void writeExportBinary() const;
+
+    // GNN training format export
+    void writeExportData() const;
+    QStringList buildInputLabels() const;
+    QStringList buildOutputLabels() const;
+    void writeLabelsFile(const QString& path, const QStringList& labels) const;
+    void writeShapeFile(const QString& path, int numSamples, int numFeatures) const;
+    void writeBinaryFile(const QString& path, const std::vector<std::vector<float>>& samples) const;
 
 };

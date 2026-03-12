@@ -301,9 +301,7 @@ void GNNController::prepareInput()
 
 	if (bExportData && !_exportInputSamples.empty()) {
 		QDir().mkpath(_exportDir);
-		writeExportMetadata();
-		writeExportSequences();
-		writeExportBinary();
+		writeExportData();
 		bExportData = false;
 	}
 
@@ -874,111 +872,96 @@ void GNNController::DrawPlot() {
 
 // ── Inference Data Export ─────────────────────────────────────────────────────
 
-void GNNController::writeExportMetadata() const
+QStringList GNNController::buildInputLabels() const
 {
 	int numBones = static_cast<int>(initJointPos.size());
-
-	// ── Input header ──
-	int numFeatX = 0;
-	QString headerX;
+	QStringList labels;
 
 	for (int i = 0; i < totalKeys; i++) {
-		headerX += ",root_pos_x_" + QString::number(i);
-		headerX += ",root_pos_y_" + QString::number(i);
-		headerX += ",root_fwd_x_" + QString::number(i);
-		headerX += ",root_fwd_y_" + QString::number(i);
-		headerX += ",root_vel_x_" + QString::number(i);
-		headerX += ",root_vel_y_" + QString::number(i);
-		headerX += ",root_speed_" + QString::number(i);
-		numFeatX += 7;
+		labels << "root_pos_x_" + QString::number(i);
+		labels << "root_pos_y_" + QString::number(i);
+		labels << "root_fwd_x_" + QString::number(i);
+		labels << "root_fwd_y_" + QString::number(i);
+		labels << "root_vel_x_" + QString::number(i);
+		labels << "root_vel_y_" + QString::number(i);
+		labels << "root_speed_" + QString::number(i);
 	}
 
 	for (int i = 0; i < numBones; i++) {
 		QString boneName = QString::fromStdString(skeleton->bone_names_reverse.at(i));
-		headerX += ",jpos_x_" + boneName;
-		headerX += ",jpos_y_" + boneName;
-		headerX += ",jpos_z_" + boneName;
-		headerX += ",jrot_0_" + boneName;
-		headerX += ",jrot_1_" + boneName;
-		headerX += ",jrot_2_" + boneName;
-		headerX += ",jrot_3_" + boneName;
-		headerX += ",jrot_4_" + boneName;
-		headerX += ",jrot_5_" + boneName;
-		headerX += ",jvel_x_" + boneName;
-		headerX += ",jvel_y_" + boneName;
-		headerX += ",jvel_z_" + boneName;
-		numFeatX += 12;
+		labels << "jpos_x_" + boneName;
+		labels << "jpos_y_" + boneName;
+		labels << "jpos_z_" + boneName;
+		labels << "jrot_0_" + boneName;
+		labels << "jrot_1_" + boneName;
+		labels << "jrot_2_" + boneName;
+		labels << "jrot_3_" + boneName;
+		labels << "jrot_4_" + boneName;
+		labels << "jrot_5_" + boneName;
+		labels << "jvel_x_" + boneName;
+		labels << "jvel_y_" + boneName;
+		labels << "jvel_z_" + boneName;
 	}
 
+	int phaseIdx = 1;
 	for (int f = 0; f < totalKeys; f++) {
 		for (int c = 0; c < numPhaseChannel; c++) {
-			headerX += ",in_phase_x_t" + QString::number(f) + "_c" + QString::number(c);
-			headerX += ",in_phase_y_t" + QString::number(f) + "_c" + QString::number(c);
-			numFeatX += 2;
+			labels << "PhaseSpace-" + QString::number(phaseIdx++);
+			labels << "PhaseSpace-" + QString::number(phaseIdx++);
 		}
 	}
-	headerX += "\n";
 
-	// ── Output header ──
-	int numFeatY = 0;
-	QString headerY;
+	return labels;
+}
 
-	headerY += ",delta_x,delta_y,delta_angle";
-	numFeatY += 3;
+QStringList GNNController::buildOutputLabels() const
+{
+	int numBones = static_cast<int>(initJointPos.size());
+	QStringList labels;
+
+	labels << "delta_x" << "delta_y" << "delta_angle";
 
 	for (int i = pastKeys + 1; i < totalKeys; i++) {
-		headerY += ",out_root_pos_x_" + QString::number(i);
-		headerY += ",out_root_pos_y_" + QString::number(i);
-		headerY += ",out_root_fwd_x_" + QString::number(i);
-		headerY += ",out_root_fwd_y_" + QString::number(i);
-		headerY += ",out_root_vel_x_" + QString::number(i);
-		headerY += ",out_root_vel_y_" + QString::number(i);
-		headerY += ",out_root_speed_" + QString::number(i);
-		numFeatY += 7;
+		labels << "out_root_pos_x_" + QString::number(i);
+		labels << "out_root_pos_y_" + QString::number(i);
+		labels << "out_root_fwd_x_" + QString::number(i);
+		labels << "out_root_fwd_y_" + QString::number(i);
+		labels << "out_root_vel_x_" + QString::number(i);
+		labels << "out_root_vel_y_" + QString::number(i);
+		labels << "out_root_speed_" + QString::number(i);
 	}
 
 	for (int i = 0; i < numBones; i++) {
 		QString boneName = QString::fromStdString(skeleton->bone_names_reverse.at(i));
-		headerY += ",out_jpos_x_" + boneName;
-		headerY += ",out_jpos_y_" + boneName;
-		headerY += ",out_jpos_z_" + boneName;
-		headerY += ",out_jrot_0_" + boneName;
-		headerY += ",out_jrot_1_" + boneName;
-		headerY += ",out_jrot_2_" + boneName;
-		headerY += ",out_jrot_3_" + boneName;
-		headerY += ",out_jrot_4_" + boneName;
-		headerY += ",out_jrot_5_" + boneName;
-		headerY += ",out_jvel_x_" + boneName;
-		headerY += ",out_jvel_y_" + boneName;
-		headerY += ",out_jvel_z_" + boneName;
-		numFeatY += 12;
+		labels << "out_jpos_x_" + boneName;
+		labels << "out_jpos_y_" + boneName;
+		labels << "out_jpos_z_" + boneName;
+		labels << "out_jrot_0_" + boneName;
+		labels << "out_jrot_1_" + boneName;
+		labels << "out_jrot_2_" + boneName;
+		labels << "out_jrot_3_" + boneName;
+		labels << "out_jrot_4_" + boneName;
+		labels << "out_jrot_5_" + boneName;
+		labels << "out_jvel_x_" + boneName;
+		labels << "out_jvel_y_" + boneName;
+		labels << "out_jvel_z_" + boneName;
 	}
 
+	int updateIdx = 1;
 	for (int f = 0; f < futureKeys + 1; f++) {
 		for (int c = 0; c < numPhaseChannel; c++) {
-			headerY += ",out_phase_x_t" + QString::number(f) + "_c" + QString::number(c);
-			headerY += ",out_phase_y_t" + QString::number(f) + "_c" + QString::number(c);
-			numFeatY += 2;
+			labels << "PhaseUpdate-" + QString::number(updateIdx++);
+			labels << "PhaseUpdate-" + QString::number(updateIdx++);
 		}
 		for (int c = 0; c < numPhaseChannel; c++) {
-			headerY += ",out_amp_t" + QString::number(f) + "_c" + QString::number(c);
-			numFeatY++;
+			labels << "PhaseUpdate-" + QString::number(updateIdx++);
 		}
 		for (int c = 0; c < numPhaseChannel; c++) {
-			headerY += ",out_freq_t" + QString::number(f) + "_c" + QString::number(c);
-			numFeatY++;
+			labels << "PhaseUpdate-" + QString::number(updateIdx++);
 		}
 	}
-	headerY += "\n";
 
-	QFile metaFile(_exportDir + "/metadata.txt");
-	if (metaFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-		QTextStream out(&metaFile);
-		out << QString::number(numFeatX) << headerX;
-		out << QString::number(numFeatY) << headerY;
-	} else {
-		qWarning() << "GNNController: failed to write metadata.txt to" << _exportDir;
-	}
+	return labels;
 }
 
 void GNNController::writeExportSequences() const
@@ -994,35 +977,74 @@ void GNNController::writeExportSequences() const
 	}
 }
 
-void GNNController::writeExportBinary() const
+void GNNController::writeBinaryFile(const QString& path, const std::vector<std::vector<float>>& samples) const
 {
-	// data_X.bin
-	{
-		QFile fileX(_exportDir + "/data_X.bin");
-		if (fileX.open(QIODevice::WriteOnly)) {
-			QDataStream out(&fileX);
-			out.setByteOrder(QDataStream::LittleEndian);
-			for (const auto& sample : _exportInputSamples) {
-				out.writeRawData(reinterpret_cast<const char*>(sample.data()),
-					static_cast<int>(sample.size() * sizeof(float)));
-			}
-		} else {
-			qWarning() << "GNNController: failed to write data_X.bin to" << _exportDir;
+	QFile file(path);
+	if (file.open(QIODevice::WriteOnly)) {
+		QDataStream out(&file);
+		out.setByteOrder(QDataStream::LittleEndian);
+		for (const auto& sample : samples) {
+			out.writeRawData(reinterpret_cast<const char*>(sample.data()),
+				static_cast<int>(sample.size() * sizeof(float)));
 		}
+	} else {
+		qWarning() << "GNNController: failed to write" << path;
+	}
+}
+
+void GNNController::writeLabelsFile(const QString& path, const QStringList& labels) const
+{
+	QFile file(path);
+	if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		QTextStream out(&file);
+		for (int i = 0; i < labels.size(); i++) {
+			out << "[" << i << "] " << labels[i] << "\n";
+		}
+	} else {
+		qWarning() << "GNNController: failed to write" << path;
+	}
+}
+
+void GNNController::writeShapeFile(const QString& path, int numSamples, int numFeatures) const
+{
+	QFile file(path);
+	if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		QTextStream out(&file);
+		out << numSamples << "\n" << numFeatures;
+	} else {
+		qWarning() << "GNNController: failed to write" << path;
+	}
+}
+
+void GNNController::writeExportData() const
+{
+	int numSamples = static_cast<int>(_exportInputSamples.size());
+	int numInputFeatures = _exportInputSamples.empty() ? 0 : static_cast<int>(_exportInputSamples[0].size());
+	int numOutputFeatures = _exportOutputSamples.empty() ? 0 : static_cast<int>(_exportOutputSamples[0].size());
+
+	QStringList inputLabels = buildInputLabels();
+	QStringList outputLabels = buildOutputLabels();
+
+	if (inputLabels.size() != numInputFeatures) {
+		qWarning() << "GNNController: input label count" << inputLabels.size()
+			<< "does not match feature count" << numInputFeatures;
+	}
+	if (outputLabels.size() != numOutputFeatures) {
+		qWarning() << "GNNController: output label count" << outputLabels.size()
+			<< "does not match feature count" << numOutputFeatures;
 	}
 
-	// data_Y.bin
-	{
-		QFile fileY(_exportDir + "/data_Y.bin");
-		if (fileY.open(QIODevice::WriteOnly)) {
-			QDataStream out(&fileY);
-			out.setByteOrder(QDataStream::LittleEndian);
-			for (const auto& sample : _exportOutputSamples) {
-				out.writeRawData(reinterpret_cast<const char*>(sample.data()),
-					static_cast<int>(sample.size() * sizeof(float)));
-			}
-		} else {
-			qWarning() << "GNNController: failed to write data_Y.bin to" << _exportDir;
-		}
-	}
+	writeBinaryFile(_exportDir + "/Input.bin", _exportInputSamples);
+	writeBinaryFile(_exportDir + "/Output.bin", _exportOutputSamples);
+
+	writeLabelsFile(_exportDir + "/InputLabels.txt", inputLabels);
+	writeLabelsFile(_exportDir + "/OutputLabels.txt", outputLabels);
+
+	writeShapeFile(_exportDir + "/InputShape.txt", numSamples, numInputFeatures);
+	writeShapeFile(_exportDir + "/OutputShape.txt", numSamples, numOutputFeatures);
+
+	writeExportSequences();
+
+	qDebug() << "GNNController: exported" << numSamples << "samples to" << _exportDir
+		<< "(input:" << numInputFeatures << "features, output:" << numOutputFeatures << "features)";
 }

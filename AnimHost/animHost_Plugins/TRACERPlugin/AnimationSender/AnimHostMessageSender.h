@@ -42,6 +42,9 @@
 #include <QMutex>
 #include <QMultiMap>
 #include <QElapsedTimer>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 //#include <nzmqt/nzmqt.hpp>
 #include <zmq.hpp>
 
@@ -177,8 +180,16 @@ class TRACERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMessageHandler
     void SerializePose(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character,
                        std::shared_ptr<SceneNodeObjectSequence> sceneNodeList, QByteArray* byteArray, int frame = 0);
 
-    void SerializeAnimation(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character, 
+    void SerializeAnimation(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character,
                                 std::shared_ptr<SceneNodeObjectSequence> sceneNodeList, QByteArray* byteArray, int frame);
+
+    void dumpPoseToJson(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character,
+                        std::shared_ptr<SceneNodeObjectSequence> sceneNodeList, int frame, const QString& path);
+
+    void dumpAnimationToJson(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character,
+                             std::shared_ptr<SceneNodeObjectSequence> sceneNodeList, const QString& path);
+
+    void setDumpMessage() { dumpMessageToFile = true; }
 
     //! Indicates whether the sent animation will loop or not
     /*!
@@ -190,6 +201,8 @@ class TRACERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMessageHandler
     bool streamAnimation = false; //!< Indicates whether the animation data has to be streamed frame by frame or send en bloc
 
     bool sendBlock = false; //!< Indicates whether the animation data has to be sent en bloc
+
+    bool dumpMessageToFile = true; //!< One-shot flag to dump the next message to a JSON file
 
 	bool targetAddressChanged = false; //!< Indicates whether the target address has been changed
 

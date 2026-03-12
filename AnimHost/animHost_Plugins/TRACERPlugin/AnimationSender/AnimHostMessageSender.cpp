@@ -24,6 +24,8 @@
 #include <QDebug>
 #include <QDataStream>
 #include <QElapsedTimer>
+#include <QFile>
+#include <QCoreApplication>
 #include <iostream>
 
 void AnimHostMessageSender::requestStart() {
@@ -141,6 +143,12 @@ void AnimHostMessageSender::streamAnimationData()
         SerializePose(animData, charObj, sceneNodeList, msgBodyAnim, (int) animFrame);
         mutex.unlock();
 
+        if (dumpMessageToFile) {
+            QString dumpPath = QCoreApplication::applicationDirPath() + "/animhost_pose_dump.json";
+            dumpPoseToJson(animData, charObj, sceneNodeList, (int) animFrame, dumpPath);
+            dumpMessageToFile = false;
+        }
+
         // Create ZMQ Message
         createNewMessage(_globalTimer->getLocalTimeStamp(), ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
 
@@ -226,6 +234,12 @@ void AnimHostMessageSender::sendAnimationDataBlock()
     SerializeAnimation(animData, charObj, sceneNodeList, msgBodyAnim, 0);
     mutex.unlock();
     qDebug() << "BLOCK: SerializeAnimation done, msgBodyAnim size:" << msgBodyAnim->size();
+
+    if (dumpMessageToFile) {
+        QString dumpPath = QCoreApplication::applicationDirPath() + "/animhost_animation_dump.json";
+        dumpAnimationToJson(animData, charObj, sceneNodeList, dumpPath);
+        dumpMessageToFile = false;
+    }
 
     qDebug() << "BLOCK: calling createNewMessage...";
     createNewMessage( _globalTimer->getLocalTimeStamp(), ZMQMessageHandler::MessageType::PARAMETERUPDATE, msgBodyAnim);
@@ -523,7 +537,213 @@ void AnimHostMessageSender::SerializeAnimation(std::shared_ptr<Animation> animDa
 
 }
 
+void AnimHostMessageSender::dumpPoseToJson(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character,
+                                           std::shared_ptr<SceneNodeObjectSequence> sceneNodeList, int frame, const QString& path) {
+    QJsonObject root;
+    root["messageType"] = "PARAMETERUPDATE";
+    root["mode"] = "pose";
+    root["frame"] = frame;
+    root["targetSceneID"] = (int)ZMQMessageHandler::getTargetSceneID();
+    root["characterObjectID"] = (int)character->sceneObjectID;
 
+    // Resolve bone map
+    std::vector<int> skeletonFallback;
+    const std::vector<int>* boneMapPtr = nullptr;
+    if (!character->skinnedMeshList.empty()) {
+        boneMapPtr = &character->skinnedMeshList.at(0).boneMapIDs;
+        root["boneMapSource"] = "skinnedMesh";
+    } else if (character->skeletonObjIDs.size() > 1) {
+        skeletonFallback.assign(character->skeletonObjIDs.begin() + 1, character->skeletonObjIDs.end());
+        boneMapPtr = &skeletonFallback;
+        root["boneMapSource"] = "skeletonFallback";
+    } else {
+        root["error"] = "no bone map available";
+        QFile file(path);
+        file.open(QIODevice::WriteOnly);
+        file.write(QJsonDocument(root).toJson(QJsonDocument::Indented));
+        return;
+    }
+    const std::vector<int>& boneMapIDs = *boneMapPtr;
+    int nBones = (int)boneMapIDs.size();
+    root["nBones"] = nBones;
+
+    // Root transform
+    glm::quat rootQuat = animData->mBones.at(0).GetOrientation(frame);
+    glm::vec3 rootPos = animData->mBones.at(0).GetPosition(frame);
+    QJsonObject rootTransform;
+    rootTransform["position"] = QJsonObject{{"x", rootPos.x}, {"y", rootPos.y}, {"z", rootPos.z}};
+    rootTransform["rotation"] = QJsonObject{{"x", rootQuat.x}, {"y", rootQuat.y}, {"z", rootQuat.z}, {"w", rootQuat.w}};
+    rootTransform["paramID_pos"] = 0;
+    rootTransform["paramID_rot"] = 1;
+    root["root"] = rootTransform;
+
+    // Bones
+    QJsonArray bonesArray;
+    for (int i = 0; i < nBones; i++) {
+        int boneID = boneMapIDs.at(i);
+        if (boneID < 0 || boneID >= (int)sceneNodeList->mSceneNodeObjectSequence.size()) continue;
+        std::string boneName = sceneNodeList->mSceneNodeObjectSequence.at(boneID).objectName;
+        if (boneName == "heel_02_R" || boneName == "heel_02_L") continue;
+
+        int animDataBoneID = -1;
+        for (int j = 0; j < (int)animData->mBones.size(); j++) {
+            if (boneName == animData->mBones.at(j).mName) { animDataBoneID = j; break; }
+        }
+        if (animDataBoneID < 0) continue;
+
+        glm::quat boneQuat = animData->mBones.at(animDataBoneID).GetOrientation(frame);
+        glm::vec3 bonePos = animData->mBones.at(animDataBoneID).GetPosition(frame);
+
+        QJsonObject boneObj;
+        boneObj["index"] = i;
+        boneObj["boneID"] = boneID;
+        boneObj["boneName"] = QString::fromStdString(boneName);
+        boneObj["animDataBoneID"] = animDataBoneID;
+        boneObj["paramID_rot"] = i + 3 + 3;
+        boneObj["paramID_pos"] = i + nBones + 3 + 3;
+        boneObj["rotation"] = QJsonObject{{"x", boneQuat.x}, {"y", boneQuat.y}, {"z", boneQuat.z}, {"w", boneQuat.w}};
+        boneObj["position"] = QJsonObject{{"x", bonePos.x}, {"y", bonePos.y}, {"z", bonePos.z}};
+        bonesArray.append(boneObj);
+    }
+    root["bones"] = bonesArray;
+
+    QFile file(path);
+    if (file.open(QIODevice::WriteOnly)) {
+        file.write(QJsonDocument(root).toJson(QJsonDocument::Indented));
+        qDebug() << "Pose dump written to:" << path;
+    } else {
+        qWarning() << "Failed to open dump file:" << path;
+    }
+}
+
+void AnimHostMessageSender::dumpAnimationToJson(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character,
+                                                std::shared_ptr<SceneNodeObjectSequence> sceneNodeList, const QString& path) {
+    QJsonObject root;
+    root["messageType"] = "PARAMETERUPDATE";
+    root["mode"] = "animation";
+    root["targetSceneID"] = (int)ZMQMessageHandler::getTargetSceneID();
+    root["characterObjectID"] = (int)character->sceneObjectID;
+
+    if (animData->mBones.empty()) {
+        root["error"] = "no bones in animation data";
+        QFile file(path);
+        file.open(QIODevice::WriteOnly);
+        file.write(QJsonDocument(root).toJson(QJsonDocument::Indented));
+        return;
+    }
+
+    // Resolve bone map
+    std::vector<int> skeletonFallback;
+    const std::vector<int>* boneMapPtr = nullptr;
+    if (!character->skinnedMeshList.empty()) {
+        boneMapPtr = &character->skinnedMeshList.at(0).boneMapIDs;
+        root["boneMapSource"] = "skinnedMesh";
+    } else if (character->skeletonObjIDs.size() > 1) {
+        skeletonFallback.assign(character->skeletonObjIDs.begin() + 1, character->skeletonObjIDs.end());
+        boneMapPtr = &skeletonFallback;
+        root["boneMapSource"] = "skeletonFallback";
+    } else {
+        root["error"] = "no bone map available";
+        QFile file(path);
+        file.open(QIODevice::WriteOnly);
+        file.write(QJsonDocument(root).toJson(QJsonDocument::Indented));
+        return;
+    }
+    const std::vector<int>& boneMapIDs = *boneMapPtr;
+    int nBones = (int)boneMapIDs.size();
+    root["nBones"] = nBones;
+    root["animBoneCount"] = (int)animData->mBones.size();
+
+    // Root keyframes
+    QJsonObject rootObj;
+    rootObj["paramID_pos"] = 0;
+    rootObj["paramID_rot"] = 1;
+
+    auto& rootBone = animData->mBones.at(0);
+    rootObj["positionKeyCount"] = (int)rootBone.mPositonKeys.size();
+    rootObj["rotationKeyCount"] = (int)rootBone.mRotationKeys.size();
+
+    // Root position keyframes (limit to first 5 + last for readability)
+    QJsonArray rootPosKeys;
+    for (int k = 0; k < (int)rootBone.mPositonKeys.size(); k++) {
+        auto& key = rootBone.mPositonKeys.at(k);
+        QJsonObject kObj;
+        kObj["time_s"] = key.timeStamp / 60.0;
+        kObj["position"] = QJsonObject{{"x", key.position.x}, {"y", key.position.y}, {"z", key.position.z}};
+        rootPosKeys.append(kObj);
+    }
+    rootObj["positionKeys"] = rootPosKeys;
+
+    QJsonArray rootRotKeys;
+    for (int k = 0; k < (int)rootBone.mRotationKeys.size(); k++) {
+        auto& key = rootBone.mRotationKeys.at(k);
+        QJsonObject kObj;
+        kObj["time_s"] = key.timeStamp / 60.0;
+        kObj["rotation"] = QJsonObject{{"x", key.orientation.x}, {"y", key.orientation.y}, {"z", key.orientation.z}, {"w", key.orientation.w}};
+        rootRotKeys.append(kObj);
+    }
+    rootObj["rotationKeys"] = rootRotKeys;
+    root["root"] = rootObj;
+
+    // Bones
+    QJsonArray bonesArray;
+    for (int i = 0; i < nBones; i++) {
+        int boneID = boneMapIDs.at(i);
+        if (boneID < 0 || boneID >= (int)sceneNodeList->mSceneNodeObjectSequence.size()) continue;
+        std::string boneName = sceneNodeList->mSceneNodeObjectSequence.at(boneID).objectName;
+        if (boneName == "heel_02_R" || boneName == "heel_02_L") continue;
+
+        int animDataBoneID = -1;
+        for (int j = 0; j < (int)animData->mBones.size(); j++) {
+            if (boneName == animData->mBones.at(j).mName) { animDataBoneID = j; break; }
+        }
+        if (animDataBoneID < 0) continue;
+
+        QJsonObject boneObj;
+        boneObj["index"] = i;
+        boneObj["boneID"] = boneID;
+        boneObj["boneName"] = QString::fromStdString(boneName);
+        boneObj["animDataBoneID"] = animDataBoneID;
+        boneObj["paramID_rot"] = i + 3 + 3;
+        boneObj["paramID_pos"] = i + nBones + 3 + 3;
+
+        auto& bone = animData->mBones.at(animDataBoneID);
+        boneObj["positionKeyCount"] = (int)bone.mPositonKeys.size();
+        boneObj["rotationKeyCount"] = (int)bone.mRotationKeys.size();
+
+        // Include all keyframes
+        if (!bone.mPositonKeys.empty()) {
+            QJsonArray posKeys;
+            for (auto& key : bone.mPositonKeys) {
+                QJsonObject kObj;
+                kObj["time_s"] = key.timeStamp / 60.0;
+                kObj["position"] = QJsonObject{{"x", key.position.x}, {"y", key.position.y}, {"z", key.position.z}};
+                posKeys.append(kObj);
+            }
+            boneObj["positionKeys"] = posKeys;
+        }
+
+        QJsonArray rotKeys;
+        for (auto& key : bone.mRotationKeys) {
+            QJsonObject kObj;
+            kObj["time_s"] = key.timeStamp / 60.0;
+            kObj["rotation"] = QJsonObject{{"x", key.orientation.x}, {"y", key.orientation.y}, {"z", key.orientation.z}, {"w", key.orientation.w}};
+            rotKeys.append(kObj);
+        }
+        boneObj["rotationKeys"] = rotKeys;
+
+        bonesArray.append(boneObj);
+    }
+    root["bones"] = bonesArray;
+
+    QFile file(path);
+    if (file.open(QIODevice::WriteOnly)) {
+        file.write(QJsonDocument(root).toJson(QJsonDocument::Indented));
+        qDebug() << "Animation dump written to:" << path;
+    } else {
+        qWarning() << "Failed to open dump file:" << path;
+    }
+}
 
 
 // Creating ZMQ Parameter Update Message Body from T value
