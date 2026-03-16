@@ -9,15 +9,16 @@ import time
 import os
 
 class FrameRange:
-    def __init__(self, num_samples, fps, reference_frame, start_index):
-        
+    def __init__(self, num_samples, fps, reference_frame, start_index, max_frame=None):
+
         self.fps = fps
         self.reference_frame = reference_frame
         self.current_sample_index = start_index
+        self.max_frame = max_frame
 
         # Ensure total frames is odd, so the reference frame is always in the middle
         self.total_frames = 2 * fps + 1
-        
+
         self.num_samples = num_samples
         if num_samples % 2 == 0:
             self.num_samples += 1
@@ -41,6 +42,9 @@ class FrameRange:
 
             if frameIndex < 0:
                 frameIndex = 0
+
+            if self.max_frame is not None and frameIndex > self.max_frame:
+                frameIndex = self.max_frame
 
             return frameIndex
     
@@ -189,16 +193,34 @@ def get_future_window_values(row, phaseValues, selected_columns, window_size=7):
         print(f"Progress: {seq_id}/{frame}", end='\r')
     return window[selected_columns].values.flatten()
 
-def get_window_values_(row, phaseValues, selected_columns, num_samples=13, fps=60, start_index=0):
+def get_window_values_(row, phaseValues, selected_columns, num_samples=13, fps=60, start_index=0, offset=0):
+    """"
+    Retrieves the window values for a given row in a DataFrame based on a specified frame range.
+
+    Parameters:
+    - row: The row containing the sequence ID and frame number.
+    - phaseValues: The DataFrame containing the phase values.
+    - selected_columns: The list of columns to select from the window.
+    - num_samples: The number of samples to retrieve within the window (default is 13).
+    - fps: The frames per second to determine the total frame range (default is 60)
+    - start_index: The starting index for the window (default is 0).
+    - offset: The frame offset to apply to the row reference frame (default is 0).
+
+    Returns:
+    - The flattened array of values from the window.
+
+    """    
     seq_id, frame = row.name
-    
-    # Initialize FrameRange with the given parameters
-    frame_range = FrameRange(num_samples=num_samples, fps=fps, reference_frame=frame, start_index=start_index)
-    
+
+    # Offset by one frame because target pivot is expected to be a future frame
+    frame = frame + offset if offset else frame
+    max_frame = phaseValues.loc[seq_id].index.max()
+    # Initialize FrameRange with the given parameters. Guard with max_frame to prevent out-of-bounds access due to offset.
+    frame_range = FrameRange(num_samples=num_samples, fps=fps, reference_frame=frame, start_index=start_index, max_frame=max_frame)
+
     # Generate the frame indices within the specified range
     frame_indices = list(frame_range)
-    
-    #print(frame_indices)
+
     # Create a list of tuples for the multi-index selection
     index_tuples = [(seq_id, f) for f in frame_indices]
 
@@ -366,7 +388,7 @@ class MotionProcessor:
         select_combined = select_phase2d + select_amplitude + select_freq
 
         # Collect Future Phase Values
-        future_phase_values = self.InputData.apply(get_window_values_, args=(self.PhaseData, select_combined, 13, 60, 6), axis=1)
+        future_phase_values = self.InputData.apply(get_window_values_, args=(self.PhaseData, select_combined, 13, 60, 6, 1), axis=1)
         #future_phase_values = self.InputData.apply(get_future_window_values, args=(self.PhaseData, select_combined, 7), axis=1)
         
         dfOutDataMrg = pd.merge(df_OutputData, future_phase_values.to_frame(), on=['SeqId','Frame'],how='inner')
