@@ -3,11 +3,13 @@
 
 #include "../DeepLocomotionPlugin_global.h"
 #include <QMetaType>
+#include <QComboBox>
 #include <pluginnodeinterface.h>
 #include <nodedatatypes.h>
 #include <UIUtils.h>
 #include <commondatatypes.h>
 #include <MathUtils.h>
+#include <SkeletonConfig.h>
 
 class DEEPLOCOMOTIONPLUGINSHARED_EXPORT LocomotionPreprocessNode : public PluginNodeInterface
 {
@@ -18,14 +20,20 @@ private:
     std::weak_ptr<AnimNodeData<PoseSequence>> _poseSequenceIn;
     std::weak_ptr<AnimNodeData<JointVelocitySequence>> _jointVelocitySequenceIn;
     std::weak_ptr<AnimNodeData<Animation>> _animationIn;
+    std::weak_ptr<AnimNodeData<ValidFrames>> _validFramesIn;
 
 
     //UI
     QWidget* _widget = nullptr;
     FolderSelectionWidget* _folderSelect = nullptr;
     BoneSelectionWidget* _boneSelect = nullptr;
+    QComboBox* _skeletonTypeCombo = nullptr;
     QCheckBox* _cbOverwrite = nullptr;
     QVBoxLayout* _vLayout = nullptr;
+
+    // Skeleton configuration
+    SkeletonType _skeletonType = SkeletonType::Bipedal;
+    const SkeletonBoneConfig& getBoneConfig() const;
 
 private: 
     //Write Data
@@ -33,6 +41,12 @@ private:
 
     int totalNumberFrames = 0;
     bool bOverwriteDataExport = false;
+
+    // Continuous sequence indexing
+    int currentSequenceIndex = 1;
+
+    // Frame tracking for consecutive segmentation
+    std::vector<int> processedFrameNumbers;  // Actual frame numbers from getFramesToProcess()
 
     QString metadataFileName = "metadata.txt";
     QString sequencesFileName = "sequences_mann.txt";
@@ -195,11 +209,61 @@ private:
     void writeInputData();
     void writeOutputData();
     void writeMetaData();
+    void clearSegmentBuffers();
+
+    /**
+     * @brief Segment frames into consecutive groups.
+     *
+     * Splits a list of frame numbers into groups where each group contains
+     * consecutive frames (frame[i+1] == frame[i] + 1).
+     *
+     * @param frames Vector of frame numbers (must be sorted)
+     * @return Vector of frame number groups, each representing a consecutive segment
+     */
+    std::vector<std::vector<int>> segmentConsecutiveFrames(const std::vector<int>& frames) const;
+
+    /**
+     * @brief Segment frames into consecutive groups and apply 60-frame buffer filter.
+     *
+     * First segments frames into consecutive groups (same as DataExportPlugin),
+     * then applies 60-frame buffer filter to each segment based on position within the segment.
+     * A frame is kept only if it has at least 60 valid frames before and after it within the
+     * same consecutive segment. Returns ALL segments including empty ones (segments completely
+     * eliminated by the filter).
+     *
+     * @param frames Vector of frame numbers (must be sorted)
+     * @param animationDuration Total duration of the animation (unused, kept for compatibility)
+     * @return Vector of frame number groups (some may be empty)
+     */
+    std::vector<std::vector<int>> segmentAndFilterConsecutiveFrames(
+        const std::vector<int>& frames,
+        int animationDuration) const;
 
 private Q_SLOTS:
     void onRootBoneSelectionChanged(const int text);
     void onFolderSelectionChanged();
     void onOverrideCheckbox(int state);
+    void onSkeletonTypeChanged(int index);
+
+private:
+    /**
+     * @brief Get the list of frames to process based on ValidFrames input.
+     *
+     * If ValidFrames is empty (no Sequences.txt), returns frames with 60-frame offset (current behavior).
+     * If ValidFrames is populated, filters to valid frames that pass the 60-frame scene bounds check.
+     *
+     * @param animation The animation being processed
+     * @param sourceName The source filename to look up in ValidFrames
+     * @return Vector of frame indices to process
+     */
+    std::vector<int> getFramesToProcess(std::shared_ptr<Animation> animation, const QString& sourceName);
+
+    /**
+     * @brief Extract the filename stem (without path and extension) from a source name.
+     * @param sourceName The source filename (e.g., "D1_001_KAN01_001.bvh")
+     * @return The stem without extension (e.g., "D1_001_KAN01_001")
+     */
+    QString extractFileStem(const QString& sourceName) const;
 
 };
 

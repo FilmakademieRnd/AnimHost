@@ -222,12 +222,23 @@ def get_window_values_(row, phaseValues, selected_columns, num_samples=13, fps=6
     # Create a list of tuples for the multi-index selection
     index_tuples = [(seq_id, f) for f in frame_indices]
 
-    # Access the rows corresponding to these indices
-    window = phaseValues.loc[index_tuples]
-    
+    # DEBUG: Check which frames are missing
+    try:
+        # Access the rows corresponding to these indices
+        window = phaseValues.loc[index_tuples]
+    except KeyError as e:
+        # Find which specific frames are missing
+        available_frames = set(phaseValues.loc[seq_id].index) if seq_id in phaseValues.index.get_level_values('SeqId') else set()
+        missing_frames = [f for f in frame_indices if f not in available_frames]
+        print(f"\nX KeyError for SeqId {seq_id}, Frame {frame}")
+        print(f"   Requested frames: {frame_indices}")
+        print(f"   Available frames for SeqId {seq_id}: {sorted(available_frames) if available_frames else 'SeqId not found'}")
+        print(f"   Missing frames: {missing_frames}")
+        raise
+
     if frame % 100 == 0:
         print(f"Progress: {seq_id}/{frame}", end='\r')
-    
+
     return window[selected_columns].values.flatten()
 
 def parse_input_output_features(metadata_file):
@@ -338,6 +349,30 @@ class MotionProcessor:
         # Set multi-index for both dataframes
         for df in [df_inputData, df_phaseData]:
             df.set_index(['SeqId', 'Frame'], inplace=True)
+
+        # DEBUG: Show sequence alignment
+        print("\n=== SEQUENCE ALIGNMENT DEBUG ===")
+        print(f"Mann sequences (df_inputData):")
+        print(f"  Total rows: {len(df_inputData)}")
+        print(f"  SeqIds: {sorted(df_inputData.index.get_level_values('SeqId').unique())}")
+        for seqid in sorted(df_inputData.index.get_level_values('SeqId').unique())[:5]:  # Show first 5
+            frames = df_inputData.loc[seqid].index.tolist()
+            print(f"  SeqId {seqid}: {len(frames)} frames, range: {min(frames)}-{max(frames)}")
+
+        print(f"\nPAE sequences (df_phaseData):")
+        print(f"  Total rows: {len(df_phaseData)}")
+        print(f"  SeqIds: {sorted(df_phaseData.index.get_level_values('SeqId').unique())}")
+        for seqid in sorted(df_phaseData.index.get_level_values('SeqId').unique())[:5]:  # Show first 5
+            frames = df_phaseData.loc[seqid].index.tolist()
+            print(f"  SeqId {seqid}: {len(frames)} frames, range: {min(frames)}-{max(frames)}")
+
+        # Check for missing SeqIds
+        mann_seqids = set(df_inputData.index.get_level_values('SeqId').unique())
+        pae_seqids = set(df_phaseData.index.get_level_values('SeqId').unique())
+        missing_seqids = mann_seqids - pae_seqids
+        if missing_seqids:
+            print(f"\n⚠️  WARNING: Mann SeqIds missing from PAE: {sorted(missing_seqids)}")
+        print("=" * 40 + "\n")
 
         # Get columns that start with 'Phase2D_'
         selected_columns = df_phaseData.columns[df_phaseData.columns.str.startswith('Phase2D_')]

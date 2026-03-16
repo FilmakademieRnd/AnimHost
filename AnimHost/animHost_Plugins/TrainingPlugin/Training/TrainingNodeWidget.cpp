@@ -173,6 +173,18 @@ void TrainingNodeWidget::updateFromMessage(const MLFramework::TrainingMessage& m
         if (!msg.text.isEmpty()) {
             qDebug() << "Training error:" << msg.text;
         }
+
+        // Log traceback if available in metrics
+        if (msg.metrics.contains("traceback")) {
+            QString traceback = msg.metrics["traceback"].toString();
+            if (!traceback.isEmpty()) {
+                qDebug() << "Traceback:";
+                QStringList lines = traceback.split('\n', Qt::SkipEmptyParts);
+                for (const QString& line : lines) {
+                    qDebug() << "  " << line;
+                }
+            }
+        }
     }
 }
 

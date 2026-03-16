@@ -47,6 +47,9 @@ AssimpLoaderPlugin::AssimpLoaderPlugin()
 
 	_animation = std::make_shared<AnimNodeData<Animation>>();
 
+	_validFrames = std::make_shared<AnimNodeData<ValidFrames>>();
+	_validFrames->setData(std::make_shared<ValidFrames>());
+
 	bDataValid = false;
 
 	_pushButton = nullptr;
@@ -61,7 +64,9 @@ QJsonObject AssimpLoaderPlugin::save() const
 	QJsonObject nodeJson = NodeDelegateModel::save();
 
 	nodeJson["dir"] = SourceDirectory;
-	nodeJson["check"] = _subsamplingCheck->isChecked();
+	nodeJson["skeletonType"] = static_cast<int>(_skeletonType);
+	nodeJson["sequencesFile"] = SequencesFilePath;
+	nodeJson["sequencesOneIndexed"] = bSequencesOneIndexed;
 
 	return nodeJson;
 }
@@ -69,7 +74,9 @@ QJsonObject AssimpLoaderPlugin::save() const
 void AssimpLoaderPlugin::load(QJsonObject const& p)
 {
 	QJsonValue v = p["dir"];
-	QJsonValue c = p["check"];
+	QJsonValue skeletonTypeVal = p["skeletonType"];
+	QJsonValue sequencesFileVal = p["sequencesFile"];
+	QJsonValue sequencesOneIndexedVal = p["sequencesOneIndexed"];
 
 	if (!v.isUndefined()) {
 		QString strDir = v.toString();
@@ -82,13 +89,26 @@ void AssimpLoaderPlugin::load(QJsonObject const& p)
 			widget->updateGeometry();
 		}
 	}
-	if (!c.isUndefined()) {
-		bool check = c.toBool();
 
-		if (check)
-			_subsamplingCheck->setCheckState(Qt::CheckState::Checked);
-		else
-			_subsamplingCheck->setCheckState(Qt::CheckState::Unchecked);
+	if (!skeletonTypeVal.isUndefined()) {
+		_skeletonType = static_cast<SkeletonType>(skeletonTypeVal.toInt());
+		if (_skeletonTypeCombo) {
+			_skeletonTypeCombo->setCurrentIndex(static_cast<int>(_skeletonType));
+		}
+	}
+
+	if (!sequencesFileVal.isUndefined()) {
+		SequencesFilePath = sequencesFileVal.toString();
+		if (_sequencesFileSelect && !SequencesFilePath.isEmpty()) {
+			_sequencesFileSelect->SetDirectory(SequencesFilePath);
+		}
+	}
+
+	if (!sequencesOneIndexedVal.isUndefined()) {
+		bSequencesOneIndexed = sequencesOneIndexedVal.toBool();
+		if (_indexingCombo) {
+			_indexingCombo->setCurrentIndex(bSequencesOneIndexed ? 1 : 0);
+		}
 	}
 }
 
@@ -99,7 +119,7 @@ unsigned int AssimpLoaderPlugin::nDataPorts(QtNodes::PortType portType) const
     if (portType == QtNodes::PortType::In)
         result = 0;
     else
-        result = 2;
+        result = 3;  // Skeleton, Animation, ValidFrames
 
     return result;
 }
@@ -115,26 +135,31 @@ NodeDataType AssimpLoaderPlugin::dataPortType(QtNodes::PortType portType, QtNode
 			return type = _skeleton->type();
 		case 1:
 			return type = _animation->type();
+		case 2:
+			return type = _validFrames->type();
 
 		default:
 			return type;
 		}
-             
+
 }
 
 std::shared_ptr<NodeData> AssimpLoaderPlugin::processOutData(QtNodes::PortIndex port)
 {
-
-	if (bDataValid)
-	{
-		switch (port) {
-		case 0:
+	switch (port) {
+	case 0:
+		if (bDataValid)
 			return _skeleton;
-		case 1:
+		break;
+	case 1:
+		if (bDataValid)
 			return _animation;
-		default:
-			break;
-		}
+		break;
+	case 2:
+		// ValidFrames is always available (empty if no Sequences.txt)
+		return _validFrames;
+	default:
+		break;
 	}
 	return nullptr;
 }
@@ -144,7 +169,13 @@ bool AssimpLoaderPlugin::isDataAvailable() {
 }
 
 void AssimpLoaderPlugin::run() {
-	
+
+	// Parse Sequences.txt if configured
+	parseSequencesFile();
+
+	// Emit ValidFrames data update
+	emitDataUpdate(2);
+
 	//ToDo Move Processing
 	QStringList files = loadFilesFromDir();
 
@@ -171,11 +202,12 @@ void AssimpLoaderPlugin::run() {
 
 			importAssimpData();
 
-			//Experimental.
-			// If character is our own "survivor" character, we need to adjust the skeleton and animation data
-			if (_subsamplingCheck->isChecked())
-			{
-				UseSubSkeleton("hip", { "hand_R", "hand_L", "head", "toe_L", "toe_R", "heel_02_L", "heel_02_R" });
+			// Apply sub-skeleton filtering based on selected skeleton type.
+			// This removes FBX scene hierarchy nodes (like filename and "RootNode")
+			// and keeps only actual skeleton bones.
+			const auto& config = getSubSkeletonConfig(_skeletonType);
+			UseSubSkeleton(config.rootBone, config.leafBones);
+			if (config.applyChangeOfBasis) {
 				_animation->getData()->ApplyChangeOfBasis();
 			}
 
@@ -197,15 +229,42 @@ QWidget* AssimpLoaderPlugin::embeddedWidget()
 		widget = new QWidget();
 
 		_folderSelect = new FolderSelectionWidget(widget);
-		_subsamplingCheck = new QCheckBox("Enable subsample for GNN");
+
+		// Skeleton type selector for sub-skeleton filtering
+		_skeletonTypeCombo = new QComboBox(widget);
+		_skeletonTypeCombo->addItem("Bipedal (Survivor)", static_cast<int>(SkeletonType::Bipedal));
+		_skeletonTypeCombo->addItem("Quadrupedal (MANN Dog)", static_cast<int>(SkeletonType::Quadrupedal));
+		_skeletonTypeCombo->setCurrentIndex(static_cast<int>(_skeletonType));
+
+		// Sequences.txt file selector (optional)
+		_sequencesFileSelect = new FolderSelectionWidget(
+			widget,
+			FolderSelectionWidget::SelectionType::File,
+			".txt",
+			"Sequences files (*.txt);;All files (*)"
+		);
+
+		// Indexing mode selector
+		_indexingCombo = new QComboBox(widget);
+		_indexingCombo->addItem("0-indexed", 0);
+		_indexingCombo->addItem("1-indexed", 1);
+		_indexingCombo->setCurrentIndex(bSequencesOneIndexed ? 1 : 0);
 
 		QVBoxLayout* layout = new QVBoxLayout();
 
 		layout->addWidget(_folderSelect);
-		layout->addWidget(_subsamplingCheck);
+		layout->addWidget(new QLabel("Skeleton Type:"));
+		layout->addWidget(_skeletonTypeCombo);
+		layout->addWidget(new QLabel("Sequences File (optional):"));
+		layout->addWidget(_sequencesFileSelect);
+		layout->addWidget(new QLabel("Sequences Indexing:"));
+		layout->addWidget(_indexingCombo);
 		widget->setLayout(layout);
 
 		connect(_folderSelect, &FolderSelectionWidget::directoryChanged, this, &AssimpLoaderPlugin::onFolderSelectionChanged);
+		connect(_skeletonTypeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &AssimpLoaderPlugin::onSkeletonTypeChanged);
+		connect(_sequencesFileSelect, &FolderSelectionWidget::directoryChanged, this, &AssimpLoaderPlugin::onSequencesFileChanged);
+		connect(_indexingCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &AssimpLoaderPlugin::onIndexingChanged);
 
 	}
 
@@ -226,6 +285,19 @@ void AssimpLoaderPlugin::onFolderSelectionChanged()
 	widget->updateGeometry();
 
 	Q_EMIT embeddedWidgetSizeUpdated();
+}
+
+void AssimpLoaderPlugin::onSkeletonTypeChanged(int index)
+{
+	SkeletonType newType = static_cast<SkeletonType>(index);
+	if (_skeletonType != newType) {
+		_skeletonType = newType;
+		const auto& config = getSubSkeletonConfig(_skeletonType);
+		qDebug() << "Skeleton type changed to:" << (index == 0 ? "Bipedal" : "Quadrupedal");
+		qDebug() << "  Root bone:" << config.rootBone;
+		qDebug() << "  Leaf bones:" << config.leafBones.size();
+		qDebug() << "  Apply change of basis:" << config.applyChangeOfBasis;
+	}
 }
 
 void AssimpLoaderPlugin::loadAnimationData(aiAnimation* pASSIMPAnimation, Skeleton* pSkeleton, Animation* pAnimation, aiNode* pNode)
@@ -253,7 +325,7 @@ void AssimpLoaderPlugin::loadAnimationData(aiAnimation* pASSIMPAnimation, Skelet
 			qWarning() << "Bone: " << name << "not found.";
 			continue;
 		}
-		
+
 
 		int numKeysRot = channel->mNumRotationKeys;
 		int numKeysPos = channel->mNumPositionKeys;
@@ -330,6 +402,8 @@ void AssimpLoaderPlugin::UseSubSkeleton(std::string pRootBone, std::vector<std::
 
 	anim->mDurationFrames = oAnimation->mDurationFrames;
 	anim->mDuration = oAnimation->mDuration;
+	qDebug() << "[AssimpLoader] SubSkeleton mDurationFrames:" << anim->mDurationFrames
+	         << "mDuration:" << anim->mDuration;
 	anim->sequenceID = oAnimation->sequenceID;
 	anim->sourceName = oAnimation->sourceName;
 	anim->dataSetID = oAnimation->dataSetID;
@@ -398,8 +472,11 @@ void AssimpLoaderPlugin::importAssimpData()
 	//const unsigned int severity =  Assimp::Logger::Err | Assimp::Logger::Warn;
 	Assimp::DefaultLogger::get()->attachStream(new AssimpQTStream, severity);
 
+	// FIX B: Add import flags to improve animation data processing
 	const  aiScene* scene = importer.ReadFile(SourceFilePath.toStdString(),
-		aiProcess_SortByPType);
+		aiProcess_SortByPType |
+		aiProcess_ValidateDataStructure |  // Validate imported data integrity
+		aiProcess_PopulateArmatureData);   // Ensure bone/animation data is complete
 
 	auto keys = scene->mMetaData->mKeys;
 
@@ -459,5 +536,118 @@ QStringList AssimpLoaderPlugin::loadFilesFromDir()
 	return {""};
 }
 
+void AssimpLoaderPlugin::onSequencesFileChanged()
+{
+	SequencesFilePath = _sequencesFileSelect->GetSelectedDirectory();
 
+	widget->adjustSize();
+	widget->updateGeometry();
+
+	Q_EMIT embeddedWidgetSizeUpdated();
+
+	qDebug() << "Sequences file changed to:" << SequencesFilePath;
+}
+
+void AssimpLoaderPlugin::onIndexingChanged(int index)
+{
+	bSequencesOneIndexed = (index == 1);
+	qDebug() << "Sequences indexing changed to:" << (bSequencesOneIndexed ? "1-indexed" : "0-indexed");
+}
+
+void AssimpLoaderPlugin::parseSequencesFile()
+{
+	// Reset ValidFrames
+	auto validFrames = std::make_shared<ValidFrames>();
+
+	if (SequencesFilePath.isEmpty()) {
+		// No Sequences.txt file configured - empty ValidFrames means "process all frames"
+		_validFrames->setData(validFrames);
+		qDebug() << "[AssimpLoader] No Sequences.txt configured - processing all frames";
+		return;
+	}
+
+	QFile file(SequencesFilePath);
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		qWarning() << "[AssimpLoader] Failed to open Sequences.txt:" << SequencesFilePath;
+		_validFrames->setData(validFrames);
+		return;
+	}
+
+	QTextStream in(&file);
+	int lineCount = 0;
+	int frameCount = 0;
+
+	while (!in.atEnd()) {
+		QString line = in.readLine().trimmed();
+		if (line.isEmpty()) continue;
+
+		lineCount++;
+
+		// Parse line: [unknown] [frame_number] [label] [filename_stem.bvh] [hash]
+		// Example: 1 180 Standard D1_001_KAN01_001.bvh 331c4ff26421fd44898a5e67ddd07067
+		QStringList parts = line.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
+
+		if (parts.size() < 4) {
+			qWarning() << "[AssimpLoader] Malformed line" << lineCount << "in Sequences.txt:" << line;
+			continue;
+		}
+
+		bool ok;
+		int frameNumber = parts[1].toInt(&ok);
+		if (!ok) {
+			qWarning() << "[AssimpLoader] Invalid frame number on line" << lineCount << ":" << parts[1];
+			continue;
+		}
+
+		// Convert to 0-indexed if source is 1-indexed
+		if (bSequencesOneIndexed) {
+			frameNumber -= 1;
+		}
+
+		QString filename = parts[3];
+		QString stem = extractFileStem(filename);
+
+		// Add frame to the map
+		validFrames->sequenceFrames[stem].push_back(frameNumber);
+		frameCount++;
+	}
+
+	file.close();
+
+	// Sort frame indices for each file (for binary_search in hasFrame)
+	std::vector<QString> sequencesToRemove;
+	for (auto& [stem, frames] : validFrames->sequenceFrames) {
+		std::sort(frames.begin(), frames.end());
+		// Remove duplicates
+		frames.erase(std::unique(frames.begin(), frames.end()), frames.end());
+
+		// Validate minimum sequence length for velocity filtering
+		if (frames.size() < MIN_FRAMES_FOR_VELOCITY_FILTERING) {
+			qWarning() << "[AssimpLoader] Sequence" << stem << "has only" << frames.size()
+			           << "frames (minimum" << MIN_FRAMES_FOR_VELOCITY_FILTERING
+			           << "required for Butterworth filtering) - skipping";
+			sequencesToRemove.push_back(stem);
+		}
+	}
+
+	// Remove sequences that are too short
+	for (const auto& stem : sequencesToRemove) {
+		validFrames->sequenceFrames.erase(stem);
+	}
+
+	_validFrames->setData(validFrames);
+
+	qDebug() << "[AssimpLoader] Parsed Sequences.txt:" << frameCount << "frames across"
+	         << validFrames->sequenceFrames.size() << "files (after filtering)";
+}
+
+QString AssimpLoaderPlugin::extractFileStem(const QString& filename) const
+{
+	// Remove extension (e.g., ".bvh", ".fbx")
+	int dotIndex = filename.lastIndexOf('.');
+	if (dotIndex > 0) {
+		return filename.left(dotIndex);
+	}
+	return filename;
+}
 

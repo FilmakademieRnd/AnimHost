@@ -50,6 +50,9 @@ void JointVelocityPlugin::run(QVariantList in, QVariantList& out)
     auto poseSequenceIn = in[0].value<std::shared_ptr<PoseSequence>>();
     auto animationIn = in[1].value<std::shared_ptr<Animation>>();
 
+    qDebug() << "[JointVelocityPlugin] Input PoseSequence size:" << poseSequenceIn->mPoseSequence.size()
+             << "Loop will run from 0 to" << (poseSequenceIn->mPoseSequence.size() - 1);
+
     auto jointVelocitySequence = std::make_shared<JointVelocitySequence>();
 
     jointVelocitySequence->dataSetID = poseSequenceIn->dataSetID;
@@ -103,6 +106,8 @@ void JointVelocityPlugin::run(QVariantList in, QVariantList& out)
            
         }
     }
+
+    qDebug() << "[JointVelocityPlugin] Output JointVelocitySequence size:" << jointVelocitySequence->mJointVelocitySequence.size();
 
     out.append(QVariant::fromValue(jointVelocitySequence));
 }

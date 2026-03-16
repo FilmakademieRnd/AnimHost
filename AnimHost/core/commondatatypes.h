@@ -843,4 +843,72 @@ public:
 };
 Q_DECLARE_METATYPE(std::shared_ptr<DebugSignal>)
 
+// Minimum frames required for Butterworth filtering in velocity preprocessing
+// 5th-order filter requires: len > padlen, where padlen = 3 * 6 = 18, so len >= 19
+static constexpr int MIN_FRAMES_FOR_VELOCITY_FILTERING = 19;
+
+/**
+ * @class ValidFrames
+ * @brief A class that specifies which frames are valid for processing per animation file.
+ *
+ * When empty (sequenceFrames is empty), signals that all frames should be processed.
+ * When populated, only the specified frames should be processed for each file.
+ * Frame indices are stored as 0-indexed internally.
+ */
+class ANIMHOSTCORESHARED_EXPORT ValidFrames : public Sequence
+{
+public:
+    // Map: filename stem (without extension) -> sorted vector of valid frame indices (0-indexed)
+    std::map<QString, std::vector<int>> sequenceFrames;
+
+public:
+    ValidFrames() {};
+
+    /**
+     * @brief Check if empty (signals "use all frames")
+     * @return true if no sequence file was configured
+     */
+    bool isEmpty() const { return sequenceFrames.empty(); }
+
+    /**
+     * @brief Get valid frames for a specific file
+     * @param stem The filename stem (without extension)
+     * @return Vector of valid frame indices, empty if file not found
+     */
+    std::vector<int> getFrames(const QString& stem) const {
+        auto it = sequenceFrames.find(stem);
+        if (it != sequenceFrames.end()) {
+            return it->second;
+        }
+        return std::vector<int>();
+    }
+
+    /**
+     * @brief Check if a specific frame is valid for a file
+     * @param stem The filename stem (without extension)
+     * @param frame The frame index (0-indexed)
+     * @return true if the frame is in the valid frames list
+     */
+    bool hasFrame(const QString& stem, int frame) const {
+        auto it = sequenceFrames.find(stem);
+        if (it != sequenceFrames.end()) {
+            const auto& frames = it->second;
+            return std::binary_search(frames.begin(), frames.end(), frame);
+        }
+        return false;
+    }
+
+    /**
+     * @brief Check if a file exists in the valid frames map
+     * @param stem The filename stem (without extension)
+     * @return true if the file is listed in sequenceFrames
+     */
+    bool hasFile(const QString& stem) const {
+        return sequenceFrames.find(stem) != sequenceFrames.end();
+    }
+
+    COMMONDATA(validFrames, ValidFrames)
+};
+Q_DECLARE_METATYPE(std::shared_ptr<ValidFrames>)
+
 #endif // COMMONDATATYPES_H
