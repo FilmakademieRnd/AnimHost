@@ -194,7 +194,7 @@ def get_future_window_values(row, phaseValues, selected_columns, window_size=7):
     return window[selected_columns].values.flatten()
 
 def get_window_values_(row, phaseValues, selected_columns, num_samples=13, fps=60, start_index=0, offset=0):
-    """"
+    """
     Retrieves the window values for a given row in a DataFrame based on a specified frame range.
 
     Parameters:
@@ -209,7 +209,7 @@ def get_window_values_(row, phaseValues, selected_columns, num_samples=13, fps=6
     Returns:
     - The flattened array of values from the window.
 
-    """    
+    """
     seq_id, frame = row.name
 
     # Offset by one frame because target pivot is expected to be a future frame
