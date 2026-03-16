@@ -182,7 +182,6 @@ def get_future_window_values(row, phaseValues, selected_columns, window_size=7):
 
     Returns:
     - The flattened array of values from the future window.
-
     """
     seq_id, frame = row.name
     start_frame = frame + 1
@@ -208,7 +207,6 @@ def get_window_values_(row, phaseValues, selected_columns, num_samples=13, fps=6
 
     Returns:
     - The flattened array of values from the window.
-
     """
     seq_id, frame = row.name
 
