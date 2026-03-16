@@ -30,7 +30,7 @@ import numpy as np
 #   INPUT_PHASE_MODE  expects Input.bin  with 130 features (13 keys × 5 ch × 2)
 #   OUTPUT_PHASE_MODE expects Output.bin with 140 features ( 7 keys × 5 ch × 4)
 INPUT_PHASE_MODE  = False
-OUTPUT_PHASE_MODE = False
+OUTPUT_PHASE_MODE = True
 
 # COMPARE_MODE: when True, overlay baseline + candidate histograms on the same plots.
 # When False, plot a single dataset as before.
@@ -42,16 +42,17 @@ DATA_TYPE = "output"  # "input" | "output"
 
 # Compare-mode config (used when COMPARE_MODE = True)
 BASELINE_DIR  = r"D:\anim-ws\quad-experiments\quadruped-run-10\e2509_20260225_0\GNN\Data"   # AnimHost parity model data
-CANDIDATE_DIR = r"D:\anim-ws\MANN Eval Scenes\infernece-data-7x1m"                       # AnimHost parity model inference
-# CANDIDATE_DIR = r"D:\anim-ws\quad-experiments\quadruped-run-7\GNN data"                     # Unity parity model data
+# CANDIDATE_DIR = r"D:\anim-ws\MANN Eval Scenes\infernece-data-7x1m"                       # AnimHost parity model inference
+CANDIDATE_DIR = r"D:\anim-ws\quad-experiments\quadruped-run-7\GNN data"                     # Unity parity model data
 # BASELINE_DIR  = r"D:\anim-ws\survivor-experiments\survivor-1\candidate\GNN Data"          # AnimHost survivor latest data
 # CANDIDATE_DIR = r"D:\anim-ws\survivor-experiments\survivor-1\infernece-data-7x1m"     # Animhost survivor inference
 COMPARE_DATA_TYPE = "output"  # "input" | "output" (applies to both)
 
-# Format of the CANDIDATE directory:
-#   "gnn" — preprocessed GNN data (Input/Output.bin + InputShape/Labels.txt)
-#   "raw" — raw AnimHost export   (data_x/data_y.bin + metadata.txt + sequences_mann.txt)
-CANDIDATE_FORMAT = "gnn"  # "gnn" | "raw"
+# Source pipeline — controls output-phase vector stacking order.
+#   "animhost" — grouped: [all phase2D | all amp | all freq] per key
+#   "unity"    — interleaved: (x, y, amp, freq) per channel per key
+BASELINE_SOURCE  = "animhost"  # "animhost" | "unity"
+CANDIDATE_SOURCE = "unity"  # "animhost" | "unity"
 
 # If non-empty, only these labels are plotted. In compare mode, only labels
 # present in LABEL_FILTER *and* both datasets are shown.
@@ -105,10 +106,10 @@ CANDIDATE_FORMAT = "gnn"  # "gnn" | "raw"
 #     "jpos_z_Spine1", "jpos_z_Tail", "jpos_z_Neck", "jpos_z_Head",
 #     "root_speed_0", "jpos_z_RightShoulder", "root_speed_1", "jpos_z_LeftShoulder",
 # ]
-LABEL_FILTER: Optional[List[str]] = [
-    "out_root_fwd_y_8", "out_root_fwd_y_9", "out_root_fwd_y_10",
-    "out_root_fwd_y_7", "out_root_fwd_y_11", "out_root_fwd_y_12",
-]
+# LABEL_FILTER: Optional[List[str]] = [
+#     "out_root_fwd_y_8", "out_root_fwd_y_9", "out_root_fwd_y_10",
+#     "out_root_fwd_y_7", "out_root_fwd_y_11", "out_root_fwd_y_12",
+# ]
 
 
 
@@ -164,44 +165,6 @@ def _read_binary(path: Path, num_samples: int, num_features: int) -> np.ndarray:
     return np.frombuffer(raw[:expected_bytes], dtype=np.float32).reshape(
         num_samples, num_features
     )
-
-
-def _count_lines(path: Path) -> int:
-    """Return the number of non-empty lines in a text file."""
-    with open(path, "r", encoding="utf-8") as f:
-        return sum(1 for line in f if line.strip())
-
-
-def load_raw_dataset(directory: str, data_type: str = "input") -> Tuple[np.ndarray, List[str]]:
-    """Load data_x.bin or data_y.bin with labels from metadata.txt.
-
-    metadata.txt format (comma-separated):
-      row 0: num_input_features, label_0, label_1, ...
-      row 1: num_output_features, label_0, label_1, ...
-
-    Sample count is derived from sequences_mann.txt (one non-empty line per sample).
-    """
-    d = Path(directory)
-    with open(d / "metadata.txt", "r", encoding="utf-8") as f:
-        lines = [l.strip() for l in f if l.strip()]
-
-    row_idx = 0 if data_type == "input" else 1
-    parts = lines[row_idx].split(",")
-    num_features = int(parts[0])
-    labels = [p.strip() for p in parts[1 : num_features + 1]]
-
-    num_samples = _count_lines(d / "sequences_mann.txt")
-    print(f"  [{data_type}] Shape: {num_samples} samples × {num_features} features")
-
-    bin_name = "data_x.bin" if data_type == "input" else "data_y.bin"
-    data = _read_binary(d / bin_name, num_samples, num_features)
-
-    if len(labels) != num_features:
-        print(
-            f"  WARNING: metadata.txt has {len(labels)} labels "
-            f"but {num_features} expected"
-        )
-    return data, labels
 
 
 def load_dataset(directory: str, data_type: str = "input") -> Tuple[np.ndarray, List[str]]:
@@ -270,26 +233,33 @@ def log_character_dimensions(
 
 # ── Phase decode ───────────────────────────────────────────────────────────────
 
-def decode_input_phase(data: np.ndarray) -> np.ndarray:
+def decode_input_phase(data: np.ndarray, source: str = "animhost") -> np.ndarray:
     """(N, 130) → (N, 13, 5, 2)   last dim = [x, y]
 
     Layout: key*10 + channel*2 + {0=x, 1=y}
     Amplitude is baked into the vector radius.
+    Input phase layout is identical for both Unity and AnimHost.
     """
     return data.reshape(data.shape[0], 13, _N_CHANNELS, 2)
 
 
-def decode_output_phase(data: np.ndarray) -> np.ndarray:
+def decode_output_phase(data: np.ndarray, source: str = "animhost") -> np.ndarray:
     """(N, 140) → (N, 7, 5, 4)   last dim = [x, y, amp, freq]
 
-    Per-key block of 20: [ch0_x ch0_y … ch4_y (10)] | [ch0…ch4 amp (5)] | [ch0…ch4 freq (5)]
+    AnimHost layout (grouped per key):
+        [ch0_x ch0_y … ch4_y (10)] | [ch0…ch4 amp (5)] | [ch0…ch4 freq (5)]
+    Unity layout (interleaved per channel):
+        [ch0_x ch0_y ch0_amp ch0_freq, ch1_x ch1_y ch1_amp ch1_freq, …]
     """
     N = data.shape[0]
-    blocks   = data.reshape(N, 7, 20)
-    phase2d  = blocks[:, :, :10].reshape(N, 7, _N_CHANNELS, 2)   # (N,7,5,2)
-    amp      = blocks[:, :, 10:15][..., np.newaxis]               # (N,7,5,1)
-    freq     = blocks[:, :, 15:20][..., np.newaxis]               # (N,7,5,1)
-    return np.concatenate([phase2d, amp, freq], axis=-1)          # (N,7,5,4)
+    if source == "unity":
+        return data.reshape(N, 7, _N_CHANNELS, 4)                    # (N,7,5,4)
+    else:  # animhost
+        blocks   = data.reshape(N, 7, 20)
+        phase2d  = blocks[:, :, :10].reshape(N, 7, _N_CHANNELS, 2)   # (N,7,5,2)
+        amp      = blocks[:, :, 10:15][..., np.newaxis]               # (N,7,5,1)
+        freq     = blocks[:, :, 15:20][..., np.newaxis]               # (N,7,5,1)
+        return np.concatenate([phase2d, amp, freq], axis=-1)          # (N,7,5,4)
 
 
 # ── Phase plot helpers ─────────────────────────────────────────────────────────
@@ -636,20 +606,20 @@ if __name__ == "__main__":
             return data[:, indices]
 
         if COMPARE_MODE:
-            print(f"Loading baseline  ({dtype}): {BASELINE_DIR}")
+            print(f"Loading baseline  ({dtype}) [{BASELINE_SOURCE}]: {BASELINE_DIR}")
             b_data, b_labels = load_dataset(BASELINE_DIR, dtype)
             log_character_dimensions(b_data, b_labels, "baseline")
-            print(f"Loading candidate ({dtype}): {CANDIDATE_DIR}")
+            print(f"Loading candidate ({dtype}) [{CANDIDATE_SOURCE}]: {CANDIDATE_DIR}")
             c_data, c_labels = load_dataset(CANDIDATE_DIR, dtype)
             log_character_dimensions(c_data, c_labels, "candidate")
-            b_ph = decode(_extract_phase(b_data, b_labels))
-            c_ph = decode(_extract_phase(c_data, c_labels))
+            b_ph = decode(_extract_phase(b_data, b_labels), BASELINE_SOURCE)
+            c_ph = decode(_extract_phase(c_data, c_labels), CANDIDATE_SOURCE)
             suffix = "Baseline vs Candidate"
         else:
             print(f"Loading ({dtype}): {DATA_DIR}")
             data, labels = load_dataset(DATA_DIR, dtype)
             log_character_dimensions(data, labels)
-            b_ph = c_ph = decode(_extract_phase(data, labels))
+            b_ph = c_ph = decode(_extract_phase(data, labels), BASELINE_SOURCE)
             suffix = DATA_DIR
 
         compare = COMPARE_MODE
@@ -679,11 +649,8 @@ if __name__ == "__main__":
         print(f"Loading baseline  ({COMPARE_DATA_TYPE}): {BASELINE_DIR}")
         b_data, b_labels = load_dataset(BASELINE_DIR, COMPARE_DATA_TYPE)
         log_character_dimensions(b_data, b_labels, "baseline")
-        print(f"Loading candidate ({COMPARE_DATA_TYPE}) [{CANDIDATE_FORMAT}]: {CANDIDATE_DIR}")
-        if CANDIDATE_FORMAT == "raw":
-            c_data, c_labels = load_raw_dataset(CANDIDATE_DIR, COMPARE_DATA_TYPE)
-        else:
-            c_data, c_labels = load_dataset(CANDIDATE_DIR, COMPARE_DATA_TYPE)
+        print(f"Loading candidate ({COMPARE_DATA_TYPE}): {CANDIDATE_DIR}")
+        c_data, c_labels = load_dataset(CANDIDATE_DIR, COMPARE_DATA_TYPE)
         log_character_dimensions(c_data, c_labels, "candidate")
         plot_compare_distributions(b_data, b_labels, c_data, c_labels, LABEL_FILTER, BINS)
     else:
