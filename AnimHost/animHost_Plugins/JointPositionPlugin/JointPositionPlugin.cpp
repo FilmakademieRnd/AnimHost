@@ -53,15 +53,10 @@ void JointPositionPlugin::run(QVariantList in, QVariantList& out)
     std::shared_ptr<Skeleton> skeleton = in[0].value<std::shared_ptr<Skeleton>>();
     std::shared_ptr<Animation> animation = in[1].value<std::shared_ptr<Animation>>();
 
-    qDebug() << "[JointPositionPlugin] Input animation->mDurationFrames:" << animation->mDurationFrames;
-
     auto poseSequence = std::make_shared<PoseSequence>();
     int frame = 0;
-
+  
     poseSequence->mPoseSequence = std::vector<Pose>(animation->mDurationFrames);
-
-    qDebug() << "[JointPositionPlugin] Allocated PoseSequence vector size:" << poseSequence->mPoseSequence.size()
-             << "Loop will run from 0 to" << (animation->mDurationFrames - 1);
 
 
     //std::function<void(glm::mat4, int)> lBuildPose;

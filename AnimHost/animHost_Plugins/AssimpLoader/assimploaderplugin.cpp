@@ -472,7 +472,6 @@ void AssimpLoaderPlugin::importAssimpData()
 	//const unsigned int severity =  Assimp::Logger::Err | Assimp::Logger::Warn;
 	Assimp::DefaultLogger::get()->attachStream(new AssimpQTStream, severity);
 
-	// FIX B: Add import flags to improve animation data processing
 	const  aiScene* scene = importer.ReadFile(SourceFilePath.toStdString(),
 		aiProcess_SortByPType |
 		aiProcess_ValidateDataStructure |  // Validate imported data integrity
