@@ -30,7 +30,7 @@ import numpy as np
 #   INPUT_PHASE_MODE  expects Input.bin  with 130 features (13 keys × 5 ch × 2)
 #   OUTPUT_PHASE_MODE expects Output.bin with 140 features ( 7 keys × 5 ch × 4)
 INPUT_PHASE_MODE  = False
-OUTPUT_PHASE_MODE = True
+OUTPUT_PHASE_MODE = False
 
 # COMPARE_MODE: when True, overlay baseline + candidate histograms on the same plots.
 # When False, plot a single dataset as before.
@@ -42,8 +42,8 @@ DATA_TYPE = "output"  # "input" | "output"
 
 # Compare-mode config (used when COMPARE_MODE = True)
 BASELINE_DIR  = r"D:\anim-ws\quad-experiments\quadruped-run-10\e2509_20260225_0\GNN\Data"   # AnimHost parity model data
-# CANDIDATE_DIR = r"D:\anim-ws\MANN Eval Scenes\infernece-data-7x1m"                       # AnimHost parity model inference
-CANDIDATE_DIR = r"D:\anim-ws\quad-experiments\quadruped-run-7\GNN data"                     # Unity parity model data
+CANDIDATE_DIR = r"D:\anim-ws\MANN Eval Scenes\infernece-data-7x1m"                       # AnimHost parity model inference
+# CANDIDATE_DIR = r"D:\anim-ws\quad-experiments\quadruped-run-7\GNN data"                     # Unity parity model data
 # BASELINE_DIR  = r"D:\anim-ws\survivor-experiments\survivor-1\candidate\GNN Data"          # AnimHost survivor latest data
 # CANDIDATE_DIR = r"D:\anim-ws\survivor-experiments\survivor-1\infernece-data-7x1m"     # Animhost survivor inference
 COMPARE_DATA_TYPE = "output"  # "input" | "output" (applies to both)
