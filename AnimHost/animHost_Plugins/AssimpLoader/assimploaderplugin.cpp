@@ -523,7 +523,9 @@ void AssimpLoaderPlugin::importAssimpData()
 	Assimp::DefaultLogger::get()->attachStream(new AssimpQTStream, severity);
 
 	const  aiScene* scene = importer.ReadFile(SourceFilePath.toStdString(),
-		aiProcess_SortByPType);
+		aiProcess_SortByPType |
+		aiProcess_ValidateDataStructure |  // Validate imported data integrity
+		aiProcess_PopulateArmatureData);   // Ensure bone/animation data is complete
 
 	auto keys = scene->mMetaData->mKeys;
 
