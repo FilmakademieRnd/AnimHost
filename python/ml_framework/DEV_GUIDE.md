@@ -69,7 +69,7 @@ Release/
 
 ## Run all tests
 ```bash
-cd python/ml_framework/tests
+cd python/ml_framework
 pytest tests/ -v
 ```
 

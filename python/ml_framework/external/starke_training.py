@@ -158,6 +158,18 @@ def _init_pae_network_script(
         logger.error(f"Failed to update PAE Network.py: {error}")
         raise RuntimeError(f"Failed to update PAE Network.py: {error}")
 
+    # Fix single-sample last-batch crash: PAE params have shape [batch, channels, 1]
+    # due to unsqueeze(2). .squeeze() removes ALL size-1 dims, so a batch of 1 collapses
+    # to 1D and breaks indexing throughout training and parameter saving.
+    # .squeeze(-1) only removes the trailing dim, preserving batch regardless of size.
+    # params[0] (phase) has no trailing 1 so .squeeze(-1) is safely a no-op there.
+    # Backup already created by write_script_variables above.
+    content = pae_network_path.read_text(encoding="utf-8")
+    fixed = re.sub(r"(params\[\d+\]\))\.squeeze\(\)", r"\1.squeeze(-1)", content)
+    if fixed != content:
+        pae_network_path.write_text(fixed, encoding="utf-8")
+        logger.info("Applied squeeze(-1) fix to PAE Network.py")
+
     # Log all changes
     logger.info("Successfully updated PAE Network.py with:")
     for key, new_value in updates.items():
@@ -478,36 +490,43 @@ def move_pae_artifacts(path_to_ai4anim: Path, dest_dir: Path) -> bool:
     """
     Move PAE training artifacts to destination directory.
 
-    Moves files from AI4Animation/SIGGRAPH_2022/PyTorch/PAE/Training/ to dest_dir/PAE/Training/
-    Overwrites existing files with the same name.
+    Moves:
+    - AI4Animation/.../PAE/Training/ to dest_dir/PAE/Training/
+    - AI4Animation/.../PAE/Dataset/ to dest_dir/PAE/Dataset/
 
     :param path_to_ai4anim: Path to AI4Animation framework
     :param dest_dir: Destination directory for artifacts
     :return: True on success, False on failure
     """
     try:
-        pae_source = pae_path(path_to_ai4anim) / "Training"
-        pae_dest = dest_dir / "PAE" / "Training"
+        pae_base = pae_path(path_to_ai4anim)
+        dirs_to_move = ["Training", "Dataset"]
+        total_moved = 0
 
-        if not pae_source.exists():
-            logger.warning(f"PAE training directory not found: {pae_source}")
-            return False
+        for dir_name in dirs_to_move:
+            pae_source = pae_base / dir_name
+            pae_dest = dest_dir / "PAE" / dir_name
 
-        if not pae_source.is_dir():
-            logger.error(f"PAE training path is not a directory: {pae_source}")
-            return False
+            if not pae_source.exists():
+                logger.warning(f"PAE {dir_name} directory not found: {pae_source}")
+                continue
 
-        # Create destination directory
-        pae_dest.mkdir(parents=True, exist_ok=True)
+            if not pae_source.is_dir():
+                logger.error(f"PAE {dir_name} path is not a directory: {pae_source}")
+                continue
 
-        # Move all files from source to destination
-        moved_count = 0
-        for item in pae_source.iterdir():
-            dest_item = pae_dest / item.name
-            shutil.move(str(item), str(dest_item))
-            moved_count += 1
+            # Create destination directory
+            pae_dest.mkdir(parents=True, exist_ok=True)
 
-        logger.info(f"Moved {moved_count} PAE training artifacts from {pae_source} to {pae_dest}")
+            # Move all files from source to destination
+            for item in pae_source.iterdir():
+                dest_item = pae_dest / item.name
+                shutil.move(str(item), str(dest_item))
+                total_moved += 1
+
+            logger.info(f"Moved PAE {dir_name} artifacts from {pae_source} to {pae_dest}")
+
+        logger.info(f"Moved {total_moved} PAE artifacts total")
         return True
 
     except Exception as e:
@@ -519,38 +538,45 @@ def move_gnn_artifacts(path_to_ai4anim: Path, dest_dir: Path) -> bool:
     """
     Move GNN training artifacts to destination directory.
 
-    Moves files from AI4Animation/SIGGRAPH_2022/PyTorch/GNN/Training/ to dest_dir/GNN/Training/
-    Overwrites existing files with the same name.
+    Moves:
+    - AI4Animation/.../GNN/Training/ to dest_dir/GNN/Training/
+    - AI4Animation/.../GNN/Data/ to dest_dir/GNN/Data/
 
     :param path_to_ai4anim: Path to AI4Animation framework
     :param dest_dir: Destination directory for artifacts
     :return: True on success, False on failure
     """
     try:
-        gnn_source = gnn_path(path_to_ai4anim) / "Training"
-        gnn_dest = dest_dir / "GNN" / "Training"
+        gnn_base = gnn_path(path_to_ai4anim)
+        dirs_to_move = ["Training", "Data"]
+        total_moved = 0
 
-        if not gnn_source.exists():
-            logger.warning(f"GNN training directory not found: {gnn_source}")
-            return False
+        for dir_name in dirs_to_move:
+            gnn_source = gnn_base / dir_name
+            gnn_dest = dest_dir / "GNN" / dir_name
 
-        if not gnn_source.is_dir():
-            logger.error(f"GNN training path is not a directory: {gnn_source}")
-            return False
-
-        # Create destination directory
-        gnn_dest.mkdir(parents=True, exist_ok=True)
-
-        # Move all files from source to destination (skip placeholder.txt)
-        moved_count = 0
-        for item in gnn_source.iterdir():
-            if item.name == "placeholder.txt":
+            if not gnn_source.exists():
+                logger.warning(f"GNN {dir_name} directory not found: {gnn_source}")
                 continue
-            dest_item = gnn_dest / item.name
-            shutil.move(str(item), str(dest_item))
-            moved_count += 1
 
-        logger.info(f"Moved {moved_count} GNN training artifacts from {gnn_source} to {gnn_dest}")
+            if not gnn_source.is_dir():
+                logger.error(f"GNN {dir_name} path is not a directory: {gnn_source}")
+                continue
+
+            # Create destination directory
+            gnn_dest.mkdir(parents=True, exist_ok=True)
+
+            # Move all files from source to destination (skip placeholder.txt)
+            for item in gnn_source.iterdir():
+                if item.name == "placeholder.txt":
+                    continue
+                dest_item = gnn_dest / item.name
+                shutil.move(str(item), str(dest_item))
+                total_moved += 1
+
+            logger.info(f"Moved GNN {dir_name} artifacts from {gnn_source} to {gnn_dest}")
+
+        logger.info(f"Moved {total_moved} GNN artifacts total")
         return True
 
     except Exception as e:

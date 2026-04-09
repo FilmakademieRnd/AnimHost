@@ -382,7 +382,7 @@ std::vector<float> LocomotionPreprocessNode::prepareTrajectoryData(int reference
 
 	// For output data, we only need to calculate the trajectory for the future steps.
 	// 6 is the start index for future steps, including pivot of frame range. Might need to change this if the number of samples changes.
-	int startIdx = isOutput ? 7 : 0;
+	int startIdx = isOutput ? (pastSamples + 1) : 0;
 
 	FrameRange frameRange(numSamples, 60, refIdx, startIdx);
 
@@ -695,7 +695,7 @@ void LocomotionPreprocessNode::writeMetaData() {
 					featureCount += 3;
 
 					//Root Trajectory. start index at 6 for future steps
-					for (int i = 7; i < numSamples; i++) {
+					for (int i = (pastSamples + 1); i < numSamples; i++) {
 						header += ",out_root_pos_x_" + QString::number(i);
 						header += ",out_root_pos_y_" + QString::number(i);
 						header += ",out_root_fwd_x_" + QString::number(i);
