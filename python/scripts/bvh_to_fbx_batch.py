@@ -1,9 +1,6 @@
 """
 Batch convert BVH files to FBX using Blender's Python API.
 
-Versioning
-- v0: Initial implementation with working BVH to FBX conversion (scale 100x off, skeleton orientations use different axis conventions)
-- v1: Consistent scale, consistent skeleton orientations
 
 Usage:
     blender --background --python bvh_to_fbx_batch.py -- <input_path> <output_dir>
@@ -11,7 +8,6 @@ Usage:
     input_path: Either a single .bvh file or a directory containing .bvh files
 
 Example:
-    blender --background --python bvh_to_fbx_batch.py -- "D:\anim-ws\MANN_qudruped_data" "D:\anim-ws\MANN_qudruped_data\fbx_output"
     & "D:\anim-sw\Blender Foundation\Blender 4.2\blender.exe" --background --python bvh_to_fbx_batch.py -- "D:\anim-ws\MANN_qudruped_data\p100" "D:\anim-ws\MANN_qudruped_data\p100\fbx-v1"
     & "D:\anim-sw\Blender Foundation\Blender 4.2\blender.exe" --background --python bvh_to_fbx_batch.py -- "D:\anim-ws\MANN_qudruped_data\p50\D1_007_KAN01_001.bvh" "D:\anim-ws\MANN_qudruped_data\p50\fbx"
 """
@@ -36,7 +32,7 @@ def parse_bvh_end_sites(bvh_path):
     """Parse BVH file to extract End Site offsets with their parent joint names.
 
     Returns a dict: {parent_joint_name: Vector(offset)}
-    Excludes Head End Site to match Unity pipeline convention.
+    Excludes Head End Site to match Unity DeepPhase pipeline convention.
     """
     end_sites = {}
 
@@ -63,7 +59,7 @@ def parse_bvh_end_sites(bvh_path):
         if 'End Site' in line:
             parent_joint = joint_stack[-1] if joint_stack else None
 
-            # Skip Head End Site to match Unity pipeline
+            # Skip Head End Site to match Unity DeepPhase pipeline convention
             if parent_joint and parent_joint != 'Head':
                 for j in range(i + 1, min(i + 5, len(lines))):
                     offset_line = lines[j].strip()
@@ -140,7 +136,7 @@ def convert_bvh_to_fbx(bvh_path, fbx_path):
     # Clear scene - use direct removal for reliability (operators can fail silently)
     for obj in bpy.data.objects:
         bpy.data.objects.remove(obj, do_unlink=True)
-    # Clear actions (animation data persists separately from objects!)
+    # Clear actions (animation data persists separately from objects)
     for action in bpy.data.actions:
         bpy.data.actions.remove(action, do_unlink=True)
     # Clear armature data blocks
@@ -184,23 +180,20 @@ def convert_bvh_to_fbx(bvh_path, fbx_path):
     armature.select_set(True)
     bpy.context.view_layer.objects.active = armature
 
-    # Set scene frame range to match the animation (FBX exporter uses scene range)
-    # IMPORTANT: bpy.ops.export_scene.fbx() does NOT have frame_start/frame_end parameters!
-    # It uses the scene's frame range instead - this is documented behavior
+    # FBX exporter has no frame range input params - it reads from scene
     bpy.context.scene.frame_start = int(frame_start)
     bpy.context.scene.frame_end = int(frame_end)
     print(f"  Set scene frame range: {int(frame_start)}-{int(frame_end)}")
 
     # Export FBX with full animation data
     # API Reference: https://docs.blender.org/api/4.2/bpy.ops.export_scene.html#bpy.ops.export_scene.fbx
-    # To verify parameters in your Blender version, run in Python console: help(bpy.ops.export_scene.fbx)
     bpy.ops.export_scene.fbx(
         # === File & Selection ===
         filepath=str(fbx_path),  # (string) Output file path
         use_selection=True,  # (bool) Export only selected objects (our armature)
 
         # === Scale ===
-        global_scale=1,  # (float) Scale all data. Keep at 1.0 to preserve cm scale for Unity pipeline
+        global_scale=1,  # (float) Scale all data. Keep at 1.0 to preserve cm scale
 
         # === Transform & Axis Conversion ===
         axis_forward='-Z',
