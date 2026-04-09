@@ -604,7 +604,7 @@ void AssimpLoaderPlugin::parseSequencesFile()
 		}
 
 		QString filename = parts[3];
-		QString stem = extractFileStem(filename);
+		QString stem = AnimHostHelper::extractFileStem(filename);
 
 		// Add frame to the map
 		validFrames->sequenceFrames[stem].push_back(frameNumber);
@@ -640,13 +640,4 @@ void AssimpLoaderPlugin::parseSequencesFile()
 	         << validFrames->sequenceFrames.size() << "files (after filtering)";
 }
 
-QString AssimpLoaderPlugin::extractFileStem(const QString& filename) const
-{
-	// Remove extension (e.g., ".bvh", ".fbx")
-	int dotIndex = filename.lastIndexOf('.');
-	if (dotIndex > 0) {
-		return filename.left(dotIndex);
-	}
-	return filename;
-}
 

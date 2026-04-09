@@ -223,15 +223,15 @@ void LocomotionPreprocessNode::run()
 		         << "poseSequenceIn->mPoseSequence.size():" << poseSequenceIn->mPoseSequence.size()
 		         << "velSeq->mJointVelocitySequence.size():" << velSeq->mJointVelocitySequence.size();
 
-		// Get frames to process WITHOUT 60-frame buffer (same as DataExportPlugin)
-		std::vector<int> framesToProcess = getFramesToProcess(animation, animation->sourceName);
+		// Get frames to export (filtered by ValidFrames if configured)
+		std::vector<int> framesToProcess = getFramesToProcess(animation->mDurationFrames, animation->sourceName);
 
 		if (framesToProcess.empty()) {
 			qDebug() << "[LocomotionPreprocessNode] No valid frames - skipping file";
 			return;  // File not in ValidFrames - both plugins skip
 		}
 
-		// Segment AND filter with 60-frame buffer
+		// Segment and filter to fit window size
 		// Returns all segments (including empty ones that were filtered out)
 		std::vector<std::vector<int>> segments = segmentAndFilterConsecutiveFrames(
 			framesToProcess,
@@ -446,8 +446,7 @@ std::vector<float> LocomotionPreprocessNode::prepareTrajectoryData(int reference
 	int refIdx = referenceFrame + (isOutput ? 1 : 0);
 
 	// For output data, we only need to calculate the trajectory for the future steps.
-	// 6 is the start index for future steps, including pivot of frame range. Might need to change this if the number of samples changes.
-	int startIdx = isOutput ? (pastSamples + 1) : 0;
+	int startIdx = isOutput ? pivotSampleIndex : 0;
 
 	FrameRange frameRange(numSamples, 60, refIdx, startIdx);
 
@@ -780,8 +779,8 @@ void LocomotionPreprocessNode::writeMetaData() {
 
 					featureCount += 3;
 
-					//Root Trajectory. start index at 6 for future steps
-					for (int i = (pastSamples + 1); i < numSamples; i++) {
+					//Root Trajectory. start index at pivotSampleIndex for future steps
+					for (int i = pivotSampleIndex; i < numSamples; i++) {
 						header += ",out_root_pos_x_" + QString::number(i);
 						header += ",out_root_pos_y_" + QString::number(i);
 						header += ",out_root_fwd_x_" + QString::number(i);
@@ -1120,10 +1119,10 @@ std::vector<glm::quat> LocomotionPreprocessNode::GaussianFilterQuaternions(const
 	return smoothedQuaternions;
 }
 
-std::vector<int> LocomotionPreprocessNode::getFramesToProcess(std::shared_ptr<Animation> animation, const QString& sourceName)
+std::vector<int> LocomotionPreprocessNode::getFramesToProcess(int totalFrames, const QString& sourceName)
 {
 	std::vector<int> frames;
-	int duration = animation->mDurationFrames;
+	int duration = totalFrames;
 
 	// Check if ValidFrames is available
 	auto sp_validFrames = _validFramesIn.lock();
@@ -1142,7 +1141,7 @@ std::vector<int> LocomotionPreprocessNode::getFramesToProcess(std::shared_ptr<An
 
 	// ValidFrames is configured - get valid frames only
 	auto validFrames = sp_validFrames->getData();
-	QString stem = extractFileStem(sourceName);
+	QString stem = AnimHostHelper::extractFileStem(sourceName);
 
 	if (!validFrames->hasFile(stem)) {
 		// File not in Sequences.txt - skip it
@@ -1170,40 +1169,21 @@ std::vector<int> LocomotionPreprocessNode::getFramesToProcess(std::shared_ptr<An
 	return frames;
 }
 
-std::vector<std::vector<int>> LocomotionPreprocessNode::segmentConsecutiveFrames(const std::vector<int>& frames) const
-{
-	std::vector<std::vector<int>> segments;
-	if (frames.empty()) return segments;
-
-	std::vector<int> currentSegment = {frames[0]};
-
-	for (size_t i = 1; i < frames.size(); i++) {
-		if (frames[i] == frames[i-1] + 1) {
-			currentSegment.push_back(frames[i]);  // Consecutive
-		} else {
-			segments.push_back(currentSegment);   // Gap detected - save and start new
-			currentSegment = {frames[i]};
-		}
-	}
-	segments.push_back(currentSegment);  // Add last segment
-	return segments;
-}
 
 std::vector<std::vector<int>> LocomotionPreprocessNode::segmentAndFilterConsecutiveFrames(
 	const std::vector<int>& frames,
 	int animationDuration) const
 {
-	// Step 1: Segment into consecutive groups (same as DataExportPlugin)
-	std::vector<std::vector<int>> segments = segmentConsecutiveFrames(frames);
+	// Step 1: Segment into consecutive groups
+	std::vector<std::vector<int>> segments = AnimHostHelper::segmentConsecutiveFrames(frames);
 
-	// Step 2: Apply 60-frame buffer filter to EACH segment
-	// Check position within segment to ensure 60 valid frames before/after
-	const int buffer = 60;
+	// Step 2: Apply frameHalfSpan buffer filter to EACH segment
+	// Check position within segment to ensure frameHalfSpan valid frames before/after
 	for (auto& segment : segments) {
 		std::vector<int> filtered;
 		for (size_t i = 0; i < segment.size(); i++) {
-			// Only keep frames that have 60 frames before and after WITHIN this segment
-			if (i >= buffer && i < segment.size() - buffer) {
+			// Only keep frames that have frameHalfSpan frames before and after WITHIN this segment
+			if (i >= frameHalfSpan && i < segment.size() - frameHalfSpan) {
 				filtered.push_back(segment[i]);
 			}
 		}
@@ -1213,16 +1193,4 @@ std::vector<std::vector<int>> LocomotionPreprocessNode::segmentAndFilterConsecut
 	return segments;  // Some segments might be empty vectors
 }
 
-QString LocomotionPreprocessNode::extractFileStem(const QString& sourceName) const
-{
-	// Remove path if present
-	QString filename = QFileInfo(sourceName).fileName();
-
-	// Remove extension
-	int dotIndex = filename.lastIndexOf('.');
-	if (dotIndex > 0) {
-		return filename.left(dotIndex);
-	}
-	return filename;
-}
 

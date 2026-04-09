@@ -59,8 +59,8 @@ private:
 
 
     int numSamples = 13; // Number of trajectory samples (-60:+60 frames, every 10 frames -> 13 samples)
-    int pastSamples = 6; // Number of past samples
-    int pastFrames = 60; // Number of past frames sampled
+    int pivotSampleIndex = 7; // Index of the pivot (current frame) sample in the trajectory window
+    int frameHalfSpan = 60; // Half the trajectory window in frames
 
     int rootbone_idx = 0;
 
@@ -215,19 +215,12 @@ private:
      * @brief Segment frames into consecutive groups.
      *
      * Splits a list of frame numbers into groups where each group contains
-     * consecutive frames (frame[i+1] == frame[i] + 1).
-     *
-     * @param frames Vector of frame numbers (must be sorted)
-     * @return Vector of frame number groups, each representing a consecutive segment
-     */
-    std::vector<std::vector<int>> segmentConsecutiveFrames(const std::vector<int>& frames) const;
-
     /**
      * @brief Segment frames into consecutive groups and apply 60-frame buffer filter.
      *
      * First segments frames into consecutive groups (same as DataExportPlugin),
-     * then applies 60-frame buffer filter to each segment based on position within the segment.
-     * A frame is kept only if it has at least 60 valid frames before and after it within the
+     * then applies frameHalfSpan buffer filter to each segment based on position within the segment.
+     * A frame is kept only if it has at least frameHalfSpan valid frames before and after it within the
      * same consecutive segment. Returns ALL segments including empty ones (segments completely
      * eliminated by the filter).
      *
@@ -249,21 +242,14 @@ private:
     /**
      * @brief Get the list of frames to process based on ValidFrames input.
      *
-     * If ValidFrames is empty (no Sequences.txt), returns frames with 60-frame offset (current behavior).
-     * If ValidFrames is populated, filters to valid frames that pass the 60-frame scene bounds check.
+     * If ValidFrames is empty (no Sequences.txt), returns all frames.
+     * If ValidFrames is populated, filters to valid frames within bounds.
      *
-     * @param animation The animation being processed
+     * @param totalFrames Total number of frames in the animation
      * @param sourceName The source filename to look up in ValidFrames
      * @return Vector of frame indices to process
      */
-    std::vector<int> getFramesToProcess(std::shared_ptr<Animation> animation, const QString& sourceName);
-
-    /**
-     * @brief Extract the filename stem (without path and extension) from a source name.
-     * @param sourceName The source filename (e.g., "D1_001_KAN01_001.bvh")
-     * @return The stem without extension (e.g., "D1_001_KAN01_001")
-     */
-    QString extractFileStem(const QString& sourceName) const;
+    std::vector<int> getFramesToProcess(int totalFrames, const QString& sourceName);
 
 };
 

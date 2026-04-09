@@ -170,24 +170,6 @@ bool DataExportPlugin::isDataAvailable() {
     return !_skeletonIn.expired() && !_poseSequenceIn.expired() && !_jointVelocitySequenceIn.expired();
 }
 
-std::vector<std::vector<int>> DataExportPlugin::segmentConsecutiveFrames(const std::vector<int>& frames) const
-{
-    std::vector<std::vector<int>> segments;
-    if (frames.empty()) return segments;
-
-    std::vector<int> currentSegment = {frames[0]};
-
-    for (size_t i = 1; i < frames.size(); i++) {
-        if (frames[i] == frames[i-1] + 1) {
-            currentSegment.push_back(frames[i]);  // Consecutive
-        } else {
-            segments.push_back(currentSegment);   // Gap detected - save and start new
-            currentSegment = {frames[i]};
-        }
-    }
-    segments.push_back(currentSegment);  // Add last segment
-    return segments;
-}
 
 void DataExportPlugin::run()
 {
@@ -211,11 +193,11 @@ void DataExportPlugin::run()
             }
 
             // Get frames to export (filtered by ValidFrames if configured)
-            std::vector<int> framesToExport = getFramesToExport(totalFrames, sourceName);
+            std::vector<int> framesToExport = getFramesToProcess(totalFrames, sourceName);
 
             if (!framesToExport.empty()) {
                 // Segment frames into consecutive groups
-                std::vector<std::vector<int>> segments = segmentConsecutiveFrames(framesToExport);
+                std::vector<std::vector<int>> segments = AnimHostHelper::segmentConsecutiveFrames(framesToExport);
 
                 qDebug() << "[DataExportPlugin] Found" << segments.size()
                          << "consecutive segments to export";
@@ -568,7 +550,7 @@ void DataExportPlugin::writeBinaryJointVelocitySequence() {
     }
 }
 
-std::vector<int> DataExportPlugin::getFramesToExport(int totalFrames, const QString& sourceName)
+std::vector<int> DataExportPlugin::getFramesToProcess(int totalFrames, const QString& sourceName)
 {
     std::vector<int> frames;
 
@@ -586,7 +568,7 @@ std::vector<int> DataExportPlugin::getFramesToExport(int totalFrames, const QStr
 
     // ValidFrames is configured - export only valid frames
     auto validFrames = sp_validFrames->getData();
-    QString stem = extractFileStem(sourceName);
+    QString stem = AnimHostHelper::extractFileStem(sourceName);
 
     if (!validFrames->hasFile(stem)) {
         qWarning() << "[DataExportPlugin] File" << stem
@@ -608,10 +590,4 @@ std::vector<int> DataExportPlugin::getFramesToExport(int totalFrames, const QStr
     qDebug() << "[DataExportPlugin] After bounds check:"
              << frames.size() << "frames to export";
     return frames;
-}
-
-QString DataExportPlugin::extractFileStem(const QString& sourceName) const
-{
-    QFileInfo fileInfo(sourceName);
-    return fileInfo.completeBaseName();
 }

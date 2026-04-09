@@ -141,7 +141,6 @@ private:
      * @param filename The filename with extension (e.g., "D1_001_KAN01_001.bvh")
      * @return The stem without extension (e.g., "D1_001_KAN01_001")
      */
-    QString extractFileStem(const QString& filename) const;
 
 };
 

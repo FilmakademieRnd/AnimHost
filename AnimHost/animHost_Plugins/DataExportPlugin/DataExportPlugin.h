@@ -116,23 +116,9 @@ private:
      *
      * @param totalFrames Total number of frames in the sequence
      * @param sourceName The source filename to look up in ValidFrames
-     * @return Vector of frame indices to export
+     * @return Vector of frame indices to process
      */
-    std::vector<int> getFramesToExport(int totalFrames, const QString& sourceName);
-
-    /**
-     * @brief Extract the filename stem (without path and extension) from a source name.
-     * @param sourceName The source filename (e.g., "D1_001_KAN01_001.bvh")
-     * @return The stem without extension (e.g., "D1_001_KAN01_001")
-     */
-    QString extractFileStem(const QString& sourceName) const;
-
-    /**
-     * @brief Segment frame indices into consecutive groups.
-     * @param frames Sorted vector of frame indices
-     * @return Vector of segments, where each segment is a vector of consecutive frames
-     */
-    std::vector<std::vector<int>> segmentConsecutiveFrames(const std::vector<int>& frames) const;
+    std::vector<int> getFramesToProcess(int totalFrames, const QString& sourceName);
 
 private Q_SLOTS:
     void onButtonClicked();
