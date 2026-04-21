@@ -212,10 +212,6 @@ private:
     void clearSegmentBuffers();
 
     /**
-     * @brief Segment frames into consecutive groups.
-     *
-     * Splits a list of frame numbers into groups where each group contains
-    /**
      * @brief Segment frames into consecutive groups and apply 60-frame buffer filter.
      *
      * First segments frames into consecutive groups (same as DataExportPlugin),
