@@ -20,8 +20,6 @@
  
 #include "assimploaderplugin.h"
 #include <iostream>
-#include <algorithm>
-#include <cfloat>
 
 #include "assimphelper.h"
 #include "animhosthelper.h"
@@ -215,54 +213,6 @@ void AssimpLoaderPlugin::run() {
 
 			emitDataUpdate(0);
 			emitDataUpdate(1);
-
-			// Log character dimensions (median bounding box across frames)
-			{
-				auto anim   = _animation->getData();
-				int nFrames = anim->mDurationFrames;
-				int nBones  = static_cast<int>(anim->mBones.size());
-
-				if (nFrames > 0 && nBones > 0) {
-					std::vector<float> extX, extY, extZ;
-					extX.reserve(nFrames); extY.reserve(nFrames); extZ.reserve(nFrames);
-
-					for (int f = 0; f < nFrames; ++f) {
-						float minX =  FLT_MAX, maxX = -FLT_MAX;
-						float minY =  FLT_MAX, maxY = -FLT_MAX;
-						float minZ =  FLT_MAX, maxZ = -FLT_MAX;
-						for (const auto& bone : anim->mBones) {
-							glm::vec3 p = bone.GetPosition(f);
-							minX = std::min(minX, p.x); maxX = std::max(maxX, p.x);
-							minY = std::min(minY, p.y); maxY = std::max(maxY, p.y);
-							minZ = std::min(minZ, p.z); maxZ = std::max(maxZ, p.z);
-						}
-						extX.push_back(maxX - minX);
-						extY.push_back(maxY - minY);
-						extZ.push_back(maxZ - minZ);
-					}
-
-					// nth_element-based percentile (operates on a copy)
-					auto pct = [](std::vector<float> v, float p) -> float {
-						int idx = static_cast<int>(p / 100.0f * (static_cast<int>(v.size()) - 1));
-						std::nth_element(v.begin(), v.begin() + idx, v.end());
-						return v[idx];
-					};
-
-					auto fmt = [](float v) { return QString::number(static_cast<double>(v), 'f', 2); };
-
-					float medY = pct(extY, 50);
-					const char* unit = (medY > 10.0f) ? " (~cm)" : " (~m)";
-
-					qDebug() << "── Character dimensions" << unit
-					         << "| frames:" << nFrames << "| bones:" << nBones;
-					qDebug() << "  X (lateral) :" << fmt(pct(extX, 50))
-					         << " [p10=" << fmt(pct(extX, 10)) << " p90=" << fmt(pct(extX, 90)) << "]";
-					qDebug() << "  Y (vertical):" << fmt(medY)
-					         << " [p10=" << fmt(pct(extY, 10)) << " p90=" << fmt(pct(extY, 90)) << "]";
-					qDebug() << "  Z (depth)   :" << fmt(pct(extZ, 50))
-					         << " [p10=" << fmt(pct(extZ, 10)) << " p90=" << fmt(pct(extZ, 90)) << "]";
-				}
-			}
 
 			qDebug() << "Processing " << shorty << " done.";
 
