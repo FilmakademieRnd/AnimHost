@@ -95,18 +95,18 @@ private:
     /**
      * Exponential mix factor for rotations between predicted future trajectory values and control trajectory values.
      */
-    float tauRotation = 1.f;
+    float tauRotation = 0.3f;
 
     /**
 	 * Exponential mix factor for positions between predicted future trajectory values and control trajectory values.
      */
-	float tauTranslation = 1.f;
+	float tauTranslation = 0.5f;
 
     /**
      * Trajectory Update Bias.
 	 * Controls the mix between predicted future trajectory values and the the current trajectory values.
      */
-    float networkControlBias = 1.f;
+    float networkControlBias = 1./3.f;
 
     /**
      * Phase Update Bias.
@@ -200,7 +200,7 @@ public:
     void SetControlPath(std::shared_ptr<ControlPath> path);
 
     void SetMixWeights(float translation, float rotation, float controlTauRotation, float controlTauTranslation,
-        float networkControlBias = 1./3.f, float networkPhaseBias = 1./3.f) {
+        float networkControlBias = 1./3.f, float networkPhaseBias = 0.5f) {
         this->rootTranslationWeight = translation; 
         this->rootRotationWeight = rotation; 
         this->tauRotation = controlTauRotation; 

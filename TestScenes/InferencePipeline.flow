@@ -174,12 +174,12 @@
             "id": 3,
             "internal-data": {
                 "fileSelection": "../../../../Users/m5940/Desktop/DEMO_Package/ResourcesAnimHost/GNN_2025_01_30_Eddy_NoMirror_E290.onnx",
-                "mixControlPathRotation": 1.0,
-                "mixControlPathTranslation": 1.0,
+                "mixControlPathRotation": 0.3,
+                "mixControlPathTranslation": 0.5,
                 "mixRootRotation": 0.0,
                 "mixRootTranslation": 0.0,
                 "model-name": "GNNNode",
-                "networkControlBias": 1.0,
+                "networkControlBias": 0.33,
                 "networkPhaseBias": 0.5
             },
             "position": {
