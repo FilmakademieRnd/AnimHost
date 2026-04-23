@@ -27,6 +27,7 @@
 #include <QtWidgets>
 #include <pluginnodeinterface.h>
 #include <nodedatatypes.h>
+#include <commondatatypes.h>
 
 class QPushButton;
 
@@ -53,6 +54,7 @@ private:
     std::weak_ptr<AnimNodeData<PoseSequence>> _poseSequenceIn;
     bool bWriteJointVelocity = true;
     std::weak_ptr<AnimNodeData<JointVelocitySequence>> _jointVelocitySequenceIn;
+    std::weak_ptr<AnimNodeData<ValidFrames>> _validFramesIn;
 
     // Export Settings
     QString exportDirectory = "";
@@ -60,6 +62,13 @@ private:
     bool bWriteBinaryData = false;
     bool bOverwriteJointVelSeq = true;
     bool bOverwritePoseSeq = true;
+
+    // Continuous sequence indexing
+    int currentSequenceIndex = 1;
+
+    // Segment tracking
+    std::vector<int> currentFrameSegment;  // Current segment being exported
+    bool isFirstSegment = true;             // Whether this is the first segment
 
 public:
 
@@ -97,6 +106,19 @@ public:
 
     //QTNodes
     QString category() override { return "Undefined Category"; };  // Returns a category for the node
+
+private:
+    /**
+     * @brief Get the list of frames to export based on ValidFrames input.
+     *
+     * If ValidFrames is empty (no Sequences.txt), returns all frames.
+     * If ValidFrames is populated, returns only valid frames for the current file.
+     *
+     * @param totalFrames Total number of frames in the sequence
+     * @param sourceName The source filename to look up in ValidFrames
+     * @return Vector of frame indices to process
+     */
+    std::vector<int> getFramesToProcess(int totalFrames, const QString& sourceName);
 
 private Q_SLOTS:
     void onButtonClicked();

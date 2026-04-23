@@ -299,9 +299,23 @@ void TrainingNode::onTrainingError()
 {
     QByteArray data = _trainingProcess->readAllStandardError();
     QString errorOutput = QString::fromUtf8(data);
-    
+
     if (!errorOutput.isEmpty()) {
-        qDebug() << "Python error output:" << errorOutput.trimmed();
+        // Split multi-line error output (e.g., stack traces) into separate log lines
+        // Replace Windows-style \r\n with \n for consistent handling
+        QString normalized = errorOutput.replace("\r\n", "\n");
+        QStringList lines = normalized.split('\n', Qt::SkipEmptyParts);
+
+        if (lines.count() == 1) {
+            // Single line error - log normally
+            qDebug() << "Python error output:" << lines[0];
+        } else {
+            // Multi-line error (e.g., traceback) - log each line separately
+            qDebug() << "Python error output:";
+            for (const QString& line : lines) {
+                qDebug() << "  " << line;
+            }
+        }
     }
 }
 

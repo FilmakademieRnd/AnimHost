@@ -23,6 +23,8 @@
 
 #include <commondatatypes.h>
 
+#include <vector>
+
 
 class ANIMHOSTCORESHARED_EXPORT AnimHostHelper
 {
@@ -43,6 +45,20 @@ public:
 	* @brief: This function returns Coordinate system transformation matrix swapping the Y and Z axis and negating the new Z axis
 	*/
 	static glm::mat4 GetCoordinateSystemTransformationMatrix();
+
+	/**
+	 * @brief Extracts the filename stem (no path, no extension) from a source name.
+	 * @param sourceName Full path or filename (e.g. "C:/data/walk_001.bvh")
+	 * @return Stem only (e.g. "walk_001")
+	 */
+	static QString extractFileStem(const QString& sourceName);
+
+	/**
+	 * @brief Splits a sorted list of frame indices into groups of consecutive frames.
+	 * @param frames Sorted vector of frame indices
+	 * @return Vector of segments, each segment being a consecutive run of frames
+	 */
+	static std::vector<std::vector<int>> segmentConsecutiveFrames(const std::vector<int>& frames);
 
 };
 

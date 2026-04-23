@@ -126,3 +126,27 @@ glm::mat4 AnimHostHelper::GetCoordinateSystemTransformationMatrix()
 
     return newmatrix;
 }
+
+QString AnimHostHelper::extractFileStem(const QString& sourceName)
+{
+    return QFileInfo(sourceName).completeBaseName();
+}
+
+std::vector<std::vector<int>> AnimHostHelper::segmentConsecutiveFrames(const std::vector<int>& frames)
+{
+    std::vector<std::vector<int>> segments;
+    if (frames.empty()) return segments;
+
+    std::vector<int> currentSegment = {frames[0]};
+
+    for (size_t i = 1; i < frames.size(); i++) {
+        if (frames[i] == frames[i-1] + 1) {
+            currentSegment.push_back(frames[i]);
+        } else {
+            segments.push_back(currentSegment);
+            currentSegment = {frames[i]};
+        }
+    }
+    segments.push_back(currentSegment);
+    return segments;
+}

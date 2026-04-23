@@ -179,6 +179,8 @@ NodeDataType AnimHostNode::convertQMetaTypeToNodeDataType(QMetaType qType)
         return AnimNodeData<PoseSequence>::staticType();
     else if (typeId == QMetaType::fromName("JointVelocitySequence").id())
         return AnimNodeData<JointVelocitySequence>::staticType();
+    else if (typeId == QMetaType::fromName("ValidFrames").id())
+        return AnimNodeData<ValidFrames>::staticType();
     else
         throw "Unknown Datatype";
 }
@@ -200,6 +202,8 @@ std::shared_ptr<AnimNodeDataBase> AnimHostNode::createAnimNodeDataFromID(QMetaTy
         return std::make_shared <AnimNodeData<PoseSequence>>();
     else if (typeId == QMetaType::fromName("JointVelocitySequence").id())
         return std::make_shared <AnimNodeData<JointVelocitySequence>>();
+    else if (typeId == QMetaType::fromName("ValidFrames").id())
+        return std::make_shared <AnimNodeData<ValidFrames>>();
     else
         throw "Unknown Datatype";
 }

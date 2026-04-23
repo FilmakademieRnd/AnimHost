@@ -3,11 +3,13 @@
 
 #include "../DeepLocomotionPlugin_global.h"
 #include <QMetaType>
+#include <QComboBox>
 #include <pluginnodeinterface.h>
 #include <nodedatatypes.h>
 #include <UIUtils.h>
 #include <commondatatypes.h>
 #include <MathUtils.h>
+#include <SkeletonConfig.h>
 
 class DEEPLOCOMOTIONPLUGINSHARED_EXPORT LocomotionPreprocessNode : public PluginNodeInterface
 {
@@ -18,14 +20,20 @@ private:
     std::weak_ptr<AnimNodeData<PoseSequence>> _poseSequenceIn;
     std::weak_ptr<AnimNodeData<JointVelocitySequence>> _jointVelocitySequenceIn;
     std::weak_ptr<AnimNodeData<Animation>> _animationIn;
+    std::weak_ptr<AnimNodeData<ValidFrames>> _validFramesIn;
 
 
     //UI
     QWidget* _widget = nullptr;
     FolderSelectionWidget* _folderSelect = nullptr;
     BoneSelectionWidget* _boneSelect = nullptr;
+    QComboBox* _skeletonTypeCombo = nullptr;
     QCheckBox* _cbOverwrite = nullptr;
     QVBoxLayout* _vLayout = nullptr;
+
+    // Skeleton configuration
+    SkeletonType _skeletonType = SkeletonType::Bipedal;
+    const SkeletonBoneConfig& getBoneConfig() const;
 
 private: 
     //Write Data
@@ -33,6 +41,12 @@ private:
 
     int totalNumberFrames = 0;
     bool bOverwriteDataExport = false;
+
+    // Continuous sequence indexing
+    int currentSequenceIndex = 1;
+
+    // Frame tracking for consecutive segmentation
+    std::vector<int> processedFrameNumbers;  // Actual frame numbers from getFramesToProcess()
 
     QString metadataFileName = "metadata.txt";
     QString sequencesFileName = "sequences_mann.txt";
@@ -45,8 +59,8 @@ private:
 
 
     int numSamples = 13; // Number of trajectory samples (-60:+60 frames, every 10 frames -> 13 samples)
-    int pastSamples = 6; // Number of past samples
-    int pastFrames = 60; // Number of past frames sampled
+    int pivotSampleIndex = 7; // Index of the pivot (current frame) sample in the trajectory window
+    int frameHalfSpan = 60; // Half the trajectory window in frames
 
     int rootbone_idx = 0;
 
@@ -195,11 +209,43 @@ private:
     void writeInputData();
     void writeOutputData();
     void writeMetaData();
+    void clearSegmentBuffers();
+
+    /**
+     * @brief Segment frames into consecutive groups and apply 60-frame buffer filter.
+     *
+     * First segments frames into consecutive groups (same as DataExportPlugin),
+     * then applies frameHalfSpan buffer filter to each segment based on position within the segment.
+     * A frame is kept only if it has at least frameHalfSpan valid frames before and after it within the
+     * same consecutive segment. Returns ALL segments including empty ones (segments completely
+     * eliminated by the filter).
+     *
+     * @param frames Vector of frame numbers (must be sorted)
+     * @param animationDuration Total duration of the animation (unused, kept for compatibility)
+     * @return Vector of frame number groups (some may be empty)
+     */
+    std::vector<std::vector<int>> segmentAndFilterConsecutiveFrames(
+        const std::vector<int>& frames,
+        int animationDuration) const;
 
 private Q_SLOTS:
     void onRootBoneSelectionChanged(const int text);
     void onFolderSelectionChanged();
     void onOverrideCheckbox(int state);
+    void onSkeletonTypeChanged(int index);
+
+private:
+    /**
+     * @brief Get the list of frames to process based on ValidFrames input.
+     *
+     * If ValidFrames is empty (no Sequences.txt), returns all frames.
+     * If ValidFrames is populated, filters to valid frames within bounds.
+     *
+     * @param totalFrames Total number of frames in the animation
+     * @param sourceName The source filename to look up in ValidFrames
+     * @return Vector of frame indices to process
+     */
+    std::vector<int> getFramesToProcess(int totalFrames, const QString& sourceName);
 
 };
 

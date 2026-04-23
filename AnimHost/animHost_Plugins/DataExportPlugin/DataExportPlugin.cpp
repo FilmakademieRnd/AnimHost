@@ -38,6 +38,7 @@ DataExportPlugin::DataExportPlugin()
     _skeletonIn = std::make_shared<AnimNodeData<Skeleton>>();
     _poseSequenceIn = std::make_shared<AnimNodeData<PoseSequence>>();
     _jointVelocitySequenceIn = std::make_shared<AnimNodeData<JointVelocitySequence>>();
+    _validFramesIn = std::make_shared<AnimNodeData<ValidFrames>>();
 
 }
 
@@ -90,8 +91,8 @@ void DataExportPlugin::load(QJsonObject const& p)
 unsigned int DataExportPlugin::nDataPorts(QtNodes::PortType portType) const
 {
     if (portType == QtNodes::PortType::In)
-        return 3;
-    else            
+        return 4;
+    else
         return 0;
 }
 
@@ -106,6 +107,8 @@ NodeDataType DataExportPlugin::dataPortType(QtNodes::PortType portType, QtNodes:
             return AnimNodeData<PoseSequence>::staticType();
         case 2:
             return AnimNodeData<JointVelocitySequence>::staticType();
+        case 3:
+            return AnimNodeData<ValidFrames>::staticType();
 
         default:
             return type;
@@ -123,7 +126,7 @@ void DataExportPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::Po
 {
     qDebug() << "DataExportPlugin setInData";
 
-    if (!data) {  
+    if (!data) {
         switch (portIndex) {
         case 0:
             _skeletonIn.reset();
@@ -133,6 +136,9 @@ void DataExportPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::Po
             break;
         case 2:
             _jointVelocitySequenceIn.reset();
+            break;
+        case 3:
+            _validFramesIn.reset();
             break;
 
         default:
@@ -151,6 +157,9 @@ void DataExportPlugin::processInData(std::shared_ptr<NodeData> data, QtNodes::Po
     case 2:
         _jointVelocitySequenceIn = std::static_pointer_cast<AnimNodeData<JointVelocitySequence>>(data);
         break;
+    case 3:
+        _validFramesIn = std::static_pointer_cast<AnimNodeData<ValidFrames>>(data);
+        break;
 
     default:
         return;
@@ -161,21 +170,65 @@ bool DataExportPlugin::isDataAvailable() {
     return !_skeletonIn.expired() && !_poseSequenceIn.expired() && !_jointVelocitySequenceIn.expired();
 }
 
+
 void DataExportPlugin::run()
 {
     if (!exportDirectory.isEmpty()) {
-
         if (auto sp_skeleton = _skeletonIn.lock()) {
             writeBinarySkeletonData();
 
-            if (auto sp_poseSeq = _poseSequenceIn.lock() && bWritePoseSequence) {
-                exportPoseSequenceData();
+            auto sp_poseSeq = _poseSequenceIn.lock();
+            auto sp_jointVelSeq = _jointVelocitySequenceIn.lock();
+
+            // Determine source name and total frames from available data
+            QString sourceName;
+            int totalFrames = 0;
+
+            if (sp_poseSeq) {
+                sourceName = sp_poseSeq->getData()->sourceName;
+                totalFrames = sp_poseSeq->getData()->mPoseSequence.size();
+            } else if (sp_jointVelSeq) {
+                sourceName = sp_jointVelSeq->getData()->sourceName;
+                totalFrames = sp_jointVelSeq->getData()->mJointVelocitySequence.size();
             }
 
-            if (auto sp_jointVelSeq = _jointVelocitySequenceIn.lock() && bWriteJointVelocity) {
-                exportJointVelocitySequence();
+            // Get frames to export (filtered by ValidFrames if configured)
+            std::vector<int> framesToExport = getFramesToProcess(totalFrames, sourceName);
+
+            if (!framesToExport.empty()) {
+                // Segment frames into consecutive groups
+                std::vector<std::vector<int>> segments = AnimHostHelper::segmentConsecutiveFrames(framesToExport);
+
+                qDebug() << "[DataExportPlugin] Found" << segments.size()
+                         << "consecutive segments to export";
+
+                // Reset index if overwriting
+                if (bOverwritePoseSeq || bOverwriteJointVelSeq) {
+                    currentSequenceIndex = 1;
+                }
+
+                // Export each segment
+                for (size_t i = 0; i < segments.size(); i++) {
+                    currentFrameSegment = segments[i];
+                    isFirstSegment = (i == 0);
+
+                    qDebug() << "[DataExportPlugin] Exporting segment" << (i + 1)
+                             << "with" << currentFrameSegment.size()
+                             << "frames, index:" << currentSequenceIndex;
+
+                    if (sp_poseSeq && bWritePoseSequence) {
+                        exportPoseSequenceData();
+                    }
+
+                    if (sp_jointVelSeq && bWriteJointVelocity) {
+                        exportJointVelocitySequence();
+                    }
+
+                    currentSequenceIndex++;
+                }
             }
         }
+
         // Reset overwrite flags after run to avoid accidental overwriting on next run
         _cbOverwrite->setCheckState(Qt::Unchecked);
 
@@ -261,11 +314,13 @@ void DataExportPlugin::writeCSVPoseSequenceData() {
 
     qDebug() << "Write Pose Data to CSV File";
 
+    // Use pre-computed segment from run()
+    const std::vector<int>& framesToExport = currentFrameSegment;
 
     QFile file(exportDirectory+"pose.csv");
 
-    if (bOverwritePoseSeq) {
-        file.open(QIODevice::WriteOnly | QIODevice::Text);   
+    if (isFirstSegment && bOverwritePoseSeq) {
+        file.open(QIODevice::WriteOnly | QIODevice::Text);
     }
     else {
         file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append);
@@ -274,7 +329,7 @@ void DataExportPlugin::writeCSVPoseSequenceData() {
 
     QTextStream out(&file);
 
-    if (bOverwritePoseSeq) {
+    if (isFirstSegment && bOverwritePoseSeq) {
         out << "seq_id,";
         for (int i = 0; i < skeletonIn->mNumBones; i++) {
             out << QString::fromStdString(skeletonIn->bone_names_reverse.at(i)) << "_x,";
@@ -286,8 +341,9 @@ void DataExportPlugin::writeCSVPoseSequenceData() {
         out << "\n";
     }
 
-    for (int frame = 0; frame < poseSequenceIn->mPoseSequence.size(); frame++) {
-        out << poseSequenceIn->dataSetID << ",";
+    // Export only filtered frames using continuous sequence index
+    for (int frame : framesToExport) {
+        out << currentSequenceIndex << ",";
         for (int bone = 0; bone < skeletonIn->mNumBones; bone++) {
             out << poseSequenceIn->mPoseSequence[frame].mPositionData[bone].x << ",";
             out << poseSequenceIn->mPoseSequence[frame].mPositionData[bone].y << ",";
@@ -306,10 +362,13 @@ void DataExportPlugin::writeBinaryPoseSequenceData() {
     auto poseSequenceIn = _poseSequenceIn.lock()->getData();
 
     qDebug() << "Write Pose Data to Binary File";
-    
+
+    // Use pre-computed segment from run()
+    const std::vector<int>& framesToExport = currentFrameSegment;
+
     QFile file(exportDirectory+ "pose.bin");
 
-    if (bOverwritePoseSeq) {
+    if (isFirstSegment && bOverwritePoseSeq) {
         file.open(QIODevice::WriteOnly);
     }
     else {
@@ -320,10 +379,11 @@ void DataExportPlugin::writeBinaryPoseSequenceData() {
 
     int sizeframe = poseSequenceIn->mPoseSequence[0].mPositionData.size() * sizeof(glm::vec3);
 
-    for (int frame = 0; frame < poseSequenceIn->mPoseSequence.size(); frame++) {
+    // Export only filtered frames
+    for (int frame : framesToExport) {
         out.writeRawData((char*)&poseSequenceIn->mPoseSequence[frame].mPositionData[0], sizeframe);
     }
-       
+
 }
 
 void DataExportPlugin::writeBinarySkeletonData() {
@@ -395,10 +455,12 @@ void DataExportPlugin::writeCSVJointVelocitySequence() {
 
     qDebug() << "Write Joint Velocity Data to CSV File";
 
+    // Use pre-computed segment from run()
+    const std::vector<int>& framesToExport = currentFrameSegment;
 
     QFile file(exportDirectory + "joint_velocity.csv");
 
-    if (bOverwriteJointVelSeq) {
+    if (isFirstSegment && bOverwriteJointVelSeq) {
         file.open(QIODevice::WriteOnly | QIODevice::Text);
     }
     else {
@@ -408,7 +470,7 @@ void DataExportPlugin::writeCSVJointVelocitySequence() {
 
     QTextStream out(&file);
 
-    if (bOverwriteJointVelSeq) {
+    if (isFirstSegment && bOverwriteJointVelSeq) {
         out << "seq_id,";
         out << "frame,";
         for (int i = 0; i < skeletonIn->mNumBones; i++) {
@@ -421,8 +483,9 @@ void DataExportPlugin::writeCSVJointVelocitySequence() {
         out << "\n";
     }
 
-    for (int frame = 0; frame < jointVelSeqIn->mJointVelocitySequence.size(); frame++) {
-        out << jointVelSeqIn->dataSetID << ",";
+    // Export only filtered frames using continuous sequence index
+    for (int frame : framesToExport) {
+        out << currentSequenceIndex << ",";
         out << frame << ",";
         for (int bone = 0; bone < skeletonIn->mNumBones; bone++) {
             out << jointVelSeqIn->mJointVelocitySequence[frame].mJointVelocity[bone].x << ",";
@@ -443,11 +506,16 @@ void DataExportPlugin::writeBinaryJointVelocitySequence() {
 
     qDebug() << "Write Joint Velocity Data to Binary File";
 
+    // Use pre-computed segment from run()
+    const std::vector<int>& framesToExport = currentFrameSegment;
+
+    qDebug() << "[DataExportPlugin] JointVelocitySequence frames to export:" << framesToExport.size();
+
     QFile file(exportDirectory + "joint_velocity.bin");
 
     QString fileNameIdent = exportDirectory + "sequences_velocity.txt";
 
-    if (bOverwriteJointVelSeq) {
+    if (isFirstSegment && bOverwriteJointVelSeq) {
         file.open(QIODevice::WriteOnly);
         FileHandler<QTextStream>::deleteFile(fileNameIdent);
     }
@@ -459,27 +527,67 @@ void DataExportPlugin::writeBinaryJointVelocitySequence() {
 
     int sizeframe = jointVelSeqIn->mJointVelocitySequence[0].mJointVelocity.size() * sizeof(glm::vec3);
 
-    for (int frame = 0; frame < jointVelSeqIn->mJointVelocitySequence.size(); frame++) {
+    // Export only filtered frames
+    for (int frame : framesToExport) {
         out.writeRawData((char*)&jointVelSeqIn->mJointVelocitySequence[frame].mJointVelocity[0], sizeframe);
     }
-
-    
 
     FileHandler<QTextStream> fileIdent = FileHandler<QTextStream>(fileNameIdent);
     QTextStream& outID = fileIdent.getStream();
     QString idString = "";
 
-    for (int frame = 0; frame < jointVelSeqIn->mJointVelocitySequence.size(); frame++) {
-        idString += QString::number(jointVelSeqIn->sequenceID) + " ";
+    // Write sequence identifiers for filtered frames only, using continuous sequence index
+    for (int frame : framesToExport) {
+        idString += QString::number(currentSequenceIndex) + " ";
         idString += QString::number(frame) + " ";
         idString += "Standard ";
         idString += jointVelSeqIn->sourceName + " ";
         idString += jointVelSeqIn->dataSetID;
 
-
         idString += "\n";
         outID << idString;
         idString = "";
     }
+}
 
+std::vector<int> DataExportPlugin::getFramesToProcess(int totalFrames, const QString& sourceName)
+{
+    std::vector<int> frames;
+
+    auto sp_validFrames = _validFramesIn.lock();
+
+    if (!sp_validFrames || sp_validFrames->getData()->isEmpty()) {
+        // No Sequences.txt configured - export all frames (current behavior)
+        for (int f = 0; f < totalFrames; f++) {
+            frames.push_back(f);
+        }
+        qDebug() << "[DataExportPlugin] No ValidFrames - exporting all"
+                 << frames.size() << "frames";
+        return frames;
+    }
+
+    // ValidFrames is configured - export only valid frames
+    auto validFrames = sp_validFrames->getData();
+    QString stem = AnimHostHelper::extractFileStem(sourceName);
+
+    if (!validFrames->hasFile(stem)) {
+        qWarning() << "[DataExportPlugin] File" << stem
+                   << "not found in Sequences.txt - skipping export";
+        return frames;  // Empty
+    }
+
+    std::vector<int> validFrameList = validFrames->getFrames(stem);
+    qDebug() << "[DataExportPlugin] Found" << validFrameList.size()
+             << "valid frames for" << stem << "in Sequences.txt";
+
+    // Filter to frames that exist in the data
+    for (int f : validFrameList) {
+        if (f >= 0 && f < totalFrames) {
+            frames.push_back(f);
+        }
+    }
+
+    qDebug() << "[DataExportPlugin] After bounds check:"
+             << frames.size() << "frames to export";
+    return frames;
 }

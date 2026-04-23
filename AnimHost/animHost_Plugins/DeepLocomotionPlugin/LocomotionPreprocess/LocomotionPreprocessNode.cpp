@@ -45,11 +45,15 @@ LocomotionPreprocessNode::~LocomotionPreprocessNode()
 {
 }
 
+const SkeletonBoneConfig& LocomotionPreprocessNode::getBoneConfig() const
+{
+    return getSkeletonBoneConfig(_skeletonType);
+}
 
 unsigned int LocomotionPreprocessNode::nDataPorts(QtNodes::PortType portType) const
 {
 	if (portType == QtNodes::PortType::In)
-		return 4;
+		return 5;  // Skeleton, PoseSequence, JointVelocitySequence, Animation, ValidFrames
 	else
 		return 0;
 }
@@ -68,26 +72,28 @@ NodeDataType LocomotionPreprocessNode::dataPortType(QtNodes::PortType portType, 
 			return AnimNodeData<JointVelocitySequence>::staticType();
 		case 3:
 			return AnimNodeData<Animation>::staticType();
+		case 4:
+			return AnimNodeData<ValidFrames>::staticType();
 		default:
 			break;
 		}
 	}
-	
+
 	return type;
 }
 
-QJsonObject LocomotionPreprocessNode::save() const 
+QJsonObject LocomotionPreprocessNode::save() const
 {
 	QJsonObject nodeJson = NodeDelegateModel::save();
 
 	nodeJson["dir"] = exportDirectory;
+	nodeJson["skeletonType"] = static_cast<int>(_skeletonType);
 
 	return nodeJson;
 }
 
 void LocomotionPreprocessNode::load(QJsonObject const& p)
 {
-	
 	QJsonValue v = p["dir"];
 
 	if (!v.isUndefined()) {
@@ -102,6 +108,13 @@ void LocomotionPreprocessNode::load(QJsonObject const& p)
 		}
 	}
 
+	QJsonValue skeletonTypeVal = p["skeletonType"];
+	if (!skeletonTypeVal.isUndefined()) {
+		_skeletonType = static_cast<SkeletonType>(skeletonTypeVal.toInt());
+		if (_skeletonTypeCombo) {
+			_skeletonTypeCombo->setCurrentIndex(static_cast<int>(_skeletonType));
+		}
+	}
 }
 
 
@@ -122,6 +135,10 @@ void LocomotionPreprocessNode::processInData(std::shared_ptr<NodeData> data, QtN
 			break;
 		case 3:
 			_animationIn.reset();
+			break;
+		case 4:
+			_validFramesIn.reset();
+			break;
 
 		default:
 			return;
@@ -144,6 +161,9 @@ void LocomotionPreprocessNode::processInData(std::shared_ptr<NodeData> data, QtN
 		break;
 	case 3:
 		_animationIn = std::static_pointer_cast<AnimNodeData<Animation>>(data);
+		break;
+	case 4:
+		_validFramesIn = std::static_pointer_cast<AnimNodeData<ValidFrames>>(data);
 		break;
 	default:
 		return;
@@ -198,25 +218,71 @@ void LocomotionPreprocessNode::run()
 		//Preprocess Root Transform for Biped once for all frames
 		rootBoneTransforms = prepareBipedRoot(poseSequenceIn, skeleton);
 
+		qDebug() << "[LocomotionPreprocessNode] Input sizes:"
+		         << "animation->mDurationFrames:" << animation->mDurationFrames
+		         << "poseSequenceIn->mPoseSequence.size():" << poseSequenceIn->mPoseSequence.size()
+		         << "velSeq->mJointVelocitySequence.size():" << velSeq->mJointVelocitySequence.size();
 
-		//Offset to start of sequence, allows for enough frames to be left for past trajectory samples
-		int start = 60;
+		// Get frames to export (filtered by ValidFrames if configured)
+		std::vector<int> framesToProcess = getFramesToProcess(animation->mDurationFrames, animation->sourceName);
 
-		//Offset to last frame of sequence, allows for enough frames to be left for trajectory 
-		//and output (trajectory of next frame)
-		int end = animation->mDurationFrames - 60;
-
-		for (int frameCounter = start; frameCounter <= end; frameCounter++) {
-			processFrame(frameCounter, poseSequenceIn, animation, velSeq, skeleton);
+		if (framesToProcess.empty()) {
+			qDebug() << "[LocomotionPreprocessNode] No valid frames - skipping file";
+			return;  // File not in ValidFrames - both plugins skip
 		}
 
-		// Clear existing data
-		clearExistingData();
+		// Segment and filter to fit window size
+		// Returns all segments (including empty ones that were filtered out)
+		std::vector<std::vector<int>> segments = segmentAndFilterConsecutiveFrames(
+			framesToProcess,
+			animation->mDurationFrames
+		);
 
-		// Write Data to Files
-		writeMetaData();
-		writeInputData();
-		writeOutputData();
+		qDebug() << "[LocomotionPreprocessNode] Found" << segments.size()
+		         << "consecutive segments from" << framesToProcess.size() << "total frames";
+
+		// Reset index if overwriting
+		if (bOverwriteDataExport) {
+			currentSequenceIndex = 1;
+		}
+
+		// Process each segment (skip empty ones but still increment SeqId)
+		for (size_t segIdx = 0; segIdx < segments.size(); segIdx++) {
+			const std::vector<int>& currentSegment = segments[segIdx];
+
+			if (currentSegment.empty()) {
+				// Segment eliminated by 60-frame buffer - skip but increment SeqId
+				qDebug() << "[LocomotionPreprocessNode] Segment" << (segIdx + 1)
+				         << "eliminated by 60-frame buffer. Skipping SeqId"
+				         << currentSequenceIndex << "to maintain sync with DataExportPlugin.";
+				currentSequenceIndex++;
+				continue;
+			}
+
+			qDebug() << "[LocomotionPreprocessNode] Processing segment" << (segIdx + 1)
+			         << "with" << currentSegment.size() << "frames, SeqId:" << currentSequenceIndex;
+
+			// Clear data buffers
+			clearSegmentBuffers();
+
+			// Process all frames in this segment
+			for (int frameCounter : currentSegment) {
+				processFrame(frameCounter, poseSequenceIn, animation, velSeq, skeleton);
+				processedFrameNumbers.push_back(frameCounter);
+			}
+
+			// Write this segment's data to files
+			if (segIdx == 0) {
+				clearExistingData();
+			}
+
+			writeMetaData();
+			writeInputData();
+			writeOutputData();
+
+			// Increment sequence index for next segment
+			currentSequenceIndex++;
+		}
 
 	}
 }
@@ -283,37 +349,35 @@ void LocomotionPreprocessNode::processFrame(int frameCounter, std::shared_ptr<Po
 
 std::vector<glm::quat> LocomotionPreprocessNode::prepareRootRotation(std::shared_ptr<PoseSequence> poseSequenceIn, std::shared_ptr<Skeleton> skeleton)
 {
+	const auto& boneConfig = getBoneConfig();
 
-	// Get Bone Index for Hip and Shoulder. Currently hardcoded, should be changed to be more flexible.
-	int rightHipIdx = skeleton->bone_names.at("pelvis_R");
-	int leftHipIdx = skeleton->bone_names.at("pelvis_L");
+	// Get Bone Index for rear and front joints based on skeleton type
+	int rearRightIdx = skeleton->bone_names.at(boneConfig.rearRight);
+	int rearLeftIdx = skeleton->bone_names.at(boneConfig.rearLeft);
+	int frontRightIdx = skeleton->bone_names.at(boneConfig.frontRight);
+	int frontLeftIdx = skeleton->bone_names.at(boneConfig.frontLeft);
 
-	int rightShoulderIdx = skeleton->bone_names.at("shoulder_R");
-	int leftShoulderIdx = skeleton->bone_names.at("shoulder_L");
+	qDebug() << "Using skeleton type:" << (_skeletonType == SkeletonType::Bipedal ? "Bipedal" : "Quadrupedal");
+	qDebug() << "Rear indices (R/L):" << rearRightIdx << "/" << rearLeftIdx;
+	qDebug() << "Front indices (R/L):" << frontRightIdx << "/" << frontLeftIdx;
 
-	/*qDebug() << "Right Hip Index: " << rightHipIdx;
-	qDebug() << "Left Hip Index: " << leftHipIdx;
-	qDebug() << "Right Shoulder Index: " << rightShoulderIdx;
-	qDebug() << "Left Shoulder Index: " << leftShoulderIdx;*/
+	std::function<glm::quat(int)> calculateRootRotation = [&](int frame) {
 
-	 std::function<glm::quat(int)> calculateRootRotation = [&](int frame) {
+		glm::vec3 rearRight, rearLeft, frontRight, frontLeft;
 
-		glm::vec3 hipRight, hipLeft, shoulderRight, shoulderLeft;
+		rearRight = poseSequenceIn->GetPositionAtFrame3D(frame, rearRightIdx);
+		rearLeft = poseSequenceIn->GetPositionAtFrame3D(frame, rearLeftIdx);
 
-		hipRight = poseSequenceIn->GetPositionAtFrame3D(frame, rightHipIdx);
-		hipLeft = poseSequenceIn->GetPositionAtFrame3D(frame, leftHipIdx);
+		glm::vec3 rearVector = rearRight - rearLeft;
+		rearVector = glm::normalize(AnimHostHelper::ProjectPointOnGroundPlane(rearVector));
 
+		frontRight = poseSequenceIn->GetPositionAtFrame3D(frame, frontRightIdx);
+		frontLeft = poseSequenceIn->GetPositionAtFrame3D(frame, frontLeftIdx);
 
-		glm::vec3 hipVector = hipRight - hipLeft;
-		hipVector = glm::normalize(AnimHostHelper::ProjectPointOnGroundPlane(hipVector));
+		glm::vec3 frontVector = frontRight - frontLeft;
+		frontVector = glm::normalize(AnimHostHelper::ProjectPointOnGroundPlane(frontVector));
 
-		shoulderRight = poseSequenceIn->GetPositionAtFrame3D(frame, rightShoulderIdx);
-		shoulderLeft = poseSequenceIn->GetPositionAtFrame3D(frame, leftShoulderIdx);
-
-		glm::vec3 shoulderVector = shoulderRight - shoulderLeft;
-		shoulderVector = glm::normalize(AnimHostHelper::ProjectPointOnGroundPlane(shoulderVector));
-
-		glm::vec3 forward = glm::normalize(hipVector + shoulderVector);
+		glm::vec3 forward = glm::normalize(rearVector + frontVector);
 		forward = glm::cross(glm::vec3(0.0, 1.0, 0.0), forward);
 		forward = glm::normalize(AnimHostHelper::ProjectPointOnGroundPlane(forward));
 
@@ -335,10 +399,11 @@ std::vector<glm::quat> LocomotionPreprocessNode::prepareRootRotation(std::shared
 
 std::vector<glm::mat4> LocomotionPreprocessNode::prepareBipedRoot(std::shared_ptr<PoseSequence> poseSequenceIn, std::shared_ptr<Skeleton> skeleton)
 {
+	const auto& boneConfig = getBoneConfig();
 
 	int numFrames = poseSequenceIn->mPoseSequence.size();
 
-	int hipIdx = skeleton->bone_names.at("hip"); 
+	int rootBoneIdx = skeleton->bone_names.at(boneConfig.rootBone);
 
 	std::vector<glm::quat> rootRot = prepareRootRotation(poseSequenceIn, skeleton);
 
@@ -349,7 +414,7 @@ std::vector<glm::mat4> LocomotionPreprocessNode::prepareBipedRoot(std::shared_pt
 	std::vector<glm::vec3> rootPos = std::vector<glm::vec3>(numFrames);
 
 	for (int i = 0; i < numFrames; i++) {
-		rootPos[i] = poseSequenceIn->mPoseSequence[i].mPositionData[hipIdx];
+		rootPos[i] = poseSequenceIn->mPoseSequence[i].mPositionData[rootBoneIdx];
 	}
 	
 	std::vector<glm::mat4> rootTransforms = std::vector<glm::mat4>(numFrames);
@@ -381,8 +446,7 @@ std::vector<float> LocomotionPreprocessNode::prepareTrajectoryData(int reference
 	int refIdx = referenceFrame + (isOutput ? 1 : 0);
 
 	// For output data, we only need to calculate the trajectory for the future steps.
-	// 6 is the start index for future steps, including pivot of frame range. Might need to change this if the number of samples changes.
-	int startIdx = isOutput ? (pastSamples + 1) : 0;
+	int startIdx = isOutput ? pivotSampleIndex : 0;
 
 	FrameRange frameRange(numSamples, 60, refIdx, startIdx);
 
@@ -546,18 +610,23 @@ QWidget* LocomotionPreprocessNode::embeddedWidget()
 		_folderSelect = new FolderSelectionWidget(_widget);
 		_cbOverwrite = new QCheckBox("Overwrite Existing Data");
 
+		// Skeleton type selector
+		_skeletonTypeCombo = new QComboBox(_widget);
+		_skeletonTypeCombo->addItem("Bipedal", static_cast<int>(SkeletonType::Bipedal));
+		_skeletonTypeCombo->addItem("Quadrupedal", static_cast<int>(SkeletonType::Quadrupedal));
+		_skeletonTypeCombo->setCurrentIndex(static_cast<int>(_skeletonType));
 
 		QVBoxLayout* layout = new QVBoxLayout();
 
-
+		layout->addWidget(new QLabel("Skeleton Type:"));
+		layout->addWidget(_skeletonTypeCombo);
 		layout->addWidget(_folderSelect);
 		layout->addWidget(_cbOverwrite);
 		layout->addWidget(_boneSelect);
 
 		_widget->setLayout(layout);
-		//_widget->setMinimumHeight(_widget->sizeHint().height());
-		//_widget->setMaximumWidth(_widget->sizeHint().width());
 
+		connect(_skeletonTypeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &LocomotionPreprocessNode::onSkeletonTypeChanged);
 		connect(_boneSelect, &BoneSelectionWidget::currentBoneChanged, this, &LocomotionPreprocessNode::onRootBoneSelectionChanged);
 		connect(_folderSelect, &FolderSelectionWidget::directoryChanged, this, &LocomotionPreprocessNode::onFolderSelectionChanged);
 		connect(_cbOverwrite, &QCheckBox::stateChanged, this, &LocomotionPreprocessNode::onOverrideCheckbox);
@@ -611,6 +680,22 @@ void LocomotionPreprocessNode::clearExistingData()
 		bOverwriteDataExport = false;
 		_cbOverwrite->setCheckState(Qt::Unchecked);
 	}
+}
+
+void LocomotionPreprocessNode::clearSegmentBuffers()
+{
+	rootSequenceData.clear();
+	sequenceRelativeJointPosition.clear();
+	sequenceRelativeJointVelocities.clear();
+	sequenceRelativJointRotations.clear();
+	sequenceRelativJointRotations6D.clear();
+	Y_SequenceDeltaUpdate.clear();
+	Y_RootSequenceData.clear();
+	Y_SequenceRelativeJointPosition.clear();
+	Y_SequenceRelativeJointVelocities.clear();
+	Y_SequenceRelativJointRotations.clear();
+	Y_SequenceRelativJointRotations6D.clear();
+	processedFrameNumbers.clear();
 }
 
 void LocomotionPreprocessNode::writeMetaData() {
@@ -694,8 +779,8 @@ void LocomotionPreprocessNode::writeMetaData() {
 
 					featureCount += 3;
 
-					//Root Trajectory. start index at 6 for future steps
-					for (int i = (pastSamples + 1); i < numSamples; i++) {
+					//Root Trajectory. start index at pivotSampleIndex for future steps
+					for (int i = pivotSampleIndex; i < numSamples; i++) {
 						header += ",out_root_pos_x_" + QString::number(i);
 						header += ",out_root_pos_y_" + QString::number(i);
 						header += ",out_root_fwd_x_" + QString::number(i);
@@ -773,8 +858,9 @@ void LocomotionPreprocessNode::writeInputData()
 					QString idString = "";
 
 					for (int idx = 0; idx < rootSequenceData.size(); idx++) {
-						idString += QString::number(poseSequenceIn->sequenceID) + " ";
-						idString += QString::number(pastSamples + idx) + " ";
+						// Use currentSequenceIndex and actual frame numbers from processedFrameNumbers
+						idString += QString::number(currentSequenceIndex) + " ";
+						idString += QString::number(processedFrameNumbers[idx]) + " ";
 						idString += "Standard ";
 						idString += poseSequenceIn->sourceName + " ";
 						idString += poseSequenceIn->dataSetID;
@@ -925,11 +1011,23 @@ void LocomotionPreprocessNode::onRootBoneSelectionChanged(const int indx)
 	}
 }
 
-void LocomotionPreprocessNode::onOverrideCheckbox(int state) 
+void LocomotionPreprocessNode::onOverrideCheckbox(int state)
 {
 	bOverwriteDataExport = state;
 }
 
+void LocomotionPreprocessNode::onSkeletonTypeChanged(int index)
+{
+	SkeletonType newType = static_cast<SkeletonType>(index);
+	if (_skeletonType != newType) {
+		_skeletonType = newType;
+		const auto& config = getBoneConfig();
+		qDebug() << "Skeleton type changed to:" << (index == 0 ? "Bipedal" : "Quadrupedal");
+		qDebug() << "  Root bone:" << config.rootBone;
+		qDebug() << "  Rear bones:" << config.rearLeft << "/" << config.rearRight;
+		qDebug() << "  Front bones:" << config.frontLeft << "/" << config.frontRight;
+	}
+}
 
 // Experimental
 
@@ -1020,4 +1118,79 @@ std::vector<glm::quat> LocomotionPreprocessNode::GaussianFilterQuaternions(const
 
 	return smoothedQuaternions;
 }
+
+std::vector<int> LocomotionPreprocessNode::getFramesToProcess(int totalFrames, const QString& sourceName)
+{
+	std::vector<int> frames;
+	int duration = totalFrames;
+
+	// Check if ValidFrames is available
+	auto sp_validFrames = _validFramesIn.lock();
+
+	if (!sp_validFrames || sp_validFrames->getData()->isEmpty()) {
+		// No Sequences.txt configured - use all frames (no buffer here)
+		for (int f = 0; f < duration; f++) {
+			frames.push_back(f);
+		}
+
+		qDebug() << "[LocomotionPreprocessNode] No ValidFrames - using all"
+		         << frames.size() << "frames";
+
+		return frames;
+	}
+
+	// ValidFrames is configured - get valid frames only
+	auto validFrames = sp_validFrames->getData();
+	QString stem = AnimHostHelper::extractFileStem(sourceName);
+
+	if (!validFrames->hasFile(stem)) {
+		// File not in Sequences.txt - skip it
+		qWarning() << "[LocomotionPreprocessNode] File" << stem
+		           << "not found in Sequences.txt - skipping (no valid frames)";
+		return frames;  // Empty
+	}
+
+	// Get valid frames for this file
+	std::vector<int> validFrameList = validFrames->getFrames(stem);
+
+	qDebug() << "[LocomotionPreprocessNode] Found" << validFrameList.size()
+	         << "valid frames for" << stem << "in Sequences.txt";
+
+	// Filter by bounds only (NO 60-frame buffer here)
+	for (int f : validFrameList) {
+		if (f >= 0 && f < duration) {
+			frames.push_back(f);
+		}
+	}
+
+	qDebug() << "[LocomotionPreprocessNode] After bounds check:"
+	         << frames.size() << "frames to process";
+
+	return frames;
+}
+
+
+std::vector<std::vector<int>> LocomotionPreprocessNode::segmentAndFilterConsecutiveFrames(
+	const std::vector<int>& frames,
+	int animationDuration) const
+{
+	// Step 1: Segment into consecutive groups
+	std::vector<std::vector<int>> segments = AnimHostHelper::segmentConsecutiveFrames(frames);
+
+	// Step 2: Apply frameHalfSpan buffer filter to EACH segment
+	// Check position within segment to ensure frameHalfSpan valid frames before/after
+	for (auto& segment : segments) {
+		std::vector<int> filtered;
+		for (size_t i = 0; i < segment.size(); i++) {
+			// Only keep frames that have frameHalfSpan frames before and after WITHIN this segment
+			if (i >= frameHalfSpan && i < segment.size() - frameHalfSpan) {
+				filtered.push_back(segment[i]);
+			}
+		}
+		segment = filtered;  // Replace with filtered version (might be empty!)
+	}
+
+	return segments;  // Some segments might be empty vectors
+}
+
 
