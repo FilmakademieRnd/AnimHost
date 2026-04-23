@@ -68,12 +68,12 @@ cd .\DataHub\DataHub\
 
 | Parameter | Range | Default | Description |
 |-----------|-------|---------|-------------|
-| **Mix Root Rotation** | 0.0 - 1.0 | 0.5 | Root rotation blend (0 = network, 1 = path) |
-| **Mix Root Translation** | 0.0 - 1.0 | 0.5 | Root position blend (0 = network, 1 = path) |
-| **Path Position Influence** | 0.0 - 1.0 | 0.5 | Pre-inference position blend (0 = strict path, 1 = loose) |
-| **Path Rotation Influence** | 0.0 - 1.0 | 0.3 | Pre-inference rotation blend (0 = strict path, 1 = loose) |
-| **Network Phase Bias** | 0 - 100 | 50 | Post-inference phase blend (0 = steady gait, 100 = fast tempo adaptation) |
-| **Network Control Bias** | 0 - 100 | 33 | Post-inference trajectory blend (0 = ignore network, 100 = trust network) |
+| **Mix Root Rotation** | 0.0 - 1.0 | 0.0 | Root rotation blend (0 = network, 1 = control path) |
+| **Mix Root Translation** | 0.0 - 1.0 | 0.0 | Root position blend (0 = network, 1 = control path) |
+| **Path Position Influence** | 0.0 - 1.0 | 0.5 | Control position blend (0 = strict control path, 1 = loose) |
+| **Path Rotation Influence** | 0.0 - 1.0 | 0.3 | Control rotation blend (0 = strict control path, 1 = loose) |
+| **Network Phase Bias** | 0 - 100 | 50 | Network feedback phase blend (0 = steady gait, 100 = fast tempo adaptation) |
+| **Network Control Bias** | 0 - 100 | 33 | Network feedback blend (0 = ignore network, 100 = trust network) |
 
 > **Note:** Settings of 0, 0, 1, 1, 100, 100 produce output closest to raw network predictions.
 

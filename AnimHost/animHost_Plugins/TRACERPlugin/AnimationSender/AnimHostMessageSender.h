@@ -177,7 +177,7 @@ class TRACERPLUGINSHARED_EXPORT AnimHostMessageSender : public ZMQMessageHandler
     void SerializePose(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character,
                        std::shared_ptr<SceneNodeObjectSequence> sceneNodeList, QByteArray* byteArray, int frame = 0);
 
-    void SerializeAnimation(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character, 
+    void SerializeAnimation(std::shared_ptr<Animation> animData, std::shared_ptr<CharacterObject> character,
                                 std::shared_ptr<SceneNodeObjectSequence> sceneNodeList, QByteArray* byteArray, int frame);
 
     //! Indicates whether the sent animation will loop or not

@@ -1,3 +1,23 @@
 {
-    "cmake.configureOnOpen": false
+    "cmake.configureOnOpen": false,
+    "search.exclude": {
+        "**/build": true,
+        "**/vcpkg": true,
+        "**/glm": true,
+        "**/__pycache__": true,
+        "**/.pytest_cache": true,
+        "**/onnxruntime/lib": true,
+        "**/*.pth": true,
+        "**/*.onnx": true,
+        "**/*.dll": true,
+        "**/*.lib": true,
+        "**/*.obj": true,
+        "**/*.pdb": true
+    },
+    "files.watcherExclude": {
+        "**/build/**": true,
+        "**/vcpkg/**": true,
+        "**/__pycache__/**": true,
+        "**/.pytest_cache/**": true
+    }
 }

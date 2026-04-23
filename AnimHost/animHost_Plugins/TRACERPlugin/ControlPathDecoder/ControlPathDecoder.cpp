@@ -157,7 +157,7 @@ void ControlPathDecoderNode::run()
 
         //Construct the path
         for (int i = 0; i < this->_pointLocation.size() - 1; i++) {
-            qDebug() << "Processing Control Point" << i;
+            qDebug() << "Processing Control Segment starting at" << i;
             glm::vec3   thisLoc = this->_pointLocation.at(i).value;
             glm::vec3   outTang = this->_pointLocation.at(i).outTangentValue;
             int         firstFrame = this->_pointLocation.at(i).time;

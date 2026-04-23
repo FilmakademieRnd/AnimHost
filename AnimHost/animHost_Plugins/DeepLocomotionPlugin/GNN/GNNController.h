@@ -89,24 +89,24 @@ private:
     int numPhaseChannel = 5;
 
     /*Mix Weights*/
-    float rootTranslationWeight = 0.5f;
-    float rootRotationWeight = 0.5f;
+    float rootTranslationWeight = 0.0f;
+    float rootRotationWeight = 0.0f;
 
     /**
      * Exponential mix factor for rotations between predicted future trajectory values and control trajectory values.
      */
-    float tauRotation = 1.f;
+    float tauRotation = 0.3f;
 
     /**
 	 * Exponential mix factor for positions between predicted future trajectory values and control trajectory values.
      */
-	float tauTranslation = 1.f;
+	float tauTranslation = 0.5f;
 
     /**
      * Trajectory Update Bias.
 	 * Controls the mix between predicted future trajectory values and the the current trajectory values.
      */
-    float networkControlBias = 1.f / 3.f;
+    float networkControlBias = 1./3.f;
 
     /**
      * Phase Update Bias.
@@ -158,6 +158,12 @@ private:
     std::vector<float> input_values;
     std::vector<float> output_values;
 
+    // Data export
+    bool bExportData = false;
+    QString _exportDir;
+    std::vector<std::vector<float>> _exportInputSamples;
+    std::vector<std::vector<float>> _exportOutputSamples;
+
     //Plotting
     #ifdef DEBUG_PLOT
     matplot::figure_handle figure = nullptr;
@@ -194,7 +200,7 @@ public:
     void SetControlPath(std::shared_ptr<ControlPath> path);
 
     void SetMixWeights(float translation, float rotation, float controlTauRotation, float controlTauTranslation,
-        float networkControlBias = 1./3.f, float networkPhaseBias = 1./3.f) {
+        float networkControlBias = 1./3.f, float networkPhaseBias = 0.5f) {
         this->rootTranslationWeight = translation; 
         this->rootRotationWeight = rotation; 
         this->tauRotation = controlTauRotation; 
@@ -205,6 +211,13 @@ public:
 
     std::shared_ptr<Animation> GetAnimationOut();
     std::shared_ptr<DebugSignal> GetDebugSignal(){return debugSignal; }
+
+    void EnableDataExport(const QString& dir) {
+        bExportData = true;
+        _exportDir = dir;
+        _exportInputSamples.clear();
+        _exportOutputSamples.clear();
+    }
 
 private:
 
@@ -239,5 +252,15 @@ private:
     float CalcPhaseValue(glm::vec2 phase);
 
     glm::mat4 updateRootTranform(const glm::mat4& pos, const glm::vec3& delta, int genIdx);
+
+    void writeExportSequences() const;
+
+    // GNN training format export
+    void writeExportData() const;
+    QStringList buildInputLabels() const;
+    QStringList buildOutputLabels() const;
+    void writeLabelsFile(const QString& path, const QStringList& labels) const;
+    void writeShapeFile(const QString& path, int numSamples, int numFeatures) const;
+    void writeBinaryFile(const QString& path, const std::vector<std::vector<float>>& samples) const;
 
 };

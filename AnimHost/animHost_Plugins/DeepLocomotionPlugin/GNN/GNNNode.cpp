@@ -245,12 +245,13 @@ void GNNNode::run()
                     controller->SetAnimationIn(animation);
                     controller->SetSkeleton(skeleton);
                     controller->SetControlPath(controlPath);
-                    controller->SetMixWeights(_mixRootTranslation->value(), _mixRootRotation->value(), 
+                    controller->SetMixWeights(_mixRootTranslation->value(), _mixRootRotation->value(),
                         _mixControlPathRotation->value(), _mixControlPathTranslation->value(),
                         _networkControlBias->value()/100.f, _networkPhaseBias->value()/100.f);
 
-                    //dummy data
-           
+                    if (_cbExportData && _cbExportData->isChecked() && !_exportPath.isEmpty())
+                        controller->EnableDataExport(_exportPath);
+
                     controller->prepareInput();
 
 					if (auto animOut = controller->GetAnimationOut()) {
@@ -353,9 +354,15 @@ QWidget* GNNNode::embeddedWidget()
 
        layout->addLayout(gridLayout);
 
+       _cbExportData = new QCheckBox("Export Inference Data", _widget);
+       _exportFolderWidget = new FolderSelectionWidget(_widget, FolderSelectionWidget::Directory);
+       layout->addWidget(_cbExportData);
+       layout->addWidget(_exportFolderWidget);
+
        _widget->setLayout(layout);
 
        connect(_fileSelectionWidget, &FolderSelectionWidget::directoryChanged, this, &GNNNode::onFileSelectionChanged);
+       connect(_exportFolderWidget, &FolderSelectionWidget::directoryChanged, this, [this]() { _exportPath = _exportFolderWidget->GetSelectedDirectory(); });
 
        _widget->setStyleSheet("QHeaderView::section {background-color:rgba(64, 64, 64, 0%);""border: 0px solid white;""}"
            "QWidget{background-color:rgba(64, 64, 64, 0%);""color: white;}"
